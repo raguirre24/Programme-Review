@@ -1,0 +1,1202 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.6.0/schema.json",
+  "name": "83954ae904c379806a3d",
+  "position": {
+    "x": 0,
+    "y": 216.51316729368065,
+    "z": 8000,
+    "height": 864.10210010000469,
+    "width": 1786.7212724415447,
+    "tabOrder": 8000
+  },
+  "visual": {
+    "visualType": "LongestPathVisual",
+    "query": {
+      "queryState": {
+        "taskId": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "06 XER_PREDECESSOR"
+                    }
+                  },
+                  "Property": "task_code"
+                }
+              },
+              "queryRef": "06 XER_PREDECESSOR.task_code",
+              "nativeQueryRef": "task_code"
+            }
+          ]
+        },
+        "duration": {
+          "projections": [
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "06 XER_PREDECESSOR"
+                        }
+                      },
+                      "Property": "Remaining Working Days"
+                    }
+                  },
+                  "Function": 0
+                }
+              },
+              "queryRef": "Sum(06 XER_PREDECESSOR.Remaining Working Days)",
+              "nativeQueryRef": "Sum of Remaining Working Days"
+            }
+          ]
+        },
+        "taskTotalFloat": {
+          "projections": [
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "06 XER_PREDECESSOR"
+                        }
+                      },
+                      "Property": "Total Float"
+                    }
+                  },
+                  "Function": 0
+                }
+              },
+              "queryRef": "Sum(06 XER_PREDECESSOR.Total Float)",
+              "nativeQueryRef": "Sum of Total Float"
+            }
+          ]
+        },
+        "taskName": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "06 XER_PREDECESSOR"
+                    }
+                  },
+                  "Property": "TaskCodeAndName"
+                }
+              },
+              "queryRef": "06 XER_PREDECESSOR.TaskCodeAndName",
+              "nativeQueryRef": "TaskCodeAndName"
+            }
+          ]
+        },
+        "taskType": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "06 XER_PREDECESSOR"
+                    }
+                  },
+                  "Property": "task_type"
+                }
+              },
+              "queryRef": "06 XER_PREDECESSOR.task_type",
+              "nativeQueryRef": "task_type"
+            }
+          ]
+        },
+        "predecessorId": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "06 XER_PREDECESSOR"
+                    }
+                  },
+                  "Property": "predecessor_task_code"
+                }
+              },
+              "queryRef": "06 XER_PREDECESSOR.predecessor_task_code",
+              "nativeQueryRef": "predecessor_task_code"
+            }
+          ]
+        },
+        "relationshipType": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "06 XER_PREDECESSOR"
+                    }
+                  },
+                  "Property": "pred_type"
+                }
+              },
+              "queryRef": "06 XER_PREDECESSOR.pred_type",
+              "nativeQueryRef": "pred_type"
+            }
+          ]
+        },
+        "tooltip": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "01 XER_TASK"
+                    }
+                  },
+                  "Property": "CriticalStatus"
+                }
+              },
+              "queryRef": "01 XER_TASK.CriticalStatus",
+              "nativeQueryRef": "CriticalStatus"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "01 XER_TASK"
+                    }
+                  },
+                  "Property": "cstr_type"
+                }
+              },
+              "queryRef": "01 XER_TASK.cstr_type",
+              "nativeQueryRef": "cstr_type"
+            }
+          ]
+        },
+        "wbsLevels": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "03 XER_PROJWBS"
+                    }
+                  },
+                  "Property": "Level_1"
+                }
+              },
+              "queryRef": "03 XER_PROJWBS.Level_1",
+              "nativeQueryRef": "Level_1"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "03 XER_PROJWBS"
+                    }
+                  },
+                  "Property": "Level_2"
+                }
+              },
+              "queryRef": "03 XER_PROJWBS.Level_2",
+              "nativeQueryRef": "Level_2"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "03 XER_PROJWBS"
+                    }
+                  },
+                  "Property": "Level_3"
+                }
+              },
+              "queryRef": "03 XER_PROJWBS.Level_3",
+              "nativeQueryRef": "Level_3"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "03 XER_PROJWBS"
+                    }
+                  },
+                  "Property": "Level_4"
+                }
+              },
+              "queryRef": "03 XER_PROJWBS.Level_4",
+              "nativeQueryRef": "Level_4"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "03 XER_PROJWBS"
+                    }
+                  },
+                  "Property": "Level_5"
+                }
+              },
+              "queryRef": "03 XER_PROJWBS.Level_5",
+              "nativeQueryRef": "Level_5"
+            }
+          ]
+        },
+        "startDate": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "06 XER_PREDECESSOR"
+                    }
+                  },
+                  "Property": "early_start_date"
+                }
+              },
+              "queryRef": "06 XER_PREDECESSOR.early_start_date",
+              "nativeQueryRef": "Start",
+              "displayName": "Start"
+            }
+          ]
+        },
+        "finishDate": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "06 XER_PREDECESSOR"
+                    }
+                  },
+                  "Property": "early_end_date"
+                }
+              },
+              "queryRef": "06 XER_PREDECESSOR.early_end_date",
+              "nativeQueryRef": "Finish",
+              "displayName": "Finish"
+            }
+          ]
+        },
+        "relationshipFreeFloat": {
+          "projections": [
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "06 XER_PREDECESSOR"
+                        }
+                      },
+                      "Property": "free_float"
+                    }
+                  },
+                  "Function": 0
+                }
+              },
+              "queryRef": "CountNonNull(06 XER_PREDECESSOR.free_float)",
+              "nativeQueryRef": "Sum of free_float"
+            }
+          ]
+        },
+        "manualStartDate": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "01 XER_TASK"
+                    }
+                  },
+                  "Property": "Start"
+                }
+              },
+              "queryRef": "01 XER_TASK.start",
+              "nativeQueryRef": "start"
+            }
+          ]
+        },
+        "manualFinishDate": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "01 XER_TASK"
+                    }
+                  },
+                  "Property": "Finish"
+                }
+              },
+              "queryRef": "01 XER_TASK.finish",
+              "nativeQueryRef": "finish"
+            }
+          ]
+        },
+        "dataDate": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "01 XER_TASK"
+                    }
+                  },
+                  "Property": "data_date"
+                }
+              },
+              "queryRef": "01 XER_TASK.data_date",
+              "nativeQueryRef": "data_date"
+            }
+          ]
+        },
+        "baselineStartDate": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "01 XER_TASK"
+                    }
+                  },
+                  "Property": "Baseline Start"
+                }
+              },
+              "queryRef": "01 XER_TASK.Baseline Start",
+              "nativeQueryRef": "Baseline Start"
+            }
+          ]
+        },
+        "baselineFinishDate": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "01 XER_TASK"
+                    }
+                  },
+                  "Property": "Baseline Finish"
+                }
+              },
+              "queryRef": "01 XER_TASK.Baseline Finish",
+              "nativeQueryRef": "Baseline Finish"
+            }
+          ]
+        },
+        "previousUpdateStartDate": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "01 XER_TASK"
+                    }
+                  },
+                  "Property": "Previous Month Start"
+                }
+              },
+              "queryRef": "01 XER_TASK.Previous Month Start",
+              "nativeQueryRef": "Previous Month Start"
+            }
+          ]
+        },
+        "previousUpdateFinishDate": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "01 XER_TASK"
+                    }
+                  },
+                  "Property": "Previous Month Finish"
+                }
+              },
+              "queryRef": "01 XER_TASK.Previous Month Finish",
+              "nativeQueryRef": "Previous Month Finish"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "persistedState": [
+        {
+          "properties": {
+            "floatThreshold": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            },
+            "selectedTaskId": {
+              "expr": {
+                "Literal": {
+                  "Value": "''"
+                }
+              }
+            },
+            "traceMode": {
+              "expr": {
+                "Literal": {
+                  "Value": "'forward'"
+                }
+              }
+            },
+            "wbsExpandLevel": {
+              "expr": {
+                "Literal": {
+                  "Value": "1D"
+                }
+              }
+            },
+            "wbsExpandedState": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{\"L1:C5064\":true,\"L1:C5064|L2:LIVERPOOL WRRF\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:APPROVALS\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:APPROVALS|L4:REF Approval [SWC]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:APPROVALS|L4:REF Approval [SWC]|L5:REF Approval [SWC]\":false,\"L1:C5064|L2:PRELIMINARIES\":false,\"L1:C5064|L2:PRELIMINARIES|L3:Management Plans [As per Annexure C of the Contract]\":false,\"L1:C5064|L2:PRELIMINARIES|L3:Management Plans [As per Annexure C of the Contract]|L4:CONSTRUCTION ENVIRONMENTAL MANAGEMENT PLAN (CEMP)\":false,\"L1:C5064|L2:PRELIMINARIES|L3:Management Plans [As per Annexure C of the Contract]|L4:CONSTRUCTION ENVIRONMENTAL MANAGEMENT PLAN (CEMP)|L5:MAIN CEMP\":false,\"L1:C5064|L2:PRELIMINARIES|L3:Management Plans [As per Annexure C of the Contract]|L4:CONSTRUCTION ENVIRONMENTAL MANAGEMENT PLAN (CEMP)|L5:SOIL AND WATER MANAGEMENT PLAN\":false,\"L1:C5064|L2:PRELIMINARIES|L3:Management Plans [As per Annexure C of the Contract]|L4:PROCUREMENT MANAGEMENT PLAN\":false,\"L1:C5064|L2:PRELIMINARIES|L3:Management Plans [As per Annexure C of the Contract]|L4:PROCUREMENT MANAGEMENT PLAN|L5:PROCUREMENT MANAGEMENT PLAN\":false,\"L1:C5064|L2:PRELIMINARIES|L3:Management Plans [As per Annexure C of the Contract]|L4:QUALITY MANAGEMENT PLAN (QMP)\":false,\"L1:C5064|L2:PRELIMINARIES|L3:Management Plans [As per Annexure C of the Contract]|L4:QUALITY MANAGEMENT PLAN (QMP)|L5:QUALITY MANAGEMENT PLAN (QMP)\":false,\"L1:C5064|L2:PRELIMINARIES|L3:Management Plans [As per Annexure C of the Contract]|L4:RESOURCING MANAGEMENT PLAN\":false,\"L1:C5064|L2:PRELIMINARIES|L3:Management Plans [As per Annexure C of the Contract]|L4:RESOURCING MANAGEMENT PLAN|L5:RESOURCING MANAGEMENT PLAN\":false,\"L1:C5064|L2:PRELIMINARIES|L3:Management Plans [As per Annexure C of the Contract]|L4:SUSTAINABILITY MANAGEMENT PLAN\":false,\"L1:C5064|L2:PRELIMINARIES|L3:Management Plans [As per Annexure C of the Contract]|L4:SUSTAINABILITY MANAGEMENT PLAN|L5:SUSTAINABILITY MANAGEMENT PLAN\":false,\"L1:C5064|L2:PRELIMINARIES|L3:Management Plans [As per Annexure C of the Contract]|L4:CONSTRUCTION ENVIRONMENTAL MANAGEMENT PLAN (CEMP)|L5:WASTE AND RESOURCE RECOVERY PLAN\":false,\"L1:C5064|L2:PRELIMINARIES|L3:Management Plans [As per Annexure C of the Contract]|L4:CONSTRUCTION ENVIRONMENTAL MANAGEMENT PLAN (CEMP)|L5:STOCKPILE MANAGEMENT PLAN\":false,\"L1:C5064|L2:PRELIMINARIES|L3:Management Plans [As per Annexure C of the Contract]|L4:COMMERCIAL AND FINANCIAL MANAGEMENT PLAN (CFMP)\":false,\"L1:C5064|L2:PRELIMINARIES|L3:Management Plans [As per Annexure C of the Contract]|L4:COMMERCIAL AND FINANCIAL MANAGEMENT PLAN (CFMP)|L5:COMMERCIAL AND FINANCIAL MANAGEMENT PLAN (CFMP)\":false,\"L1:C5064|L2:PRELIMINARIES|L3:Management Plans [As per Annexure C of the Contract]|L4:CONTRACT MANAGEMENT PLAN\":false,\"L1:C5064|L2:PRELIMINARIES|L3:Management Plans [As per Annexure C of the Contract]|L4:CONTRACT MANAGEMENT PLAN|L5:CONTRACT MANAGEMENT PLAN\":false,\"L1:C5064|L2:PRELIMINARIES|L3:Management Plans [As per Annexure C of the Contract]|L4:INTERFACE MANAGEMENT PLAN\":false,\"L1:C5064|L2:PRELIMINARIES|L3:Management Plans [As per Annexure C of the Contract]|L4:INTERFACE MANAGEMENT PLAN|L5:INTERFACE MANAGEMENT PLAN\":false,\"L1:C5064|L2:GLENFIELD WRRF\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.08 HV ELECTRICAL DESIGN\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.08 HV ELECTRICAL DESIGN|L5:Design Stage 1 - 50%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.03 EARLY WORKS / UTILITIES\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.03 EARLY WORKS / UTILITIES|L5:Design Stage 1 - 50%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.04 UNDERGROUND PIPEWORK\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.04 UNDERGROUND PIPEWORK|L5:Design Stage 1 - 50%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Materials & Equipment\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Materials & Equipment|L5:101 - AGS-AQM\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.12 INSTRUMENTATION\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.12 INSTRUMENTATION|L5:Design Stage 1 - 50%\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.18 100 ODOUR CONTROL\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.18 100 ODOUR CONTROL|L5:Design Stage 1 - 50%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.15 Existing PST''s & PEDS\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.15 Existing PST''s & PEDS|L5:LP DP.15.1 PST''s+PEDS-Civil/Structural\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.12 INSTRUMENTATION\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.12 INSTRUMENTATION|L5:Design Stage 1 - 50%\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Materials & Equipment\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Materials & Equipment|L5:[GPR19] - Scrappers\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Materials & Equipment|L5:031. PRIMARY SEDIMENTATION\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Delivery Contracts\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Delivery Contracts|L5:CV01 - SURVEY/UTILITY IDENTIFICATION\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Delivery Contracts\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Delivery Contracts|L5:CV01 - SURVEY/UTILITY IDENTIFICATION\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Delivery Contracts|L5:CV14 - ENABLING WORKS [Clearing/Utilities]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.15 025 New Inlet Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.15 025 New Inlet Works|L5:GF DP.15.1 025 New Inlet Works-Civil/Structrural\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:ENABLING WORKS\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:ENABLING WORKS|L4:ASP3 - 11 KV Feeders\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:ENABLING WORKS|L4:ASP3 - 11 KV Feeders|L5:2 x 11kV Feeder to Sydney Water Glenfield WRRF\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:ENABLING WORKS\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:ENABLING WORKS|L4:ASP3 - 33 KV Feeders\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:ENABLING WORKS|L4:ASP3 - 33 KV Feeders|L5:2 x 33kV Feeder to Sydney Water Liverpool WRRF - Indicative Program\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Materials & Equipment|L5:ODOUR CONTROL\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Materials & Equipment|L5:110 / 111 ODOUR CONTROL\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.01 SITE WIDE PROCESS & HYDRAULICS\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.01 SITE WIDE PROCESS & HYDRAULICS|L5:101 AQM DESIGN PHASE (AGS System)\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.17 031 PRIMARY SEDIMENTATION\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.17 031 PRIMARY SEDIMENTATION|L5:GF DP.17.1 031 PRIMARY SEDIMENTATION - Civil/Structrural\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.15 025 New Inlet Works|L5:GF DP.15.2 025 New Inlet Works-Mechanial\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.23 DIGESTION HEATING BUILDING\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.23 DIGESTION HEATING BUILDING|L5:LP DP.23.1 DIGESTION HEATING BUILDING-Civil/Structrural\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Materials & Equipment|L5:[GPR01] - Course screens\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Materials & Equipment|L5:[GPR010] - Sluice Launders\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Materials & Equipment|L5:[GPR011] - Weir mounted screen\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Materials & Equipment|L5:[GPR013] - Discharge hoppers\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Materials & Equipment|L5:[GPR02] - Fine Screens\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Materials & Equipment|L5:[GPR05] - Wash Press\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.17 AGS TANKS\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.17 AGS TANKS|L5:LP DP.17.1 AGS TANKS-Piling & Structrural\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Materials & Equipment|L5:[GPR03] - Grit Vortex System Pumps and agitators\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Materials & Equipment|L5:[GPR04] - Grit wash classifiers\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.03 EARLY WORKS / UTILITES / DEMO\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.03 EARLY WORKS / UTILITES / DEMO|L5:Design Stage 1 - 50%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.01 SITE WIDE PROCESS & HYDRAULICS|L5:Design Stage 1 - 50%\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.06 FLOODING & HYDROLOGY\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.06 FLOODING & HYDROLOGY|L5:Draft Flooding & Hydrology Report\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.17 031 PRIMARY SEDIMENTATION|L5:GF DP.17.2 031 PRIMARY SEDIMENTATION - Mechanical\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Materials & Equipment|L5:[GPR20] - Scum/Screw Pumps\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Materials & Equipment|L5:[GPR21] - Macerator pump\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Materials & Equipment|L5:09A - PRIMARY / 09A -WAS / 09A -HOMO TANKS\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Materials & Equipment|L5:09B - SLUDGE HANDLING & THICKENING [RDT''S]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.02 GEOTECH INVESTIGATIONS\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.02 GEOTECH INVESTIGATIONS|L5:GF DP.02 GEOTECH INVESTIGATIONS\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.02 GEOTECH INVESTIGATIONS\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.02 GEOTECH INVESTIGATIONS|L5:LP DP.02 GEOTECH INVESTIGATIONS\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.06 FLOODING & HYDROLOGY\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.06 FLOODING & HYDROLOGY|L5:Draft Flooding & Hydrology Report\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.01 SITE WIDE PROCESS & HYDRAULICS\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.01 SITE WIDE PROCESS & HYDRAULICS|L5:Design Stage 1 - 50%\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.14 ASP3 DESIGN - 11KV HV [BY STOWE]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.14 ASP3 DESIGN - 11KV HV [BY STOWE]|L5:Design Stage 1 - 50%\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.16 02A [IPS]-[ON HOLD]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.16 02A [IPS]-[ON HOLD]|L5:GF DP.16.1 02A [IPS]-Civil/Structrural [ON HOLD]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.16 02A [IPS]-[ON HOLD]|L5:GF DP.16.2 02A [IPS]-Mechanical & Electrical [ON HOLD]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Delivery Contracts|L5:CV02 - CONTAMINATION SURVEY [GF & LV]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Materials & Equipment|L5:[GPR012] - Container\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Materials & Equipment|L5:[GPR08] - Penstocks & Stop logs\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Materials & Equipment|L5:[GPR14] - Low/Med/High Flow Pumps\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Materials & Equipment|L5:[GPR17] - Covers\":false,\"L1:C5064|L2:Key dates\":false,\"L1:C5064|L2:Key dates|L3:Establishment\":false,\"L1:C5064|L2:Key dates|L3:Establishment|L4:Establishment\":false,\"L1:C5064|L2:Key dates|L3:Establishment|L4:Establishment|L5:Establishment\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:APPROVALS|L4:Council Approval\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:APPROVALS|L4:Council Approval|L5:Council Approval\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.16 AGS BUFFER TANKS\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.16 AGS BUFFER TANKS|L5:LP DP.16.1 AGS BUFFER TANKS-Piling & Structrural\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.22 DIGESTER''S\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.22 DIGESTER''S|L5:LP DP.22.1 DIGESTER''S-Piling & Structrural\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Materials & Equipment|L5:06A - DIGESTERS\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Materials & Equipment|L5:100 - AGS PUMPING STATION\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Materials & Equipment|L5:100 - INFLUENT BUFFER TANKS\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Materials & Equipment|L5:101 - AGS-NON AQM PKG''s\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Materials & Equipment|L5:105 - AGS BLOWER BUILDING\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Materials & Equipment|L5:K11 -BIO-SOLIDS OUTLOADING\":false,\"L1:C5064|L2:PRELIMINARIES|L3:Management Plans [As per Annexure C of the Contract]|L4:CONSTRUCTION MANAGEMENT PLAN\":false,\"L1:C5064|L2:PRELIMINARIES|L3:Management Plans [As per Annexure C of the Contract]|L4:CONSTRUCTION MANAGEMENT PLAN|L5:CONSTRUCTION MANAGEMENT PLAN\":false,\"L1:C5064|L2:PRELIMINARIES|L3:Management Plans [As per Annexure C of the Contract]|L4:TRAFFIC MANAGEMENT PLAN\":false,\"L1:C5064|L2:PRELIMINARIES|L3:Management Plans [As per Annexure C of the Contract]|L4:TRAFFIC MANAGEMENT PLAN|L5:TRAFFIC MANAGEMENT PLAN\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.01 SITE WIDE PROCESS & HYDRAULICS|L5:Design Stage 2 - 90%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.10  LV DESIGN\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.10  LV DESIGN|L5:LP DP.10.1  LV POWER PACKAGE\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.21 ODOUR CONTROL-New OCU1 (Main) & New OCU2 (Biosolids Area)\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.21 ODOUR CONTROL-New OCU1 (Main) & New OCU2 (Biosolids Area)|L5:Design Stage 1 - 50%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.23 DIGESTION HEATING BUILDING|L5:LP DP.23.2 DIGESTION HEATING BUILDING-06C Digestion Heater and Boiler Building\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Survey/Utility Identification\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Survey/Utility Identification|L5:Survey/Utility Identification\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Survey/Utility Identification\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Survey/Utility Identification|L5:Survey/Utility Identification\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.08 HV ELECTRICAL DESIGN\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.08 HV ELECTRICAL DESIGN|L5:Design Stage 1 - 50%\":false,\"L1:C5064|L2:PRELIMINARIES|L3:Management Plans [As per Annexure C of the Contract]|L4:RISK & OPPORTUNITY MANAGEMENT PLAN\":false,\"L1:C5064|L2:PRELIMINARIES|L3:Management Plans [As per Annexure C of the Contract]|L4:RISK & OPPORTUNITY MANAGEMENT PLAN|L5:RISK & OPPORTUNITY MANAGEMENT PLAN\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.10 LV DESIGN\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.10 LV DESIGN|L5:GF DP.10.1 LV POWER PACKAGE\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.05 BULK EARTHWORKS [Including Sheet Piling for AGS & Storm Water PS]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.05 BULK EARTHWORKS [Including Sheet Piling for AGS & Storm Water PS]|L5:Design Stage 1 - 50%\":false,\"L1:C5064|L2:Milestones\":false,\"L1:C5064|L2:Milestones|L3:Liverpool WRRF Milestones\":false,\"L1:C5064|L2:Milestones|L3:Liverpool WRRF Milestones|L4:Liverpool WRRF Milestones\":false,\"L1:C5064|L2:Milestones|L3:Liverpool WRRF Milestones|L4:Liverpool WRRF Milestones|L5:Liverpool WRRF Milestones\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:APPROVALS\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:APPROVALS|L4:Council Approval\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:APPROVALS|L4:Council Approval|L5:Council Approval\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.01 SITE WIDE PROCESS & HYDRAULICS|L5:Design Stage 2 - 90%\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Materials & Equipment|L5:[GPR18] - Overhead Crane\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:CHAIR 1\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:CHAIR 1|L5:CHAIR 1\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.19 ANCILLARY STRUCTURES\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.19 ANCILLARY STRUCTURES|L5:Design Stage 1 - 50%\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Materials & Equipment|L5:ELECTRICAL EQUIPMENT\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:APPROVALS|L4:Water Supply Work Appoval [WSWA]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:APPROVALS|L4:Water Supply Work Appoval [WSWA]|L5:Water Supply Work Appoval [WSWA]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Materials & Equipment|L5:030 - FLOOD LIFT PUMPING STATION\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.25 THICKENING [RDT''S]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.25 THICKENING [RDT''S]|L5:LP DP.25.1 09A-FAT''s & 9B-Thickening-Civil/Structural\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.06 FLOODING & HYDROLOGY|L5:Final Flooding & Hydrology Report\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:ENABLING WORKS|L4:LP DP.30 TEMPORARY WORKS DESIGN\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:ENABLING WORKS|L4:LP DP.30 TEMPORARY WORKS DESIGN|L5:Rock Bolts\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.10  LV DESIGN|L5:LP DP.10.2  LV I&C PACKAGE\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.17 AGS TANKS|L5:LP DP.17.2 AGS TANKS-Mechanical\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.18 AGS BLOWER BUILDING\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.18 AGS BLOWER BUILDING|L5:LP DP.18.1 AGS BLOWER BUILDING-Civil/Structrural\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.22 DIGESTER''S|L5:LP DP.22.2 DIGESTER''S-Mechanical\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.25 THICKENING [RDT''S]|L5:LP DP.25.3 06B Digested Sludge Tank-Civil/Structural\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.05 BULK EARTHWORKS [Including Sheet Piling for IPS]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.05 BULK EARTHWORKS [Including Sheet Piling for IPS]|L5:Design Stage 1 - 50%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.19 AGS PUMPSTATION BUILDING\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.19 AGS PUMPSTATION BUILDING|L5:LP DP.19.1 AGS PUMPSTATION BUILDING-Civil/Structrural\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:ENABLING WORKS|L4:LP DP.30 TEMPORARY WORKS DESIGN|L5:Sheet Piling\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:CHAIR 1\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:CHAIR 1|L5:CHAIR 1\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Materials & Equipment|L5:06C - HEAT BOILER BUILDING\":false,\"L1:C5064|L2:Key dates|L3:ERC Approval\":false,\"L1:C5064|L2:Key dates|L3:ERC Approval|L4:ERC Approval\":false,\"L1:C5064|L2:Key dates|L3:ERC Approval|L4:ERC Approval|L5:ERC Approval\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.09 HV SWITCHROOM\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.09 HV SWITCHROOM|L5:Design Stage 1 - 50%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.29 ROADS & STORMWATER DRAINAGE\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.29 ROADS & STORMWATER DRAINAGE|L5:Design Stage 1 - 50%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:ENABLING WORKS|L4:LP DP.30 TEMPORARY WORKS DESIGN|L5:Demolition\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Delivery Contracts|L5:CV15 - ENABLING WORKS [Demolition]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.09 Main HV Switchroom\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.09 Main HV Switchroom|L5:Design Stage 1 - 50%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:ENABLING WORKS|L4:Utilities/Relocation/Demolition\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:ENABLING WORKS|L4:Utilities/Relocation/Demolition|L5:Relocation Existing Equip/Services/Piping\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.11 LV SWITCHROOMS\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.11 LV SWITCHROOMS|L5:LP DP.11.1 AGS LV Switchroom, HVAC Pad, Transformer Yards & Emergency Generator\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.11 LV SWITCHROOMS|L5:LP DP.11.2 Bio Solids LV Switchroom, Transformer Yard & Emergency Generator\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.16 AGS BUFFER TANKS|L5:LP DP.16.2 AGS BUFFER TANKS-Mechanical\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.24  GAS SYSTEMS\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.24  GAS SYSTEMS|L5:06D Gas Holders\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Materials & Equipment|L5:ELECTRICAL EQUIPMENT\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.26 K09 Dewatering\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.26 K09 Dewatering|L5:LP DP.26.1 DEWATERING-Civil/Structrural\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.10 LV DESIGN|L5:GF DP.10.2 LV I&C PACKAGE\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.11 LV SWITCHROOMS\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.11 LV SWITCHROOMS|L5:GF DP.11.1 02B IPS-LV Switchroom, Transformer Yard & emergency Generator Slab [ON HOLD]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:ENABLING WORKS|L4:GF DP.21 TEMPORARY WORKS DESIGN\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:ENABLING WORKS|L4:GF DP.21 TEMPORARY WORKS DESIGN|L5:Sheet Piling\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.13 CONTROL [SCADA]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.13 CONTROL [SCADA]|L5:Design Stage 1 - 50%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.18 AGS BLOWER BUILDING|L5:LP DP.18.2 AGS BLOWER BUILDING-Mechanical design\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.25 THICKENING [RDT''S]|L5:LP DP.25.2 09A-FAT''s & 9B-Thickening-Mechanical\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.13 CONTROL (SCADA)\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.13 CONTROL (SCADA)|L5:Design Stage 1 - 50%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.19 AGS PUMPSTATION BUILDING|L5:LP DP.19.2 AGS PUMPSTATION BUILDING-Mechanical\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.20 STORM WATER PUMPING STATION\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.20 STORM WATER PUMPING STATION|L5:LP DP.20.1 030 STORM WATER PUMPING STATION-Civil/Structrural\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Materials & Equipment|L5:06B -DST TANKS\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.20 ROADWORKS & STORMWATER DRAINAGE\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.20 ROADWORKS & STORMWATER DRAINAGE|L5:Design Stage 1 - 50%\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:ENABLING WORKS|L4:Contamination Assessment\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:ENABLING WORKS|L4:Contamination Assessment|L5:Contamination Assessment\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:ENABLING WORKS|L4:Contamination Assessment\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:ENABLING WORKS|L4:Contamination Assessment|L5:Contamination Assessment\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.05 BULK EARTHWORKS [Including Sheet Piling for AGS & Storm Water PS]|L5:Design Stage 2 - 90%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.27 09D Outloading Silos\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.27 09D Outloading Silos|L5:Design Stage 1 - 50%\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.06 FLOODING & HYDROLOGY|L5:Final Flooding & Hydrology Report\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.03 EARLY WORKS / UTILITIES|L5:Design Stage 2 - 90%\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.11 LV SWITCHROOMS|L5:GF DP.11.2 026 Inlet Works-LV Switchroom, Transformer Yard & Emergency Generator Slab\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.14 ASP3 DESIGN - 11KV HV [BY STOWE]|L5:Design Stage 2 - 90%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.24  GAS SYSTEMS|L5:062 Waste Gas Burners\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.24  GAS SYSTEMS|L5:Relocated Cogen\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.24  GAS SYSTEMS|L5:Relocated Gas Conditioning\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.08 HV ELECTRICAL DESIGN|L5:Design Stage 2 - 90%\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.10 LV DESIGN|L5:GF DP.10.3 LV ANCILLARY PACKAGE\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.26 K09 Dewatering|L5:LP DP.26.2 DEWATERING-Mechanical\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.28 ANCILLARY STRUCTURES\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.28 ANCILLARY STRUCTURES|L5:LP DP.28.1 09E & 038 Relocate Polymer & Ferric Chloride Storage and Distribution System\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:SCADA/PLC and Control Systems\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:SCADA/PLC and Control Systems|L5:PLC Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.04 UNDERGROUND PIPEWORK\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.04 UNDERGROUND PIPEWORK|L5:Design Stage 1 - 50%\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:ENABLING WORKS|L4:Site Establishment/Early Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:ENABLING WORKS|L4:Site Establishment/Early Works|L5:Site Establishment/Early Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Materials & Equipment|L5:I&C EQUIPMENT\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:ENABLING WORKS|L4:A Works Heritage Archiving\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:ENABLING WORKS|L4:A Works Heritage Archiving|L5:A Works Heritage Archiving\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:ENABLING WORKS|L4:Pre-clearing Surveys\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:ENABLING WORKS|L4:Pre-clearing Surveys|L5:Pre-clearing Surveys\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:APPROVALS|L4:Water Supply Work Appoval [WSWA]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:APPROVALS|L4:Water Supply Work Appoval [WSWA]|L5:Water Supply Work Appoval [WSWA]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.03 EARLY WORKS / UTILITES / DEMO|L5:Design Stage 2 - 90%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.10  LV DESIGN|L5:LP DP.10.3  LV ANCILLARY PACKAGE\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Materials & Equipment|L5:I&C EQUIPMENT\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Materials & Equipment|L5:K09 - DEWATERING\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.25 THICKENING [RDT''S]|L5:LP DP.25.4 06B Digested Sludge Tank-Mechanical\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Materials & Equipment|L5:06D - GAS HOLDERS\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:HAZOP\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:HAZOP|L5:HAZOP\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:ENABLING WORKS|L4:Site Establishment\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:ENABLING WORKS|L4:Site Establishment|L5:Site Establishment\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Delivery Contracts|L5:CV16 - PRECAST CONTRACTOR\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Materials & Equipment|L5:M05. SERVICE AIR\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.20 STORM WATER PUMPING STATION|L5:LP DP.20.2 030 STORM WATER PUMPING STATION\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.18 100 ODOUR CONTROL|L5:Design Stage 2 - 90%\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:ENABLING WORKS|L4:Pre-clearing Surveys\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:ENABLING WORKS|L4:Pre-clearing Surveys|L5:Pre-clearing Surveys\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:HAZOP\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:HAZOP|L5:HAZOP\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.20 ROADWORKS & STORMWATER DRAINAGE|L5:Design Stage 2 - 90%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.08 HV ELECTRICAL DESIGN|L5:Design Stage 2 - 90%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Delivery Contracts|L5:GENERAL - BULK EARTHWORKS\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.24  GAS SYSTEMS|L5:LP DP.24  GAS SYSTEMS-Client Submissions\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.05 BULK EARTHWORKS [Including Sheet Piling for AGS & Storm Water PS]|L5:Design Stage 3 - 100%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.03 EARLY WORKS / UTILITIES|L5:Design Stage 3 - 100%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.21 ODOUR CONTROL-New OCU1 (Main) & New OCU2 (Biosolids Area)|L5:Design Stage 2 - 90%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.12 INSTRUMENTATION|L5:Design Stage 2 - 90%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:ENABLING WORKS|L4:LP DP.30 TEMPORARY WORKS DESIGN|L5:Precast Yard\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Delivery Contracts|L5:CV08 - INLET/IPS WORKS\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Materials & Equipment|L5:SITE WIDE PROCESS & HYDRAULICS\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:ENABLING WORKS|L4:Utilities/Relocation/Demolition|L5:Demolition\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Delivery Contracts|L5:CV09 - PRIMARY SEDIMENTATION\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.05 BULK EARTHWORKS [Including Sheet Piling for IPS]|L5:Design Stage 2 - 90%\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.14 ASP3 DESIGN - 11KV HV [BY STOWE]|L5:Design Stage 3 - 100%\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Delivery Contracts|L5:CV03 - EARLY WORKS/UTILITIES RELOCATION\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.15 Existing PST''s & PEDS|L5:LP DP.15.2 PST''s+PEDS-Mechanical\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.28 ANCILLARY STRUCTURES|L5:LP DP.28.2 101 AGS Effluent Outlet\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.05 BULK EARTHWORKS [Including Sheet Piling for AGS & Storm Water PS]|L5:Design Stage 4 - Issue IFC\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.27 09D Outloading Silos|L5:Design Stage 2 - 90%\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.19 ANCILLARY STRUCTURES|L5:Design Stage 2 - 90%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.29 ROADS & STORMWATER DRAINAGE|L5:Design Stage 2 - 90%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.03 EARLY WORKS / UTILITIES|L5:Design Stage 4 - Issue IFC\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.09 HV SWITCHROOM|L5:Design Stage 2 - 90%\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:APPROVALS|L4:FIFM''s\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:APPROVALS|L4:FIFM''s|L5:PST 3201\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.04 UNDERGROUND PIPEWORK|L5:Design Stage 2 - 90%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.31 FIRE SYSTEM\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.31 FIRE SYSTEM|L5:Draft Fire System Report\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.32 SECURITY & CCTV\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.32 SECURITY & CCTV|L5:Draft Security & CCTV Report\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:CHAIR 2&3\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:CHAIR 2&3|L5:CHAIR 2&3\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.22 FIRE SYSTEM\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.22 FIRE SYSTEM|L5:Draft Fire System Report\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.23 SECURITY & CCTV\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.23 SECURITY & CCTV|L5:Draft Security & CCTV Report\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Materials & Equipment|L5:SITE WIDE PROCESS PIPING\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.03 EARLY WORKS / UTILITES / DEMO|L5:Design Stage 3 - 100%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Materials & Equipment|L5:XXX. RECLAIMED WATER\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.14 ASP3 DESIGN - 11KV HV [BY STOWE]|L5:Design Stage 4 - Issue IFC\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.04 UNDERGROUND PIPEWORK|L5:Design Stage 2 - 90%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Tanks [100] - PRECAST\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Tanks [100] - PRECAST|L5:Precast Yard\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:ENABLING WORKS|L4:Clearing/Topsoil Strip/ERSED\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:ENABLING WORKS|L4:Clearing/Topsoil Strip/ERSED|L5:Clearing/Topsoil Strip/ERSED\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Delivery Contracts|L5:SITE WIDE PROCESS & HYDRAULICS\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.01 SITE WIDE PROCESS & HYDRAULICS|L5:Design Stage 3 - 100%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Materials & Equipment|L5:SITE WIDE PROCESS & HYDRAULICS\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.01 SITE WIDE PROCESS & HYDRAULICS|L5:Design Stage 3 - 100%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:ENABLING WORKS|L4:Utilities/Relocation/Demolition|L5:Utilities\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.03 EARLY WORKS / UTILITES / DEMO|L5:Design Stage 4 - Issue IFC\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Buffer Tanks [100]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Buffer Tanks [100]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.09 Main HV Switchroom|L5:Design Stage 2 - 90%\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Delivery Contracts|L5:CV05 - GENERAL - BULK EARTHWORKS, FLOODING & HYDROLOGY\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.12 INSTRUMENTATION|L5:Design Stage 2 - 90%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.31 FIRE SYSTEM|L5:Final Fire System Report\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.22 FIRE SYSTEM|L5:Final Fire System Report\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.23 SECURITY & CCTV|L5:Final Security & CCTV Report\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.05 BULK EARTHWORKS [Including Sheet Piling for IPS]|L5:Design Stage 3 - 100%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.32 SECURITY & CCTV|L5:Final Security & CCTV Report\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Delivery Contracts|L5:AGS/BUFFER TANKS\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.13 CONTROL (SCADA)|L5:Design Stage 2 - 90%\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Delivery Contracts|L5:CV11 - ANCILLARY STRUCTURES\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Utilities Re-location\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Utilities Re-location|L5:Utilities Re-location\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.01 SITE WIDE PROCESS & HYDRAULICS|L5:Design Stage 4 - Issue IFC\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Delivery Contracts|L5:DIGESTER\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Utilities Re-location|L5:Clearing/Topsoil\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Utilities Re-location|L5:OCU/Aeration Demolition\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Delivery Contracts|L5:CV07 - MECH INSTALL PACKAGE 2 - OCU\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.01 SITE WIDE PROCESS & HYDRAULICS|L5:Design Stage 4 - Issue IFC\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.19 ANCILLARY STRUCTURES|L5:Design Stage 3 - 100%\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:CHAIR 2&3\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:CHAIR 2&3|L5:CHAIR 2&3\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.13 CONTROL [SCADA]|L5:Design Stage 2 - 90%\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:New PST [031]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:New PST [031]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.20 ROADWORKS & STORMWATER DRAINAGE|L5:Design Stage 3 - 100%\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Delivery Contracts|L5:CV10 - ODOUR CONTROL\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.18 100 ODOUR CONTROL|L5:Design Stage 3 - 100%\":false,\"L1:C5064|L2:PRELIMINARIES|L3:Management Plans [As per Annexure C of the Contract]|L4:COMMISSIONING MANAGEMENT PLAN\":false,\"L1:C5064|L2:PRELIMINARIES|L3:Management Plans [As per Annexure C of the Contract]|L4:COMMISSIONING MANAGEMENT PLAN|L5:COMMISSIONING MANAGEMENT PLAN\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.05 BULK EARTHWORKS [Including Sheet Piling for IPS]|L5:Design Stage 4 - Issue IFC\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Delivery Contracts|L5:ELECTRICAL BUILDING\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Delivery Contracts|L5:CV06 - MECH INSTALL PACKAGE 1 - BOP\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Delivery Contracts|L5:MECH INSTALL PACKAGE 2 - OCU\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.09 HV SWITCHROOM|L5:Design Stage 3 - 100%\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.04 UNDERGROUND PIPEWORK|L5:Design Stage 3 - 100%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.29 ROADS & STORMWATER DRAINAGE|L5:Design Stage 3 - 100%\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Utilities Re-location|L5:Road Removal\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:APPROVALS|L4:FIFM''s|L5:PST 3101\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:APPROVALS|L4:FIFM''s|L5:PST 3102\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Delivery Contracts|L5:CV12 - GENERAL - ROAD, CARPARKS AND PAVEMENTS\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.19 ANCILLARY STRUCTURES|L5:Design Stage 4 - Issue IFC\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Delivery Contracts|L5:ODOUR CONTROL\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:SCADA & Instrumentation\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:SCADA & Instrumentation|L5:SCADA/PLC and Control Systems\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.21 ODOUR CONTROL-New OCU1 (Main) & New OCU2 (Biosolids Area)|L5:Design Stage 3 - 100%\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:New PST [031]|L5:Civil Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.08 HV ELECTRICAL DESIGN|L5:Design Stage 3 - 100%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.04 UNDERGROUND PIPEWORK|L5:Design Stage 3 - 100%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Materials & Equipment|L5:SITE WIDE PROCESS PIPING\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Tanks [100] - PRECAST|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.12 INSTRUMENTATION|L5:Design Stage 3 - 100%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Delivery Contracts|L5:BIO-SOLIDS OUTLOADING\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:CHAZOP\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:CHAZOP|L5:CHAZOP\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.27 09D Outloading Silos|L5:Design Stage 3 - 100%\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.09 Main HV Switchroom|L5:Design Stage 3 - 100%\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.20 ROADWORKS & STORMWATER DRAINAGE|L5:Design Stage 4 - Issue IFC\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.13 CONTROL (SCADA)|L5:Design Stage 3 - 100%\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Inflet flow measurment Building (025)\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Inflet flow measurment Building (025)|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Interstage Pumping Station [IPS] - [02A] - ON HOLD\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Interstage Pumping Station [IPS] - [02A] - ON HOLD|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:New Inlet Works - [025]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:New Inlet Works - [025]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.18 100 ODOUR CONTROL|L5:Design Stage 4 - Issue IFC\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Delivery Contracts|L5:MECH INSTALL PACKAGE 3 - BOP\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.09 HV SWITCHROOM|L5:Design Stage 4 - Issue IFC\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.04 UNDERGROUND PIPEWORK|L5:Design Stage 4 - Issue IFC\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Discharge Flow Chamber [02A]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Discharge Flow Chamber [02A]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Inflet flow measurment Building (025)|L5:Civil Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:Procurement|L4:Delivery Contracts|L5:CV04 - SITEWIDE ELECTRICAL WORKS, SCADA AND INSTRUMENTATION\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.29 ROADS & STORMWATER DRAINAGE|L5:Design Stage 4 - Issue IFC\":false,\"L1:C5064|L2:Milestones|L3:Glenfield WRRF Milestones\":false,\"L1:C5064|L2:Milestones|L3:Glenfield WRRF Milestones|L4:Glenfield WRRF Milestones\":false,\"L1:C5064|L2:Milestones|L3:Glenfield WRRF Milestones|L4:Glenfield WRRF Milestones|L5:Glenfield WRRF Milestones\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Discharge Flow Chamber [02A]|L5:Civil Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.12 INSTRUMENTATION|L5:Design Stage 3 - 100%\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:New HV Switchroom - [003]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:New HV Switchroom - [003]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Interstage Pumping Station [IPS] - [02A] - ON HOLD|L5:Structure\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.12 INSTRUMENTATION|L5:Design Stage 4 - Issue IFC\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Delivery Contracts|L5:GENERAL - ROAD, CARPARKS AND PAVEMENTS\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:New PST [031]|L5:Hydrostatic Testing\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Delivery Contracts|L5:SITEWIDE ELECTRICAL WORKS, SCADA AND INSTRUMENTATION\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.13 CONTROL [SCADA]|L5:Design Stage 3 - 100%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.21 ODOUR CONTROL-New OCU1 (Main) & New OCU2 (Biosolids Area)|L5:Design Stage 4 - Issue IFC\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:New HV Switchroom - [003]|L5:Structure\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:New Inlet Works - [025]|L5:Structure\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Delivery Contracts|L5:MECH INSTALL PACKAGE 1 - AGS (Installation Subcontractor)\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.13 CONTROL (SCADA)|L5:Design Stage 4 - Issue IFC\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.04 UNDERGROUND PIPEWORK|L5:Design Stage 4 - Issue IFC\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.09 Main HV Switchroom|L5:Design Stage 4 - Issue IFC\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:CHAZOP\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:CHAZOP|L5:CHAZOP\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DETAILED DESIGN|L4:GF DP.08 HV ELECTRICAL DESIGN|L5:Design Stage 4 - Issue IFC\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Existing PST - Refurbishment [031]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Existing PST - Refurbishment [031]|L5:Existing PST 3201\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.08 HV ELECTRICAL DESIGN|L5:Design Stage 3 - 100%\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.27 09D Outloading Silos|L5:Design Stage 4 - Issue IFC\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Buffer Tanks [100]|L5:Civil Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:New HV Switchroom - [005]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:New HV Switchroom - [005]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:New HV Switchroom - [003]|L5:Milestones\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Digesters [06A]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Digesters [06A]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Odour Control Unit [100]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Odour Control Unit [100]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:New HV Switchroom - [005]|L5:Structure\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Digesters [06A]|L5:Civil Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Inflet flow measurment Building (025)|L5:Hydrostatic Testing\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Transformer Yards [Area 2] - [006]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Transformer Yards [Area 2] - [006]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Inlet Works  LV Switchroom [026]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Inlet Works  LV Switchroom [026]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Tanks [100] - PRECAST|L5:Wall Footings\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Delivery Contracts|L5:BLOWER BUILDING\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Odour Control Unit 1 [110]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Odour Control Unit 1 [110]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Transformer Yards [Area 2] - [006]|L5:Structure\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.12 INSTRUMENTATION|L5:Design Stage 4 - Issue IFC\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Tanks [100] - PRECAST|L5:AGS Tank #6\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Odour Control Unit [100]|L5:Civil Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Inlet Works  LV Switchroom [026]|L5:Structure\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Inlet Works  Transformer Yard [027]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Inlet Works  Transformer Yard [027]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.13 CONTROL [SCADA]|L5:Design Stage 4 - Issue IFC\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Inlet Works  Transformer Yard [027]|L5:Structure\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Flood Lift Pumping [030]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Flood Lift Pumping [030]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:New Inlet Works - [025]|L5:Hydrostatic Testing\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Odour Control Unit 1 [110]|L5:Civil Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:PEDS [072]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:PEDS [072]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DETAILED DESIGN|L4:LP DP.08 HV ELECTRICAL DESIGN|L5:Design Stage 4 - Issue IFC\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Discharge Flow Chamber [02A]|L5:Hydrostatic Testing\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Existing Outloading [09A]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Existing Outloading [09A]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:PEDS [072]|L5:Civil Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Digestion Heater & Boiler Bldg [06C]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Digestion Heater & Boiler Bldg [06C]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS  LV Switchroom [103]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS  LV Switchroom [103]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Existing Outloading [09A]|L5:Milestones\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Inflet flow measurment Building (025)|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:New HV Switchroom - [005]|L5:Milestones\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS  LV Switchroom [103]|L5:Structure\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS  LV Switchroom HVAC Pad [103]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS  LV Switchroom HVAC Pad [103]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:Procurement|L4:Delivery Contracts|L5:SLUDGE HANDLING & THICKENING [RDT''S]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Tanks [100] - PRECAST|L5:AGS Tank #3\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Digested Sludge Tanks [06B]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Digested Sludge Tanks [06B]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Digestion Heater & Boiler Bldg [06C]|L5:Structure\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS  LV Switchroom HVAC Pad [103]|L5:Structure\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Transformer Yard [104]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Transformer Yard [104]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Inflet flow measurment Building (025)|L5:Electrical Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Dewatering Building [K09]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Dewatering Building [K09]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Digested Sludge Tanks [06B]|L5:Civil Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Emergency Generator [104]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Emergency Generator [104]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Transformer Yard [104]|L5:Structure\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Transformer Yards [Area 2] - [006]|L5:Electrical Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Bio-Solids Outloading [K11]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Bio-Solids Outloading [K11]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Emergency Generator [104]|L5:Structure\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Sludge Holding Tanks [E06]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Sludge Holding Tanks [E06]|L5:Civil Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Existing Outloading [09A]|L5:Civil Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Tanks [100] - PRECAST|L5:AGS Tank #5\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Inflet flow measurment Building (025)|L5:Milestones\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:PEDS [072]|L5:Hyrostatic Testing\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Discharge Flow Chamber [02A]|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Inlet Works  Emergency Generator [027]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Inlet Works  Emergency Generator [027]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:PST''s 1-4 - Refurbishment [031]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:PST''s 1-4 - Refurbishment [031]|L5:Existing PST #1 [Refurbishment]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Existing PST - Refurbishment [031]|L5:Common Equipment to all PST''s\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Cut-overs/Cut-Ins\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Cut-overs/Cut-Ins|L5:Process/Mechanical\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Effluent Structure [E12]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Effluent Structure [E12]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Flood Lift Pumping [030]|L5:Earthwks/Foundation Treatment\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Inlet Works  Emergency Generator [027]|L5:Structure\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Existing Outloading [09A]|L5:Electrical Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Existing Outloading [09A]|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Tanks [100] - PRECAST|L5:AGS Tank #2\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Effluent Structure [E12]|L5:Civil Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Sitewide Electrical\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Sitewide Electrical|L5:EE Switch to Main HV\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Sitewide Electrical\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Sitewide Electrical|L5:AGS Switch [005] to A2 Trans/Yard  [006]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Existing Outloading [09A]|L5:Commissioning\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Blower Building [105]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Blower Building [105]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Existing Outloading [09A]|L5:Project Completion/WAE Documentation\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:SCADA/PLC and Control Systems|L5:SCADA Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Blower Building [105]|L5:Civil Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Tanks [100] - PRECAST|L5:AGS Tank #4\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Sitewide Electrical|L5:A2 Trans/Yard  [006] to AGS Trans/Yard [104]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Dewatering Building [K09]|L5:Structure\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Inlet Works  Emergency Generator [027]|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS  LV Switchroom HVAC Pad [103]|L5:Electrical Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Sitewide Process Pipework\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Sitewide Process Pipework|L5:Existing RE Channel to PEDS [072] - DN1100\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Inlet Works  Transformer Yard [027]|L5:Electrical Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Odour Control Unit [100]|L5:Structural Steel\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Tanks [100] - PRECAST|L5:AGS Tank #1\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Sitewide Electrical|L5:AGS Trans/Yard [104] to Biosolids Trans/Yard [09F]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Digested Sludge Tanks [06B]|L5:Platforms / walkways / staircases / Handrails\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:PEDS [031]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:PEDS [031]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Existing PST - Refurbishment [031]|L5:Milestones\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Biosolids Area LV Switchroom [09F]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Biosolids Area LV Switchroom [09F]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Inlet Works  Emergency Generator [027]|L5:Electrical Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:RDT THICKENING [09B]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:RDT THICKENING [09B]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Odour Control Unit 2 - Biosolids Area [111]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Odour Control Unit 2 - Biosolids Area [111]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:PEDS [031]|L5:Civil Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Biosolids Area LV Switchroom [09F]|L5:Structure\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Biosolids Area LV Transformer Yard [09F]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Biosolids Area LV Transformer Yard [09F]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:PRIMARY/WAS/HOMOG - FAT''s [09A/09A/09A]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:PRIMARY/WAS/HOMOG - FAT''s [09A/09A/09A]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Sitewide Process Pipework|L5:Existing RE Channel to Secondary Effluent Dist Channel [J03] - DN800\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Digested Sludge Tanks [06B]|L5:Hydrostatic Testing\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Biosolids Area LV Emergency Generator [09F]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Biosolids Area LV Emergency Generator [09F]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Bio-Solids Outloading [K11]|L5:Civil Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:RDT THICKENING [09B]|L5:Civil Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Tanks [100] - PRECAST|L5:AGS Common Mechanical / Pipework\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Sitewide Electrical|L5:A2 Trans/Yard  [006]  to Existing Cogen [N04]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Odour Control Unit 2 - Biosolids Area [111]|L5:Civil Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Biosolids Area LV Emergency Generator [09F]|L5:Structure\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Biosolids Area LV Transformer Yard [09F]|L5:Structure\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Digestion Heater & Boiler Bldg [06C]|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:PEDS [072]|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Access Roads & Laydowns\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Access Roads & Laydowns|L5:Roadworks\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:New HV Switchroom - [003]|L5:Electrical Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Sitewide Electrical|L5:N-1 HV Infrastructure Modifications\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Aeration Tanks Transformer Yard [040]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Aeration Tanks Transformer Yard [040]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:New HV Switchroom - [005]|L5:Commissioning [Pre/Dry/Wet]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:New HV Switchroom - [005]|L5:Electrical Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Existing PST - Refurbishment [031]|L5:Existing PST 3101\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Digested Sludge Tanks [06B]|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:New PST [031]|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Odour Control Unit [100]|L5:Pipework / Ductwork - Feed from Process areas\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Odour Control Unit 1 [110]|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Odour Control Unit 1 [110]|L5:Structural Platforms/Walkways\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Interstage Pumping Station [IPS] - [02A] - ON HOLD|L5:Hydrostatic Testing\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:PST''s 1-4 - Refurbishment [031]|L5:Milestones\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Flood Lift Pumping [030]|L5:Civil Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Sitewide Process Pipework|L5:PEDS [072] to SPS580 Pipeline - DN1050\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:PEDS [031]|L5:Mechanical / Pipeworks\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Sitewide Process Pipework|L5:PEDS [072] to SEDC [J03] - DN1500\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Aeration Tanks Transformer Yard [040]|L5:Stage 1\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:PEDS [072]|L5:Electrical Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:PRIMARY/WAS/HOMOG - FAT''s [09A/09A/09A]|L5:Civil Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Sitewide Electrical|L5:Existing Cogen [N04] to Biosolids Trans/Yard [09F]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:PEDS [031]|L5:Electrical Works\":false,\"L1:C5064|L2:Key dates|L3:Sectional Completion\":false,\"L1:C5064|L2:Key dates|L3:Sectional Completion|L4:Stage 1\":false,\"L1:C5064|L2:Key dates|L3:Sectional Completion|L4:Stage 1|L5:Stage 1\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Pumpstation [100]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Pumpstation [100]|L5:Structure Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Discharge Flow Chamber [02A]|L5:Electrical Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:New PST [031]|L5:Electrical Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Sitewide Electrical|L5:Main HV to Blower/Convas Switchroom\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:PEDS [072]|L5:Milestones\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:PEDS [072]|L5:Commissioning\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:IPS Emergency Generator [02C] - ON HOLD\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:IPS Emergency Generator [02C] - ON HOLD|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:RDT THICKENING [09B]|L5:Platforms/Walkways\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Sitewide Process Pipework|L5:New PST [031] to Existing RE Channel - DN900\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:New HV Switchroom - [003]|L5:Commissioning [Pre/Dry/Wet]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Sitewide Electrical|L5:Exist HV HVS2305 to New HVS [003]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:PEDS [031]|L5:Commissioning\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:PEDS [031]|L5:Milestones\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Transformer Yard [104]|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Sitewide Process Pipework|L5:Existing RE Channel to Storm Tank [083]- DN800\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Digested Sludge Tanks [06B]|L5:Electrical Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:IPS Emergency Generator [02C] - ON HOLD|L5:Structure\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:IPS LV Switchroom - [02B] - ON HOLD\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:IPS LV Switchroom - [02B] - ON HOLD|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:IPS Transformer Yard [02C] - ON HOLD\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:IPS Transformer Yard [02C] - ON HOLD|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Emergency Generator [104]|L5:Electrical Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Discharge Flow Chamber [02A]|L5:Milestones\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Transformer Yard [104]|L5:Electrical Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:IPS LV Switchroom - [02B] - ON HOLD|L5:Structure\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:IPS Transformer Yard [02C] - ON HOLD|L5:Structure\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:PST''s 1-4 - Refurbishment [031]|L5:Existing PST #2 [Refurbishment]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Effluent Structure [E12]|L5:Hydrostatic Testing\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Odour Control Unit 1 [110]|L5:Electrical Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Emergency Generator [104]|L5:Milestones\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Odour Control Unit 1 [110]|L5:Pipework / Ductwork - Feed from Process areas\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Dewatering Building [K09]|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Digested Sludge Tanks [06B]|L5:Milestones\":false,\"L1:C5064|L2:Key dates|L3:Sectional Completion|L4:Stage 2\":false,\"L1:C5064|L2:Key dates|L3:Sectional Completion|L4:Stage 2|L5:Stage 2\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Flood Lift Pumping [030]|L5:Hydrostatic Testing\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Aeration Tanks Transformer Yard [040]|L5:Milestones\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Sitewide Process Pipework\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Sitewide Process Pipework|L5:AGS [E12] to Flow Splitter LAPS [072] - DN1500\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Pumpstation [100]|L5:Platforms / walkways / staircases / Handrails\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Aeration Tanks Transformer Yard [040]|L5:Stage 2\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:IPS Emergency Generator [02C] - ON HOLD|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Biosolids Area LV Transformer Yard [09F]|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:RDT THICKENING [09B]|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Effluent Structure [E12]|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Cut-overs/Cut-Ins\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Cut-overs/Cut-Ins|L5:Process/Mechanical\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Digestion Heater & Boiler Bldg [06C]|L5:Electrical Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Sitewide Process Pipework|L5:AGS [E12] to LEWW Connection LAPS [072] - DN1050\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Sitewide Process Pipework|L5:Overflow from GLEDS [M03] to AGS Buffer [100] - DN1050\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Biosolids Area LV Transformer Yard [09F]|L5:Electrical Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:New PST [031]|L5:Commissioning [Dry to Proving]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:New PST [031]|L5:Milestones\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:New PST [031]|L5:Project Completion/WAE Documentation\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Odour Control Unit 2 - Biosolids Area [111]|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Blower Building [105]|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Bio-Solids Outloading [K11]|L5:Structural Platforms/Walkways\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Sitewide Electrical|L5:N-1 HV Infrastructure Modifications\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Effluent Structure [E12]|L5:Electrical Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Buffer Tanks [100]|L5:Hydrostatic Testing\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Odour Control Unit [100]|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Biosolids Area LV Emergency Generator [09F]|L5:Electrical Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Odour Control Unit 2 - Biosolids Area [111]|L5:Pipework / Ductwork - Feed from Process areas\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Gas Holders [06D]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Gas Holders [06D]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Digestion Heater & Boiler Bldg [06C]|L5:Milestones\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Odour Control Unit 1 [110]|L5:Milestones\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS  LV Switchroom [103]|L5:Electrical Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Gas Holders [06D]|L5:Civil Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Pumpstation [100]|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Sitewide Process Pipework|L5:IPS [02A] to IFM [B04] - DN1600\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Access Roads & Laydowns|L5:SW Drainage\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Odour Control Unit 2 - Biosolids Area [111]|L5:Electrical Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Sludge Holding Tanks [E06]|L5:Hydrotesting\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:New Inlet Works - [025]|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Existing PST - Refurbishment [031]|L5:Existing PST 3102\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Digesters [06A]|L5:Metalwork/Walkways\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Buffer Tanks [100]|L5:Backfill @ Sheetpiling\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Buffer Tanks [100]|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Gas Cogen - Relocation (064)\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Gas Cogen - Relocation (064)|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Gas Conditioning - Relocation [064]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Gas Conditioning - Relocation [064]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Blower Building [105]|L5:Electrical Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Sitewide Process Pipework|L5:IFM [B04] to Inlet Works [025] - DN1600\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Sitewide Process Pipework|L5:SPS353 to 02A [5 x DN900]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS  LV Switchroom [103]|L5:Milestones\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS  LV Switchroom [103]|L5:Commissioning [Pre/Dry/Wet]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS  LV Switchroom HVAC Pad [103]|L5:Commissioning [Pre/Dry/Wet]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Emergency Generator [104]|L5:Commissioning [Pre/Dry/Wet]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Transformer Yard [104]|L5:Commissioning [Pre/Dry/Wet]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Sludge Holding Tanks [E06]|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Biosolids Area LV Switchroom [09F]|L5:Electrical Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Gas Cogen - Relocation (064)|L5:Civil Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Gas Conditioning - Relocation [064]|L5:Civil Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Interstage Pumping Station [IPS] - [02A] - ON HOLD|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Odour Control Unit 2 - Biosolids Area [111]|L5:Milestones\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Odour Control Unit [100]|L5:Electrical Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:PRIMARY/WAS/HOMOG - FAT''s [09A/09A/09A]|L5:Hydrostatic Testing\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Inlet Works  LV Switchroom [026]|L5:Electrical Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:IPS Emergency Generator [02C] - ON HOLD|L5:Electrical Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:IPS Transformer Yard [02C] - ON HOLD|L5:Electrical Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Sludge Holding Tanks [E06]|L5:Electrical Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Sitewide Process Pipework|L5:New Inlet Works to PST Influent Chamber - DN1800\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:PST''s 1-4 - Refurbishment [031]|L5:Existing PST #3 [GRP Covers and Supports]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Pumpstation [100]|L5:Electrical Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:IPS Emergency Generator [02C] - ON HOLD|L5:Milestones\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:IPS Transformer Yard [02C] - ON HOLD|L5:Milestones\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Buffer Tanks [100]|L5:Electrical Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Gas Conditioning - Relocation [064]|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Tanks [100] - PRECAST|L5:Milestones\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Sitewide Process Pipework|L5:Inlet Works [025] to Storm tanks [083] - DN1800\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Biosolids Area LV Emergency Generator [09F]|L5:Commissioning [Pre/Dry/Wet]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Biosolids Area LV Switchroom [09F]|L5:Commissioning [Pre/Dry/Wet]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Biosolids Area LV Switchroom [09F]|L5:Milestones\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Biosolids Area LV Transformer Yard [09F]|L5:Commissioning [Pre/Dry/Wet]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Inlet Works  Emergency Generator [027]|L5:Commissioning [Pre/Dry/Wet]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Inlet Works  LV Switchroom [026]|L5:Commissioning [Pre/Dry/Wet]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Inlet Works  LV Switchroom [026]|L5:Milestones\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Inlet Works  Transformer Yard [027]|L5:Commissioning [Pre/Dry/Wet]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Blower Building [105]|L5:Milestones\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DE-COMMISSIONING\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DE-COMMISSIONING|L4:Existing Digesters & Heating Building [060]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DE-COMMISSIONING|L4:Existing Digesters & Heating Building [060]|L5:Existing Digesters & Heating Building [060]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Gas Cogen - Relocation (064)|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Blower Building [105]|L5:Commissioning\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Odour Control Unit 1 [110]|L5:Commissioning\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Flood Lift Pumping [030]|L5:Platforms / walkways / staircases / Handrails\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Sitewide Process Pipework|L5:Influent PEDS [031] to AGS Buffer Tank [100] - DN1400\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Sitewide Process Pipework|L5:02A  to IPS [02A] - DN1800\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Dewatering Building [K09]|L5:Electrical Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Bio-Solids Outloading [K11]|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:PST''s 1-4 - Refurbishment [031]|L5:Existing PST #4 [GRP Covers and Supports]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Buffer Tanks [100]|L5:Commissioning\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Buffer Tanks [100]|L5:Milestones\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:IPS LV Switchroom - [02B] - ON HOLD|L5:Electrical Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Sitewide Process Pipework|L5:Influent PEDS [031] to Exist RAS [SSDS] - DN900\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:New Inlet Works - [025]|L5:Electrical Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Sitewide Electrical|L5:Main HV to IPS/RWP/SPS353 Switchrooms\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:PRIMARY/WAS/HOMOG - FAT''s [09A/09A/09A]|L5:Platforms / walkways / staircases / Handrails\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Flood Lift Pumping [030]|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Interstage Pumping Station [IPS] - [02A] - ON HOLD|L5:Electrical Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Digesters [06A]|L5:Hydrostatic Testing\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Pumpstation [100]|L5:Milestones\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Odour Control Unit [100]|L5:Milestones\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Roads/Carparks/Landscaping\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Roads/Carparks/Landscaping|L5:Roadworks\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Pumpstation [100]|L5:Commissioning\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Gas Conditioning - Relocation [064]|L5:Electrical Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Flood Lift Pumping [030]|L5:Electrical Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Roads/Carparks/Landscaping|L5:SW Drainage\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:PST''s 1-4 - Refurbishment [031]|L5:Effluent Channel Modifications\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Gas Holders [06D]|L5:Structural\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Odour Control Unit [100]|L5:Commissioning [Dry to Proving]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Odour Control Unit [100]|L5:Project Completion/WAE Documentation\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Dewatering Building [K09]|L5:Milestones\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Gas Conditioning - Relocation [064]|L5:Milestones\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Gas Conditioning - Relocation [064]|L5:Commissioning\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:PRIMARY/WAS/HOMOG - FAT''s [09A/09A/09A]|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:IPS Emergency Generator [02C] - ON HOLD|L5:Commissioning [Pre/Dry/Wet]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:IPS LV Switchroom - [02B] - ON HOLD|L5:Commissioning [Pre/Dry/Wet]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:IPS LV Switchroom - [02B] - ON HOLD|L5:Milestones\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:IPS Transformer Yard [02C] - ON HOLD|L5:Commissioning [Pre/Dry/Wet]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Digesters [06A]|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Gas Holders [06D]|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Gas Cogen - Relocation (064)|L5:Electrical Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Roads/Carparks/Landscaping|L5:Retaining Walls [MC02/MC03/MC05]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:PST''s 1-4 - Refurbishment [031]|L5:Install New Common Sludge Pumps to PST''s\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Waste Gas Burners - Relocation [062]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Waste Gas Burners - Relocation [062]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Interstage Pumping Station [IPS] - [02A] - ON HOLD|L5:Milestones\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Sitewide Process Pipework|L5:From Sludge Pumps to Primary Sludge FAT [09A] - OD180 PE100\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Bio-Solids Outloading [K11]|L5:Electrical Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:PST''s 5-8 - Refurbishment [031]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:PST''s 5-8 - Refurbishment [031]|L5:Existing PST #5 [GRP Covers and Supports]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Gas Cogen - Relocation (064)|L5:Milestones\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Digesters [06A]|L5:Electrical Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Gas Cogen - Relocation (064)|L5:Commissioning\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Waste Gas Burners - Relocation [062]|L5:Civil Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Gas Holders [06D]|L5:Electrical Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Flood Lift Pumping [030]|L5:Commissioning\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Flood Lift Pumping [030]|L5:Milestones\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Polymer Storage/Dosing System [09E]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Polymer Storage/Dosing System [09E]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Sitewide Process Pipework|L5:From Scum Pumps to Inlet Works - DN150\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Sitewide Process Pipework|L5:Sludge Overflow to Sludge Holding  [E06] WAS FAT [09A] - OD180 PE100\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:PRIMARY/WAS/HOMOG - FAT''s [09A/09A/09A]|L5:Electrical Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Ferric Chloride Dosing System [038]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Ferric Chloride Dosing System [038]|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Polymer Storage/Dosing System [09E]|L5:Civil Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Odour Control Unit 2 - Biosolids Area [111]|L5:Commissioning\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:Interstage Pumping Station [IPS] - [02A] - ON HOLD|L5:Commissioning [Dry to Proving]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Ferric Chloride Dosing System [038]|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:RDT THICKENING [09B]|L5:Electrical Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Digestion Heater & Boiler Bldg [06C]|L5:Commissioning\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Bio-Solids Outloading [K11]|L5:Commissioning\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Bio-Solids Outloading [K11]|L5:Milestones\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Ferric Chloride Dosing System [038]|L5:Electrical Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Sitewide Process Pipework|L5:From CONVAS Clarifiers [E02] to FAT [09A] - DN150\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Digesters [06A]|L5:Milestones\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Digested Sludge Tanks [06B]|L5:Commissioning\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Digesters [06A]|L5:Commissioning\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:New Inlet Works - [025]|L5:Commissioning [Dry to Proving]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:New Inlet Works - [025]|L5:Milestones\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Gas Holders [06D]|L5:Commissioning\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Gas Holders [06D]|L5:Milestones\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:PST''s 5-8 - Refurbishment [031]|L5:Existing PST #6 [GRP Covers and Supports]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:PST''s 5-8 - Refurbishment [031]|L5:Milestones\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Ferric Chloride Dosing System [038]|L5:Commissioning\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Ferric Chloride Dosing System [038]|L5:Milestones\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:PRIMARY/WAS/HOMOG - FAT''s [09A/09A/09A]|L5:Milestones\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:RDT THICKENING [09B]|L5:Commissioning\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:RDT THICKENING [09B]|L5:Milestones\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Digesters [06A]|L5:De-Commission Existing Digesters\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Relocation of Existing Sludge/Dewatering/RDT''s\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Relocation of Existing Sludge/Dewatering/RDT''s|L5:Re-Locate Existing RDT''s/Polymer Dosing\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:PST''s 5-8 - Refurbishment [031]|L5:Existing PST #7 [GRP Covers and Supports]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Access Roads & Laydowns|L5:Retaining Wall\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Relocation of Existing Sludge/Dewatering/RDT''s|L5:Demolish Exist Biosolid Storage/Sheds\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Relocation of Existing Sludge/Dewatering/RDT''s|L5:Commissioning\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DE-COMMISSIONING|L4:Existing Outloading Building [K10]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DE-COMMISSIONING|L4:Existing Outloading Building [K10]|L5:Existing Outloading Building [K10]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:PST''s 5-8 - Refurbishment [031]|L5:Existing PST #8 [GRP Covers and Supports]\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:CONSTRUCTION|L4:New Inlet Works - [025]|L5:Project Completion/WAE Documentation\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:COMMISSIONING/PROVING PROCESS\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:COMMISSIONING/PROVING PROCESS|L4:O & M Manuals/Training\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:COMMISSIONING/PROVING PROCESS|L4:O & M Manuals/Training|L5:O & M Manuals/Training\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Dewatering Building [K09]|L5:Commissioning\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:COMMISSIONING/PROVING PROCESS|L4:Process Proving\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:COMMISSIONING/PROVING PROCESS|L4:Process Proving|L5:Process Proving\":false,\"L1:C5064|L2:Key dates|L3:Sectional Completion|L4:Stage 3\":false,\"L1:C5064|L2:Key dates|L3:Sectional Completion|L4:Stage 3|L5:Stage 3\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Polymer Storage/Dosing System [09E]|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Waste Gas Burners - Relocation [062]|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DE-COMMISSIONING\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DE-COMMISSIONING|L4:Enabling Works/Utilities\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DE-COMMISSIONING|L4:Enabling Works/Utilities|L5:Enabling Works/Utilities\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DE-COMMISSIONING|L4:Electrical Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DE-COMMISSIONING|L4:Electrical Works|L5:Electrical Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DE-COMMISSIONING|L4:Mechanical/Pipeworks\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DE-COMMISSIONING|L4:Mechanical/Pipeworks|L5:Mechanical/Pipeworks\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Polymer Storage/Dosing System [09E]|L5:Electrical Works\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DE-COMMISSIONING|L4:Project Completion/WAE Documentation\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DE-COMMISSIONING|L4:Project Completion/WAE Documentation|L5:Project Completion/WAE Documentation\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Waste Gas Burners - Relocation [062]|L5:Electrical Works\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Waste Gas Burners - Relocation [062]|L5:Commissioning\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Waste Gas Burners - Relocation [062]|L5:Milestones\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Polymer Storage/Dosing System [09E]|L5:Commissioning\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Polymer Storage/Dosing System [09E]|L5:Milestones\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DE-COMMISSIONING|L4:Project Completion/WAE Documentation\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DE-COMMISSIONING|L4:Project Completion/WAE Documentation|L5:Project Completion/WAE Documentation\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DE-ESTABLISH\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DE-ESTABLISH|L4:DE-ESTABLISH\":false,\"L1:C5064|L2:GLENFIELD WRRF|L3:DE-ESTABLISH|L4:DE-ESTABLISH|L5:DE-ESTABLISH\":false,\"L1:C5064|L2:Key dates|L3:Contract Completion\":false,\"L1:C5064|L2:Key dates|L3:Contract Completion|L4:Stage 4 - Glenfield - Planned Completion\":false,\"L1:C5064|L2:Key dates|L3:Contract Completion|L4:Stage 4 - Glenfield - Planned Completion|L5:Stage 4 - Glenfield - Planned Completion\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:Digesters [06A]|L5:Project Completion/WAE Documentation\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Tanks [100] - PRECAST|L5:Commissioning\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DE-COMMISSIONING|L4:Existing OCU [L01]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DE-COMMISSIONING|L4:Existing OCU [L01]|L5:Existing OCU [L01]\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:COMMISSIONING/PROVING PROCESS\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:COMMISSIONING/PROVING PROCESS|L4:Integrated  Process Proving\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:COMMISSIONING/PROVING PROCESS|L4:Integrated  Process Proving|L5:Integrated  Process Proving\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:CONSTRUCTION|L4:AGS Tanks [100] - PRECAST|L5:Project Completion/WAE Documentation\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:COMMISSIONING/PROVING PROCESS|L4:Project Completion/WAE Documentation\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:COMMISSIONING/PROVING PROCESS|L4:Project Completion/WAE Documentation|L5:Project Completion/WAE Documentation\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:COMMISSIONING/PROVING PROCESS|L4:O & M Manuals/Training\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:COMMISSIONING/PROVING PROCESS|L4:O & M Manuals/Training|L5:O & M Manuals/Training\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DE-ESTABLISH\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DE-ESTABLISH|L4:DE-ESTABLISH\":false,\"L1:C5064|L2:LIVERPOOL WRRF|L3:DE-ESTABLISH|L4:DE-ESTABLISH|L5:DE-ESTABLISH\":false,\"L1:C5064|L2:Key dates|L3:Contract Completion|L4:Stage 6 - Liverpool - Planned Completion\":false,\"L1:C5064|L2:Key dates|L3:Contract Completion|L4:Stage 6 - Liverpool - Planned Completion|L5:Stage 6 - Liverpool - Planned Completion\":false,\"L1:C5064|L2:Key dates|L3:Contract Completion|L4:Whole of Works Completion\":false,\"L1:C5064|L2:Key dates|L3:Contract Completion|L4:Whole of Works Completion|L5:Whole of Works Completion\":false}'"
+                }
+              }
+            },
+            "wbsManualToggledGroups": {
+              "expr": {
+                "Literal": {
+                  "Value": "'[]'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "projectEndLine": [
+        {
+          "properties": {
+            "lineWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "2.5D"
+                }
+              }
+            },
+            "lineStyle": {
+              "expr": {
+                "Literal": {
+                  "Value": "'dashed'"
+                }
+              }
+            },
+            "lineColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 9,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "labelColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "labelFontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "9D"
+                }
+              }
+            },
+            "labelBackgroundColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 9,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "labelPosition": {
+              "expr": {
+                "Literal": {
+                  "Value": "'left'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "legend": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "titleText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Finish Variance vs Previous Month'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "15D"
+                }
+              }
+            },
+            "sortOrder": {
+              "expr": {
+                "Literal": {
+                  "Value": "'ascending'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "textAndLabels": [
+        {
+          "properties": {
+            "labelColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "showDuration": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "showFinishDates": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "taskNameFontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "layoutSettings": [
+        {
+          "properties": {
+            "leftMargin": {
+              "expr": {
+                "Literal": {
+                  "Value": "593D"
+                }
+              }
+            },
+            "taskPadding": {
+              "expr": {
+                "Literal": {
+                  "Value": "12D"
+                }
+              }
+            },
+            "rightMargin": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
+                }
+              }
+            },
+            "maxTasksToShow": {
+              "expr": {
+                "Literal": {
+                  "Value": "30000D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "connectorLines": [
+        {
+          "properties": {
+            "showConnectorToggle": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "connectorWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "2D"
+                }
+              }
+            },
+            "criticalConnectorWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "2D"
+                }
+              }
+            },
+            "differentiateDrivers": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "showConnectorLines": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "connectorColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "legendColors": [
+        {
+          "properties": {
+            "color1": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 2,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "color2": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 3,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "color3": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 5,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "color4": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 9,
+                      "Percent": 0.6
+                    }
+                  }
+                }
+              }
+            },
+            "color5": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 9,
+                      "Percent": 0.2
+                    }
+                  }
+                }
+              }
+            },
+            "color6": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 9,
+                      "Percent": -0.25
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "wbsGrouping": [
+        {
+          "properties": {
+            "enableWbsGrouping": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "expandCollapseAll": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "groupNameFontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "11D"
+                }
+              }
+            },
+            "indentPerLevel": {
+              "expr": {
+                "Literal": {
+                  "Value": "15D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "dataDateLine": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "lineColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#010CE0'"
+                    }
+                  }
+                }
+              }
+            },
+            "lineStyle": {
+              "expr": {
+                "Literal": {
+                  "Value": "'solid'"
+                }
+              }
+            },
+            "lineWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "2.5D"
+                }
+              }
+            },
+            "showLabel": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "wbsLevelStyles": [
+        {
+          "properties": {
+            "level1Background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#99FF99'"
+                    }
+                  }
+                }
+              }
+            },
+            "level2Background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFF66'"
+                    }
+                  }
+                }
+              }
+            },
+            "level3Background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#0000CC'"
+                    }
+                  }
+                }
+              }
+            },
+            "level4Background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#CC3333'"
+                    }
+                  }
+                }
+              }
+            },
+            "level5Background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#66FFFF'"
+                    }
+                  }
+                }
+              }
+            },
+            "level1Text": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "level2Text": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "level3Text": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "level4Text": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "level5Text": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "criticalPath": [
+        {
+          "properties": {
+            "calculationMode": {
+              "expr": {
+                "Literal": {
+                  "Value": "'floatBased'"
+                }
+              }
+            },
+            "showAllTasks": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "gridLines": [
+        {
+          "properties": {
+            "timelineLabelColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "gridLineWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "2D"
+                }
+              }
+            },
+            "verticalLineWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "2D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "columns": [
+        {
+          "properties": {
+            "showStartDate": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "showFinishDate": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "showDuration": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "showTotalFloat": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "startDateWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "65D"
+                }
+              }
+            },
+            "finishDateWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "65D"
+                }
+              }
+            },
+            "durationWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "65D"
+                }
+              }
+            },
+            "totalFloatWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "65D"
+                }
+              }
+            },
+            "enableColumnDisplay": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "generalSettings": [
+        {
+          "properties": {
+            "showExportButton": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "dataDateColorOverride": [
+        {
+          "properties": {
+            "enableP6Style": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "comparisonBars": [
+        {
+          "properties": {
+            "showPreviousUpdate": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "showBaseline": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

@@ -1,0 +1,331 @@
+table 12_XER_RSRC
+	lineageTag: e4336989-d4b0-42ee-88e3-6b90d448d516
+
+	column rsrc_name
+		dataType: string
+		lineageTag: 2aab7585-c2ae-485f-b118-5e36d486ee7c
+		summarizeBy: none
+		sourceColumn: rsrc_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column rsrc_type
+		dataType: string
+		lineageTag: c05a4d39-156e-4af9-891e-730962108e16
+		summarizeBy: none
+		sourceColumn: rsrc_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column rsrc_id_key
+		dataType: string
+		lineageTag: 1f350a95-5c2d-4644-bfbb-cc98363d613d
+		summarizeBy: none
+		sourceColumn: rsrc_id_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column clndr_id_key
+		dataType: string
+		lineageTag: 3896f964-9774-425d-bcdd-2dea93c2152d
+		summarizeBy: none
+		sourceColumn: clndr_id_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column rsrc_short_name
+		dataType: string
+		lineageTag: 8d072758-0dc6-48a1-8d8d-0827f2fe8bfa
+		summarizeBy: none
+		sourceColumn: rsrc_short_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column project_resource =
+			
+			'12_XER_RSRC'[ProjectCode] & "." &
+			'12_XER_RSRC'[rsrc_short_name] & "." &
+			'12_XER_RSRC'[rsrc_type]
+		lineageTag: f2dc558d-0f2c-4f71-a428-b8aadf8cd248
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column server
+		dataType: string
+		lineageTag: 65b96436-2aaa-47c8-ab12-994c83475912
+		summarizeBy: none
+		sourceColumn: server
+
+		annotation SummarizationSetBy = Automatic
+
+	column database
+		dataType: string
+		lineageTag: a6a977c7-eb09-4dcb-ace9-100356f6b8ed
+		summarizeBy: none
+		sourceColumn: database
+
+		annotation SummarizationSetBy = Automatic
+
+	column rsrc_id
+		dataType: string
+		lineageTag: 217e0cff-3777-46d4-a076-a05080daac01
+		summarizeBy: none
+		sourceColumn: rsrc_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column parent_rsrc_id
+		dataType: string
+		lineageTag: 893b423e-ea08-4558-9924-a603216044a1
+		summarizeBy: none
+		sourceColumn: parent_rsrc_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column clndr_id
+		dataType: string
+		lineageTag: 7d2f50f3-9521-4cd8-8c55-30348f04fc93
+		summarizeBy: none
+		sourceColumn: clndr_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column role_id
+		dataType: string
+		lineageTag: fdfe3fbb-5f74-46ca-bbe9-4fd18ea7d032
+		summarizeBy: none
+		sourceColumn: role_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column shift_id
+		dataType: string
+		lineageTag: 6b6705e2-07ab-49cb-8460-e69ddb7fa565
+		summarizeBy: none
+		sourceColumn: shift_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column user_id
+		dataType: string
+		lineageTag: 3ac4cc2e-dda1-41bb-a358-03c584f22dc2
+		summarizeBy: none
+		sourceColumn: user_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column pobs_id
+		dataType: string
+		lineageTag: 0e4092d9-1a3c-4740-9814-384c8e3e7a75
+		summarizeBy: none
+		sourceColumn: pobs_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column guid
+		dataType: string
+		lineageTag: 50118510-a7e7-4778-969f-a1b0e936c608
+		summarizeBy: none
+		sourceColumn: guid
+
+		annotation SummarizationSetBy = Automatic
+
+	column rsrc_seq_num
+		dataType: string
+		lineageTag: 893a23cb-ba3d-41cb-882a-378cf567241a
+		summarizeBy: none
+		sourceColumn: rsrc_seq_num
+
+		annotation SummarizationSetBy = Automatic
+
+	column email_addr
+		dataType: string
+		lineageTag: f1e32969-560e-4aa7-89af-7e9dc055d989
+		summarizeBy: none
+		sourceColumn: email_addr
+
+		annotation SummarizationSetBy = Automatic
+
+	column employee_code
+		dataType: string
+		lineageTag: 203c6225-4883-4199-a65e-d5f02e649f46
+		summarizeBy: none
+		sourceColumn: employee_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column office_phone
+		dataType: string
+		lineageTag: 46c1e167-ddcd-4602-8e25-f739abad6385
+		summarizeBy: none
+		sourceColumn: office_phone
+
+		annotation SummarizationSetBy = Automatic
+
+	column other_phone
+		dataType: string
+		lineageTag: 62a5677b-35a5-4402-9f47-c026dd03c123
+		summarizeBy: none
+		sourceColumn: other_phone
+
+		annotation SummarizationSetBy = Automatic
+
+	column rsrc_title_name
+		dataType: string
+		lineageTag: ca64a3dd-9168-43e6-b0c7-efc2637eddcf
+		summarizeBy: none
+		sourceColumn: rsrc_title_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column def_qty_per_hr
+		dataType: string
+		lineageTag: d210c000-6734-4030-ba4b-789cfc53306b
+		summarizeBy: none
+		sourceColumn: def_qty_per_hr
+
+		annotation SummarizationSetBy = Automatic
+
+	column cost_qty_type
+		dataType: string
+		lineageTag: 283518fd-91e8-4c12-9fea-48f918ddb41a
+		summarizeBy: none
+		sourceColumn: cost_qty_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column ot_factor
+		dataType: string
+		lineageTag: 7dc0fc2d-0e2f-43ab-88ab-19ef401cac03
+		summarizeBy: none
+		sourceColumn: ot_factor
+
+		annotation SummarizationSetBy = Automatic
+
+	column active_flag
+		dataType: string
+		lineageTag: 503cd2bf-5380-44bc-ad8b-ecc8f409efe2
+		summarizeBy: none
+		sourceColumn: active_flag
+
+		annotation SummarizationSetBy = Automatic
+
+	column auto_compute_act_flag
+		dataType: string
+		lineageTag: 23604d76-4d68-40ef-9199-c8d71d6a00b8
+		summarizeBy: none
+		sourceColumn: auto_compute_act_flag
+
+		annotation SummarizationSetBy = Automatic
+
+	column def_cost_qty_link_flag
+		dataType: string
+		lineageTag: 0552e59b-a583-4fa6-99a2-6fbda7e33e05
+		summarizeBy: none
+		sourceColumn: def_cost_qty_link_flag
+
+		annotation SummarizationSetBy = Automatic
+
+	column ot_flag
+		dataType: string
+		lineageTag: 190d6604-c8cc-4b7a-b3de-f4d1db47a8d2
+		summarizeBy: none
+		sourceColumn: ot_flag
+
+		annotation SummarizationSetBy = Automatic
+
+	column curr_id
+		dataType: string
+		lineageTag: 2028cc60-f818-4f0a-9d24-5362d6109013
+		summarizeBy: none
+		sourceColumn: curr_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column unit_id
+		dataType: string
+		lineageTag: 1298589a-427c-4bb3-8549-bb4da6707882
+		summarizeBy: none
+		sourceColumn: unit_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column location_id
+		dataType: string
+		lineageTag: 0d60cc43-eeef-4b40-8245-af7d285939ca
+		summarizeBy: none
+		sourceColumn: location_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column rsrc_notes
+		dataType: string
+		lineageTag: ca9caab2-cc4a-46d1-be2a-b69b95fa3387
+		summarizeBy: none
+		sourceColumn: rsrc_notes
+
+		annotation SummarizationSetBy = Automatic
+
+	column load_tasks_flag
+		dataType: string
+		lineageTag: f23501d9-1040-440a-8e9a-7148ad4db30f
+		summarizeBy: none
+		sourceColumn: load_tasks_flag
+
+		annotation SummarizationSetBy = Automatic
+
+	column level_flag
+		dataType: string
+		lineageTag: e3dac22e-4157-435c-ac77-e3fbe5802e69
+		summarizeBy: none
+		sourceColumn: level_flag
+
+		annotation SummarizationSetBy = Automatic
+
+	column last_checksum
+		dataType: string
+		lineageTag: c1ae6b05-06a6-46e4-84c2-6c6e3ef9d086
+		summarizeBy: none
+		sourceColumn: last_checksum
+
+		annotation SummarizationSetBy = Automatic
+
+	column filename
+		dataType: string
+		lineageTag: d7131c57-5dac-46f9-964a-59a89044585a
+		summarizeBy: none
+		sourceColumn: filename
+
+		annotation SummarizationSetBy = Automatic
+
+	column refresh_date
+		dataType: string
+		lineageTag: 71204be3-b19e-40b6-b940-22f94f9a5ee1
+		summarizeBy: none
+		sourceColumn: refresh_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProjectCode
+		dataType: string
+		lineageTag: 354cab50-e6f6-4d0e-9b8b-d748778eeca7
+		summarizeBy: none
+		sourceColumn: ProjectCode
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 12_XER_RSRC = m
+		mode: import
+		queryGroup: XER
+		source =
+				let
+				    Source = fnAthenaSource("12_xer_rsrc"),
+				    #"Added Custom" = Table.AddColumn(Source, "ProjectCode", each Text.BeforeDelimiter([filename], "-"), type text)
+				in
+				    #"Added Custom"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

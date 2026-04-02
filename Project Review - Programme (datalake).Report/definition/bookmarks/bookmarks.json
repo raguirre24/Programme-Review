@@ -1,0 +1,16 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmarksMetadata/1.0.0/schema.json",
+  "items": [
+    {
+      "name": "109523331af7b8688e3a"
+    },
+    {
+      "name": "1aec8f286a7b200d8209",
+      "displayName": "Relationship Toggle",
+      "children": [
+        "7b05384c901a06e8537d",
+        "7c97252701977856c989"
+      ]
+    }
+  ]
+}

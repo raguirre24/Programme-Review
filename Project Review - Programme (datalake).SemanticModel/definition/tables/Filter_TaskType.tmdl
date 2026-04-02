@@ -1,0 +1,27 @@
+table Filter_TaskType
+	lineageTag: c4903885-6a31-41dc-952f-e384bdd8fd40
+
+	column TaskType
+		lineageTag: 105419a2-b376-4ace-a058-a5fe2c49648a
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [TaskType]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Filter_TaskType = calculated
+		mode: import
+		source =
+				
+				DATATABLE(
+				    "TaskType", STRING,
+				    {
+				        {"Activity"},
+				        {"Milestone"},
+				        {"LOE"},
+				        {"Other"}
+				    }
+				)
+
+	annotation PBI_Id = 65c710ddd43147d3b53b92f2fcf0b157
+

@@ -1,0 +1,66 @@
+table Project
+	isHidden
+	lineageTag: ce61dec6-2440-4fac-b751-58a6301c1a3a
+
+	column projectno
+		dataType: string
+		lineageTag: 20d945ca-c933-4192-96ea-bc1fa8008e26
+		summarizeBy: none
+		sourceColumn: projectno
+
+		annotation SummarizationSetBy = Automatic
+
+	column projectname
+		dataType: string
+		lineageTag: 0cb293e6-ff53-4a0a-be3c-997b5503f41e
+		summarizeBy: none
+		sourceColumn: projectname
+
+		annotation SummarizationSetBy = Automatic
+
+	column companyname
+		dataType: string
+		lineageTag: 6b1c9556-8258-42a8-88f5-1371d1738366
+		summarizeBy: none
+		sourceColumn: companyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column divisionname
+		dataType: string
+		lineageTag: 2469702d-a284-4715-b1c7-4c7579a0d374
+		summarizeBy: none
+		sourceColumn: divisionname
+
+		annotation SummarizationSetBy = Automatic
+
+	column state
+		dataType: string
+		lineageTag: e89741bc-9d65-4ce2-a709-8cb90aefe2ce
+		summarizeBy: none
+		sourceColumn: state
+
+		annotation SummarizationSetBy = Automatic
+
+	column country
+		dataType: string
+		lineageTag: 2046fa57-9833-48fa-abe9-1761961e97c3
+		summarizeBy: none
+		sourceColumn: country
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Project = m
+		mode: import
+		source =
+				let
+				    Source = Table.Buffer(dbo_project)
+				in
+				    Source
+
+	changedProperty = IsHidden
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

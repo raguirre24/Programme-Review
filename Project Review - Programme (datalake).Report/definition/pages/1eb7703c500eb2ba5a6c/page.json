@@ -1,0 +1,200 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.0.0/schema.json",
+  "name": "1eb7703c500eb2ba5a6c",
+  "displayName": "Constraint Analysis",
+  "displayOption": "FitToPage",
+  "height": 1080,
+  "width": 1920,
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "c8b5d1bb438b6899ea4a",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "01 XER_TASK"
+              }
+            },
+            "Property": "TaskType_Classified"
+          }
+        },
+        "type": "Categorical",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "0",
+              "Entity": "01 XER_TASK",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "In": {
+                  "Expressions": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "0"
+                          }
+                        },
+                        "Property": "TaskType_Classified"
+                      }
+                    }
+                  ],
+                  "Values": [
+                    [
+                      {
+                        "Literal": {
+                          "Value": "'Milestone'"
+                        }
+                      }
+                    ],
+                    [
+                      {
+                        "Literal": {
+                          "Value": "'Activity'"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "howCreated": "User"
+      }
+    ]
+  },
+  "objects": {
+    "background": [
+      {
+        "properties": {
+          "color": {
+            "solid": {
+              "color": {
+                "expr": {
+                  "ThemeDataColor": {
+                    "ColorId": 0,
+                    "Percent": -0.1
+                  }
+                }
+              }
+            }
+          },
+          "transparency": {
+            "expr": {
+              "Literal": {
+                "Value": "0D"
+              }
+            }
+          },
+          "image": {
+            "image": {
+              "name": {
+                "expr": {
+                  "Literal": {
+                    "Value": "'Contract Background.png'"
+                  }
+                }
+              },
+              "url": {
+                "expr": {
+                  "ResourcePackageItem": {
+                    "PackageName": "RegisteredResources",
+                    "PackageType": 1,
+                    "ItemName": "Contract_Background6253722335837282.png"
+                  }
+                }
+              },
+              "scaling": {
+                "expr": {
+                  "Literal": {
+                    "Value": "'Fit'"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ],
+    "outspacePane": [
+      {
+        "properties": {
+          "width": {
+            "expr": {
+              "Literal": {
+                "Value": "403L"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "displayArea": [
+      {
+        "properties": {
+          "verticalAlignment": {
+            "expr": {
+              "Literal": {
+                "Value": "'Middle'"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "visualInteractions": [
+    {
+      "source": "b900eee48c68bb7c6eec",
+      "target": "a53f78b03d9e2c2d8926",
+      "type": "NoFilter"
+    },
+    {
+      "source": "a53f78b03d9e2c2d8926",
+      "target": "5da707f9b0d8db0d2b6e",
+      "type": "NoFilter"
+    },
+    {
+      "source": "ee988fbebaa08d8521b4",
+      "target": "5da707f9b0d8db0d2b6e",
+      "type": "NoFilter"
+    },
+    {
+      "source": "ee988fbebaa08d8521b4",
+      "target": "fc64d8be0e0201a8612b",
+      "type": "NoFilter"
+    },
+    {
+      "source": "ee988fbebaa08d8521b4",
+      "target": "85d9a29b54cb54003334",
+      "type": "NoFilter"
+    },
+    {
+      "source": "ee988fbebaa08d8521b4",
+      "target": "51f3c27d80d54a9852a8",
+      "type": "NoFilter"
+    },
+    {
+      "source": "ee988fbebaa08d8521b4",
+      "target": "7e92ee6a3b8c6b1c0b4d",
+      "type": "NoFilter"
+    },
+    {
+      "source": "5da707f9b0d8db0d2b6e",
+      "target": "ee988fbebaa08d8521b4",
+      "type": "NoFilter"
+    },
+    {
+      "source": "58211dc0ca774e65a107",
+      "target": "ee988fbebaa08d8521b4",
+      "type": "NoFilter"
+    }
+  ]
+}

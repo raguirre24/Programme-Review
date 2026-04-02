@@ -1,0 +1,61 @@
+table Filter_Constraint_Types
+	lineageTag: 89d9aa1d-d1b1-4006-8bad-b6a49ee90716
+
+	column 'Full Name'
+		lineageTag: a6fa6fb6-0acd-49ef-a220-8924d7d0b1b6
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Full Name]
+
+		annotation SummarizationSetBy = Automatic
+
+	column ConstraintType
+		lineageTag: 4c074294-f9e1-48ff-941e-75c1884e86fb
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [ConstraintType]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Medium Abbreviation'
+		lineageTag: a85954e7-0a68-4fb8-a7bb-15dfb9cb383a
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Medium Abbreviation]
+		sortByColumn: 'Sort Order'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Sort Order'
+		formatString: 0
+		lineageTag: 1ef64167-773d-4cf9-991f-f2bba49cf0c4
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Sort Order]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Filter_Constraint_Types = calculated
+		mode: import
+		source =
+				
+				DATATABLE(
+				    "ConstraintType", STRING,
+				    "Full Name", STRING,
+				    "Medium Abbreviation", STRING,
+				    "Sort Order", INTEGER,
+				    {
+				        {"CS_ALAP", "As Late As Possible", "As Late", 9},
+				        {"CS_MEO", "Must Finish On", "Fin On", 6},
+				        {"CS_MEOA", "Must Finish On or After", "Fin On/Aft", 8},
+				        {"CS_MEOB", "Must Finish On or Before", "Fin On/Bef", 7},
+				        {"CS_MANDFIN", "Mandatory Finish", "Mand Fin", 5},
+				        {"CS_MANDSTART", "Mandatory Start", "Mand Start", 1},
+				        {"CS_MSO", "Must Start On", "Start On", 2},
+				        {"CS_MSOA", "Must Start On or After", "Start On/Aft", 4},
+				        {"CS_MSOB", "Must Start On or Before", "Start On/Bef", 3}
+				    }
+				)
+
+	annotation PBI_Id = 95fb65dca6ba4063b82e73c9fccbfb37
+

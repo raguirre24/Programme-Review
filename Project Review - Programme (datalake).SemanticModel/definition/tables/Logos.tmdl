@@ -1,0 +1,57 @@
+table Logos
+	lineageTag: 7d6cac0e-2a2a-4c92-992b-cae10d4ca417
+
+	measure 'Display Logo' = ```
+			
+			VAR SelectedLogo = SELECTEDVALUE('Logos'[LogoCode])
+			VAR DefaultLogo = 
+			    CALCULATE(
+			        MAX('Logos'[LogoCode]),
+			        REMOVEFILTERS(),
+			        'Logos'[Name] = "Acciona"
+			    )
+			RETURN 
+			    IF(ISBLANK(SelectedLogo), 
+			        DefaultLogo,
+			        SelectedLogo
+			    )
+			```
+		lineageTag: f3c557c2-c514-4d6c-a969-6e81da95b489
+
+	column Name
+		dataType: string
+		lineageTag: c98c80ba-5609-4a7b-9224-6a30b35d7140
+		summarizeBy: none
+		sourceColumn: Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column LogoCode
+		dataType: string
+		lineageTag: f26951eb-269c-4172-beed-3b57eac67417
+		summarizeBy: none
+		sourceColumn: LogoCode
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Logos = m
+		mode: import
+		source =
+				let
+				    Source = SharePoint.Contents(#"SharePointSite", [ApiVersion = 15]),
+				    #"Documents" = Source{[Name="Documents"]}[Content],
+				    #"P6" = #"Documents"{[Name="P6"]}[Content],
+				    #"Programme" = #"P6"{[Name="Programme"]}[Content],
+				    #"Logos" = #"Programme"{[Name="Logos"]}[Content],
+				    #"Removed Other Columns" = Table.SelectColumns(Logos,{"Content", "Name"}),
+				    #"Added Custom" = Table.AddColumn(#"Removed Other Columns", "LogoCode", each "data:image/png;base64," & Binary.ToText([Content], BinaryEncoding.Base64)),
+				    #"Removed Other Columns1" = Table.SelectColumns(#"Added Custom",{"Name", "LogoCode"}),
+				    #"Extracted Text Before Delimiter" = Table.TransformColumns(#"Removed Other Columns1", {{"Name", each Text.BeforeDelimiter(_, "."), type text}}),
+				    #"Filtered Rows" = Table.SelectRows(#"Extracted Text Before Delimiter", each [Name] <> null and [Name] <> "")
+				in
+				    #"Filtered Rows"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

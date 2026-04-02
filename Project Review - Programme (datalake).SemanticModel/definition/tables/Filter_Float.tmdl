@@ -1,0 +1,28 @@
+table Filter_Float
+	lineageTag: 5f4bdbc1-71bc-4327-8afe-11467977f07a
+
+	column FloatCategory
+		lineageTag: 10f3d15a-2af6-4ae9-aae1-f6aee76c6b5a
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [FloatCategory]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Filter_Float = calculated
+		mode: import
+		source =
+				
+				DATATABLE(
+				    "FloatCategory", STRING,
+				    {
+				        {" Float < 0"},
+				        {"0 ≤ Float ≤ 10"},
+				        {"10 < Float ≤ 30"},
+				        {"30 < Float ≤ 50"},
+				        {"50 < Float"}
+				    }
+				)
+
+	annotation PBI_Id = 89c7b014181b45ef9b79b4491408400d
+

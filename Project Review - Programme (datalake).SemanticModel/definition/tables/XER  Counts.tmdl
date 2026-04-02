@@ -1,0 +1,959 @@
+table 'XER  Counts'
+	lineageTag: c73c013b-298a-4220-97b0-dd690156e2bc
+
+	measure FinishCount_<3_Months_TT_Task =
+			
+			CALCULATE(
+			    COUNTROWS('01 XER_TASK'),
+			    '01 XER_TASK'[FinishDateCategory] = " 1-3 Months"
+			)
+		formatString: #,0
+		displayFolder: FinishCount
+		lineageTag: 8e6d7d21-19bb-4a9b-8ef5-23832fd50da1
+
+	measure FinishCount_<1_Month_TT_Task = ```
+			
+			CALCULATE(
+			    COUNTROWS('01 XER_TASK'),
+			    '01 XER_TASK'[FinishDateCategory] = " <1 Month"
+			)
+			
+			```
+		formatString: #,0
+		displayFolder: FinishCount
+		lineageTag: aa566629-0908-46e1-a169-818354e723ce
+
+	measure FinishCount_<6_Months_TT_Task =
+			
+			CALCULATE(
+			    COUNTROWS('01 XER_TASK'),
+			    '01 XER_TASK'[FinishDateCategory] = " 3-6 Months"
+			)
+		formatString: #,0
+		displayFolder: FinishCount
+		lineageTag: ca96292b-3b15-4144-aaea-1865d4232b88
+
+	measure FinishCount_>6_Months_TT_Task =
+			
+			CALCULATE(
+			    COUNTROWS('01 XER_TASK'),
+			    '01 XER_TASK'[FinishDateCategory] = ">6 Months"
+			)
+		formatString: #,0
+		displayFolder: FinishCount
+		lineageTag: 3c98b1e4-6508-4e31-b51d-aa1dad4b52bb
+
+	measure Count_Critical_Tasks = ```
+			
+			VAR CountResult = 
+			    CALCULATE(
+			        COUNTROWS('01 XER_TASK'),
+			        '01 XER_TASK'[CriticalStatus] = "Critical"
+			    )
+			RETURN
+			    IF(
+			        ISBLANK(MIN('01 XER_TASK'[UpdateDate])),
+			        BLANK(),
+			        COALESCE(CountResult, 0)
+			    )
+			```
+		formatString: #,0
+		displayFolder: Critical Status
+		lineageTag: ec6e65b2-d186-494a-95dc-3c25cdd6f03d
+
+	measure Count_NearCritical_Tasks = ```
+			
+			VAR CountResult = 
+			    CALCULATE(
+			        COUNTROWS('01 XER_TASK'),
+			        '01 XER_TASK'[CriticalStatus] = "Near Critical"
+			    )
+			RETURN
+			    IF(
+			        ISBLANK(MIN('01 XER_TASK'[UpdateDate])),
+			        BLANK(),
+			        COALESCE(CountResult, 0)
+			    )
+			```
+		formatString: #,0
+		displayFolder: Critical Status
+		lineageTag: eb3cb4cd-bb4f-41e2-bf31-ae095c2f760b
+
+	measure Count_Complete_Tasks = ```
+			
+			VAR CompleteCount = 
+			    CALCULATE(
+			        COUNTROWS('01 XER_TASK'),
+			        '01 XER_TASK'[status_code]="Complete"
+			    )
+			RETURN
+			    IF(CompleteCount = 0, BLANK(), CompleteCount)
+			```
+		formatString: #,0
+		displayFolder: Activity Status
+		lineageTag: f9f29096-e9f7-4a56-8274-ffb1ba772a50
+
+	measure Count_InProgress_Tasks =
+			
+			CALCULATE(
+			    COUNTROWS('01 XER_TASK'),
+			    '01 XER_TASK'[status_code]="In Progress")
+		formatString: 0
+		displayFolder: Activity Status
+		lineageTag: a7c8362f-ee56-4a59-abfb-23ead98b914e
+
+	measure Count_NotStarted_Tasks =
+			
+			CALCULATE(
+			    COUNTROWS('01 XER_TASK'),
+			    '01 XER_TASK'[status_code]="Not Started")
+		formatString: #,0
+		displayFolder: Activity Status
+		lineageTag: 509fe80d-c3ef-4598-ad75-c0342e52db36
+
+	measure StartCount_<1_Month_TT_Task =
+			
+			CALCULATE(
+			    COUNTROWS('01 XER_TASK'),
+			    '01 XER_TASK'[StartDateCategory] = " <1 Month"
+			)
+		formatString: #,0
+		displayFolder: StartCount
+		lineageTag: 4fdac84d-351c-43f9-87c2-b83d5b3f6359
+
+	measure StartCount_<3_Months_TT_Task =
+			
+			CALCULATE(
+			    COUNTROWS('01 XER_TASK'),
+			    '01 XER_TASK'[StartDateCategory] = " 1-3 Months"
+			)
+		formatString: #,0
+		displayFolder: StartCount
+		lineageTag: cb8a9da3-17d3-4668-83b8-ebfc21bfa166
+
+	measure StartCount_>6_Months_TT_Task =
+			
+			CALCULATE(
+			    COUNTROWS('01 XER_TASK'),
+			    '01 XER_TASK'[StartDateCategory] = ">6 Months"
+			)
+		formatString: #,0
+		displayFolder: StartCount
+		lineageTag: 19cfca96-0e25-4b42-b1a8-66827699f96f
+
+	measure StartCount_<6_Months_TT_Task =
+			
+			CALCULATE(
+			    COUNTROWS('01 XER_TASK'),
+			    '01 XER_TASK'[StartDateCategory] = " 3-6 Months"
+			)
+		formatString: #,0
+		displayFolder: StartCount
+		lineageTag: f79b5c19-9eb0-428a-af72-95107e300939
+
+	measure Count_Tasks = ```
+			
+			VAR CountResult = 
+			    CALCULATE(
+			        COUNTROWS('01 XER_TASK')
+			    )
+			
+			RETURN
+			    IF(
+			        NOT ISBLANK( MIN('01 XER_TASK'[UpdateDate]) ),
+			        COALESCE(CountResult, 0),
+			        BLANK()
+			    )
+			```
+		formatString: #,0
+		lineageTag: ecc26924-f44e-4522-9444-a4d58cc6f9e5
+
+	measure Count_Remaining_Tasks = ```
+			
+			VAR RemainingCount = 
+			    CALCULATE(
+			        COUNTROWS('01 XER_TASK'),
+			        '01 XER_TASK'[status_code] <> "Complete"
+			    )
+			RETURN
+			    IF(
+			        ISBLANK(MIN('01 XER_TASK'[UpdateDate])),
+			        BLANK(),
+			        COALESCE(RemainingCount, 0)
+			    )
+			```
+		formatString: #,0
+		lineageTag: c23a0ad8-a144-4b52-84b2-cfd872c6b63a
+
+	measure Count_Incomplete_Float_0_to_10 =
+			
+			VAR _ProjectHasActivity =
+			    COUNTROWS ( '01 XER_TASK' )
+			RETURN
+			    IF (
+			        _ProjectHasActivity > 0,
+			        CALCULATE (
+			            COUNTROWS ( '01 XER_TASK' ),
+			            '01 XER_TASK'[status_code] <> "Complete",
+			            '01 XER_TASK'[total_float] >= 0,
+			            '01 XER_TASK'[total_float] <= 10
+			        ) + 0
+			    )
+		formatString: #,0
+		displayFolder: Float Analysis
+		lineageTag: 88f7bc8b-7b45-4ab9-bc77-74e9e5623682
+
+	measure Count_Incomplete_Float_10_to_30 = ```
+			
+			VAR _ProjectHasActivity =
+			    COUNTROWS ( '01 XER_TASK' )
+			RETURN
+			    IF (
+			        _ProjectHasActivity > 0,
+			        CALCULATE (
+			            COUNTROWS ( '01 XER_TASK' ),
+			            '01 XER_TASK'[status_code] <> "Complete",
+			            '01 XER_TASK'[total_float] > 10,
+			            '01 XER_TASK'[total_float] <= 30
+			        ) + 0
+			    )
+			
+			```
+		formatString: #,0
+		displayFolder: Float Analysis
+		lineageTag: 47fb2a7c-74e5-40e5-bd6c-aea373a2c322
+
+	measure Count_Incomplete_Float_30_to_50 = ```
+			
+			VAR _ProjectHasActivity =
+			    COUNTROWS ( '01 XER_TASK' )
+			RETURN
+			    IF (
+			        _ProjectHasActivity > 0,
+			        CALCULATE (
+			            COUNTROWS ( '01 XER_TASK' ),
+			            '01 XER_TASK'[status_code] <> "Complete",
+			            '01 XER_TASK'[total_float] > 30,
+			            '01 XER_TASK'[total_float] <= 50
+			        ) + 0
+			    )
+			
+			```
+		formatString: #,0
+		displayFolder: Float Analysis
+		lineageTag: 9af74e01-03df-4be1-9ed3-7e112a4706ff
+
+	measure Count_Incomplete_Float_More_50 =
+			
+			VAR _ProjectHasActivity =
+			    COUNTROWS ( '01 XER_TASK' )
+			RETURN
+			    IF (
+			        _ProjectHasActivity > 0,
+			        CALCULATE (
+			            COUNTROWS ( '01 XER_TASK' ),
+			            '01 XER_TASK'[status_code] <> "Complete",
+			            '01 XER_TASK'[total_float] > 50
+			        ) + 0
+			    )
+		formatString: 0
+		displayFolder: Float Analysis
+		lineageTag: 6188fdf2-3b1f-4a95-96a5-6a188b6b86f8
+
+	measure Count_Incomplete_Float_Less_0 =
+			
+			VAR _ProjectHasActivity =
+			    COUNTROWS ( '01 XER_TASK' )
+			RETURN
+			    IF (
+			        _ProjectHasActivity > 0,
+			        CALCULATE (
+			            COUNTROWS ( '01 XER_TASK' ),
+			            '01 XER_TASK'[status_code] <> "Complete",
+			            '01 XER_TASK'[total_float] < 0
+			        ) + 0
+			    )
+		formatString: 0
+		displayFolder: Float Analysis
+		lineageTag: 25257ba4-878a-47d8-ab36-3b92a36ddc13
+
+	measure Count_Incomplete_Float_Less_50 =
+			
+			VAR _ProjectHasActivity =
+			    COUNTROWS ( '01 XER_TASK' )
+			RETURN
+			    IF (
+			        _ProjectHasActivity > 0,
+			        CALCULATE (
+			            COUNTROWS ( '01 XER_TASK' ),
+			            '01 XER_TASK'[status_code] <> "Complete",
+			            '01 XER_TASK'[total_float] < 50
+			        ) + 0
+			    )
+		formatString: 0
+		displayFolder: Float Analysis
+		lineageTag: e04eb346-fbab-4d41-85c1-1790a068ccb7
+
+	measure Count_Incomplete_Float_Less_30 =
+			
+			VAR _ProjectHasActivity =
+			    COUNTROWS ( '01 XER_TASK' )
+			RETURN
+			    IF (
+			        _ProjectHasActivity > 0,
+			        CALCULATE (
+			            COUNTROWS ( '01 XER_TASK' ),
+			            '01 XER_TASK'[status_code] <> "Complete",
+			            '01 XER_TASK'[total_float] < 30
+			        ) + 0
+			    )
+		formatString: 0
+		displayFolder: Float Analysis
+		lineageTag: 2b703c2a-5345-4142-8dae-a493b5e6950f
+
+	measure Count_Incomplete_Float_Less_10 =
+			
+			VAR _ProjectHasActivity =
+			    COUNTROWS ( '01 XER_TASK' )
+			RETURN
+			    IF (
+			        _ProjectHasActivity > 0,
+			        CALCULATE (
+			            COUNTROWS ( '01 XER_TASK' ),
+			            '01 XER_TASK'[status_code] <> "Complete",
+			            '01 XER_TASK'[total_float] < 10
+			        ) + 0
+			    )
+		formatString: 0
+		displayFolder: Float Analysis
+		lineageTag: 19b928eb-5025-4df4-b4bb-2c8eb330de8e
+
+	measure PreviousMonth_FinishVariance_<1_Month_TT_Task = ```
+			
+			VAR CountResult = 
+			    CALCULATE(
+			        COUNTROWS('01 XER_TASK'),
+			        '01 XER_TASK'[PreviousMonthFinishVarianceCategory] = " <1 Month"
+			    )
+			RETURN
+			    IF(
+			        ISBLANK(MIN('01 XER_TASK'[UpdateDate])),
+			        BLANK(),
+			        COALESCE(CountResult, 0)
+			    )
+			```
+		formatString: #,0
+		displayFolder: Previous Month Finish Variance
+		lineageTag: b2a25d6e-dd04-4575-8ea2-79f427f17027
+
+	measure PreviousMonth_FinishVariance_<3_Month_TT_Task = ```
+			
+			VAR CountResult = 
+			    CALCULATE(
+			        COUNTROWS('01 XER_TASK'),
+			        '01 XER_TASK'[PreviousMonthFinishVarianceCategory] = " 1-3 Months"
+			    )
+			RETURN
+			    IF(
+			        ISBLANK(MIN('01 XER_TASK'[UpdateDate])),
+			        BLANK(),
+			        COALESCE(CountResult, 0)
+			    )
+			```
+		formatString: #,0
+		displayFolder: Previous Month Finish Variance
+		lineageTag: 9e7dc0ce-51ae-4e2a-bdb5-f385df996e03
+
+	measure PreviousMonth_FinishVariance_<6_Month_TT_Task = ```
+			
+			VAR CountResult = 
+			    CALCULATE(
+			        COUNTROWS('01 XER_TASK'),
+			        '01 XER_TASK'[PreviousMonthFinishVarianceCategory] = " 3-6 Months"
+			    )
+			RETURN
+			    IF(
+			        ISBLANK(MIN('01 XER_TASK'[UpdateDate])),
+			        BLANK(),
+			        COALESCE(CountResult, 0)
+			    )
+			```
+		formatString: #,0
+		displayFolder: Previous Month Finish Variance
+		lineageTag: 5bcc8265-8833-4818-a5e0-c09728bc9497
+
+	measure PreviousMonth_FinishVariance_>6_Month_TT_Task = ```
+			
+			VAR CountResult = 
+			    CALCULATE(
+			        COUNTROWS('01 XER_TASK'),
+			        '01 XER_TASK'[PreviousMonthFinishVarianceCategory] = ">6 Months"
+			    )
+			RETURN
+			    IF(
+			        ISBLANK(MIN('01 XER_TASK'[UpdateDate])),
+			        BLANK(),
+			        COALESCE(CountResult, 0)
+			    )
+			```
+		formatString: #,0
+		displayFolder: Previous Month Finish Variance
+		lineageTag: ee80bce9-fd44-49fa-bab5-3773f48a327c
+
+	measure Count_Rem_Duration_0_to_10 =
+			
+			VAR _ProjectHasActivity =
+			    COUNTROWS ( '01 XER_TASK' )
+			RETURN
+			    IF (
+			        _ProjectHasActivity > 0,
+			        CALCULATE (
+			            COUNTROWS ( '01 XER_TASK' ),
+			            '01 XER_TASK'[status_code] <> "Complete",
+			            '01 XER_TASK'[remaining_working_days] > 0,
+			            '01 XER_TASK'[remaining_working_days] <= 10
+			        ) + 0
+			    )
+		formatString: #,0
+		displayFolder: Duration Analysis
+		lineageTag: eaba90ef-38d8-4355-83b9-e7333dcac993
+
+	measure Count_Rem_Duration_10_to_20 =
+			
+			VAR _ProjectHasActivity =
+			    COUNTROWS ( '01 XER_TASK' )
+			RETURN
+			    IF (
+			        _ProjectHasActivity > 0,
+			        CALCULATE (
+			            COUNTROWS ( '01 XER_TASK' ),
+			            '01 XER_TASK'[status_code] <> "Complete",
+			            '01 XER_TASK'[remaining_working_days] > 10,
+			            '01 XER_TASK'[remaining_working_days] <= 20
+			        ) + 0
+			    )
+		formatString: #,0
+		displayFolder: Duration Analysis
+		lineageTag: 85855f6c-c5a3-4ab1-8ea1-f7d5f086f51e
+
+	measure Count_Rem_Duration_20_to_30 =
+			
+			VAR _ProjectHasActivity =
+			    COUNTROWS ( '01 XER_TASK' )
+			RETURN
+			    IF (
+			        _ProjectHasActivity > 0,
+			        CALCULATE (
+			            COUNTROWS ( '01 XER_TASK' ),
+			            '01 XER_TASK'[status_code] <> "Complete",
+			            '01 XER_TASK'[remaining_working_days] > 20,
+			            '01 XER_TASK'[remaining_working_days] <= 30
+			        ) + 0
+			    )
+		formatString: #,0
+		displayFolder: Duration Analysis
+		lineageTag: 4f288f63-5700-4377-887a-b06097d96de5
+
+	measure Count_Rem_Duration_30_to_44 =
+			
+			VAR _ProjectHasActivity =
+			    COUNTROWS ( '01 XER_TASK' )
+			RETURN
+			    IF (
+			        _ProjectHasActivity > 0,
+			        CALCULATE (
+			            COUNTROWS ( '01 XER_TASK' ),
+			            '01 XER_TASK'[status_code] <> "Complete",
+			            '01 XER_TASK'[remaining_working_days] > 30,
+			            '01 XER_TASK'[remaining_working_days] <= 44
+			        ) + 0
+			    )
+		formatString: #,0
+		displayFolder: Duration Analysis
+		lineageTag: 28a361e8-e065-4fbf-b0c6-aa5f5208fdf7
+
+	measure Count_Rem_Duration_>44d =
+			
+			VAR _ProjectHasActivity =
+			    COUNTROWS ( '01 XER_TASK' )
+			RETURN
+			    IF (
+			        _ProjectHasActivity > 0,
+			        CALCULATE (
+			            COUNTROWS ( '01 XER_TASK' ),
+			            '01 XER_TASK'[status_code] <> "Complete",
+			            '01 XER_TASK'[remaining_working_days] > 44
+			        ) + 0
+			    )
+		formatString: #,0
+		displayFolder: Duration Analysis
+		lineageTag: 1a736d48-00d4-468d-b766-42381f35c45e
+
+	measure Count_Rem_Duration_Less_44 =
+			
+			VAR _ProjectHasActivity =
+			    COUNTROWS ( '01 XER_TASK' )
+			RETURN
+			    IF (
+			        _ProjectHasActivity > 0,
+			        CALCULATE (
+			            COUNTROWS ( '01 XER_TASK' ),
+			            '01 XER_TASK'[status_code] <> "Complete",
+			            '01 XER_TASK'[remaining_working_days] < 44
+			        ) + 0
+			    )
+		formatString: #,0
+		displayFolder: Duration Analysis
+		lineageTag: 7e3d2d33-072d-4e4a-b3f5-50e6f6195fb9
+
+	measure Count_Rem_Duration_Less_30 =
+			
+			VAR _ProjectHasActivity =
+			    COUNTROWS ( '01 XER_TASK' )
+			RETURN
+			    IF (
+			        _ProjectHasActivity > 0,
+			        CALCULATE (
+			            COUNTROWS ( '01 XER_TASK' ),
+			            '01 XER_TASK'[status_code] <> "Complete",
+			            '01 XER_TASK'[remaining_working_days] < 30
+			        ) + 0
+			    )
+		formatString: #,0
+		displayFolder: Duration Analysis
+		lineageTag: 925ce4d3-6562-4e78-aa07-2cedf5214d1b
+
+	measure Count_Rem_Duration_Less_20 =
+			
+			VAR _ProjectHasActivity =
+			    COUNTROWS ( '01 XER_TASK' )
+			RETURN
+			    IF (
+			        _ProjectHasActivity > 0,
+			        CALCULATE (
+			            COUNTROWS ( '01 XER_TASK' ),
+			            '01 XER_TASK'[status_code] <> "Complete",
+			            '01 XER_TASK'[remaining_working_days] < 20
+			        ) + 0
+			    )
+		formatString: #,0
+		displayFolder: Duration Analysis
+		lineageTag: 3f82b72c-9fa4-418a-bc6e-eefb13fecaf7
+
+	measure Count_Rem_Duration_Less_10 =
+			
+			VAR _ProjectHasActivity =
+			    COUNTROWS ( '01 XER_TASK' )
+			RETURN
+			    IF (
+			        _ProjectHasActivity > 0,
+			        CALCULATE (
+			            COUNTROWS ( '01 XER_TASK' ),
+			            '01 XER_TASK'[status_code] <> "Complete",
+			            '01 XER_TASK'[remaining_working_days] < 10
+			        ) + 0
+			    )
+		formatString: #,0
+		displayFolder: Duration Analysis
+		lineageTag: 796cce2f-db40-4bba-bc99-9e7e60894656
+
+	measure Count_Driving_Tasks = ```
+			
+			VAR CountResult = 
+			    CALCULATE(
+			        COUNTROWS('01 XER_TASK'),
+			        '01 XER_TASK'[driving_path_flag] = "Y"
+			    )
+			RETURN
+			    IF(
+			        ISBLANK(MIN('01 XER_TASK'[UpdateDate])),
+			        BLANK(),
+			        COALESCE(CountResult, 0)
+			    )
+			```
+		formatString: #,0
+		displayFolder: Critical Status
+		lineageTag: c2100c1e-0c65-468e-a731-7730ea641c1a
+
+	measure PreviousMonth_StartVariance_<1_Month_TT_Task = ```
+			
+			VAR CountResult = 
+			    CALCULATE(
+			        COUNTROWS('01 XER_TASK'),
+			        '01 XER_TASK'[PreviousMonthStartVarianceCategory] = " <1 Month"
+			    )
+			RETURN
+			    IF(
+			        ISBLANK(MIN('01 XER_TASK'[UpdateDate])),
+			        BLANK(),
+			        COALESCE(CountResult, 0)
+			    )
+			```
+		formatString: #,0
+		displayFolder: Previous Month Start Variance
+		lineageTag: 8b591d18-3db8-4069-a2fe-211d167770ff
+
+	measure PreviousMonth_StartVariance_<3_Month_TT_Task = ```
+			
+			VAR CountResult = 
+			    CALCULATE(
+			        COUNTROWS('01 XER_TASK'),
+			        '01 XER_TASK'[PreviousMonthStartVarianceCategory] = " 1-3 Months"
+			    )
+			RETURN
+			    IF(
+			        ISBLANK(MIN('01 XER_TASK'[UpdateDate])),
+			        BLANK(),
+			        COALESCE(CountResult, 0)
+			    )
+			```
+		formatString: #,0
+		displayFolder: Previous Month Start Variance
+		lineageTag: 4d14c982-21a5-4af7-8700-0d96358b3101
+
+	measure PreviousMonth_StartVariance_<6_Month_TT_Task = ```
+			
+			VAR CountResult = 
+			    CALCULATE(
+			        COUNTROWS('01 XER_TASK'),
+			        '01 XER_TASK'[PreviousMonthStartVarianceCategory] = " 3-6 Months"
+			    )
+			RETURN
+			    IF(
+			        ISBLANK(MIN('01 XER_TASK'[UpdateDate])),
+			        BLANK(),
+			        COALESCE(CountResult, 0)
+			    )
+			```
+		formatString: #,0
+		displayFolder: Previous Month Start Variance
+		lineageTag: 5065f584-7857-4e56-98be-bd51bff5511a
+
+	measure PreviousMonth_StartVariance_>6_Month_TT_Task = ```
+			
+			VAR CountResult = 
+			    CALCULATE(
+			        COUNTROWS('01 XER_TASK'),
+			        '01 XER_TASK'[PreviousMonthStartVarianceCategory] = ">6 Months"
+			    )
+			RETURN
+			    IF(
+			        ISBLANK(MIN('01 XER_TASK'[UpdateDate])),
+			        BLANK(),
+			        COALESCE(CountResult, 0)
+			    )
+			```
+		formatString: #,0
+		displayFolder: Previous Month Start Variance
+		lineageTag: ec959fc3-b7dd-4261-9be1-822f15aadf82
+
+	measure 'As Late' =
+			
+			VAR _ProjectHasActivity =
+			    COUNTROWS ( '01 XER_TASK' )
+			RETURN
+			    IF (
+			        _ProjectHasActivity > 0,
+			        CALCULATE (
+			            COUNTROWS ( '01 XER_TASK' ),
+			            '01 XER_TASK'[cstr_type] = "CS_ALAP",
+			            '01 XER_TASK'[status_code] <> "Complete"
+			        ) + 0
+			    )
+		formatString: 0
+		displayFolder: Constraint Count
+		lineageTag: 565c7398-9732-4289-9bb9-749706eed4dc
+
+	measure 'Fin On' =
+			
+			VAR _ProjectHasActivity =
+			    COUNTROWS ( '01 XER_TASK' )
+			RETURN
+			    IF (
+			        _ProjectHasActivity > 0,
+			        CALCULATE (
+			            COUNTROWS ( '01 XER_TASK' ),
+			            '01 XER_TASK'[cstr_type] = "CS_MEO",
+			            '01 XER_TASK'[status_code] <> "Complete"
+			        ) + 0
+			    )
+		formatString: 0
+		displayFolder: Constraint Count
+		lineageTag: f7967638-8aa2-427c-8b2f-e26e1cf1cb83
+
+	measure 'Fin On/Aft' = ```
+			
+			VAR _ProjectHasActivity =
+			    COUNTROWS ( '01 XER_TASK' )
+			RETURN
+			    IF (
+			        _ProjectHasActivity > 0,
+			        CALCULATE (
+			            COUNTROWS ( '01 XER_TASK' ),
+			            '01 XER_TASK'[cstr_type] = "CS_MEOA",
+			            '01 XER_TASK'[status_code] <> "Complete"
+			        ) + 0
+			    )
+			
+			```
+		formatString: 0
+		displayFolder: Constraint Count
+		lineageTag: 8665a022-7ae5-45e1-8ffe-2be0d0bf9d64
+
+	measure 'Fin On/Bef' =
+			
+			VAR _ProjectHasActivity =
+			    COUNTROWS ( '01 XER_TASK' )
+			RETURN
+			    IF (
+			        _ProjectHasActivity > 0,
+			        CALCULATE (
+			            COUNTROWS ( '01 XER_TASK' ),
+			            '01 XER_TASK'[cstr_type] = "CS_MEOB",
+			            '01 XER_TASK'[status_code] <> "Complete"
+			        ) + 0
+			    )
+		formatString: 0
+		displayFolder: Constraint Count
+		lineageTag: 807e5c65-935c-4595-a98e-5460f9b77dbc
+
+	measure 'Mand Fin' =
+			
+			VAR _ProjectHasActivity =
+			    COUNTROWS ( '01 XER_TASK' )
+			RETURN
+			    IF (
+			        _ProjectHasActivity > 0,
+			        CALCULATE (
+			            COUNTROWS ( '01 XER_TASK' ),
+			            '01 XER_TASK'[cstr_type] = "CS_MANDFIN",
+			            '01 XER_TASK'[status_code] <> "Complete"
+			        ) + 0
+			    )
+		formatString: 0
+		displayFolder: Constraint Count
+		lineageTag: bffa7cbf-854d-4dc1-8189-e461572aaf4f
+
+	measure 'Mand Start' =
+			
+			VAR _ProjectHasActivity =
+			    COUNTROWS ( '01 XER_TASK' )
+			RETURN
+			    IF (
+			        _ProjectHasActivity > 0,
+			        CALCULATE (
+			            COUNTROWS ( '01 XER_TASK' ),
+			            '01 XER_TASK'[cstr_type] = "CS_MANDSTART",
+			            '01 XER_TASK'[status_code] <> "Complete"
+			        ) + 0
+			    )
+		formatString: 0
+		displayFolder: Constraint Count
+		lineageTag: 3d290943-19d7-440b-8afb-caf806f8a322
+
+	measure 'Start On' =
+			
+			VAR _ProjectHasActivity =
+			    COUNTROWS ( '01 XER_TASK' )
+			RETURN
+			    IF (
+			        _ProjectHasActivity > 0,
+			        CALCULATE (
+			            COUNTROWS ( '01 XER_TASK' ),
+			            '01 XER_TASK'[cstr_type] = "CS_MSO",
+			            '01 XER_TASK'[status_code] <> "Complete"
+			        ) + 0
+			    )
+		formatString: 0
+		displayFolder: Constraint Count
+		lineageTag: 5d9b9dcb-6db5-429a-8029-db5582fb53b1
+
+	measure 'Start On/Aft' =
+			
+			VAR _ProjectHasActivity =
+			    COUNTROWS ( '01 XER_TASK' )
+			RETURN
+			    IF (
+			        _ProjectHasActivity > 0,
+			        CALCULATE (
+			            COUNTROWS ( '01 XER_TASK' ),
+			            '01 XER_TASK'[cstr_type] = "CS_MSOA",
+			            '01 XER_TASK'[status_code] <> "Complete"
+			        ) + 0
+			    )
+		formatString: 0
+		displayFolder: Constraint Count
+		lineageTag: 1c0e75c8-4bbb-4705-8532-62ebc365aef5
+
+	measure 'Start On/Bef' =
+			
+			VAR _ProjectHasActivity =
+			    COUNTROWS ( '01 XER_TASK' )
+			RETURN
+			    IF (
+			        _ProjectHasActivity > 0,
+			        CALCULATE (
+			            COUNTROWS ( '01 XER_TASK' ),
+			            '01 XER_TASK'[cstr_type] = "CS_MSOB",
+			            '01 XER_TASK'[status_code] <> "Complete"
+			        ) + 0
+			    )
+		formatString: 0
+		displayFolder: Constraint Count
+		lineageTag: da67f021-aced-4722-8e6e-f95816fe4d76
+
+	measure 'No Constraints' = [Count_Remaining_Tasks]-[As Late]-[Mand Fin]-[Mand Start]-[Fin On]-[Fin On/Aft]-[Fin On/Bef]-[Start On]-[Start On/Aft]-[Start On/Bef]
+		formatString: 0
+		displayFolder: Constraint Count
+		lineageTag: 11caf28b-ddcf-4e9a-88c3-471a5a450dae
+
+	measure 'As Late%' = [As Late]/[Count_Remaining_Tasks]
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Constraint %
+		lineageTag: 2f53d1a2-93c6-4ce7-9242-1556675b3241
+
+	measure 'Fin On %' = [Fin On]/[Count_Remaining_Tasks]
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Constraint %
+		lineageTag: 3ea42654-0a3b-434c-b528-685cde8e720e
+
+	measure 'Fin On/Aft %' = [Fin On/Aft]/[Count_Remaining_Tasks]
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Constraint %
+		lineageTag: ddc6ee99-e835-4aa6-b532-7141c1dba4b1
+
+	measure 'Fin On/Bef %' = [Fin On/Bef] / [Count_Remaining_Tasks]
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Constraint %
+		lineageTag: 2e79157e-fd9c-4b07-94a4-7a97226a5fbd
+
+	measure 'Mand Fin %' = [Mand Fin] / [Count_Remaining_Tasks]
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Constraint %
+		lineageTag: e6b0a837-e656-4cf4-99be-ca151f504f5c
+
+	measure 'Mand Start %' = [Mand Start] / [Count_Remaining_Tasks]
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Constraint %
+		lineageTag: 093d48be-36b4-4eae-b0c9-bc754703eae8
+
+	measure 'Start On %' = [Start On] / [Count_Remaining_Tasks]
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Constraint %
+		lineageTag: 82c29607-dcab-4adb-a3a3-c583b0552d13
+
+	measure 'Start On/Aft %' = [Start On/Aft] / [Count_Remaining_Tasks]
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Constraint %
+		lineageTag: f90f0a15-7fc8-4c9f-9ec3-e7edbff33604
+
+	measure 'Start On/Bef %' = [Start On/Bef]/ [Count_Remaining_Tasks]
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Constraint %
+		lineageTag: 0385bbcd-fa0b-4232-8ac5-31d503463c46
+
+	measure 'No Constraint %' = [No Constraints]/[Count_Remaining_Tasks]
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Constraint %
+		lineageTag: d7e8afbd-c24c-4d6c-af98-bf3741926ec5
+
+	measure PreviousMonth_StartVariance_Ahead_TT_Task = ```
+			
+			VAR CountResult = 
+			    CALCULATE(
+			        COUNTROWS('01 XER_TASK'),
+			        '01 XER_TASK'[PreviousMonthStartVarianceCategory] = "  Ahead"
+			    )
+			RETURN
+			    IF(
+			        ISBLANK(MIN('01 XER_TASK'[UpdateDate])),
+			        BLANK(),
+			        COALESCE(CountResult, 0)
+			    )
+			```
+		formatString: #,0
+		displayFolder: Previous Month Start Variance
+		lineageTag: 3cd5f7e1-b314-48ff-9281-42abb21b133b
+
+	measure PreviousMonth_FinishVariance_Ahead_TT_Task = ```
+			
+			VAR CountResult = 
+			    CALCULATE(
+			        COUNTROWS('01 XER_TASK'),
+			        '01 XER_TASK'[PreviousMonthFinishVarianceCategory] = "  Ahead"
+			    )
+			RETURN
+			    IF(
+			        ISBLANK(MIN('01 XER_TASK'[UpdateDate])),
+			        BLANK(),
+			        COALESCE(CountResult, 0)
+			    )
+			```
+		formatString: #,0
+		displayFolder: Previous Month Finish Variance
+		lineageTag: 06e45df0-0725-4714-8586-fbd3ee66d93f
+
+	measure Count_Tasks_Continuous = ```
+			
+			VAR CurrentCount = COUNTROWS('01 XER_TASK')
+			
+			VAR Level2_IsActiveInMonth = 
+			    CALCULATE(
+			        NOT ISEMPTY('01 XER_TASK'),
+			        ALL('01 XER_TASK'[PreviousMonthFinishVarianceCategory])
+			    )
+			
+			RETURN
+			
+			    IF(
+			        Level2_IsActiveInMonth,
+			        COALESCE(CurrentCount, 0),
+			        BLANK()
+			    )
+			```
+		formatString: 0
+		lineageTag: c7647c7a-0d79-49e7-8fbb-f6a59d2a8945
+
+	measure 'PreviousMonth_FinishVariance_Ahead_TT_Task (-1)' = ```
+			
+			VAR CountResult = 
+			    CALCULATE(
+			        COUNTROWS('01 XER_TASK'),
+			        '01 XER_TASK'[PreviousMonthFinishVarianceCategory] = "  Ahead"
+			    )
+			RETURN
+			    IF(
+			        ISBLANK(MIN('01 XER_TASK'[UpdateDate])),
+			        BLANK(),
+			        COALESCE(CountResult, 0)
+			    )*-1
+			```
+		formatString: 0
+		displayFolder: Previous Month Finish Variance
+		lineageTag: 0afd5a56-1428-49bb-910c-a394c2aaea65
+
+	measure PreviousMonth_FinishVariance_No_Variance =
+			
+			[PreviousMonth_FinishVariance_<1_Month_TT_Task]-[PreviousMonth_FinishVariance_Ahead_TT_Task (-1)]
+		formatString: 0
+		displayFolder: Previous Month Finish Variance
+		lineageTag: f7e43f11-ce22-4370-8460-ac61a98b998f
+
+	measure PreviousMonth_FiniNoVariance =
+			
+			0 - [PreviousMonth_FinishVariance_Ahead_TT_Task (-1)]
+		formatString: 0
+		lineageTag: 05ec007d-fe69-46bf-be06-01e8a787f132
+
+	partition 'XER  Counts' = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,155 @@
+table 11_XER_CALENDAR_DETAILED
+	lineageTag: 1f0a43f3-8544-4d87-a633-d2a20f36d916
+
+	column clndr_id
+		dataType: string
+		lineageTag: 8ad805ca-29a8-473b-927e-675e0b574d47
+		summarizeBy: none
+		sourceColumn: clndr_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column clndr_name
+		dataType: string
+		lineageTag: f9b18c71-2b62-4e64-b529-2478ee5d0d84
+		summarizeBy: none
+		sourceColumn: clndr_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column clndr_type
+		dataType: string
+		lineageTag: 96eacd9a-a62a-4b9b-a612-2aeaa1eebe99
+		summarizeBy: none
+		sourceColumn: clndr_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column date
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: 955b1234-4a99-4315-911d-c3904ed428e3
+		summarizeBy: none
+		sourceColumn: date
+
+		variation Variation
+			isDefault
+			relationship: 4cfda5d0-5bdd-4929-b05e-9490cd56cdb5
+			defaultHierarchy: LocalDateTable_73dd2f81-3f46-4e40-b34a-37f6368a1c02.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column day_of_week
+		dataType: string
+		lineageTag: 259126b9-141e-4d8b-9644-7642d8f898cb
+		summarizeBy: none
+		sourceColumn: day_of_week
+
+		annotation SummarizationSetBy = Automatic
+
+	column working_day
+		dataType: string
+		lineageTag: 24b1eae2-0eb5-461e-b0eb-3f513aca77a9
+		summarizeBy: none
+		sourceColumn: working_day
+
+		annotation SummarizationSetBy = Automatic
+
+	column work_hours
+		dataType: double
+		formatString: 0
+		lineageTag: c3d1a172-2b0e-419e-9c29-7ab4ccea89c8
+		summarizeBy: sum
+		sourceColumn: work_hours
+
+		annotation SummarizationSetBy = Automatic
+
+	column exception_type
+		dataType: string
+		lineageTag: 8667e2cc-11ac-45a1-8628-d8f0eb5b7a27
+		summarizeBy: none
+		sourceColumn: exception_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column clndr_id_key
+		dataType: string
+		lineageTag: bd456117-dc6e-4361-aa67-44e76f960ab7
+		summarizeBy: none
+		sourceColumn: clndr_id_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column day_of_week_num
+		dataType: int64
+		formatString: 0
+		lineageTag: 82ec4313-b217-4dce-9eea-f28f2e0e0690
+		summarizeBy: sum
+		sourceColumn: day_of_week_num
+
+		annotation SummarizationSetBy = Automatic
+
+	column working_day_int
+		dataType: int64
+		formatString: 0
+		lineageTag: cbc15f6c-618d-4caa-b8d1-410e898d533f
+		summarizeBy: sum
+		sourceColumn: working_day_int
+
+		annotation SummarizationSetBy = Automatic
+
+	column server
+		dataType: string
+		lineageTag: 36861d85-1617-4f80-8460-0ddd2861ccca
+		summarizeBy: none
+		sourceColumn: server
+
+		annotation SummarizationSetBy = Automatic
+
+	column database
+		dataType: string
+		lineageTag: 1f957056-c55f-472f-886f-ef43332d7a04
+		summarizeBy: none
+		sourceColumn: database
+
+		annotation SummarizationSetBy = Automatic
+
+	column filename
+		dataType: string
+		lineageTag: d05e1435-deab-4eaf-9690-fda2a52043d2
+		summarizeBy: none
+		sourceColumn: filename
+
+		annotation SummarizationSetBy = Automatic
+
+	column refresh_date
+		dataType: string
+		lineageTag: 49a51549-f8ed-4dc8-b6e9-cb46759c425f
+		summarizeBy: none
+		sourceColumn: refresh_date
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 11_XER_CALENDAR_DETAILED = m
+		mode: import
+		queryGroup: XER
+		source =
+				let
+				    Source = fnAthenaSource("11_xer_calendar_detailed"),
+				    #"Changed Type" = Table.TransformColumnTypes(Source, {{"date", type date}, {"work_hours", type number}}),
+				    #"Added Conditional Column" = Table.AddColumn(#"Changed Type", "working_day_int", each if [working_day] = "Y" then 1 else 0, Int64.Type),
+				    #"Added Custom" = Table.AddColumn(#"Added Conditional Column", "day_of_week_num", each List.PositionOf(
+				        {"Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"},
+				        [day_of_week]
+				    ) + 1, Int64.Type)
+				in
+				    #"Added Custom"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,38 @@
+table 'Resource Calendar'
+	lineageTag: cf0ce51c-a579-4d64-9c3b-4e7f5880e889
+
+	column Month
+		formatString: Long Date
+		lineageTag: 65d8a249-e728-4289-afe9-883bc6e405dc
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Month]
+
+		variation Variation
+			isDefault
+			relationship: 63a477ee-e3fc-4c17-bbe6-0449b4e63288
+			defaultHierarchy: LocalDateTable_b96da9ad-77fa-429a-b6e7-85d8829f802b.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition 'Resource Calendar' = calculated
+		mode: import
+		source = ```
+				
+				VAR MinDate = MIN('15_XER_RESOURCE_DISTRIBUTION'[start_date])
+				
+				VAR MaxDate = MAX('15_XER_RESOURCE_DISTRIBUTION'[end_date])
+				RETURN
+				DISTINCT (
+				    SELECTCOLUMNS (
+				        CALENDAR ( MinDate, MaxDate ),
+				        "Month", DATE ( YEAR ( [Date] ), MONTH ( [Date] ), 1 )
+				    )
+				)
+				
+				```
+
+	annotation PBI_Id = fe85f5eb663742e6a5d3ddc73cbdd0bc
+

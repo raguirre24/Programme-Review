@@ -1,0 +1,402 @@
+table '03 XER_PROJWBS'
+	lineageTag: d38fbb96-999a-4ae4-9881-0c33936be526
+
+	column seq_num
+		dataType: string
+		lineageTag: 8b204f11-a1fd-459a-ae28-96321095a2b0
+		summarizeBy: none
+		sourceColumn: seq_num
+
+		annotation SummarizationSetBy = Automatic
+
+	column wbs_name
+		dataType: string
+		lineageTag: 38e23525-b155-4a01-82e1-b3c9e639a3e2
+		summarizeBy: none
+		sourceColumn: wbs_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Path = PATH ('03 XER_PROJWBS'[wbs_id_key],'03 XER_PROJWBS'[parent_wbs_id_key])
+		lineageTag: c68d4b25-9ae6-4e49-95fd-33c8709f83f4
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Level_1 = '03 XER_PROJWBS'[ProjectCode]
+		lineageTag: 20447cf6-1c34-4bde-999c-ac027f78a9b7
+		summarizeBy: none
+		sortByColumn: Sort_1
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column Level_2 =
+			
+			VAR WBS4_Name = LOOKUPVALUE(
+			    '03 XER_PROJWBS'[wbs_name],
+			    '03 XER_PROJWBS'[wbs_id_key],
+			    PATHITEM('03 XER_PROJWBS'[Path], 2)
+			)
+			RETURN
+			    COALESCE(WBS4_Name, '03 XER_PROJWBS'[Level_1])
+		lineageTag: f4aea9f6-5d2c-4eee-bdb9-f44e82ec3031
+		summarizeBy: none
+		sortByColumn: Sort_2
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column Level_3 =
+			
+			VAR WBS4_Name = LOOKUPVALUE(
+			    '03 XER_PROJWBS'[wbs_name],
+			    '03 XER_PROJWBS'[wbs_id_key],
+			    PATHITEM('03 XER_PROJWBS'[Path], 3)
+			)
+			RETURN
+			    COALESCE(WBS4_Name, '03 XER_PROJWBS'[Level_2])
+		lineageTag: e4071601-3d94-4cf3-98cf-828ad1e0b751
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Level_4 = ```
+			
+			VAR WBS4_Name = LOOKUPVALUE(
+			    '03 XER_PROJWBS'[wbs_name],
+			    '03 XER_PROJWBS'[wbs_id_key],
+			    PATHITEM('03 XER_PROJWBS'[Path], 4)
+			)
+			RETURN
+			    COALESCE(WBS4_Name, '03 XER_PROJWBS'[Level_3])
+			
+			```
+		lineageTag: cebb8249-83df-4e93-8167-01baf851e169
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Level_5 = ```
+			
+			VAR WBS4_Name = LOOKUPVALUE(
+			    '03 XER_PROJWBS'[wbs_name],
+			    '03 XER_PROJWBS'[wbs_id_key],
+			    PATHITEM('03 XER_PROJWBS'[Path], 5)
+			)
+			RETURN
+			    COALESCE(WBS4_Name, '03 XER_PROJWBS'[Level_4])
+			
+			```
+		lineageTag: fec92be7-422f-44e9-b0e4-12ef257a6394
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sort_1 = LOOKUPVALUE([seq_num],[wbs_id_key],PATHITEM ( '03 XER_PROJWBS'[Path], 1 ))
+		formatString: 0
+		lineageTag: 965225bc-3a57-4569-bbe7-25266c5d97dd
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sort_2 = LOOKUPVALUE([seq_num],[wbs_id_key],PATHITEM ( '03 XER_PROJWBS'[Path], 2 ))
+		formatString: 0
+		lineageTag: 33c8f079-1259-440c-8de3-5c46bfd49d5e
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column wbs_id_key
+		dataType: string
+		lineageTag: 3a27a59d-4b99-4bf7-86e5-7a5ea800570c
+		summarizeBy: none
+		sourceColumn: wbs_id_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column proj_id
+		dataType: string
+		lineageTag: db20b88f-6ea9-474a-b00c-2d0807acd46b
+		summarizeBy: none
+		sourceColumn: proj_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column obs_id
+		dataType: string
+		lineageTag: e063f011-60ca-45c2-9d02-fe96b875610b
+		summarizeBy: none
+		sourceColumn: obs_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column status_code
+		dataType: string
+		lineageTag: 4caf0e93-6b37-4d54-93bf-2b0b06941a5d
+		summarizeBy: none
+		sourceColumn: status_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column wbs_short_name
+		dataType: string
+		lineageTag: 59a03ae1-1179-46e6-b94b-02b92dba98cc
+		summarizeBy: none
+		sourceColumn: wbs_short_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column parent_wbs_id_key
+		dataType: string
+		lineageTag: e13affb1-04d1-45d4-b82f-88970a968134
+		summarizeBy: none
+		sourceColumn: parent_wbs_id_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Min Start for Level 2' =
+			
+			VAR CurrentLevel2 = '03 XER_PROJWBS'[Level_2]
+			RETURN
+			CALCULATE(
+			    MIN('01 XER_TASK'[Start]),
+			    FILTER(
+			        ALL('03 XER_PROJWBS'),
+			        '03 XER_PROJWBS'[Level_2] = CurrentLevel2
+			    )
+			)
+		formatString: dd/mm/yyyy
+		lineageTag: 9dbbfd04-e0c8-4c0c-88f2-f8e482f4c265
+		summarizeBy: none
+
+		variation Variation
+			isDefault
+			relationship: 5268c639-e39e-49d9-9bab-e4c7c4726572
+			defaultHierarchy: LocalDateTable_99be05f3-da41-484b-b443-9abfb098934b.'Date Hierarchy'
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column server
+		dataType: string
+		lineageTag: 232e2b60-20a0-421b-9ddf-e115991c12ae
+		summarizeBy: none
+		sourceColumn: server
+
+		annotation SummarizationSetBy = Automatic
+
+	column database
+		dataType: string
+		lineageTag: 52cd37f7-86a5-4be2-8b7f-dbb7975e0648
+		summarizeBy: none
+		sourceColumn: database
+
+		annotation SummarizationSetBy = Automatic
+
+	column wbs_id
+		dataType: string
+		lineageTag: 63d0ce7a-4ab6-4fd1-a624-ee6f3d5cbf9f
+		summarizeBy: none
+		sourceColumn: wbs_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column est_wt
+		dataType: string
+		lineageTag: 3098c33e-803a-454e-89b7-5658d19f5567
+		summarizeBy: none
+		sourceColumn: est_wt
+
+		annotation SummarizationSetBy = Automatic
+
+	column proj_node_flag
+		dataType: string
+		lineageTag: 7b4cd0e5-82bf-4d2e-8d2c-1ee02c26af0d
+		summarizeBy: none
+		sourceColumn: proj_node_flag
+
+		annotation SummarizationSetBy = Automatic
+
+	column sum_data_flag
+		dataType: string
+		lineageTag: 4f89d896-1aa7-4f6d-a8f2-f4e7c003f27f
+		summarizeBy: none
+		sourceColumn: sum_data_flag
+
+		annotation SummarizationSetBy = Automatic
+
+	column phase_id
+		dataType: string
+		lineageTag: 343edccb-1db4-444d-827a-09e41c991f53
+		summarizeBy: none
+		sourceColumn: phase_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column parent_wbs_id
+		dataType: string
+		lineageTag: 458f99dd-3a5c-4542-8ebc-1e9c8dfe7bf8
+		summarizeBy: none
+		sourceColumn: parent_wbs_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column ev_user_pct
+		dataType: string
+		lineageTag: 4ed8b215-4249-454b-88db-a34a33e908c4
+		summarizeBy: none
+		sourceColumn: ev_user_pct
+
+		annotation SummarizationSetBy = Automatic
+
+	column ev_etc_user_value
+		dataType: string
+		lineageTag: 2a51b2fd-e61c-4a34-9823-1d9cec727681
+		summarizeBy: none
+		sourceColumn: ev_etc_user_value
+
+		annotation SummarizationSetBy = Automatic
+
+	column orig_cost
+		dataType: string
+		lineageTag: 81ef49fe-5ea4-436b-a3e9-bf5734392b90
+		summarizeBy: none
+		sourceColumn: orig_cost
+
+		annotation SummarizationSetBy = Automatic
+
+	column indep_remain_total_cost
+		dataType: string
+		lineageTag: 731a142b-e81a-4254-8243-924b65476539
+		summarizeBy: none
+		sourceColumn: indep_remain_total_cost
+
+		annotation SummarizationSetBy = Automatic
+
+	column ann_dscnt_rate_pct
+		dataType: string
+		lineageTag: 90a598ee-3e84-4ae3-9c1a-b07956d62bee
+		summarizeBy: none
+		sourceColumn: ann_dscnt_rate_pct
+
+		annotation SummarizationSetBy = Automatic
+
+	column dscnt_period_type
+		dataType: string
+		lineageTag: 0beff61c-569a-4ea3-815d-bec39d2ef389
+		summarizeBy: none
+		sourceColumn: dscnt_period_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column indep_remain_work_qty
+		dataType: string
+		lineageTag: f6bb86b7-cb6c-44cc-b1b1-01e696c34f9f
+		summarizeBy: none
+		sourceColumn: indep_remain_work_qty
+
+		annotation SummarizationSetBy = Automatic
+
+	column anticip_start_date
+		dataType: string
+		lineageTag: 7dbecde3-a0bb-4296-9629-c2bda8b4a6bb
+		summarizeBy: none
+		sourceColumn: anticip_start_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column anticip_end_date
+		dataType: string
+		lineageTag: 657f2779-2f2d-4078-af12-e484f0d41b6e
+		summarizeBy: none
+		sourceColumn: anticip_end_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column ev_compute_type
+		dataType: string
+		lineageTag: 4a585dbb-a480-4429-9451-4acf7aaaf73d
+		summarizeBy: none
+		sourceColumn: ev_compute_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column ev_etc_compute_type
+		dataType: string
+		lineageTag: 57abbb08-ba2d-47c9-b649-28efdb4932b7
+		summarizeBy: none
+		sourceColumn: ev_etc_compute_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column guid
+		dataType: string
+		lineageTag: 42f55f4b-6b85-4503-b927-c668a6fa73ed
+		summarizeBy: none
+		sourceColumn: guid
+
+		annotation SummarizationSetBy = Automatic
+
+	column tmpl_guid
+		dataType: string
+		lineageTag: ade15b0d-8483-4467-8700-f627560727f4
+		summarizeBy: none
+		sourceColumn: tmpl_guid
+
+		annotation SummarizationSetBy = Automatic
+
+	column plan_open_state
+		dataType: string
+		lineageTag: 7f7249b9-c945-4c2e-b2f9-93dc6a1b987f
+		summarizeBy: none
+		sourceColumn: plan_open_state
+
+		annotation SummarizationSetBy = Automatic
+
+	column filename
+		dataType: string
+		lineageTag: 3b0c9b1e-2b59-4b43-815f-d59628445a20
+		summarizeBy: none
+		sourceColumn: filename
+
+		annotation SummarizationSetBy = Automatic
+
+	column refresh_date
+		dataType: string
+		lineageTag: eda20ea9-851b-44be-a4c4-a9d3c006c4d0
+		summarizeBy: none
+		sourceColumn: refresh_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProjectCode
+		dataType: string
+		lineageTag: 5a0c250b-75e8-481f-8458-7fd22b012dad
+		summarizeBy: none
+		sourceColumn: ProjectCode
+
+		annotation SummarizationSetBy = Automatic
+
+	partition '03 XER_PROJWBS' = m
+		mode: import
+		queryGroup: XER
+		source =
+				let
+				    Source = fnAthenaSource("03_xer_projwbs"),
+				    #"Added Custom" = Table.AddColumn(Source, "ProjectCode", each Text.BeforeDelimiter([filename], "-"), type text),
+				    #"Replaced Value" = Table.ReplaceValue(#"Added Custom", "", null, Replacer.ReplaceValue, {"parent_wbs_id_key"})
+				in
+				    #"Replaced Value"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

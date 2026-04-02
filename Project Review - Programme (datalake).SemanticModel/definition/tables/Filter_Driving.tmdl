@@ -1,0 +1,42 @@
+table Filter_Driving
+	lineageTag: 0caf13b3-5293-46f2-a1e1-a3e582713fef
+
+	column DrivingFilter
+		lineageTag: 759a1984-ce8c-483d-9e76-fc99b21d1e99
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [DrivingFilter]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Driving Label'
+		lineageTag: c641f78c-2249-4313-8ee5-b08a7ea690f8
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Driving Label]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Filter_Driving = calculated
+		mode: import
+		source =
+				
+				ADDCOLUMNS(
+				    DATATABLE(
+				        "DrivingFilter", STRING,
+				        {
+				            {"Y"},
+				            {"N"}
+				        }
+				    ),
+				    "Driving Label",
+				    SWITCH(
+				        [DrivingFilter],
+				        "Y", "Driving",
+				        "N", "Not Driving",
+				        BLANK()
+				    )
+				)
+
+	annotation PBI_Id = 30f5d9b672f14dfb9a9fc0170bea7108
+

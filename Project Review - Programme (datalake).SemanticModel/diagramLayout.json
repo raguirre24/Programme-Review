@@ -1,0 +1,1130 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 9767.9998779296875,
+        "y": 70056.0009765625
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 5464.6105453154314,
+            "y": 74681.827965519973
+          },
+          "nodeIndex": "02 XER_PROJECT",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 5367.430675331887,
+            "y": 75031.985073560732
+          },
+          "nodeIndex": "01 XER_TASK",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 5083.3035199543847,
+            "y": 74776.570607053043
+          },
+          "nodeIndex": "03 XER_PROJWBS",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 852.36163941535983,
+            "y": 74555.212979028714
+          },
+          "nodeIndex": "05 XER_DATA DATE",
+          "nodeLineageTag": "7c6c4c55-1081-4ac6-83d2-06c7002e1eb7",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1136.3616394153598,
+            "y": 74481.212979028714
+          },
+          "nodeIndex": "10 XER_CALENDARS",
+          "nodeLineageTag": "94ce6dcf-9bfd-48f9-b715-089c33d5f05c",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1420.3616394153598,
+            "y": 74579.212979028714
+          },
+          "nodeIndex": "XER Measures",
+          "nodeLineageTag": "1c5bb7e0-f6a8-44e3-a17e-f631a724c979",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1704.3616394153598,
+            "y": 74531.212979028714
+          },
+          "nodeIndex": "00 CALENDAR",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1988.3616394153598,
+            "y": 74481.212979028714
+          },
+          "nodeIndex": "06 XER_PREDECESSOR",
+          "nodeLineageTag": "6c97f080-826d-44db-8576-0c805feced04",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2556.3616394153596,
+            "y": 74579.212979028714
+          },
+          "nodeIndex": "XER  Counts",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 294.1847511806298,
+            "y": 74494.680424440041
+          },
+          "nodeIndex": "08 XER_ACTVCODE",
+          "nodeLineageTag": "94c1fcbc-2867-47c1-a3a4-33f0b7591422",
+          "size": {
+            "height": 272,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 10,
+            "y": 74475.745533617388
+          },
+          "nodeIndex": "07 XER_ACTVTYPE",
+          "nodeLineageTag": "a20352d7-2126-4b85-a8c7-2d39fe44994f",
+          "size": {
+            "height": 272,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 578.36163941535983,
+            "y": 74556.005417072476
+          },
+          "nodeIndex": "09 XER_TASKACTV",
+          "nodeLineageTag": "eaa0b48e-3c49-4e66-9990-a5c12154c2a0",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 6022.7541391593168,
+            "y": 74538.595319522647
+          },
+          "nodeIndex": "XER Metrics",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 6306.7541391593168,
+            "y": 74538.595319522647
+          },
+          "nodeIndex": "XER S-Curve",
+          "nodeLineageTag": "bce5fdf6-3b4b-40cc-a2e5-8fc88110f0c4",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 6590.7541391593168,
+            "y": 74490.595319522647
+          },
+          "nodeIndex": "00 PLANNED DATE TABLE (PV)",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 8274.7541391593168,
+            "y": 74217.900442503611
+          },
+          "nodeIndex": "Activity Completion",
+          "nodeLineageTag": "2521af7d-3989-47d9-adeb-b629cc490689",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 8842.7541391593168,
+            "y": 74169.900442503611
+          },
+          "nodeIndex": "Filter_Activity_Status",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 9390.7541391593168,
+            "y": 73735.850727402212
+          },
+          "nodeIndex": "Filter_Float",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 9674.7541391593168,
+            "y": 73735.850727402212
+          },
+          "nodeIndex": "Filter_Duration",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 9948.7541391593168,
+            "y": 71102.892563631351
+          },
+          "nodeIndex": "Filter_Finish_Within",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 10222.754139159317,
+            "y": 70753.858977091717
+          },
+          "nodeIndex": "Filter_Start_Within",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 10506.754139159317,
+            "y": 70753.858977091717
+          },
+          "nodeIndex": "Filter_Critical_Status",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 10790.754139159317,
+            "y": 70753.858977091717
+          },
+          "nodeIndex": "Filter_TaskType",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 11064.754139159317,
+            "y": 69746.585849609372
+          },
+          "nodeIndex": "Filter_Driving",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 11338.754139159317,
+            "y": 68640.054325492121
+          },
+          "nodeIndex": "UserPermission",
+          "nodeLineageTag": "16634cc5-2311-4145-a599-5cdf61ee38c3",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 11622.754139159317,
+            "y": 68688.054325492121
+          },
+          "nodeIndex": "Project",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 9116.7541391593168,
+            "y": 73976.3718851665
+          },
+          "nodeIndex": "Filter_Finish_Delay",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 11896.754139159317,
+            "y": 67311.704519504274
+          },
+          "nodeIndex": "Filter_Start_Delay",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 12170.754139159317,
+            "y": 65688.721832487121
+          },
+          "nodeIndex": "Filter_Constraint_Types",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 13012.754139159317,
+            "y": 63683.651693972992
+          },
+          "nodeIndex": "11_XER_CALENDAR_DETAILED",
+          "nodeLineageTag": "1f0a43f3-8544-4d87-a633-d2a20f36d916",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 12778.754139159317,
+            "y": 63659.651693972992
+          },
+          "nodeIndex": "12_XER_RSRC",
+          "nodeLineageTag": "e4336989-d4b0-42ee-88e3-6b90d448d516",
+          "size": {
+            "height": 248,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 12494.754139159317,
+            "y": 63633.651693972992
+          },
+          "nodeIndex": "13_XER_TASKRSRC",
+          "nodeLineageTag": "bf1a8f41-7390-4182-9b31-8922ded5cf83",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 13296.754139159317,
+            "y": 63733.651693972992
+          },
+          "nodeIndex": "Resource Calendar",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 13580.754139159317,
+            "y": 63781.651693972992
+          },
+          "nodeIndex": "Resources",
+          "nodeLineageTag": "cf1806ab-9e2e-449b-9739-bc430ec62adf",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 14148.754139159317,
+            "y": 63733.651693972992
+          },
+          "nodeIndex": "Monthly Resource Distribution Baseline",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 14422.754139159317,
+            "y": 61410.335883704596
+          },
+          "nodeIndex": "Unique_Resources",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 14696.754139159317,
+            "y": 53716.048568895159
+          },
+          "nodeIndex": "WBS Measures",
+          "nodeLineageTag": "075ff10b-d681-4a2b-ac84-012ad91336ac",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 15264.754139159317,
+            "y": 53668.048568895159
+          },
+          "nodeIndex": "06a XER_SUCCESSOR",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 6864.7541391593168,
+            "y": 74405.870844212273
+          },
+          "nodeIndex": "Dynamic Titles & Formatting",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 16106.754139159317,
+            "y": 50262.636271431111
+          },
+          "nodeIndex": "Project_Dimension",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 16380.754139159317,
+            "y": 44884.152145264728
+          },
+          "nodeIndex": "04 XER_BASELINE",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 7432.7541391593168,
+            "y": 74357.870844212273
+          },
+          "nodeIndex": "CurrentDate",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 16948.754139159319,
+            "y": 44920.152145264728
+          },
+          "nodeIndex": "Logos",
+          "nodeLineageTag": "7d6cac0e-2a2a-4c92-992b-cae10d4ca417",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 17222.754139159319,
+            "y": 38616.814944732323
+          },
+          "nodeIndex": "15_XER_RESOURCE_DISTRIBUTION",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 10,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    },
+    {
+      "ordinal": 1,
+      "scrollPosition": {
+        "x": 35.999999046325684,
+        "y": 397.99999237060547
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 523.423264166985,
+            "y": 125.86677695299122
+          },
+          "nodeIndex": "02 XER_PROJECT",
+          "nodeLineageTag": "4174ebbd-f58e-48fd-9c0f-aa9cf47af1ac",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 19
+        },
+        {
+          "location": {
+            "x": 511.36352742555641,
+            "y": 677.09058423874967
+          },
+          "nodeIndex": "01 XER_TASK",
+          "nodeLineageTag": "de86e8cb-d782-4301-95e1-09a8fd150627",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 20
+        },
+        {
+          "location": {
+            "x": 74.822952216611156,
+            "y": 721.62056056939537
+          },
+          "nodeIndex": "03 XER_PROJWBS",
+          "nodeLineageTag": "d38fbb96-999a-4ae4-9881-0c33936be526",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 11
+        },
+        {
+          "location": {
+            "x": 288.23704661970481,
+            "y": 89.967003601512047
+          },
+          "nodeIndex": "10 XER_CALENDARS",
+          "nodeLineageTag": "94ce6dcf-9bfd-48f9-b715-089c33d5f05c",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 12
+        },
+        {
+          "location": {
+            "x": 113.08357216310858,
+            "y": 500.01772506109296
+          },
+          "nodeIndex": "05 XER_DATA DATE",
+          "nodeLineageTag": "7c6c4c55-1081-4ac6-83d2-06c7002e1eb7",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 13
+        },
+        {
+          "location": {
+            "x": 1187.1355391677484,
+            "y": 534.749629692752
+          },
+          "nodeIndex": "00 CALENDAR",
+          "nodeLineageTag": "9ab3ff51-12e9-4ac1-921a-03ddc9df0c6a",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 18
+        },
+        {
+          "location": {
+            "x": 150.59341040637992,
+            "y": 1113.9713097292363
+          },
+          "nodeIndex": "06 XER_PREDECESSOR",
+          "nodeLineageTag": "6c97f080-826d-44db-8576-0c805feced04",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 17
+        },
+        {
+          "location": {
+            "x": 501.21014062578547,
+            "y": 1527.0592128883143
+          },
+          "nodeIndex": "08 XER_ACTVCODE",
+          "nodeLineageTag": "94c1fcbc-2867-47c1-a3a4-33f0b7591422",
+          "size": {
+            "height": 272,
+            "width": 234
+          },
+          "zIndex": 21
+        },
+        {
+          "location": {
+            "x": 512.0994542820539,
+            "y": 1167.7556797721008
+          },
+          "nodeIndex": "09 XER_TASKACTV",
+          "nodeLineageTag": "eaa0b48e-3c49-4e66-9990-a5c12154c2a0",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 14
+        },
+        {
+          "location": {
+            "x": 924.12613415587066,
+            "y": 1544.5182643174312
+          },
+          "nodeIndex": "07 XER_ACTVTYPE",
+          "nodeLineageTag": "a20352d7-2126-4b85-a8c7-2d39fe44994f",
+          "size": {
+            "height": 272,
+            "width": 234
+          },
+          "zIndex": 15
+        },
+        {
+          "location": {
+            "x": 1679.5966813057748,
+            "y": 545.95337524709589
+          },
+          "nodeIndex": "00 PLANNED DATE TABLE (PV)",
+          "nodeLineageTag": "72d45677-ab11-4851-bac2-9f8d12e61405",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 16
+        },
+        {
+          "location": {
+            "x": 1241.2536086500274,
+            "y": 1523.2213592361563
+          },
+          "nodeIndex": "13_XER_TASKRSRC",
+          "nodeLineageTag": "bf1a8f41-7390-4182-9b31-8922ded5cf83",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 4
+        },
+        {
+          "location": {
+            "x": 1833.3324417865674,
+            "y": 1493.0447586208261
+          },
+          "nodeIndex": "12_XER_RSRC",
+          "nodeLineageTag": "e4336989-d4b0-42ee-88e3-6b90d448d516",
+          "size": {
+            "height": 248,
+            "width": 234
+          },
+          "zIndex": 5
+        },
+        {
+          "location": {
+            "x": 2024.6115081181165,
+            "y": 740.09246301533858
+          },
+          "nodeIndex": "Monthly Resource Distribution Baseline",
+          "nodeLineageTag": "fa1cf293-638c-4a26-8dd7-9b7d1bbee83f",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 6
+        },
+        {
+          "location": {
+            "x": 0,
+            "y": 78.105894222441535
+          },
+          "nodeIndex": "11_XER_CALENDAR_DETAILED",
+          "nodeLineageTag": "1f0a43f3-8544-4d87-a633-d2a20f36d916",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 7
+        },
+        {
+          "location": {
+            "x": 141.10634932982438,
+            "y": 1513.623580840539
+          },
+          "nodeIndex": "06a XER_SUCCESSOR",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 9
+        },
+        {
+          "location": {
+            "x": 1516.0381084689054,
+            "y": 1305.323671172941
+          },
+          "nodeIndex": "Project_Dimension",
+          "nodeLineageTag": "b6b57912-cd01-4aa2-a5f1-73da79d32e2a",
+          "size": {
+            "height": 272,
+            "width": 234
+          },
+          "zIndex": 1
+        },
+        {
+          "location": {
+            "x": 943.19646912142161,
+            "y": 1176.2442463164698
+          },
+          "nodeIndex": "04 XER_BASELINE",
+          "nodeLineageTag": "af4b1256-6095-4e3f-9357-ed2535c6aeb5",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 825.5851396675572,
+            "y": 140.43507113426406
+          },
+          "nodeIndex": "CurrentDate",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1491.3333301544189,
+            "y": 1790.8333587646484
+          },
+          "nodeIndex": "Logos",
+          "nodeLineageTag": "7d6cac0e-2a2a-4c92-992b-cae10d4ca417",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "XER",
+      "zoomValue": 40,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    },
+    {
+      "ordinal": 2,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 469.66925348463394,
+            "y": 251.71760765030012
+          },
+          "nodeIndex": "01 XER_TASK",
+          "nodeLineageTag": "de86e8cb-d782-4301-95e1-09a8fd150627",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 11
+        },
+        {
+          "location": {
+            "x": 629.6412248402761,
+            "y": 639.26256971146449
+          },
+          "nodeIndex": "Filter_TaskType",
+          "nodeLineageTag": "c4903885-6a31-41dc-952f-e384bdd8fd40",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 6
+        },
+        {
+          "location": {
+            "x": 46.507993858883538,
+            "y": 66.434681926410576
+          },
+          "nodeIndex": "Filter_Activity_Status",
+          "nodeLineageTag": "27a42665-ac66-442b-a9f9-e9a58bbcf112",
+          "size": {
+            "height": 198.5906668527611,
+            "width": 234
+          },
+          "zIndex": 9
+        },
+        {
+          "location": {
+            "x": 36.517354920288142,
+            "y": 346.00936106140455
+          },
+          "nodeIndex": "Filter_Critical_Status",
+          "nodeLineageTag": "0ab78d90-f60c-4e70-8ce9-50923ffe3c66",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 7
+        },
+        {
+          "location": {
+            "x": 330.62940851548603,
+            "y": 624.61198380978385
+          },
+          "nodeIndex": "Filter_Duration",
+          "nodeLineageTag": "f49209a5-bfdf-4112-a5d2-bff470085b2f",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 8
+        },
+        {
+          "location": {
+            "x": 901.642522257383,
+            "y": 623.75990509183657
+          },
+          "nodeIndex": "Filter_Finish_Within",
+          "nodeLineageTag": "7a71e94a-723c-4857-8723-de405df9dae4",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 1
+        },
+        {
+          "location": {
+            "x": 907.27985484633837,
+            "y": 378.53593747226881
+          },
+          "nodeIndex": "Filter_Float",
+          "nodeLineageTag": "5f4bdbc1-71bc-4327-8afe-11467977f07a",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 2
+        },
+        {
+          "location": {
+            "x": 357.69413872977179,
+            "y": 0
+          },
+          "nodeIndex": "Filter_Start_Within",
+          "nodeLineageTag": "cded6648-5407-4c49-84a9-893915aa092b",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 3
+        },
+        {
+          "location": {
+            "x": 661.892402,
+            "y": 0.664293999999984
+          },
+          "nodeIndex": "Filter_Driving",
+          "nodeLineageTag": "0caf13b3-5293-46f2-a1e1-a3e582713fef",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 4
+        },
+        {
+          "location": {
+            "x": 36.753418006302581,
+            "y": 615.10398995090043
+          },
+          "nodeIndex": "Filter_Finish_Delay",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 10
+        },
+        {
+          "location": {
+            "x": 1260.6800200000002,
+            "y": 294.74342
+          },
+          "nodeIndex": "Filter_Start_Delay",
+          "nodeLineageTag": "d5e2a7f3-4ad9-448d-928d-4a4c445d48f9",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 5
+        },
+        {
+          "location": {
+            "x": 1141.9854330000003,
+            "y": 41.410197000000046
+          },
+          "nodeIndex": "Filter_Constraint_Types",
+          "nodeLineageTag": "89d9aa1d-d1b1-4006-8bad-b6a49ee90716",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "Filters",
+      "zoomValue": 56.447393005377734,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    },
+    {
+      "ordinal": 3,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 457.026502012441,
+            "y": 775.39175543422141
+          },
+          "nodeIndex": "Monthly Resource Distribution Baseline",
+          "nodeLineageTag": "fa1cf293-638c-4a26-8dd7-9b7d1bbee83f",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 5
+        },
+        {
+          "location": {
+            "x": 852.38305001469382,
+            "y": 75
+          },
+          "nodeIndex": "Unique_Resources",
+          "nodeLineageTag": "b1122c23-14f0-4799-ad33-0ccd4e144db5",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 4
+        },
+        {
+          "location": {
+            "x": 480.97125505304052,
+            "y": 26.404807434637348
+          },
+          "nodeIndex": "01 XER_TASK",
+          "nodeLineageTag": "de86e8cb-d782-4301-95e1-09a8fd150627",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 3
+        },
+        {
+          "location": {
+            "x": 1136.3830500146937,
+            "y": 25
+          },
+          "nodeIndex": "12_XER_RSRC",
+          "nodeLineageTag": "e4336989-d4b0-42ee-88e3-6b90d448d516",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 1
+        },
+        {
+          "location": {
+            "x": 43.167590173811732,
+            "y": 328.93083348991655
+          },
+          "nodeIndex": "15_XER_RESOURCE_DISTRIBUTION",
+          "nodeLineageTag": "87556888-48ae-43af-af95-ce6b18405b46",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 6
+        },
+        {
+          "location": {
+            "x": 1469.0606862073714,
+            "y": 867.03260298886721
+          },
+          "nodeIndex": "13_XER_TASKRSRC",
+          "nodeLineageTag": "bf1a8f41-7390-4182-9b31-8922ded5cf83",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 2
+        }
+      ],
+      "name": "Resources",
+      "zoomValue": 34.305427922565265,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    },
+    {
+      "ordinal": 4,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 82,
+            "y": 186
+          },
+          "nodeIndex": "06 XER_PREDECESSOR",
+          "nodeLineageTag": "6c97f080-826d-44db-8576-0c805feced04",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "Predecessors",
+      "zoomValue": 100,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "XER",
+  "defaultDiagram": "All tables"
+}

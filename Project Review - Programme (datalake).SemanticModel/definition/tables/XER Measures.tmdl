@@ -1,0 +1,263 @@
+table 'XER Measures'
+	lineageTag: 1c5bb7e0-f6a8-44e3-a17e-f631a724c979
+
+	measure 'Variance to Previous Update' = ```
+			
+			VAR IsTaskSelected = HASONEVALUE('01 XER_TASK'[task_code])
+			VAR IsWBSSelected = 
+			    ISFILTERED('03 XER_PROJWBS'[Level_2]) || 
+			    ISFILTERED('03 XER_PROJWBS'[Level_3]) || 
+			    ISFILTERED('03 XER_PROJWBS'[Level_4]) || 
+			    ISFILTERED('03 XER_PROJWBS'[Level_5])
+			
+			VAR CurrentTaskCode = IF(IsTaskSelected, SELECTEDVALUE('01 XER_TASK'[task_code]), BLANK())
+			VAR CurrentProject = SELECTEDVALUE('01 XER_TASK'[ProjectName], BLANK())
+			VAR CurrentMonthUpdate = SELECTEDVALUE('01 XER_TASK'[UpdateDate], BLANK())
+			
+			VAR SelectedTaskTypes = SELECTEDVALUE(Filter_TaskType[TaskType], "All")
+			
+			// FIXED: Find previous month using ALL('01 XER_TASK') to escape bidirectional filters
+			VAR PreviousMonthUpdate = 
+			    CALCULATE(
+			        MAX('01 XER_TASK'[UpdateDate]),
+			        FILTER(
+			            ALL('01 XER_TASK'),
+			            '01 XER_TASK'[UpdateDate] < CurrentMonthUpdate &&
+			            '01 XER_TASK'[ProjectName] = CurrentProject
+			        )
+			    )
+			
+			VAR IsFirstMonth = ISBLANK(PreviousMonthUpdate)
+			
+			// ============================================
+			// CURRENT MONTH - MAX FINISH DATE (Original Logic)
+			// ============================================
+			VAR FinishCurrent = 
+			    SWITCH(
+			        TRUE(),
+			        IsTaskSelected,
+			        CALCULATE(
+			            MAX('01 XER_TASK'[Finish]),
+			            FILTER(
+			                ALL('01 XER_TASK'),
+			                '01 XER_TASK'[task_code] = CurrentTaskCode &&
+			                '01 XER_TASK'[UpdateDate] = CurrentMonthUpdate &&
+			                '01 XER_TASK'[ProjectName] = CurrentProject &&
+			                (SelectedTaskTypes = "All" || '01 XER_TASK'[TaskType_Classified] = SelectedTaskTypes)
+			            )
+			        ),
+			        IsWBSSelected,
+			        // Original WBS logic with ALLEXCEPT
+			        CALCULATE(
+			            MAX('01 XER_TASK'[Finish]),
+			            ALLEXCEPT('03 XER_PROJWBS',
+			                '03 XER_PROJWBS'[Level_2],
+			                '03 XER_PROJWBS'[Level_3],
+			                '03 XER_PROJWBS'[Level_4],
+			                '03 XER_PROJWBS'[Level_5]
+			            ),
+			            '01 XER_TASK'[UpdateDate] = CurrentMonthUpdate,
+			            '01 XER_TASK'[ProjectName] = CurrentProject,
+			            SelectedTaskTypes = "All" || '01 XER_TASK'[TaskType_Classified] = SelectedTaskTypes
+			        ),
+			        CALCULATE(
+			            MAX('01 XER_TASK'[Finish]),
+			            FILTER(
+			                ALL('01 XER_TASK'),
+			                '01 XER_TASK'[UpdateDate] = CurrentMonthUpdate &&
+			                '01 XER_TASK'[ProjectName] = CurrentProject &&
+			                (SelectedTaskTypes = "All" || '01 XER_TASK'[TaskType_Classified] = SelectedTaskTypes)
+			            )
+			        )
+			    )
+			
+			// ============================================
+			// PREVIOUS MONTH - MAX FINISH DATE (Original Logic)
+			// ============================================
+			VAR FinishPrevious = 
+			    IF(
+			        NOT(IsFirstMonth),
+			        SWITCH(
+			            TRUE(),
+			            IsTaskSelected,
+			            CALCULATE(
+			                MAX('01 XER_TASK'[Finish]),
+			                FILTER(
+			                    ALL('01 XER_TASK'),
+			                    '01 XER_TASK'[task_code] = CurrentTaskCode &&
+			                    '01 XER_TASK'[UpdateDate] = PreviousMonthUpdate &&
+			                    '01 XER_TASK'[ProjectName] = CurrentProject &&
+			                    (SelectedTaskTypes = "All" || '01 XER_TASK'[TaskType_Classified] = SelectedTaskTypes)
+			                )
+			            ),
+			            IsWBSSelected,
+			            // Original WBS logic with ALLEXCEPT
+			            CALCULATE(
+			                MAX('01 XER_TASK'[Finish]),
+			                ALLEXCEPT('03 XER_PROJWBS',
+			                    '03 XER_PROJWBS'[Level_2],
+			                    '03 XER_PROJWBS'[Level_3],
+			                    '03 XER_PROJWBS'[Level_4],
+			                    '03 XER_PROJWBS'[Level_5]
+			                ),
+			                '01 XER_TASK'[UpdateDate] = PreviousMonthUpdate,
+			                '01 XER_TASK'[ProjectName] = CurrentProject,
+			                SelectedTaskTypes = "All" || '01 XER_TASK'[TaskType_Classified] = SelectedTaskTypes
+			            ),
+			            CALCULATE(
+			                MAX('01 XER_TASK'[Finish]),
+			                FILTER(
+			                    ALL('01 XER_TASK'),
+			                    '01 XER_TASK'[UpdateDate] = PreviousMonthUpdate &&
+			                    '01 XER_TASK'[ProjectName] = CurrentProject &&
+			                    (SelectedTaskTypes = "All" || '01 XER_TASK'[TaskType_Classified] = SelectedTaskTypes)
+			                )
+			            )
+			        ),
+			        BLANK()
+			    )
+			
+			// ============================================
+			// RETURN VARIANCE
+			// ============================================
+			RETURN
+			    IF(
+			        IsFirstMonth,
+			        0,
+			        IF(
+			            AND(NOT(ISBLANK(FinishCurrent)), NOT(ISBLANK(FinishPrevious))),
+			            IF(
+			                FinishCurrent = FinishPrevious,
+			                0,
+			                NETWORKDAYS(FinishPrevious, FinishCurrent)
+			            ),
+			            BLANK()
+			        )
+			    )
+			```
+		formatString: 0
+		lineageTag: 6ba58ba7-c860-478c-ab62-c667ee1ca436
+
+	measure ShowDuration =
+			
+			IF(
+			    ISINSCOPE('01 XER_TASK'[task_code]),
+			    SELECTEDVALUE('01 XER_TASK'[remaining_working_days]),
+			    BLANK()
+			)
+		formatString: 0
+		lineageTag: 8e9041be-6a3f-44ac-9a5b-9712f6513e9b
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure ShowTaskType = ```
+			
+			IF(
+			    ISINSCOPE('01 XER_TASK'[task_code]),
+			    SELECTEDVALUE('01 XER_TASK'[TaskType_Classified]),
+			    BLANK()
+			)
+			
+			```
+		lineageTag: ad80b33e-a617-4ec7-b13a-2e1eefd41bae
+
+	measure ShowTaskName = ```
+			
+			IF(
+			    ISINSCOPE('01 XER_TASK'[task_code]),
+			    SELECTEDVALUE('01 XER_TASK'[task_name]),
+			    BLANK()
+			)
+			
+			```
+		lineageTag: 88ad46a6-9d70-4673-9527-6d6e7eb31670
+
+	measure ShowVariance =
+			
+			IF(
+			    ISINSCOPE('01 XER_TASK'[task_code]),
+			    SELECTEDVALUE('01 XER_TASK'[Finish_Variance_Previous_Month]),
+			    BLANK()
+			)
+		formatString: 0
+		lineageTag: bc62266d-0e70-4c6c-a0e5-559010dbf602
+
+	measure ShowVarianceBL =
+			
+			IF(
+			    ISINSCOPE('01 XER_TASK'[task_code]),
+			    SELECTEDVALUE('01 XER_TASK'[Variance_Finish_BL]),
+			    BLANK()
+			)
+		formatString: 0
+		lineageTag: 293b6637-e93a-408a-b9d3-84dc4e9e140b
+
+	measure ShowFloat =
+			
+			IF(
+			    ISINSCOPE('01 XER_TASK'[task_code]),
+			    SELECTEDVALUE('01 XER_TASK'[total_float]),
+			    BLANK()
+			)
+		formatString: 0
+		lineageTag: 58233990-4eab-4e42-930b-8a068a32f4c0
+
+	measure 'Previous Data Date' = ```
+			
+			VAR CurrentTaskCode = SELECTEDVALUE('01 XER_TASK'[task_code])
+			VAR CurrentDataDate = MAX('01 XER_TASK'[data_date])
+			VAR PreviousDataDate =
+			    CALCULATE(
+			        MAX('01 XER_TASK'[data_date]),
+			        FILTER(
+			            ALL('01 XER_TASK'),
+			            '01 XER_TASK'[task_code] = CurrentTaskCode &&
+			            '01 XER_TASK'[data_date] < CurrentDataDate
+			        )
+			    )
+			RETURN
+			    PreviousDataDate
+			
+			```
+		formatString: General Date
+		lineageTag: 5694209f-6ac6-4f8f-bbdf-4d4eabb4269d
+
+	measure ShowConstraint =
+			
+			IF(
+			    ISINSCOPE('01 XER_TASK'[task_code]),
+			    SELECTEDVALUE('01 XER_TASK'[cstr_type]),
+			    BLANK()
+			)
+		lineageTag: cc4cdf71-619c-4cb5-ab37-00537eca6f85
+
+	measure ShowCalendar =
+			
+			IF(
+			    ISINSCOPE('01 XER_TASK'[task_code]),
+			    SELECTEDVALUE('01 XER_TASK'[Calendar]),
+			    BLANK()
+			)
+		lineageTag: 99664ae0-37b8-4094-9cc5-91f464074fbb
+
+	measure ShowDriven =
+			
+			IF(
+			    ISINSCOPE('01 XER_TASK'[task_code]),
+			    SELECTEDVALUE('01 XER_TASK'[Driven_DataDate]),
+			    BLANK()
+			)
+		lineageTag: 8f33bfca-85e0-436a-9eb3-90a800f64948
+
+	partition 'XER Measures' = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,159 @@
+table '10 XER_CALENDARS'
+	lineageTag: 94ce6dcf-9bfd-48f9-b715-089c33d5f05c
+
+	column last_chng_date
+		dataType: string
+		lineageTag: 46cc5ee4-8c93-4236-bdb3-9a33e137bcf1
+		summarizeBy: none
+		sourceColumn: last_chng_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column day_hr_cnt
+		dataType: double
+		formatString: 0
+		lineageTag: 2cb91832-b9c1-4b1c-b8ae-6fc72ca48f1f
+		summarizeBy: none
+		sourceColumn: day_hr_cnt
+
+		annotation SummarizationSetBy = Automatic
+
+	column clndr_id_key
+		dataType: string
+		lineageTag: 82773d05-0573-4c25-ade7-f4870a47b391
+		summarizeBy: none
+		sourceColumn: clndr_id_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column clndr_name
+		dataType: string
+		lineageTag: eac87f0c-8f37-4d3d-b952-4327ce8cdcd1
+		summarizeBy: none
+		sourceColumn: clndr_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column server
+		dataType: string
+		lineageTag: e5fb62c2-a2bd-4179-8186-901b3c73f064
+		summarizeBy: none
+		sourceColumn: server
+
+		annotation SummarizationSetBy = Automatic
+
+	column database
+		dataType: string
+		lineageTag: df394022-0ebf-498e-af54-246d57bef642
+		summarizeBy: none
+		sourceColumn: database
+
+		annotation SummarizationSetBy = Automatic
+
+	column clndr_id
+		dataType: string
+		lineageTag: c34a5aeb-fafa-43cc-a4fc-4da84c82da71
+		summarizeBy: none
+		sourceColumn: clndr_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column default_flag
+		dataType: string
+		lineageTag: 8ab46a55-f840-44d4-bdfc-c490d6b1dbaa
+		summarizeBy: none
+		sourceColumn: default_flag
+
+		annotation SummarizationSetBy = Automatic
+
+	column proj_id
+		dataType: string
+		lineageTag: c366be27-d546-4c9d-be5b-36af071321fd
+		summarizeBy: none
+		sourceColumn: proj_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column base_clndr_id
+		dataType: string
+		lineageTag: f7b9b6cc-6fe1-4d43-b4b0-f14e607c8103
+		summarizeBy: none
+		sourceColumn: base_clndr_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column clndr_type
+		dataType: string
+		lineageTag: 31ea2094-6180-4dbf-976c-ef59f1e5e026
+		summarizeBy: none
+		sourceColumn: clndr_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column week_hr_cnt
+		dataType: double
+		lineageTag: c8279bd6-d97e-4289-8bef-d17c2ba8d0f3
+		summarizeBy: none
+		sourceColumn: week_hr_cnt
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column month_hr_cnt
+		dataType: double
+		lineageTag: b2c3dc85-ce0a-41ad-9c3e-dd9cbc0c66f4
+		summarizeBy: none
+		sourceColumn: month_hr_cnt
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column year_hr_cnt
+		dataType: string
+		lineageTag: be8694d0-3242-4179-a2f8-22aa5c5584b6
+		summarizeBy: none
+		sourceColumn: year_hr_cnt
+
+		annotation SummarizationSetBy = Automatic
+
+	column rsrc_private
+		dataType: string
+		lineageTag: dea9a3be-8f68-4539-9477-d6ab2932f78d
+		summarizeBy: none
+		sourceColumn: rsrc_private
+
+		annotation SummarizationSetBy = Automatic
+
+	column filename
+		dataType: string
+		lineageTag: 0f42e940-4c3e-4dc6-942f-56943ef258c1
+		summarizeBy: none
+		sourceColumn: filename
+
+		annotation SummarizationSetBy = Automatic
+
+	column refresh_date
+		dataType: string
+		lineageTag: 26ddbd80-6b57-470e-8e35-cf4cd1e7185d
+		summarizeBy: none
+		sourceColumn: refresh_date
+
+		annotation SummarizationSetBy = Automatic
+
+	partition '10 XER_CALENDARS' = m
+		mode: import
+		queryGroup: XER
+		source =
+				let
+				    Source = fnAthenaSource("10_xer_calendar"),
+				    #"Changed Type" = Table.TransformColumnTypes(Source, {{"day_hr_cnt", type number}, {"week_hr_cnt", type number}, {"month_hr_cnt", type number}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type", {"clndr_data"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

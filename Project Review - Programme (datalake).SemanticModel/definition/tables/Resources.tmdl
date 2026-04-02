@@ -1,0 +1,161 @@
+table Resources
+	lineageTag: cf1806ab-9e2e-449b-9739-bc430ec62adf
+
+	measure 'Actual Quantity' =
+			
+			CALCULATE(
+			    SUM('15_XER_RESOURCE_DISTRIBUTION'[monthly_quantity]),
+			    '15_XER_RESOURCE_DISTRIBUTION'[is_actual] = TRUE,
+			    TREATAS(VALUES('Resource Calendar'[Month]), '15_XER_RESOURCE_DISTRIBUTION'[distribution_month])
+			)
+		formatString: #,0
+		displayFolder: Update
+		lineageTag: 80197dca-6c7a-4d86-8f09-4b39cfe0b49d
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'Cumulative Quantity' = ```
+			
+			VAR CurrentMonth = MAX('Resource Calendar'[Month])
+			
+			-- Find the last month with current data
+			VAR LastMonthWithCurrentData = 
+			    CALCULATE(
+			        MAX('15_XER_RESOURCE_DISTRIBUTION'[distribution_month]),
+			        ALL('Resource Calendar'),
+			        ALL('15_XER_RESOURCE_DISTRIBUTION'[distribution_month])
+			    )
+			
+			-- Find the last month with baseline data
+			VAR LastMonthWithBaselineData = 
+			    CALCULATE(
+			        MAX('Monthly Resource Distribution Baseline'[distribution_month]),
+			        ALL('Resource Calendar'),
+			        ALL('Monthly Resource Distribution Baseline'[distribution_month])
+			    )
+			
+			-- Use the later of the two dates
+			VAR MaxMonthOverall = MAX(LastMonthWithCurrentData, LastMonthWithBaselineData)
+			
+			-- Calculate cumulative up to CURRENT month (not last month)
+			VAR AllMonthsUpToCurrent = 
+			    FILTER(
+			        ALL('Resource Calendar'[Month]),
+			        'Resource Calendar'[Month] <= CurrentMonth
+			    )
+			    
+			VAR CumulativeValue = 
+			    CALCULATE(
+			        SUM('15_XER_RESOURCE_DISTRIBUTION'[monthly_quantity]),
+			        TREATAS(AllMonthsUpToCurrent, '15_XER_RESOURCE_DISTRIBUTION'[distribution_month])
+			    )
+			
+			RETURN
+			    IF(
+			        CurrentMonth <= MaxMonthOverall,
+			        CumulativeValue,
+			        BLANK()
+			    )
+			```
+		displayFolder: Update
+		lineageTag: 27a2dff6-71f1-4621-859d-0d06e2a9f32d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Remaining Quantity' =
+			
+			CALCULATE(
+			    SUM('15_XER_RESOURCE_DISTRIBUTION'[monthly_quantity]),
+			    '15_XER_RESOURCE_DISTRIBUTION'[is_actual] = FALSE,
+			    TREATAS(VALUES('Resource Calendar'[Month]), '15_XER_RESOURCE_DISTRIBUTION'[distribution_month])
+			)
+		formatString: #,0
+		displayFolder: Update
+		lineageTag: a889c609-ccfe-4806-9677-3827c44f7a05
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'Total Quantity' =
+			
+			CALCULATE(
+			    SUM('15_XER_RESOURCE_DISTRIBUTION'[monthly_quantity]),
+			    TREATAS(VALUES('Resource Calendar'[Month]), '15_XER_RESOURCE_DISTRIBUTION'[distribution_month])
+			)
+		formatString: #,0
+		displayFolder: Update
+		lineageTag: f21ea78e-f995-43cf-ae7f-59d6a97a74b7
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'Cumulative Baseline Quantity' = ```
+			
+			VAR CurrentMonthValue = MAX('Resource Calendar'[Month])
+			
+			-- Find the last month with baseline data
+			VAR LastMonthWithBaselineData = 
+			    CALCULATE(
+			        MAX('Monthly Resource Distribution Baseline'[distribution_month]),
+			        ALL('Resource Calendar'),
+			        ALL('Monthly Resource Distribution Baseline'[distribution_month]),
+			        REMOVEFILTERS(CurrentDate)
+			    )
+			
+			-- Find the last month with current data
+			VAR LastMonthWithCurrentData = 
+			    CALCULATE(
+			        MAX('15_XER_RESOURCE_DISTRIBUTION'[distribution_month]),
+			        ALL('Resource Calendar'),
+			        ALL('15_XER_RESOURCE_DISTRIBUTION'[distribution_month])
+			    )
+			
+			-- Use the later of the two dates
+			VAR MaxMonthOverall = MAX(LastMonthWithBaselineData, LastMonthWithCurrentData)
+			
+			-- Calculate cumulative up to CURRENT month (not last month)
+			VAR AllMonthsUpToCurrent = 
+			    FILTER(
+			        ALL('Resource Calendar'[Month]),
+			        'Resource Calendar'[Month] <= CurrentMonthValue
+			    )
+			    
+			VAR CumulativeValue = 
+			    CALCULATE(
+			        SUM('Monthly Resource Distribution Baseline'[monthly_quantity]),
+			        TREATAS(AllMonthsUpToCurrent, 'Monthly Resource Distribution Baseline'[distribution_month]),
+			        REMOVEFILTERS(CurrentDate)
+			    )
+			
+			RETURN
+			    IF(
+			        CurrentMonthValue <= MaxMonthOverall,
+			        CumulativeValue,
+			        BLANK()
+			    )
+			```
+		displayFolder: Baseline
+		lineageTag: 7593cdc6-2131-49c8-bee2-ec2f78ac8d7f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Total Baseline Quantity' =
+			
+			CALCULATE (
+			    SUM ( 'Monthly Resource Distribution Baseline'[monthly_quantity] ),
+			    ALL ( 'Resource Calendar' )
+			)
+		displayFolder: Baseline
+		lineageTag: c985c4ff-17b7-4bab-b30f-2f316c6bb3df
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition Resources = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Removed Columns" = Table.RemoveColumns(Source,{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

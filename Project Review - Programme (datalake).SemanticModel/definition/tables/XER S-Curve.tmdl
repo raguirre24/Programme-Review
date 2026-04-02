@@ -1,0 +1,470 @@
+table 'XER S-Curve'
+	lineageTag: bce5fdf6-3b4b-40cc-a2e5-8fc88110f0c4
+
+	measure Cumulative_Count_Finish_TT_Task = ```
+			
+			CALCULATE(
+			    COUNTROWS('01 XER_TASK'),
+			    FILTER(
+			        ALLSELECTED('01 XER_TASK'),
+			        '01 XER_TASK'[Finish] <= MAX('01 XER_TASK'[Finish])
+			    )
+			)
+			
+			```
+		formatString: #,0
+		displayFolder: Activity Completion
+		lineageTag: 43d431e6-5fae-47ef-a42f-e574cd79eae0
+
+	measure Cumulative_Count_Actual_Finish = ```
+			
+			VAR MaxDataDate = MAX('01 XER_TASK'[data_date])
+			VAR CurrentMonth = MAX('00 CALENDAR'[Date])
+			
+			// Extract year and month components for comparison
+			VAR CurrentYearMonth = YEAR(CurrentMonth) * 100 + MONTH(CurrentMonth)
+			VAR MaxDataYearMonth = YEAR(MaxDataDate) * 100 + MONTH(MaxDataDate)
+			
+			VAR LastDateInCurrentMonth = 
+			    CALCULATE(
+			        MAX('00 CALENDAR'[Date]),
+			        '00 CALENDAR'[Date] = CurrentMonth
+			    )
+			VAR AllMonthsUpToCurrent = 
+			    FILTER(
+			        ALL('00 CALENDAR'[Date]),
+			        '00 CALENDAR'[Date] <= CurrentMonth
+			    )
+			RETURN
+			IF(
+			    CurrentYearMonth <= MaxDataYearMonth, // Compare year-month values instead of dates
+			    CALCULATE(
+			        COUNTA('01 XER_TASK'[act_end_date]),
+			        USERELATIONSHIP('01 XER_TASK'[act_end_date], '00 CALENDAR'[Date]),
+			        AllMonthsUpToCurrent
+			    ),
+			    BLANK()
+			)
+			```
+		formatString: #,0
+		displayFolder: Overall Progress Count
+		lineageTag: d3381464-a2b8-4f18-a0d2-35300e48a1d3
+
+	measure Cumulative_Count_BL_Finish_TT_Task =
+			
+			CALCULATE(
+			    COUNTA('04 XER_BASELINE'[Finish]),
+			    REMOVEFILTERS(CurrentDate[UpdateDate]),
+			    USERELATIONSHIP(
+			        '04 XER_BASELINE'[Finish],
+			        '00 CALENDAR'[Date]
+			    ),
+			    FILTER(
+			        ALLSELECTED('00 CALENDAR'[Date]),
+			        ISONORAFTER('00 CALENDAR'[Date], MAX('00 CALENDAR'[Date]), DESC)
+			    )
+			)
+		formatString: 0
+		displayFolder: Activity Completion
+		lineageTag: 5bc5298d-2805-4698-953a-8775d1e8edf1
+
+	measure Cumulative_Count_Early_TT_Task = ```
+			
+			VAR CurrentMonth = MAX('00 CALENDAR'[Date])
+			VAR AllMonthsUpToCurrent = 
+			    FILTER(
+			        ALL('00 CALENDAR'[Date]),
+			        '00 CALENDAR'[Date] <= CurrentMonth
+			    )
+			RETURN
+			CALCULATE(
+			    COUNTROWS('01 XER_TASK'),
+			    USERELATIONSHIP('01 XER_TASK'[Effective_Early_End], '00 CALENDAR'[Date]),
+			    AllMonthsUpToCurrent)
+			```
+		formatString: #,0
+		displayFolder: Overall Progress Count
+		lineageTag: 5cb65ed8-008f-41c1-b5ed-2a6b8938f296
+
+	measure Cumulative_Count_Late_TT_Task = ```
+			
+			VAR CurrentMonth = MAX('00 CALENDAR'[Date])
+			VAR AllMonthsUpToCurrent = 
+			    FILTER(
+			        ALL('00 CALENDAR'[Date]),
+			        '00 CALENDAR'[Date] <= CurrentMonth
+			    )
+			RETURN
+			CALCULATE(
+			    COUNTROWS('01 XER_TASK'),
+			    USERELATIONSHIP('01 XER_TASK'[Effective_Late_End], '00 CALENDAR'[Date]),
+			    AllMonthsUpToCurrent)
+			
+			```
+		formatString: #,0
+		displayFolder: Overall Progress Count
+		lineageTag: 44034bbd-cbfe-4976-8e56-a8cf87f7aa7a
+
+	measure Cumulative_Count_BL_Late_TT_Task = ```
+			
+			VAR CurrentMonth = MAX('00 CALENDAR'[Date])
+			VAR AllMonthsUpToCurrent = 
+			    FILTER(
+			        ALL('00 CALENDAR'[Date]),
+			        '00 CALENDAR'[Date] <= CurrentMonth
+			    )
+			RETURN
+			CALCULATE(
+			    COUNTROWS('01 XER_TASK'),
+			    USERELATIONSHIP('01 XER_TASK'[Baseline Effective_Late_End], '00 CALENDAR'[Date]),
+			    AllMonthsUpToCurrent,
+			    NOT(ISBLANK('01 XER_TASK'[Baseline Effective_Late_End]))
+			)
+			```
+		formatString: #,0
+		displayFolder: Overall Progress Count
+		lineageTag: 771349f6-b68d-4796-aed0-b07b20422103
+
+	measure Cumulative_Count_BL_Early_TT_Task = ```
+			
+			VAR CurrentMonth = MAX('00 CALENDAR'[Date])
+			VAR AllMonthsUpToCurrent = 
+			    FILTER(
+			        ALL('00 CALENDAR'[Date]),
+			        '00 CALENDAR'[Date] <= CurrentMonth
+			    )
+			RETURN
+			CALCULATE(
+			    COUNTROWS('01 XER_TASK'),
+			    USERELATIONSHIP('01 XER_TASK'[Baseline Effective_Early_End], '00 CALENDAR'[Date]),
+			    AllMonthsUpToCurrent,
+			    NOT(ISBLANK('01 XER_TASK'[Baseline Effective_Early_End]))
+			)
+			```
+		formatString: #,0
+		displayFolder: Overall Progress Count
+		lineageTag: 1bfe57e1-37e4-47fd-8db7-632e44abf389
+
+	measure Percentage_Cumulative_Actual_Finish = ```
+			
+			VAR MaxDataDate = MAX('01 XER_TASK'[data_date])
+			VAR CurrentMonth = MAX('00 CALENDAR'[Date])
+			
+			// Extract year and month components for comparison
+			VAR CurrentYearMonth = YEAR(CurrentMonth) * 100 + MONTH(CurrentMonth)
+			VAR MaxDataYearMonth = YEAR(MaxDataDate) * 100 + MONTH(MaxDataDate)
+			
+			VAR AllMonthsUpToCurrent = 
+			    FILTER(
+			        ALL('00 CALENDAR'[Date]),
+			        '00 CALENDAR'[Date] <= CurrentMonth
+			    )
+			
+			// 1. Calculate the Numerator (Cumulative Finished Tasks)
+			VAR CumulativeFinishedCount = 
+			    CALCULATE(
+			        COUNTA('01 XER_TASK'[act_end_date]),
+			        USERELATIONSHIP('01 XER_TASK'[act_end_date], '00 CALENDAR'[Date]),
+			        AllMonthsUpToCurrent
+			    )
+			
+			// 2. Calculate the Denominator (Total Scope of Tasks)
+			// We remove filters from the Calendar table to get the total count for the whole project
+			VAR TotalProjectTasks = 
+			    CALCULATE(
+			        COUNTROWS('01 XER_TASK'),
+			        ALL('00 CALENDAR') 
+			    )
+			
+			RETURN
+			IF(
+			    CurrentYearMonth <= MaxDataYearMonth, 
+			    DIVIDE(CumulativeFinishedCount, TotalProjectTasks, 0),
+			    BLANK()
+			)
+			
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Overall Progress %
+		lineageTag: 57830d6b-565b-44d5-a6e1-b81b5b9edf9a
+
+	measure Percentage_Cumulative_Early = ```
+			
+			VAR CurrentMonth = MAX('00 CALENDAR'[Date])
+			
+			VAR AllMonthsUpToCurrent = 
+			    FILTER(
+			        ALL('00 CALENDAR'[Date]),
+			        '00 CALENDAR'[Date] <= CurrentMonth
+			    )
+			
+			VAR CumulativeCount = 
+			    CALCULATE(
+			        COUNTROWS('01 XER_TASK'),
+			        USERELATIONSHIP('01 XER_TASK'[Effective_Early_End], '00 CALENDAR'[Date]),
+			        AllMonthsUpToCurrent
+			    )
+			
+			VAR TotalProjectTasks = 
+			    CALCULATE(
+			        COUNTROWS('01 XER_TASK'),
+			        ALL('00 CALENDAR')
+			    )
+			
+			RETURN
+			DIVIDE(CumulativeCount, TotalProjectTasks, 0)
+			
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Overall Progress %
+		lineageTag: 8540ff04-0126-45c1-928e-d7bc2a10ec46
+
+	measure Percentage_Cumulative_Late = ```
+			
+			VAR CurrentMonth = MAX('00 CALENDAR'[Date])
+			
+			VAR AllMonthsUpToCurrent = 
+			    FILTER(
+			        ALL('00 CALENDAR'[Date]),
+			        '00 CALENDAR'[Date] <= CurrentMonth
+			    )
+			
+			VAR CumulativeCount = 
+			    CALCULATE(
+			        COUNTROWS('01 XER_TASK'),
+			        USERELATIONSHIP('01 XER_TASK'[Effective_Late_End], '00 CALENDAR'[Date]),
+			        AllMonthsUpToCurrent
+			    )
+			
+			VAR TotalProjectTasks = 
+			    CALCULATE(
+			        COUNTROWS('01 XER_TASK'),
+			        ALL('00 CALENDAR')
+			    )
+			
+			RETURN
+			DIVIDE(CumulativeCount, TotalProjectTasks, 0)
+			
+			
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Overall Progress %
+		lineageTag: 6edbee48-39d9-4c09-86f1-e7143772b080
+
+	measure Percentage_Cumulative_BL_Early = ```
+			
+			VAR CurrentMonth = MAX('00 CALENDAR'[Date])
+			
+			VAR AllMonthsUpToCurrent = 
+			    FILTER(
+			        ALL('00 CALENDAR'[Date]),
+			        '00 CALENDAR'[Date] <= CurrentMonth
+			    )
+			
+			VAR CumulativeCount = 
+			    CALCULATE(
+			        COUNTROWS('01 XER_TASK'),
+			        USERELATIONSHIP('01 XER_TASK'[Baseline Effective_Early_End], '00 CALENDAR'[Date]),
+			        AllMonthsUpToCurrent,
+			        NOT(ISBLANK('01 XER_TASK'[Baseline Effective_Early_End]))
+			    )
+			
+			VAR TotalProjectTasks = 
+			    CALCULATE(
+			        COUNTROWS('01 XER_TASK'),
+			        ALL('00 CALENDAR'),
+			        NOT(ISBLANK('01 XER_TASK'[Baseline Effective_Late_End]))
+			    )
+			
+			RETURN
+			DIVIDE(CumulativeCount, TotalProjectTasks, 0)
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Overall Progress %
+		lineageTag: 2bb40331-a925-45c5-9f7b-0543fc0f5745
+
+	measure Percentage_Cumulative_BL_Late = ```
+			
+			VAR CurrentMonth = MAX('00 CALENDAR'[Date])
+			
+			VAR AllMonthsUpToCurrent = 
+			    FILTER(
+			        ALL('00 CALENDAR'[Date]),
+			        '00 CALENDAR'[Date] <= CurrentMonth
+			    )
+			
+			VAR CumulativeCount = 
+			    CALCULATE(
+			        COUNTROWS('01 XER_TASK'),
+			        USERELATIONSHIP('01 XER_TASK'[Baseline Effective_Late_End], '00 CALENDAR'[Date]),
+			        AllMonthsUpToCurrent,
+			        NOT(ISBLANK('01 XER_TASK'[Baseline Effective_Late_End]))
+			    )
+			
+			VAR TotalProjectTasks = 
+			    CALCULATE(
+			        COUNTROWS('01 XER_TASK'),
+			        ALL('00 CALENDAR'),
+			        NOT(ISBLANK('01 XER_TASK'[Baseline Effective_Late_End]))
+			    )
+			
+			RETURN
+			DIVIDE(CumulativeCount, TotalProjectTasks, 0)
+			
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Overall Progress %
+		lineageTag: c9bce2bc-2261-4b67-aa69-fbde430c9c72
+
+	measure 'Max of Max Late End Dates' = ```
+			
+			VAR MaxCurrentLateEnd = 
+			    MAX('01 XER_TASK'[Effective_Late_End])
+			
+			VAR MaxBaselineLateEnd = 
+			    MAX('01 XER_TASK'[Baseline Effective_Late_End])
+			
+			RETURN
+			    MAX(MaxCurrentLateEnd, MaxBaselineLateEnd)
+			```
+		formatString: General Date
+		lineageTag: 9858c9e5-7dd2-40d6-8818-6c92f575450b
+
+	measure Percentage_Actual_Finish = ```
+			
+			VAR MaxDataDate =
+			    MAX( '01 XER_TASK'[data_date] )
+			
+			VAR CompletedCount =
+			    CALCULATE(
+			        COUNTROWS( '01 XER_TASK' ),
+			        '01 XER_TASK'[act_end_date] <= MaxDataDate,
+			        NOT( ISBLANK( '01 XER_TASK'[act_end_date] ) )
+			    )
+			
+			VAR TotalCount =
+			    CALCULATE(
+			        COUNTROWS( '01 XER_TASK' )
+			    )
+			
+			VAR PercentageResult =
+			    DIVIDE( CompletedCount, TotalCount, 0 )
+			
+			RETURN
+			 PercentageResult
+			
+			
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 48e5ddd3-9faf-4e20-ad96-ec006cf7f39c
+
+	measure Count_Actual_Finish = ```
+			
+			VAR MaxDataDate = MAX('01 XER_TASK'[data_date])
+			VAR CompletedTasks = 
+			    CALCULATE(
+			        COUNTROWS('01 XER_TASK'),
+			        '01 XER_TASK'[act_end_date] <= MaxDataDate,
+			        NOT(ISBLANK('01 XER_TASK'[act_end_date]))
+			    )
+			RETURN
+			    CompletedTasks
+			```
+		formatString: #,0
+		displayFolder: Overall Progress Count
+		lineageTag: 20fe4eda-cb87-4993-9a74-fb8f6fbcb780
+
+	measure Count_Remaining_Tasks_ = ```
+			
+			VAR MaxDataDate = MAX('01 XER_TASK'[data_date])
+			VAR RemainingTasks = 
+			    CALCULATE(
+			        COUNTROWS('01 XER_TASK'),
+			        FILTER(
+			            '01 XER_TASK',
+			            ISBLANK('01 XER_TASK'[act_end_date]) || '01 XER_TASK'[act_end_date] > MaxDataDate
+			        ),
+			        ALL('00 CALENDAR')
+			    )
+			RETURN
+			    RemainingTasks
+			```
+		formatString: #,0
+		displayFolder: Overall Progress Count
+		lineageTag: 6927a5bc-e15e-4c4f-989e-7df5755a901a
+
+	measure Count_Total_Tasks_ =
+			
+			CALCULATE(
+			    COUNTROWS('01 XER_TASK'),
+			    ALL('00 CALENDAR')
+			)
+		formatString: #,0
+		displayFolder: Overall Progress Count
+		lineageTag: e4d9f43d-3888-46c6-a68a-4caee34207a2
+
+	measure Percentage_ToComplete = 1-[Percentage_Actual_Finish]
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: a0c824e5-2bd7-4b96-9b73-d61e982bc835
+
+	measure 'Min of Min Early End Dates' = ```
+			
+			VAR MinCurrentEarlyEnd = 
+			    MIN('01 XER_TASK'[Effective_Early_End])
+			
+			VAR MinBaselineEarlyEnd = 
+			    MIN('01 XER_TASK'[Baseline Effective_Early_End])
+			
+			RETURN
+			    MIN(MinCurrentEarlyEnd, MinBaselineEarlyEnd)
+			```
+		formatString: General Date
+		lineageTag: d48dca97-a68e-4ce7-82c1-1d437e0b5452
+
+	measure Percentage_Baseline_Finish = ```
+			
+			VAR MaxDataDate =
+			    MAX( '01 XER_TASK'[data_date] )
+			
+			VAR CompletedCount =
+			    CALCULATE(
+			        COUNTROWS( '01 XER_TASK' ),
+			        '01 XER_TASK'[Baseline Effective_Early_End] <= MaxDataDate,
+			        NOT( ISBLANK( '01 XER_TASK'[Baseline Effective_Early_End] ) )
+			    )
+			
+			VAR TotalCount =
+			    CALCULATE(
+			        COUNTROWS( '01 XER_TASK' ),
+			        NOT( ISBLANK( '01 XER_TASK'[Baseline Effective_Early_End] ))
+			    )
+			
+			VAR PercentageResult =
+			    DIVIDE( CompletedCount, TotalCount, 0 )
+			
+			RETURN
+			    PercentageResult
+			
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 2e589616-ca79-4e4c-aa2e-7f36d3de19a7
+
+	measure 'Percentage Completion Variance' = [Percentage_Actual_Finish]-[Percentage_Baseline_Finish]
+		lineageTag: 1ff5ecb0-e18c-4cd6-8ab8-bfd9f10afc4f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition 'XER S-Curve' = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

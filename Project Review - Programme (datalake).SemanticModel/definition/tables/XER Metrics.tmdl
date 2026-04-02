@@ -1,0 +1,281 @@
+table 'XER Metrics'
+	lineageTag: 4c90930e-7191-402b-8b10-d92d87090b7d
+
+	measure 'Missing Predecessor' =
+			
+			COALESCE(
+			    SUM('01 XER_TASK'[No Predecessor]),
+			    0
+			)
+		formatString: 0
+		displayFolder: Schedule Quality Table
+		lineageTag: b2f7cb81-8dec-4005-9a48-ad65ebfa34d0
+
+	measure Task_Count = ```
+			
+			CALCULATE(
+			    COUNTA('01 XER_TASK'[task_id_key]),
+			    '01 XER_TASK'[StatusCategory] <> "Complete"
+			)
+			
+			```
+		formatString: #,0
+		displayFolder: Schedule Quality Table
+		lineageTag: a59b8440-c71a-49f5-ac02-82817bf03c64
+
+	measure MissingPredecessor% =
+			
+			IF(
+			    ISBLANK([Missing Predecessor]/[Task_Count]),
+			    blank(),
+			    [Missing Predecessor]/[Task_Count]
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Schedule Quality Visuals
+		lineageTag: b10b5f78-5dc1-4c51-b3a0-55f52d133cc1
+
+	measure 'Float >44' =
+			
+			COALESCE(
+			    CALCULATE(
+			        COUNTA('01 XER_TASK'[task_name]),
+			        '01 XER_TASK'[total_float] > 44
+			    ),
+			    0
+			)
+		formatString: #,0
+		displayFolder: Schedule Quality Table
+		lineageTag: f455b06e-fc38-40f8-a1bd-e98e87db351b
+
+	measure HighFloat% =
+			
+			IF(
+			    ISBLANK([Float >44]/[Task_Count]),
+			    blank(),
+			    [Float >44]/[Task_Count]
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Schedule Quality Visuals
+		lineageTag: b0c84e96-887e-471b-b1d0-f53663d01542
+
+	measure 'Dur >44' =
+			
+			COALESCE(
+			    CALCULATE(
+			        COUNTA('01 XER_TASK'[task_name]),
+			        '01 XER_TASK'[remaining_working_days] > 44
+			    ),
+			    0
+			)
+		formatString: #,0
+		displayFolder: Schedule Quality Table
+		lineageTag: f0c8dee3-9325-44bb-ac70-f3c622aae79a
+
+	measure HighDur% =
+			
+			IF(
+			    ISBLANK([Dur >44]/[Task_Count]),
+			    blank(),
+			    [Dur >44]/[Task_Count]
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Schedule Quality Visuals
+		lineageTag: 197e994d-8397-448d-81b5-bd7fc09c90d2
+
+	measure Lags>5d =
+			
+			COALESCE(
+			    CALCULATE(
+			        COUNT('06 XER_PREDECESSOR'[Lag]),
+			        '06 XER_PREDECESSOR'[Lag] > 5
+			    ),
+			    0
+			)
+		formatString: 0
+		displayFolder: Schedule Quality Table
+		lineageTag: aebdccda-d216-44b1-a7ab-769cdc91a580
+
+	measure Lags% =
+			
+			IF(
+			    ISBLANK([Lags>5d]/COUNTROWS('06 XER_PREDECESSOR')),
+			    blank(),
+			    [Lags>5d]/COUNTROWS('06 XER_PREDECESSOR')
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Schedule Quality Visuals
+		lineageTag: 0b9d0cbd-83a4-4567-9276-c9e312b19b1d
+
+	measure Score =
+			
+			VAR HighDurPercent = [HighDur%]
+			VAR HighFloatPercent = [HighFloat%]
+			VAR LagsPercent = [Lags%]
+			VAR MissingPred = [MissingPredecessor%]
+			VAR DataDatePercent = [DataDate%]
+			VAR ZeroFLoat = [0Float%]
+			VAR NegativeFLoat = [<0Float%]
+			VAR NegativeLead = [<0Lead%]
+			VAR Constraints = [Constraint%]
+			VAR MissingSucc = [MissingSuccessor%]
+			
+			VAR TotalComponents = HighDurPercent + HighFloatPercent + LagsPercent + MissingPred + DataDatePercent + ZeroFLoat + NegativeFLoat + NegativeLead + Constraints + MissingSucc
+			
+			RETURN
+			IF(
+			    ISBLANK(SELECTEDVALUE('01 XER_TASK'[UpdateDate])),
+			    BLANK(),
+			    IF(
+			        ISBLANK(TotalComponents),
+			        BLANK(),
+			        1 - TotalComponents / 10
+			    )
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 91a728f9-6f81-400e-a5e1-e9f966f407af
+
+	measure Task_Count_Negative_Float = ```
+			
+			IF(
+			    CALCULATE(COUNTA('01 XER_TASK'[task_id_key]), '01 XER_TASK'[total_float] < 0) > 0,
+			    CALCULATE(COUNTA('01 XER_TASK'[task_id_key]), '01 XER_TASK'[total_float] < 0),
+			    0
+			)
+			
+			```
+		formatString: 0
+		displayFolder: Schedule Quality Table
+		lineageTag: 84f80f9d-6679-44c8-9967-879cefb38790
+
+	measure 'Primary Constraints' =
+			
+			VAR CountValue = CALCULATE(COUNTA('01 XER_TASK'[task_id_key]), '01 XER_TASK'[cstr_type] <> BLANK())
+			RETURN
+			IF(
+			    ISBLANK(CountValue) || CountValue = 0,
+			    0,
+			    CountValue
+			)
+		formatString: 0
+		displayFolder: Schedule Quality Table
+		lineageTag: a30c0519-b72a-480b-8510-a3d929447144
+
+	measure Leads<0d =
+			
+			COALESCE(
+			    CALCULATE(
+			        COUNT('06 XER_PREDECESSOR'[Lag]),
+			        '06 XER_PREDECESSOR'[Lag] < 0
+			    ),
+			    0
+			)
+		formatString: 0
+		displayFolder: Schedule Quality Table
+		lineageTag: bd7bae77-005f-45cb-b795-11d1bc91c490
+
+	measure Task_Count_Float_0 = CALCULATE(counta('01 XER_TASK'[task_id_key]),filter('01 XER_TASK','01 XER_TASK'[status_code]<>"Complete"&&'01 XER_TASK'[total_float]=0))
+		formatString: 0
+		displayFolder: Schedule Quality Table
+		lineageTag: f23dbffe-c081-4eae-8448-8886f89d6cb0
+
+	measure 'DD Driving' =
+			
+			COALESCE(
+			    CALCULATE(
+			        COUNTROWS('01 XER_TASK'),
+			        '01 XER_TASK'[Driven_DataDate] <> "Not Driven"
+			    ),
+			    0
+			)
+		formatString: #,0
+		displayFolder: Schedule Quality Table
+		lineageTag: 0639f5b7-2b37-4234-ab71-b64effa3eb55
+
+	measure DataDate% =
+			
+			IF(
+			    ISBLANK([DD Driving]/[Task_Count]),
+			    blank(),
+			    [DD Driving]/[Task_Count]
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Schedule Quality Visuals
+		lineageTag: 57cf7730-c8f5-4aba-851f-73bf91b44bf9
+
+	measure 0Float% =
+			
+			IF(
+			    ISBLANK([Task_Count_Float_0]/[Task_Count]),
+			    blank(),
+			    [Task_Count_Float_0]/[Task_Count]
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Schedule Quality Visuals
+		lineageTag: a831311e-8b1d-4ec8-b39f-dccb280d63ff
+
+	measure <0Float% =
+			
+			IF(
+			    ISBLANK([Task_Count_Negative_Float]/[Task_Count]),
+			    blank(),
+			    [Task_Count_Negative_Float]/[Task_Count]
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Schedule Quality Visuals
+		lineageTag: f2302477-2578-475c-a8c0-6c00a2b9dd98
+
+	measure <0Lead% =
+			
+			IF(
+			    ISBLANK([Leads<0d]/[Task_Count]),
+			    blank(),
+			    [Leads<0d]/[Task_Count]
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Schedule Quality Visuals
+		lineageTag: 491fc125-f8aa-4e36-878d-89d555bf390c
+
+	measure Constraint% =
+			
+			IF(
+			    ISBLANK([Primary Constraints]/[Task_Count]),
+			    blank(),
+			    [Primary Constraints]/[Task_Count]
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Schedule Quality Visuals
+		lineageTag: 2ad2059f-95e3-418a-9e3e-4a2659f6bb8c
+
+	measure 'Missing Successor' =
+			
+			COALESCE(
+			    SUM('01 XER_TASK'[No Successor]),
+			    0
+			)
+		formatString: 0
+		displayFolder: Schedule Quality Table
+		lineageTag: 72da43b9-9740-4e17-9d42-0d75e5d8d035
+
+	measure MissingSuccessor% =
+			
+			IF(
+			    ISBLANK([Missing Successor]/[Task_Count]),
+			    blank(),
+			    [Missing Successor]/[Task_Count]
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Schedule Quality Visuals
+		lineageTag: aa2548ee-cb2f-4bfe-9f84-8449da03dafe
+
+	partition 'XER Metrics' = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

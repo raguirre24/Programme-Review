@@ -1,0 +1,128 @@
+table '08 XER_ACTVCODE'
+	lineageTag: 94c1fcbc-2867-47c1-a3a4-33f0b7591422
+
+	column actv_code_id_key
+		dataType: string
+		lineageTag: aa91c058-ab23-4be7-8598-2ba4fb95fab6
+		summarizeBy: none
+		sourceColumn: actv_code_id_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column actv_code_name
+		dataType: string
+		lineageTag: 49f9a270-6cca-4b11-8262-e3fa75cda5cb
+		summarizeBy: none
+		sourceColumn: actv_code_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column short_name
+		dataType: string
+		lineageTag: 0f6b98e8-7f24-4551-99a3-849c8c47f3d3
+		summarizeBy: none
+		sourceColumn: short_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column total_assignments
+		dataType: string
+		lineageTag: 1b4ef2c4-789f-4ee6-bc04-8df9262fa57e
+		summarizeBy: none
+		sourceColumn: total_assignments
+
+		annotation SummarizationSetBy = Automatic
+
+	column actv_code_type_id_key
+		dataType: string
+		lineageTag: 374da73c-74e8-4109-b795-29961460ebff
+		summarizeBy: none
+		sourceColumn: actv_code_type_id_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column server
+		dataType: string
+		lineageTag: cc6679e7-0b2b-4396-8781-0918cb8c9810
+		summarizeBy: none
+		sourceColumn: server
+
+		annotation SummarizationSetBy = Automatic
+
+	column database
+		dataType: string
+		lineageTag: f797720d-0434-4475-bb14-f801712c265a
+		summarizeBy: none
+		sourceColumn: database
+
+		annotation SummarizationSetBy = Automatic
+
+	column actv_code_id
+		dataType: string
+		lineageTag: 653a720e-8c59-4fb5-b5bc-d59623fea5f9
+		summarizeBy: none
+		sourceColumn: actv_code_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column parent_actv_code_id
+		dataType: string
+		lineageTag: 5b3fe156-16e8-412a-ba2e-7c262762160d
+		summarizeBy: none
+		sourceColumn: parent_actv_code_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column actv_code_type_id
+		dataType: string
+		lineageTag: 2466b788-9d7f-4169-9e2d-f8675b8bdc62
+		summarizeBy: none
+		sourceColumn: actv_code_type_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column seq_num
+		dataType: string
+		lineageTag: 0af9e04a-6f6f-4d7f-998a-c422ff410473
+		summarizeBy: none
+		sourceColumn: seq_num
+
+		annotation SummarizationSetBy = Automatic
+
+	column color
+		dataType: string
+		lineageTag: f585d687-e509-43dd-8033-e294c0c1378f
+		summarizeBy: none
+		sourceColumn: color
+
+		annotation SummarizationSetBy = Automatic
+
+	column filename
+		dataType: string
+		lineageTag: 161c3b5e-eef1-4b18-a766-4b0259d6ce13
+		summarizeBy: none
+		sourceColumn: filename
+
+		annotation SummarizationSetBy = Automatic
+
+	column refresh_date
+		dataType: string
+		lineageTag: 87cd05f6-2684-4d6a-89d6-28d993785c92
+		summarizeBy: none
+		sourceColumn: refresh_date
+
+		annotation SummarizationSetBy = Automatic
+
+	partition '08 XER_ACTVCODE' = m
+		mode: import
+		queryGroup: XER
+		source =
+				let
+				    Source = fnAthenaSource("08_xer_actvcode")
+				in
+				    Source
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,100 @@
+table 'Dynamic Titles & Formatting'
+	lineageTag: 90e746fb-9a32-4cfc-b7b2-3d277b4be9cc
+
+	measure ProjectTitle = ```
+			
+			SELECTEDVALUE('01 XER_TASK'[ProjectName], "N/A") & " : " & 
+			FORMAT([CurrentDate], "MMMM yyyy") & " Update vs " & 
+			FORMAT([BL Month Update], "MMMM yyyy") & " Baseline"
+			```
+		lineageTag: 470d1c51-6bde-4f63-be0c-866808e36c21
+
+	measure SelectedTitle =
+			
+			VAR SelectedProject = SELECTEDVALUE('01 XER_TASK'[ProjectCode])
+			VAR SelectedMonth = SELECTEDVALUE(CurrentDate[UpdateDate]) // This captures the selected month (likely a date value)
+			
+			RETURN
+			    IF(
+			        ISBLANK(SelectedProject),
+			        "Please select a project and available month.",
+			        -- Else (a project is selected)
+			        IF(
+			            ISBLANK(SelectedMonth),
+			            "Selected Project: " & SelectedProject & " (No month selected)",
+			            "Selected Project: " & SelectedProject & " - " & FORMAT(SelectedMonth, "MMMM YYYY") // Applied formatting here
+			        )
+			    )
+		lineageTag: 11f7d509-f31a-45b5-b26e-94f5d33c1864
+
+	measure PeriodLabel =
+			
+			VAR PreviousDateFormatted = FORMAT([PreviousDataDate], "dd/mm/yyyy")
+			VAR CurrentDateFormatted = FORMAT([CurrentDataDate], "dd/mm/yyyy")
+			RETURN
+			    IF(
+			        ISBLANK([PreviousDataDate]),
+			        "Period: " & CurrentDateFormatted,
+			        "Period: " & PreviousDateFormatted & " to " & CurrentDateFormatted
+			    )
+		lineageTag: cf7d5d51-f0e2-4d0b-9c39-85421591e6ac
+
+	measure 'Data Date Title' = "Data Date : " & FORMAT([CurrentDataDate], "dd-MM-yyyy")
+		lineageTag: f09d3783-1842-42b2-a094-a2b44eb60971
+
+	measure SelectedFile =
+			
+			VAR SelectedProject = SELECTEDVALUE('01 XER_TASK'[FileName])
+			
+			RETURN
+			    IF(
+			        ISBLANK(SelectedProject),
+			        "Please select a project and available month.",
+			        SelectedProject
+			    )
+		lineageTag: 2b885338-2d96-4094-b37d-c45f4261d77d
+
+	measure 'Resource Selected' =
+			
+			VAR _SelectedName = SELECTEDVALUE ( '15_XER_RESOURCE_DISTRIBUTION'[rsrc_name] )
+			RETURN
+			    IF (
+			        ISBLANK ( _SelectedName ),
+			        "Multiple Resources Selected",
+			        "Selected Resource: " & _SelectedName
+			    )
+		lineageTag: 963b9af2-1f55-43ce-9f49-2a45a2c5299d
+
+	measure Behind_Schedule_Flag =
+			
+			VAR ActualFinish = [Percentage_Actual_Finish]
+			VAR BaselineFinish = [Percentage_Baseline_Finish]
+			
+			RETURN
+			    IF(
+			        ActualFinish < BaselineFinish,
+			        1,  // Behind Schedule
+			        0   // On or Ahead of Schedule
+			    )
+		formatString: 0
+		lineageTag: d1687793-de42-4fe0-bac2-dc2bf408a6fd
+
+	measure SummaryTitle = ```
+			
+			"Project Summary : " & 
+			FORMAT([CurrentDate], "MMMM yyyy")
+			```
+		lineageTag: e0828f98-750d-41e7-ad5c-b1f4cd33f32d
+
+	partition 'Dynamic Titles & Formatting' = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

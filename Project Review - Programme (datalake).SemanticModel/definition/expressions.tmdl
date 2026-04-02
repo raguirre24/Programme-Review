@@ -1,0 +1,219 @@
+expression SharePointSite = "https://acciona365-my.sharepoint.com/personal/raguirre_acciona_com" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 09b6a8fa-9d33-48c4-8d3d-c04c0a74d825
+	queryGroup: 'SharePoint Folder'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
+
+expression 'Target Update' =
+		let
+		    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+		    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+		    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+		in
+		    #"Removed Columns"
+	lineageTag: ba84a481-07d6-4011-be66-67db3eac8f8f
+
+	annotation PBI_ResultType = Table
+
+expression 'Current Update' =
+		let
+		    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+		    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+		    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+		in
+		    #"Removed Columns"
+	lineageTag: 0894244c-99c2-4d01-a79f-215ea94f10d1
+
+	annotation PBI_ResultType = Table
+
+expression SelectedProjects = "C5064, C4036" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: a1b2c3d4-5e6f-7a8b-9c0d-ef1234567890
+	queryGroup: Database
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
+
+expression ProjectFilterList =
+		let
+		    raw = SelectedProjects,
+		    isAll = Text.Upper(Text.Trim(raw)) = "ALL",
+		    splitList = if isAll then null else List.Transform(Text.Split(raw, ","), each Text.Trim(_))
+		in
+		    splitList
+	lineageTag: b2c3d4e5-6f7a-8b9c-0d1e-f23456789012
+	queryGroup: Database
+
+	annotation PBI_ResultType = List
+
+	annotation PBI_NavigationStepName = Navigation
+
+expression fnFilterByFilename =
+		let
+		    fn = (sourceTable as table, filenameColumn as text, delimiter as text) as table =>
+		        let
+		            filterList = ProjectFilterList,
+		            result = if filterList = null then
+		                sourceTable
+		            else
+		                Table.SelectRows(sourceTable, each List.Contains(filterList, Text.Trim(Text.BeforeDelimiter(Record.Field(_, filenameColumn), delimiter))))
+		        in
+		            result
+		in
+		    fn
+	lineageTag: c3d4e5f6-7a8b-9c0d-1e2f-345678901234
+	queryGroup: Database
+
+	annotation PBI_ResultType = Function
+
+	annotation PBI_NavigationStepName = Navigation
+
+expression fnAthenaSource =
+		let
+		    fn = (tableName as text) as table =>
+		        let
+		            DB = AthenaDB,
+		
+		            filterList = ProjectFilterList,
+		
+		            baseWhere = "WHERE filename LIKE '%-C-%'",
+		
+		            projectWhere =
+		                if filterList = null then
+		                    ""
+		                else
+		                    let
+		                        quoted = List.Transform(filterList, each
+		                            "'" & Text.Replace(_, "'", "''") & "'"
+		                        ),
+		                        inClause = Text.Combine(quoted, ", ")
+		                    in
+		                        " AND SPLIT_PART(filename, '-', 1) IN (" & inClause & ")",
+		
+		            sql = "SELECT * FROM prod_projectcontrols_p6.""" & tableName & """ " & baseWhere & projectWhere,
+		
+		            Result = Value.NativeQuery(DB, sql)
+		        in
+		            Result
+		in
+		    fn
+	lineageTag: 6869b75f-be7a-43ff-a8eb-4ab5b098f358
+	queryGroup: Database
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Function
+
+expression AthenaDB =
+		// Query Name: AthenaDB
+		let
+		    Source = AmazonAthena.Databases("primary_p6_bi_reporting", null, [EnableNativeQuery = true]),
+		    DB = Source{[Name="AwsDataCatalog",Kind="Database"]}[Data]
+		in
+		    DB
+	lineageTag: cf9cf846-d8d4-4453-a53e-ec5224c354da
+	queryGroup: Database
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression Staging_TaskRsrc =
+		let
+		    Source = #"13_XER_TASKRSRC",
+		    Narrow = Table.SelectColumns(Source,
+		        {"task_id_key", "rsrc_id_key", "act_ot_qty", "act_reg_qty",
+		         "act_start_date", "act_end_date", "restart_date", "reend_date", "remain_qty"}
+		    )
+		in
+		    Narrow
+	lineageTag: befe97fa-b35f-47a2-a58d-ffc701e9e53c
+	queryGroup: 'Resource Staging'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression Staging_Task =
+		let
+		    Source = #"01 XER_TASK",
+		    Narrow = Table.SelectColumns(Source,
+		        {"task_id_key", "status_code", "task_code", "calendar_id_key", "data_date"}
+		    )
+		in
+		    Narrow
+	lineageTag: 9bf59e02-72de-458a-aee8-734e8b35375c
+	queryGroup: 'Resource Staging'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression Staging_Rsrc =
+		let
+		    Source = #"12_XER_RSRC",
+		    Narrow = Table.SelectColumns(Source,
+		        {"rsrc_id_key", "rsrc_short_name", "rsrc_name", "rsrc_type"}
+		    )
+		in
+		    Narrow
+	lineageTag: 34d9bac9-ec29-4aeb-8dfb-e2e090cb05d5
+	queryGroup: 'Resource Staging'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression Staging_Calendar_Standard =
+		let
+		    Source = #"11_XER_CALENDAR_DETAILED",
+		    Filtered = Table.SelectRows(Source, each
+		        [exception_type] = "Standard"
+		        and [date] = null
+		        and [working_day_int] = 1
+		    ),
+		    Narrow = Table.SelectColumns(Filtered, {"clndr_id_key", "day_of_week_num"})
+		in
+		    Narrow
+	lineageTag: 7665903a-d88e-41e8-9866-b698d507986f
+	queryGroup: 'Resource Staging'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression Staging_Calendar_Exceptions =
+		let
+		    Source = #"11_XER_CALENDAR_DETAILED",
+		    Filtered = Table.SelectRows(Source, each
+		        ([exception_type] = "Holiday" or [exception_type] = "Exception - Working")
+		        and [date] <> null
+		    ),
+		    Narrow = Table.SelectColumns(Filtered, {"clndr_id_key", "date", "working_day_int"})
+		in
+		    Narrow
+	lineageTag: 080cf725-1f32-4490-b189-1e17fe4a3b17
+	queryGroup: 'Resource Staging'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression dbo_project =
+		let
+		    Source = AmazonAthena.Databases("primary_p6_bi_reporting", null, [EnableNativeQuery = true]),
+		    AwsDataCatalog_Database = Source{[Name="AwsDataCatalog",Kind="Database"]}[Data],
+		    prod_projectcontrols_linkedsitereports_Schema1 = AwsDataCatalog_Database{[Name="prod_projectcontrols_linkedsitereports",Kind="Schema"]}[Data],
+		    dbo_project_Table = prod_projectcontrols_linkedsitereports_Schema1{[Name="dbo_project",Kind="Table"]}[Data],
+		    #"Removed Other Columns" = Table.SelectColumns(dbo_project_Table,{"projectno", "projectname", "companyname", "divisionname", "state", "country"})
+		in
+		    #"Removed Other Columns"
+	lineageTag: a9faa87e-1b47-430e-87e4-151b133169bb
+	queryGroup: Database
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

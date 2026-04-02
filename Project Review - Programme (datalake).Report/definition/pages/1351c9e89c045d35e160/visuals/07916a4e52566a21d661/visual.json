@@ -1,0 +1,17 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.6.0/schema.json",
+  "name": "07916a4e52566a21d661",
+  "position": {
+    "x": 6.7226890756302522,
+    "y": 87.5,
+    "z": 6000,
+    "height": 992.5,
+    "width": 1780.9696186166773,
+    "tabOrder": 9000
+  },
+  "visualGroup": {
+    "displayName": "Relationships",
+    "groupMode": "ScaleMode"
+  },
+  "isHidden": true
+}

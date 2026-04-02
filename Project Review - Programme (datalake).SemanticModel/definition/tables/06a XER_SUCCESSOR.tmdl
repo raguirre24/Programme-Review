@@ -1,0 +1,146 @@
+table '06a XER_SUCCESSOR'
+	lineageTag: 9d737f42-d49d-40f2-a064-a52a3ce4d1ab
+
+	column task_id_key
+		formatString: 0
+		lineageTag: b4ef9967-6630-4311-bf9f-71e47ddee1ba
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [task_id_key]
+
+		annotation SummarizationSetBy = Automatic
+
+	column succ_task_id_key
+		formatString: 0
+		lineageTag: b4af0b81-dd4e-46fd-b19e-8c0a8673c4cc
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [succ_task_id_key]
+
+		annotation SummarizationSetBy = Automatic
+
+	column succ_type
+		formatString: 0
+		lineageTag: 98ae656a-c734-4e62-9ef2-a416f400238e
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [succ_type]
+
+		annotation SummarizationSetBy = Automatic
+
+	column successor_name
+		formatString: 0
+		lineageTag: 4605f154-f3dc-470b-86dc-5aeb39da2d93
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [successor_name]
+
+		annotation SummarizationSetBy = Automatic
+
+	column successor_start
+		formatString: dd/mm/yyyy
+		lineageTag: 82d0205c-b22a-4768-a4b5-f4fb79593d42
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [successor_start]
+
+		variation Variation
+			isDefault
+			relationship: 42daf3f7-d73f-463e-ba83-0c507ca534a1
+			defaultHierarchy: LocalDateTable_49b15a61-76d7-46ea-8275-623fdde212e4.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column successor_finish
+		formatString: dd/mm/yyyy
+		lineageTag: d89db16b-5d64-4ced-a168-a691811abfba
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [successor_finish]
+
+		variation Variation
+			isDefault
+			relationship: c3ed9120-fc3a-4ee5-b3c2-4a5bcb75c879
+			defaultHierarchy: LocalDateTable_10ccfe4d-c0c1-4e4b-8cd5-715a2b41d9ea.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column successor_total_float
+		formatString: 0
+		lineageTag: 776ac39e-c18a-4a9d-ac82-1927cd042dbb
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [successor_total_float]
+
+		annotation SummarizationSetBy = Automatic
+
+	column succ_task_type
+		formatString: 0
+		lineageTag: b6e4f78e-4b20-4432-a6c5-8fbc0be8e4e7
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [succ_task_type]
+
+		annotation SummarizationSetBy = Automatic
+
+	column succ_status_code
+		formatString: 0
+		lineageTag: 3563779a-baa9-43b8-9820-c24d3eb771ae
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [succ_status_code]
+
+		annotation SummarizationSetBy = Automatic
+
+	column successor_task_code
+		formatString: 0
+		lineageTag: c2015e3a-5839-4fd4-9eb8-dc0f14fe50d2
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [successor_task_code]
+
+		annotation SummarizationSetBy = Automatic
+
+	column task_pred_id
+		lineageTag: d1e2f3a4-5678-4bbb-cccc-111111111111
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [task_pred_id]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Free_Float = LOOKUPVALUE('06 XER_PREDECESSOR'[free_float], '06 XER_PREDECESSOR'[task_pred_id], '06a XER_SUCCESSOR'[task_pred_id])
+		formatString: 0.00
+		lineageTag: d1e2f3a4-5678-4bbb-cccc-222222222222
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	partition '06a XER_SUCCESSOR' = calculated
+		mode: import
+		source =
+				SELECTCOLUMNS(
+				    '06 XER_PREDECESSOR',
+				    "task_id_key", '06 XER_PREDECESSOR'[pred_task_id_key],
+				    "succ_task_id_key", '06 XER_PREDECESSOR'[task_id_key],
+				    "succ_type", '06 XER_PREDECESSOR'[pred_type],
+				    "succ_task_type", '06 XER_PREDECESSOR'[task_type],
+				    "succ_status_code", '06 XER_PREDECESSOR'[status_code_successor],
+				    "task_pred_id", '06 XER_PREDECESSOR'[task_pred_id],
+				    "successor_task_code", LOOKUPVALUE('01 XER_TASK'[task_code],'01 XER_TASK'[Task_ID_key],'06 XER_PREDECESSOR'[task_id_key]),
+				    "successor_name", LOOKUPVALUE('01 XER_TASK'[task_name],'01 XER_TASK'[Task_ID_key],'06 XER_PREDECESSOR'[task_id_key]),
+				    "successor_start", LOOKUPVALUE('01 XER_TASK'[Start],'01 XER_TASK'[Task_ID_key],'06 XER_PREDECESSOR'[task_id_key]),
+				    "successor_finish", LOOKUPVALUE('01 XER_TASK'[Finish],'01 XER_TASK'[Task_ID_key],'06 XER_PREDECESSOR'[task_id_key]),
+				    "successor_total_float", LOOKUPVALUE('01 XER_TASK'[total_float],'01 XER_TASK'[Task_ID_key],'06 XER_PREDECESSOR'[task_id_key])
+				)
+
+	annotation PBI_Id = b4fa624d95e9439fb486dd6786cd0082
+

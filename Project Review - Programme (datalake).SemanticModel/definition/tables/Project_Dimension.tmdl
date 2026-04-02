@@ -1,0 +1,85 @@
+table Project_Dimension
+	lineageTag: b6b57912-cd01-4aa2-a5f1-73da79d32e2a
+
+	measure 'Project Has Data' = ```
+			
+			IF(
+			    NOT ISEMPTY('01 XER_TASK'),
+			    "#28a745", 
+			    "#6c757d"
+			)
+			```
+		lineageTag: c1f0e01a-22cf-4068-92ca-1f50216612fc
+
+	column Project
+		lineageTag: 5538cb53-68b7-49a0-a8e2-9e118e2a3e9e
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Project]
+
+		annotation SummarizationSetBy = Automatic
+
+	column wbs_id_key
+		lineageTag: 3ecb6581-3596-4ff4-9d99-018682833191
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [wbs_id_key]
+
+		annotation SummarizationSetBy = Automatic
+
+	column State
+		lineageTag: 6b0eb040-ce02-4b5a-be7b-f5e91c2cc1a1
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [State]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Level_2
+		lineageTag: 6fe2e314-9181-463b-a359-d8c2a840ffb7
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Level_2]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Level_3
+		lineageTag: 397af63d-4c0b-4dd3-bdf1-319d3afe76ad
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Level_3]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Level_4
+		lineageTag: 7b08d674-6fa8-43f2-ace1-2e2ce4ba7f04
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Level_4]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Project_Dimension = calculated
+		mode: import
+		source = ```
+				
+				ADDCOLUMNS(
+				    DISTINCT(
+				        SELECTCOLUMNS(
+				            FILTER(
+				                ALL('01 XER_TASK'),
+				                '01 XER_TASK'[wbs_id_key] <> BLANK() && '01 XER_TASK'[ProjectName] <> BLANK()
+				            ), 
+				            "Project", '01 XER_TASK'[ProjectName],
+				            "wbs_id_key", '01 XER_TASK'[wbs_id_key]
+				        )
+				    ),
+				    "State", LOOKUPVALUE('Project'[State], 'Project'[projectname], [Project]),
+				    "Level_2", LOOKUPVALUE('03 XER_PROJWBS'[Level_2], '03 XER_PROJWBS'[wbs_id_key], [wbs_id_key]),
+				    "Level_3", LOOKUPVALUE('03 XER_PROJWBS'[Level_3], '03 XER_PROJWBS'[wbs_id_key], [wbs_id_key]),
+				    "Level_4", LOOKUPVALUE('03 XER_PROJWBS'[Level_4], '03 XER_PROJWBS'[wbs_id_key], [wbs_id_key])
+				)
+				```
+
+	annotation PBI_Id = 50f5c4a91ce0444bb70d1e41ee30c977
+

@@ -1,0 +1,26 @@
+table Filter_Critical_Status
+	lineageTag: 0ab78d90-f60c-4e70-8ce9-50923ffe3c66
+
+	column CriticalStatus
+		lineageTag: 86277402-7488-4efb-bbed-66a2b227c3ac
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [CriticalStatus]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Filter_Critical_Status = calculated
+		mode: import
+		source =
+				
+				DATATABLE(
+				    "CriticalStatus", STRING,
+				    {
+				        {"Critical"},
+				        {"Near Critical"},
+				        {"Non-Critical"}
+				    }
+				)
+
+	annotation PBI_Id = 6db15a5c411f412ca5e2feed303bb9c6
+

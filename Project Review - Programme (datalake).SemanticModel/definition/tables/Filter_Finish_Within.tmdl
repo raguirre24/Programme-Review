@@ -1,0 +1,28 @@
+table Filter_Finish_Within
+	lineageTag: 7a71e94a-723c-4857-8723-de405df9dae4
+
+	column FinishWithin
+		lineageTag: 01551078-8606-427d-b702-3cfccf126aa5
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [FinishWithin]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Filter_Finish_Within = calculated
+		mode: import
+		source =
+				
+				DATATABLE(
+				    "FinishWithin", STRING,
+				    {
+				        {" <1 Month"},
+				        {" 1-3 Months"},
+				        {" 3-6 Months"},
+				        {">6 Months"},
+				        {"Outside Range"}
+				    }
+				)
+
+	annotation PBI_Id = 04644c361fbd4e94ae467b240ca1fd20
+

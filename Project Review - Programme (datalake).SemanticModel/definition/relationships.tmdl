@@ -1,0 +1,526 @@
+relationship ed31ad25-fc39-3b95-b2cc-725d09bfecd9
+	crossFilteringBehavior: bothDirections
+	fromColumn: '01 XER_TASK'.wbs_id_key
+	toColumn: '03 XER_PROJWBS'.wbs_id_key
+
+relationship bf65be87-0eb7-d055-f425-98505774eaea
+	fromColumn: '06 XER_PREDECESSOR'.task_id_key
+	toColumn: '01 XER_TASK'.task_id_key
+
+relationship c01f938b-0571-d2f2-2dfa-d53a88e83ef1
+	fromColumn: '01 XER_TASK'.status_code
+	toColumn: Filter_Activity_Status.status_code
+
+relationship 1a18ce91-f15b-d4da-b5d0-858ab266edda
+	fromColumn: '01 XER_TASK'.'Remaining Duration Category'
+	toColumn: Filter_Duration.DurationCategory
+
+relationship f7d22f84-47ae-865f-d3a0-f26b6774aad4
+	fromColumn: '01 XER_TASK'.'Float Category'
+	toColumn: Filter_Float.FloatCategory
+
+relationship 63a28b11-37b8-c8e6-746f-fceeb7e1a7d0
+	fromColumn: '09 XER_TASKACTV'.actv_code_id_key
+	toColumn: '08 XER_ACTVCODE'.actv_code_id_key
+
+relationship 253e894c-8f38-637b-0eda-dfad95a2e558
+	fromColumn: '01 XER_TASK'.proj_id_key
+	toColumn: '02 XER_PROJECT'.proj_id_key
+
+relationship ed160bf7-7ce2-b609-367e-d8c24df67b17
+	isActive: false
+	fromColumn: '01 XER_TASK'.proj_id_key
+	toColumn: '05 XER_DATA DATE'.proj_id_key
+
+relationship 69b8fb30-5238-1d0a-5740-4d97f4ae4939
+	fromColumn: '08 XER_ACTVCODE'.actv_code_type_id_key
+	toColumn: '07 XER_ACTVTYPE'.actv_code_type_id_key
+
+relationship 266211a8-9bf2-7c48-61ec-d6b84de82905
+	fromColumn: '01 XER_TASK'.calendar_id_key
+	toColumn: '10 XER_CALENDARS'.clndr_id_key
+
+relationship 64a30dee-7c62-2417-b212-636b0c4c290a
+	fromColumn: '01 XER_TASK'.FinishDateCategory
+	toColumn: Filter_Finish_Within.FinishWithin
+
+relationship 23248f2b-7dd2-2635-a087-1d0558a6fdba
+	fromColumn: '01 XER_TASK'.StartDateCategory
+	toColumn: Filter_Start_Within.StartWithin
+
+relationship e52912fe-3163-464d-1018-88a6bb2e80a1
+	fromColumn: '01 XER_TASK'.CriticalStatus
+	toColumn: Filter_Critical_Status.CriticalStatus
+
+relationship 9f5bd59e-5450-6f51-dc29-6529f919ee28
+	fromColumn: '01 XER_TASK'.cstr_type
+	toColumn: Filter_Constraint_Types.ConstraintType
+
+relationship 8630f99a-16ae-b9b5-b3bb-9bb4c08c739d
+	crossFilteringBehavior: bothDirections
+	fromColumn: 13_XER_TASKRSRC.task_id_key
+	toColumn: '01 XER_TASK'.task_id_key
+
+relationship b9d2d8b9-4d18-205a-a802-d1630e05973c
+	crossFilteringBehavior: bothDirections
+	fromColumn: 13_XER_TASKRSRC.rsrc_id_key
+	toColumn: 12_XER_RSRC.rsrc_id_key
+
+relationship b5c62477-cdf8-342b-d75c-33f515404b12
+	fromColumn: '01 XER_TASK'.TaskType_Classified
+	toColumn: Filter_TaskType.TaskType
+
+relationship faf183d7-9730-f176-229d-30cb70fb9da8
+	fromColumn: '01 XER_TASK'.PreviousMonthFinishVarianceCategory
+	toColumn: Filter_Finish_Delay.PreviousMonthFinishVariance
+
+relationship 348ad1a8-0e68-48ff-16c6-932cffb8c434
+	fromColumn: '01 XER_TASK'.PreviousMonthStartVarianceCategory
+	toColumn: Filter_Start_Delay.PreviousMonthStartVariance
+
+relationship e10f35aa-d247-ac1a-c9ef-00775150a946
+	crossFilteringBehavior: bothDirections
+	toCardinality: many
+	fromColumn: 11_XER_CALENDAR_DETAILED.clndr_id_key
+	toColumn: '01 XER_TASK'.calendar_id_key
+
+relationship 3e7d6192-5b98-528e-77c5-2d5538bcf78c
+	crossFilteringBehavior: bothDirections
+	fromColumn: '09 XER_TASKACTV'.task_id_key
+	toColumn: '01 XER_TASK'.task_id_key
+
+relationship f96494cb-d9c1-d0e8-5ae0-16664e7b7f5f
+	crossFilteringBehavior: bothDirections
+	fromCardinality: one
+	fromColumn: '00 PLANNED DATE TABLE (PV)'.Date
+	toColumn: '00 CALENDAR'.Date
+
+relationship bf55c7c9-a457-d538-128b-3031335740b0
+	isActive: false
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '01 XER_TASK'.act_end_date
+	toColumn: '00 CALENDAR'.Date
+
+relationship a4cbb653-efb5-f4dc-b0ee-98d64afabda7
+	isActive: false
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '01 XER_TASK'.early_end_date
+	toColumn: '00 CALENDAR'.Date
+
+relationship 0da7d278-edb3-fac8-e04c-03b18325dd90
+	isActive: false
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '01 XER_TASK'.late_end_date
+	toColumn: '00 CALENDAR'.Date
+
+relationship 19eb6159-1c83-c64b-4cf1-949204146081
+	isActive: false
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '01 XER_TASK'.Effective_Late_End
+	toColumn: '00 CALENDAR'.Date
+
+relationship b2dc3e84-0253-c109-c1ca-0f3761e502cb
+	isActive: false
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '01 XER_TASK'.Effective_Early_End
+	toColumn: '00 CALENDAR'.Date
+
+relationship 3d728281-1cbe-669e-fbd7-f3049ac65545
+	isActive: false
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '01 XER_TASK'.'Baseline Effective_Late_End'
+	toColumn: '00 CALENDAR'.Date
+
+relationship e7388c63-8495-c635-2f44-2b34f125c8d2
+	isActive: false
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '01 XER_TASK'.'Baseline Effective_Early_End'
+	toColumn: '00 CALENDAR'.Date
+
+relationship 30ebf835-f2a4-629c-423e-7de8022668c7
+	fromColumn: '06a XER_SUCCESSOR'.task_id_key
+	toColumn: '01 XER_TASK'.task_id_key
+
+relationship 9d71a328-d704-8569-fc59-38fdb8714728
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '01 XER_TASK'.Finish
+	toColumn: '00 CALENDAR'.Date
+
+relationship 172c562c-ea1c-2975-0e85-fcc7ca5a8875
+	fromColumn: '01 XER_TASK'.UpdateDate
+	toColumn: CurrentDate.UpdateDate
+
+relationship 9f9c9ea4-2204-ed7b-8d4a-285a4a1b6a86
+	fromColumn: 15_XER_RESOURCE_DISTRIBUTION.task_id_key
+	toColumn: '01 XER_TASK'.task_id_key
+
+relationship d614b65f-0c0c-4405-8096-805b4e9317bd
+	fromColumn: '01 XER_TASK'.driving_path_flag
+	toColumn: Filter_Driving.DrivingFilter
+
+relationship 8bb9386b-77c5-41d2-a683-344e95b77933
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '02 XER_PROJECT'.last_recalc_date
+	toColumn: LocalDateTable_ae67810d-93ce-4197-a74e-3bb20d9bed60.Date
+
+relationship 99b9ad66-0068-43a4-8c80-c2217e75a527
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '02 XER_PROJECT'.plan_start_date
+	toColumn: LocalDateTable_84b136d4-0c16-430a-b2a8-6b6e79f3cbc1.Date
+
+relationship c0cf0c74-4a51-4198-8885-0f0d810fb174
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '02 XER_PROJECT'.plan_end_date
+	toColumn: LocalDateTable_bfd2190b-c248-4ffa-ac5c-c17cb1978ba9.Date
+
+relationship af828b89-f188-4776-b6f3-8de83a023bf0
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '02 XER_PROJECT'.scd_end_date
+	toColumn: LocalDateTable_18c5c2b4-20fd-4cfb-a98d-bfcdfff2b369.Date
+
+relationship 34918c33-091b-45d5-899d-8496fc090881
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '02 XER_PROJECT'.add_date
+	toColumn: LocalDateTable_359244bb-a97a-4f99-85c1-e0cf0f71bdc7.Date
+
+relationship f13bc119-5983-478b-a1e7-a499ad8334e7
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '02 XER_PROJECT'.last_tasksum_date
+	toColumn: LocalDateTable_7190bfff-72ca-4039-82ae-864bae8e5acf.Date
+
+relationship 0bfd1021-8285-4f34-9441-d50613763ca4
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '02 XER_PROJECT'.fcst_start_date
+	toColumn: LocalDateTable_cfb244e8-624b-4c14-ba72-18e4b4423952.Date
+
+relationship c020e527-9ce6-4b43-ad97-08a94ac12648
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '02 XER_PROJECT'.sum_refresh_date
+	toColumn: LocalDateTable_2c36690b-0598-4562-be50-1776db5f0b56.Date
+
+relationship 5f5df819-7c59-4aff-961d-bc2c79c0515a
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '02 XER_PROJECT'.udf_datalake_status_date
+	toColumn: LocalDateTable_a3ba81c9-ca15-4a52-8f32-4ff2153758ba.Date
+
+relationship e5fc6112-5cc5-45e9-897f-40d0f981440f
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '02 XER_PROJECT'.refresh_date
+	toColumn: LocalDateTable_76ea9526-88a5-43bf-9607-b2fbf158cc71.Date
+
+relationship ba12a1f8-071a-410d-8ec8-d4fe2d2f657e
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '01 XER_TASK'.cstr_date
+	toColumn: LocalDateTable_29db2f21-e9f9-431b-8a8e-6fde710d3a90.Date
+
+relationship 8d586938-56c2-49ee-867a-580c1f5f4a61
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '01 XER_TASK'.'Baseline Finish'
+	toColumn: LocalDateTable_6573150e-0e7c-40d1-a29d-2ac5a0ae40a9.Date
+
+relationship e71c523a-9a76-4bb0-a12b-9ec1df2403d6
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '01 XER_TASK'.'Baseline Start'
+	toColumn: LocalDateTable_4fea8041-d152-4b40-a3ae-598e8b46e8c6.Date
+
+relationship eaec5b22-0a13-454a-ba89-fe28024e5e9d
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '01 XER_TASK'.'Previous Month Start'
+	toColumn: LocalDateTable_9e5d4f73-ef28-4bfd-a51a-04ee23132c19.Date
+
+relationship 90769743-4eae-4f9b-b61a-626a3ca89cbd
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '01 XER_TASK'.'Previous Month Finish'
+	toColumn: LocalDateTable_cb744347-8e0e-436f-b8ac-7dce3a20f3d3.Date
+
+relationship 85e1c11a-29dc-4b2e-be05-d6c731aca274
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '01 XER_TASK'.PreviousDataDate
+	toColumn: LocalDateTable_1d9ae8d2-881a-41e7-ab02-7ae2b12bfabd.Date
+
+relationship 624b9297-da6f-45f6-854e-3a2d96a1609f
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '01 XER_TASK'.act_start_date
+	toColumn: LocalDateTable_dd8b3217-2ccc-4f03-9aa5-5034a8076171.Date
+
+relationship 5840c102-ee01-4adc-a276-20f7229ccf2a
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '01 XER_TASK'.early_start_date
+	toColumn: LocalDateTable_a5dac925-d78e-4913-b64d-3604fd6e1c33.Date
+
+relationship 269127b9-10ba-43a5-b7eb-0e472780edfe
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '01 XER_TASK'.late_start_date
+	toColumn: LocalDateTable_9f2dd7d0-c208-414e-b29c-ea8c020c833e.Date
+
+relationship 72f892a4-ea38-462b-b514-f2fb3b5ee128
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '01 XER_TASK'.target_start_date
+	toColumn: LocalDateTable_ce9951f2-ddff-4ffc-b9e2-344b5d4127f3.Date
+
+relationship c24ec7f4-629a-496d-8bf6-c955f42db1e5
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '01 XER_TASK'.target_end_date
+	toColumn: LocalDateTable_206a3ec9-c4f5-4df2-9eae-886d579dd9d8.Date
+
+relationship d157972d-f8be-4406-9610-956934573680
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '01 XER_TASK'.Start
+	toColumn: LocalDateTable_20ed8d13-3f4e-467b-8812-ed7802a1bad2.Date
+
+relationship 985c654a-144a-4d81-b8fd-bea65fd814a1
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '01 XER_TASK'.data_date
+	toColumn: LocalDateTable_de83b0b7-8cf7-4f27-a1f4-f5107a6680a7.Date
+
+relationship 6ce9ea4e-3c87-42a1-9bad-e804bfeddae5
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '01 XER_TASK'.refresh_date
+	toColumn: LocalDateTable_6996700e-ec92-465e-996f-3652a88b3d7b.Date
+
+relationship 5268c639-e39e-49d9-9bab-e4c7c4726572
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '03 XER_PROJWBS'.'Min Start for Level 2'
+	toColumn: LocalDateTable_99be05f3-da41-484b-b443-9abfb098934b.Date
+
+relationship 50041d5a-1958-44bf-88f1-4a17f5dce969
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '05 XER_DATA DATE'.last_recalc_date
+	toColumn: LocalDateTable_0ec6d4fe-5a03-4580-9a01-d93c95c653ac.Date
+
+relationship e83048ed-5068-45ad-a775-5d8a8ae4a791
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '00 CALENDAR'.Date
+	toColumn: LocalDateTable_d515ec98-6097-4406-be54-27cab266f793.Date
+
+relationship ea352bef-db33-4eda-89d5-5fb559e0f807
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '00 CALENDAR'.Month
+	toColumn: LocalDateTable_387636b7-eafe-401f-a098-09fe66c279c9.Date
+
+relationship 696a1a04-917d-443a-8352-d3cf6ec386ab
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '06 XER_PREDECESSOR'.'Previous Update Start'
+	toColumn: LocalDateTable_6fdedf85-45cf-4d10-8e46-cf75440ec0c5.Date
+
+relationship 34b1f7ac-7296-41ad-850d-f7ffcf5c5573
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '06 XER_PREDECESSOR'.'Previous Update Finish'
+	toColumn: LocalDateTable_a0fa430a-8fdf-48d9-af3a-dc6ff7f56890.Date
+
+relationship 163465f7-978f-4de0-877a-892f774697ee
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '06 XER_PREDECESSOR'.aref
+	toColumn: LocalDateTable_4d90b2b6-a903-4d3d-a697-e7c1ec4c4db4.Date
+
+relationship 4bd0b490-e2b4-473a-a199-971d7d82c2ed
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '06 XER_PREDECESSOR'.arls
+	toColumn: LocalDateTable_fc73dfc5-fa71-43de-9733-0ed919d629bb.Date
+
+relationship 66785685-f3a4-48d6-a8f1-b555fdd50997
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '06 XER_PREDECESSOR'.refresh_date
+	toColumn: LocalDateTable_ea375e41-2900-4d46-85fc-b8fde24435b3.Date
+
+relationship 1ec44fb4-08a0-464c-8500-9f75b1740658
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '06 XER_PREDECESSOR'.UpdateDate
+	toColumn: LocalDateTable_aa0ead3b-f445-49c8-ae3b-c62bc2978781.Date
+
+relationship 5fc17e57-c893-4372-aa55-efda0db03582
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '06 XER_PREDECESSOR'.early_start_date
+	toColumn: LocalDateTable_1ad9cf2f-b435-4609-9ee6-8aed013dca6f.Date
+
+relationship f505b996-8fc2-4414-a3d7-6b971b1feb53
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '06 XER_PREDECESSOR'.early_end_date
+	toColumn: LocalDateTable_489f16e3-9a93-47bc-be07-0568ac76e80d.Date
+
+relationship 37e0588d-bb91-484a-9384-f3ac22891fe9
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '06 XER_PREDECESSOR'.predecessor_start
+	toColumn: LocalDateTable_36bfa387-a05c-4031-aa0d-3fc71bf3dd49.Date
+
+relationship dd316367-4839-4722-ac6f-db8b72f47ced
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '06 XER_PREDECESSOR'.predecessor_finish
+	toColumn: LocalDateTable_674d22cd-9003-4348-a16f-3fd0e5eae750.Date
+
+relationship b4c46b6a-1737-4911-b27b-196f809965ea
+	joinOnDateBehavior: datePartOnly
+	fromColumn: CurrentDate.UpdateDate
+	toColumn: LocalDateTable_b0bcbbc7-7c1c-4451-b162-fcbba61edf95.Date
+
+relationship 4cfda5d0-5bdd-4929-b05e-9490cd56cdb5
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 11_XER_CALENDAR_DETAILED.date
+	toColumn: LocalDateTable_73dd2f81-3f46-4e40-b34a-37f6368a1c02.Date
+
+relationship d4afbde3-1db7-4172-bbdb-75f9f456bc92
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 13_XER_TASKRSRC.act_start_date
+	toColumn: LocalDateTable_0128c92f-464c-4d3d-b5cd-05a7a97871ca.Date
+
+relationship 3ca0f2b2-b3af-4081-9641-f69ceab4320d
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 13_XER_TASKRSRC.act_end_date
+	toColumn: LocalDateTable_13a38ce0-965a-44e0-899d-fd153e7f4d99.Date
+
+relationship 6fa76ce1-cce2-4840-b9bc-07dddac31fb6
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 13_XER_TASKRSRC.restart_date
+	toColumn: LocalDateTable_a923ea0f-2aed-4bf1-9520-ea16e8b0ab50.Date
+
+relationship 0e26c684-3427-42f3-94b1-cc40f875f474
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 13_XER_TASKRSRC.reend_date
+	toColumn: LocalDateTable_8674d33e-4d53-4611-b53c-d7da94562d00.Date
+
+relationship c2e2203c-0a8d-4b58-acba-29aa3c056195
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 13_XER_TASKRSRC.'Data Date'
+	toColumn: LocalDateTable_338125bd-2a91-4452-a2ec-ac77af5aee2e.Date
+
+relationship fe27d598-2b30-4790-ab94-b88cc96e82e1
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 13_XER_TASKRSRC.target_start_date
+	toColumn: LocalDateTable_7a3188ec-3b10-47a9-8029-efbbe567f8df.Date
+
+relationship 2f436058-721b-4cf6-9a2e-04046458acad
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 13_XER_TASKRSRC.target_end_date
+	toColumn: LocalDateTable_48d93f20-8d35-4d5e-a448-f482225635e1.Date
+
+relationship a2bb1bab-6f53-4d0a-9b52-4a77683ed75c
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 13_XER_TASKRSRC.rem_late_start_date
+	toColumn: LocalDateTable_13030c5f-ab1e-4a1b-8bc7-7f418a45a26c.Date
+
+relationship 5b553e47-cbc6-4e66-8bae-43cd483391b6
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 13_XER_TASKRSRC.rem_late_end_date
+	toColumn: LocalDateTable_ff4bc417-181d-47fb-99d7-937aecb74316.Date
+
+relationship 63a477ee-e3fc-4c17-bbe6-0449b4e63288
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Resource Calendar'.Month
+	toColumn: LocalDateTable_b96da9ad-77fa-429a-b6e7-85d8829f802b.Date
+
+relationship 5594728e-7a3d-4ef8-b159-a6c280ca9d69
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Monthly Resource Distribution Baseline'.start_date
+	toColumn: LocalDateTable_44882935-f89c-4eba-bec8-bc1877730500.Date
+
+relationship ec98e802-a7e3-4597-8161-b08bced173d2
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Monthly Resource Distribution Baseline'.end_date
+	toColumn: LocalDateTable_1d0cbfa7-6dfb-4703-b301-97b8f21253a4.Date
+
+relationship 80f363eb-1272-4862-8715-11683b953cfb
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Monthly Resource Distribution Baseline'.distribution_month
+	toColumn: LocalDateTable_803d298b-03ae-478b-8b98-ac49cd51b064.Date
+
+relationship dd451cf3-2a6a-4dd9-b478-5a86cd8abd25
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Monthly Resource Distribution Baseline'.month_start_date
+	toColumn: LocalDateTable_24a96da4-33f8-4af3-8a3c-534c4e73e40b.Date
+
+relationship 63093ff6-6213-49bf-bd9c-22c5046e76cb
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Monthly Resource Distribution Baseline'.month_end_date
+	toColumn: LocalDateTable_7c1823f2-f20a-4078-be94-efcffb8aadd2.Date
+
+relationship 42daf3f7-d73f-463e-ba83-0c507ca534a1
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '06a XER_SUCCESSOR'.successor_start
+	toColumn: LocalDateTable_49b15a61-76d7-46ea-8275-623fdde212e4.Date
+
+relationship c3ed9120-fc3a-4ee5-b3c2-4a5bcb75c879
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '06a XER_SUCCESSOR'.successor_finish
+	toColumn: LocalDateTable_10ccfe4d-c0c1-4e4b-8cd5-715a2b41d9ea.Date
+
+relationship b4c807dd-39c7-4f94-8538-d8f72a4ce90c
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 15_XER_RESOURCE_DISTRIBUTION.start_date
+	toColumn: LocalDateTable_7d1f540e-1d9c-481a-8b9c-57df2e8b74ae.Date
+
+relationship e0b10d65-d111-43c5-8ede-e578454a9d82
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 15_XER_RESOURCE_DISTRIBUTION.end_date
+	toColumn: LocalDateTable_70091d0d-0a27-4768-a3e3-bdeea2786c8e.Date
+
+relationship 629356e8-6c4a-46da-9268-66cd4bd95f67
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 15_XER_RESOURCE_DISTRIBUTION.distribution_month
+	toColumn: LocalDateTable_7621cc0e-f722-4ff3-be50-6d607a231ba9.Date
+
+relationship fdd5722d-7bb3-4975-a13d-eebff4725467
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 15_XER_RESOURCE_DISTRIBUTION.month_start_date
+	toColumn: LocalDateTable_4ebabe90-cf58-48c8-a36f-99cc6b685e65.Date
+
+relationship 6248db3c-2fe9-40fd-99a5-d7687b412433
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 15_XER_RESOURCE_DISTRIBUTION.month_end_date
+	toColumn: LocalDateTable_0ca9f382-b2de-4063-9664-72e49daad1d1.Date
+
+relationship e81d7f65-2d60-b6db-b4ab-f119711781d0
+	crossFilteringBehavior: bothDirections
+	fromCardinality: one
+	fromColumn: '04 XER_BASELINE'.task_id_key
+	toColumn: '01 XER_TASK'.task_id_key
+
+relationship 5c8b693d-a2f5-0cd9-90a0-b28dbe53a35e
+	isActive: false
+	fromColumn: '04 XER_BASELINE'.wbs_id_key
+	toColumn: '03 XER_PROJWBS'.wbs_id_key
+
+relationship a2598ad4-8622-4d63-b98a-072219a075ad
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '04 XER_BASELINE'.Start
+	toColumn: LocalDateTable_cef81a88-781d-4bb2-afe6-215e5e582809.Date
+
+relationship e73a8806-c5ce-e209-4731-02775b648430
+	isActive: false
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '04 XER_BASELINE'.Finish
+	toColumn: '00 CALENDAR'.Date
+
+relationship 73f9c568-0ccb-43ca-8612-728695b48537
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '04 XER_BASELINE'.'Data Date'
+	toColumn: LocalDateTable_f9fa0049-4ece-4889-a16f-e9fd4bcbeedd.Date
+
+relationship 930baacb-bda5-4d8a-8121-c5881042d397
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '04 XER_BASELINE'.Effective_Early_End
+	toColumn: LocalDateTable_d24a623d-b54d-476a-8f53-79bb612c537a.Date
+
+relationship a9ce5a05-a165-4596-aa59-c39bdd7640fb
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '04 XER_BASELINE'.Effective_Late_End
+	toColumn: LocalDateTable_0747e17e-11ad-419d-b613-3313c930573d.Date
+
+relationship e9a0db00-a0fc-4f15-aafe-7a65b95e398e
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '04 XER_BASELINE'.early_start_date
+	toColumn: LocalDateTable_f79ff20c-76b6-4baf-8de9-e9e6b7e760a8.Date
+
+relationship cbe27884-4fce-4805-8399-0bc4d1752dfb
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '04 XER_BASELINE'.early_end_date
+	toColumn: LocalDateTable_6a9a6000-bff2-4281-8cef-507996f2532a.Date
+
+relationship cc9b8076-b0fd-441c-9ce2-6286b31aa909
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '04 XER_BASELINE'.First_Project_Month
+	toColumn: LocalDateTable_627d255f-434c-4411-ac0d-3a15bdca3259.Date
+
+relationship b8722003-1c5c-1b4c-b829-55152087201d
+	fromColumn: '01 XER_TASK'.wbs_id_key
+	toColumn: Project_Dimension.wbs_id_key
+

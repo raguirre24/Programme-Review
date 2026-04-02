@@ -1,0 +1,120 @@
+table '07 XER_ACTVTYPE'
+	lineageTag: a20352d7-2126-4b85-a8c7-2d39fe44994f
+
+	column actv_code_type
+		dataType: string
+		lineageTag: 19f99ad7-a6ba-4a42-b0b9-f84f06dd736e
+		summarizeBy: none
+		sourceColumn: actv_code_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column actv_code_type_id_key
+		dataType: string
+		lineageTag: 9fa7cb4a-db95-4075-ae03-3f92ad21a950
+		summarizeBy: none
+		sourceColumn: actv_code_type_id_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column server
+		dataType: string
+		lineageTag: 7252da54-0ee9-4132-ab02-5451dbc5fdd3
+		summarizeBy: none
+		sourceColumn: server
+
+		annotation SummarizationSetBy = Automatic
+
+	column database
+		dataType: string
+		lineageTag: 673d6ae8-b184-4be0-a249-00f996069bfb
+		summarizeBy: none
+		sourceColumn: database
+
+		annotation SummarizationSetBy = Automatic
+
+	column actv_code_type_id
+		dataType: string
+		lineageTag: d2dd4e44-2b1c-4957-b34e-cbe10f25be61
+		summarizeBy: none
+		sourceColumn: actv_code_type_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column actv_short_len
+		dataType: string
+		lineageTag: e8a54fa8-2cf1-4610-bb0a-1b4fd086f4ee
+		summarizeBy: none
+		sourceColumn: actv_short_len
+
+		annotation SummarizationSetBy = Automatic
+
+	column seq_num
+		dataType: string
+		lineageTag: feb69759-89eb-4351-b6e4-461fd11dbedd
+		summarizeBy: none
+		sourceColumn: seq_num
+
+		annotation SummarizationSetBy = Automatic
+
+	column proj_id
+		dataType: string
+		lineageTag: 67ef5842-31de-438f-a450-6dfe7b835d5d
+		summarizeBy: none
+		sourceColumn: proj_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column wbs_id
+		dataType: string
+		lineageTag: 866cc3cf-4084-4b2d-b48b-1fae7562cb9d
+		summarizeBy: none
+		sourceColumn: wbs_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column actv_code_type_scope
+		dataType: string
+		lineageTag: d30bfa74-9772-40d1-b470-fbaf34f52462
+		summarizeBy: none
+		sourceColumn: actv_code_type_scope
+
+		annotation SummarizationSetBy = Automatic
+
+	column export_flag
+		dataType: string
+		lineageTag: 7c4ccb21-7b68-47b4-910b-d52e2cccfe82
+		summarizeBy: none
+		sourceColumn: export_flag
+
+		annotation SummarizationSetBy = Automatic
+
+	column filename
+		dataType: string
+		lineageTag: 31c258e5-8229-4cb2-b0b8-3a5a40c0af10
+		summarizeBy: none
+		sourceColumn: filename
+
+		annotation SummarizationSetBy = Automatic
+
+	column refresh_date
+		dataType: string
+		lineageTag: 606bb6e4-a6a0-488a-b3ed-ff8fe31cb767
+		summarizeBy: none
+		sourceColumn: refresh_date
+
+		annotation SummarizationSetBy = Automatic
+
+	partition '07 XER_ACTVTYPE' = m
+		mode: import
+		queryGroup: XER
+		source =
+				let
+				    Source = fnAthenaSource("07_xer_actvtype")
+				in
+				    Source
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

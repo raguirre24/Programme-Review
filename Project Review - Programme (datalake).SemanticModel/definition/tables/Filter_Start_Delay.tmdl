@@ -1,0 +1,28 @@
+table Filter_Start_Delay
+	lineageTag: d5e2a7f3-4ad9-448d-928d-4a4c445d48f9
+
+	column PreviousMonthStartVariance
+		lineageTag: f900a78b-6ff0-48d3-b1cd-68ab32c301b2
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [PreviousMonthStartVariance]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Filter_Start_Delay = calculated
+		mode: import
+		source =
+				
+				DATATABLE(
+				    "PreviousMonthStartVariance", STRING,
+				    {
+				        {"  Ahead"},
+				        {" <1 Month"},
+				        {" 1-3 Months"},
+				        {" 3-6 Months"},
+				        {">6 Months"}
+				    }
+				)
+
+	annotation PBI_Id = 0308ec1c6d744495a14af2fc8e0a9526
+

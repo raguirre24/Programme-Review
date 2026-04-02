@@ -1,0 +1,151 @@
+model Model
+	culture: en-NZ
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-NZ
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+queryGroup 'SharePoint Folder'
+
+	annotation PBI_QueryGroupOrder = 1
+
+queryGroup XER
+
+	annotation PBI_QueryGroupOrder = 2
+
+queryGroup Database
+
+	annotation PBI_QueryGroupOrder = 2
+
+queryGroup 'Resource Staging'
+
+	annotation PBI_QueryGroupOrder = 3
+
+annotation PBI_QueryOrder = ["01 XER_TASK","02 XER_PROJECT","03 XER_PROJWBS","05 XER_DATA DATE","06 XER_PREDECESSOR","07 XER_ACTVTYPE","08 XER_ACTVCODE","09 XER_TASKACTV","10 XER_CALENDARS","11_XER_CALENDAR_DETAILED","12_XER_RSRC","13_XER_TASKRSRC","15_XER_RESOURCE_DISTRIBUTION","XER Measures","XER  Counts","XER Metrics","XER S-Curve","Dynamic Titles & Formatting","SharePointSite","Target Update","Current Update","Activity Completion","UserPermission","Project","Resources","WBS Measures","Logos","SelectedProjects","ProjectFilterList","fnFilterByFilename","AthenaDB","fnAthenaSource","Staging_TaskRsrc","Staging_Task","Staging_Rsrc","Staging_Calendar_Standard","Staging_Calendar_Exceptions","dbo_project"]
+
+annotation PBI_ProTooling = ["TMDLView_Desktop","DevMode"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+ref table '02 XER_PROJECT'
+ref table '01 XER_TASK'
+ref table '03 XER_PROJWBS'
+ref table '05 XER_DATA DATE'
+ref table '10 XER_CALENDARS'
+ref table 'XER Measures'
+ref table '00 CALENDAR'
+ref table '06 XER_PREDECESSOR'
+ref table 'XER  Counts'
+ref table '08 XER_ACTVCODE'
+ref table '07 XER_ACTVTYPE'
+ref table '09 XER_TASKACTV'
+ref table 'XER Metrics'
+ref table 'XER S-Curve'
+ref table '00 PLANNED DATE TABLE (PV)'
+ref table 'Dynamic Titles & Formatting'
+ref table CurrentDate
+ref table 'Activity Completion'
+ref table Filter_Activity_Status
+ref table Filter_Finish_Delay
+ref table Filter_Float
+ref table Filter_Duration
+ref table Filter_Finish_Within
+ref table Filter_Start_Within
+ref table Filter_Critical_Status
+ref table Filter_TaskType
+ref table Filter_Driving
+ref table UserPermission
+ref table Project
+ref table Filter_Start_Delay
+ref table Filter_Constraint_Types
+ref table 11_XER_CALENDAR_DETAILED
+ref table 12_XER_RSRC
+ref table 13_XER_TASKRSRC
+ref table 'Resource Calendar'
+ref table Resources
+ref table 'Monthly Resource Distribution Baseline'
+ref table Unique_Resources
+ref table 'WBS Measures'
+ref table '06a XER_SUCCESSOR'
+ref table Project_Dimension
+ref table '04 XER_BASELINE'
+ref table Logos
+ref table 15_XER_RESOURCE_DISTRIBUTION
+ref table DateTableTemplate_0f3fb84b-7a06-46ac-b227-42c5d3d56733
+ref table LocalDateTable_ae67810d-93ce-4197-a74e-3bb20d9bed60
+ref table LocalDateTable_84b136d4-0c16-430a-b2a8-6b6e79f3cbc1
+ref table LocalDateTable_bfd2190b-c248-4ffa-ac5c-c17cb1978ba9
+ref table LocalDateTable_18c5c2b4-20fd-4cfb-a98d-bfcdfff2b369
+ref table LocalDateTable_359244bb-a97a-4f99-85c1-e0cf0f71bdc7
+ref table LocalDateTable_7190bfff-72ca-4039-82ae-864bae8e5acf
+ref table LocalDateTable_cfb244e8-624b-4c14-ba72-18e4b4423952
+ref table LocalDateTable_2c36690b-0598-4562-be50-1776db5f0b56
+ref table LocalDateTable_a3ba81c9-ca15-4a52-8f32-4ff2153758ba
+ref table LocalDateTable_76ea9526-88a5-43bf-9607-b2fbf158cc71
+ref table LocalDateTable_29db2f21-e9f9-431b-8a8e-6fde710d3a90
+ref table LocalDateTable_6573150e-0e7c-40d1-a29d-2ac5a0ae40a9
+ref table LocalDateTable_4fea8041-d152-4b40-a3ae-598e8b46e8c6
+ref table LocalDateTable_9e5d4f73-ef28-4bfd-a51a-04ee23132c19
+ref table LocalDateTable_cb744347-8e0e-436f-b8ac-7dce3a20f3d3
+ref table LocalDateTable_1d9ae8d2-881a-41e7-ab02-7ae2b12bfabd
+ref table LocalDateTable_dd8b3217-2ccc-4f03-9aa5-5034a8076171
+ref table LocalDateTable_a5dac925-d78e-4913-b64d-3604fd6e1c33
+ref table LocalDateTable_9f2dd7d0-c208-414e-b29c-ea8c020c833e
+ref table LocalDateTable_ce9951f2-ddff-4ffc-b9e2-344b5d4127f3
+ref table LocalDateTable_206a3ec9-c4f5-4df2-9eae-886d579dd9d8
+ref table LocalDateTable_20ed8d13-3f4e-467b-8812-ed7802a1bad2
+ref table LocalDateTable_de83b0b7-8cf7-4f27-a1f4-f5107a6680a7
+ref table LocalDateTable_6996700e-ec92-465e-996f-3652a88b3d7b
+ref table LocalDateTable_99be05f3-da41-484b-b443-9abfb098934b
+ref table LocalDateTable_0ec6d4fe-5a03-4580-9a01-d93c95c653ac
+ref table LocalDateTable_d515ec98-6097-4406-be54-27cab266f793
+ref table LocalDateTable_387636b7-eafe-401f-a098-09fe66c279c9
+ref table LocalDateTable_6fdedf85-45cf-4d10-8e46-cf75440ec0c5
+ref table LocalDateTable_a0fa430a-8fdf-48d9-af3a-dc6ff7f56890
+ref table LocalDateTable_4d90b2b6-a903-4d3d-a697-e7c1ec4c4db4
+ref table LocalDateTable_fc73dfc5-fa71-43de-9733-0ed919d629bb
+ref table LocalDateTable_ea375e41-2900-4d46-85fc-b8fde24435b3
+ref table LocalDateTable_aa0ead3b-f445-49c8-ae3b-c62bc2978781
+ref table LocalDateTable_1ad9cf2f-b435-4609-9ee6-8aed013dca6f
+ref table LocalDateTable_489f16e3-9a93-47bc-be07-0568ac76e80d
+ref table LocalDateTable_36bfa387-a05c-4031-aa0d-3fc71bf3dd49
+ref table LocalDateTable_674d22cd-9003-4348-a16f-3fd0e5eae750
+ref table LocalDateTable_b0bcbbc7-7c1c-4451-b162-fcbba61edf95
+ref table LocalDateTable_73dd2f81-3f46-4e40-b34a-37f6368a1c02
+ref table LocalDateTable_0128c92f-464c-4d3d-b5cd-05a7a97871ca
+ref table LocalDateTable_13a38ce0-965a-44e0-899d-fd153e7f4d99
+ref table LocalDateTable_a923ea0f-2aed-4bf1-9520-ea16e8b0ab50
+ref table LocalDateTable_8674d33e-4d53-4611-b53c-d7da94562d00
+ref table LocalDateTable_338125bd-2a91-4452-a2ec-ac77af5aee2e
+ref table LocalDateTable_7a3188ec-3b10-47a9-8029-efbbe567f8df
+ref table LocalDateTable_48d93f20-8d35-4d5e-a448-f482225635e1
+ref table LocalDateTable_13030c5f-ab1e-4a1b-8bc7-7f418a45a26c
+ref table LocalDateTable_ff4bc417-181d-47fb-99d7-937aecb74316
+ref table LocalDateTable_b96da9ad-77fa-429a-b6e7-85d8829f802b
+ref table LocalDateTable_44882935-f89c-4eba-bec8-bc1877730500
+ref table LocalDateTable_1d0cbfa7-6dfb-4703-b301-97b8f21253a4
+ref table LocalDateTable_803d298b-03ae-478b-8b98-ac49cd51b064
+ref table LocalDateTable_24a96da4-33f8-4af3-8a3c-534c4e73e40b
+ref table LocalDateTable_7c1823f2-f20a-4078-be94-efcffb8aadd2
+ref table LocalDateTable_49b15a61-76d7-46ea-8275-623fdde212e4
+ref table LocalDateTable_10ccfe4d-c0c1-4e4b-8cd5-715a2b41d9ea
+ref table LocalDateTable_7d1f540e-1d9c-481a-8b9c-57df2e8b74ae
+ref table LocalDateTable_70091d0d-0a27-4768-a3e3-bdeea2786c8e
+ref table LocalDateTable_7621cc0e-f722-4ff3-be50-6d607a231ba9
+ref table LocalDateTable_4ebabe90-cf58-48c8-a36f-99cc6b685e65
+ref table LocalDateTable_0ca9f382-b2de-4063-9664-72e49daad1d1
+ref table LocalDateTable_cef81a88-781d-4bb2-afe6-215e5e582809
+ref table LocalDateTable_f9fa0049-4ece-4889-a16f-e9fd4bcbeedd
+ref table LocalDateTable_d24a623d-b54d-476a-8f53-79bb612c537a
+ref table LocalDateTable_0747e17e-11ad-419d-b613-3313c930573d
+ref table LocalDateTable_f79ff20c-76b6-4baf-8de9-e9e6b7e760a8
+ref table LocalDateTable_6a9a6000-bff2-4281-8cef-507996f2532a
+ref table LocalDateTable_627d255f-434c-4411-ac0d-3a15bdca3259
+
+ref role 'Project Access'
+ref role 'Project Access 2'
+ref role 'Project Access 3'
+
+ref cultureInfo en-NZ
+

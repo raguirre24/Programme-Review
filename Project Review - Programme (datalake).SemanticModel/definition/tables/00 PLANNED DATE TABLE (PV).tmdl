@@ -1,0 +1,23 @@
+table '00 PLANNED DATE TABLE (PV)'
+	lineageTag: 72d45677-ab11-4851-bac2-9f8d12e61405
+
+	column Date
+		formatString: General Date
+		lineageTag: 3d4288db-5607-4bd2-acb5-af4bdb6fb74b
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition '00 PLANNED DATE TABLE (PV)' = calculated
+		mode: import
+		source =
+				
+				CALENDAR(
+				    MIN('00 CALENDAR'[Date]),
+				    MAX('02 XER_PROJECT'[last_recalc_date])
+				    )
+
+	annotation PBI_Id = 5c1fba51a8934ac3b583411c46d0bcd8
+

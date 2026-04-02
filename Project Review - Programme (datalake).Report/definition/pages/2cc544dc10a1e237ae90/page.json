@@ -1,0 +1,101 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.0.0/schema.json",
+  "name": "2cc544dc10a1e237ae90",
+  "displayName": "Home",
+  "displayOption": "FitToPage",
+  "height": 1080,
+  "width": 1920,
+  "objects": {
+    "background": [
+      {
+        "properties": {
+          "color": {
+            "solid": {
+              "color": {
+                "expr": {
+                  "Literal": {
+                    "Value": "'#e6e6e6'"
+                  }
+                }
+              }
+            }
+          },
+          "transparency": {
+            "expr": {
+              "Literal": {
+                "Value": "0D"
+              }
+            }
+          },
+          "image": {
+            "image": {
+              "name": {
+                "expr": {
+                  "Literal": {
+                    "Value": "'Contract Background.png'"
+                  }
+                }
+              },
+              "url": {
+                "expr": {
+                  "ResourcePackageItem": {
+                    "PackageName": "RegisteredResources",
+                    "PackageType": 1,
+                    "ItemName": "Contract_Background3133289438451782.png"
+                  }
+                }
+              },
+              "scaling": {
+                "expr": {
+                  "Literal": {
+                    "Value": "'Fit'"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ],
+    "displayArea": [
+      {
+        "properties": {
+          "verticalAlignment": {
+            "expr": {
+              "Literal": {
+                "Value": "'Middle'"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "visualInteractions": [
+    {
+      "source": "e473b21d676622c41e5d",
+      "target": "2100ef824bc0dc3d94b4",
+      "type": "NoFilter"
+    },
+    {
+      "source": "e473b21d676622c41e5d",
+      "target": "d0f42d6f6db694358c27",
+      "type": "NoFilter"
+    },
+    {
+      "source": "d0f42d6f6db694358c27",
+      "target": "2100ef824bc0dc3d94b4",
+      "type": "NoFilter"
+    },
+    {
+      "source": "2100ef824bc0dc3d94b4",
+      "target": "d0f42d6f6db694358c27",
+      "type": "NoFilter"
+    },
+    {
+      "source": "d0f42d6f6db694358c27",
+      "target": "e473b21d676622c41e5d",
+      "type": "DataFilter"
+    }
+  ]
+}

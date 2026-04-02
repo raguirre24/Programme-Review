@@ -1,0 +1,103 @@
+table 'Activity Completion'
+	lineageTag: 2521af7d-3989-47d9-adeb-b629cc490689
+
+	measure CurrentDate = ```
+			
+			    SELECTEDVALUE('CurrentDate'[UpdateDate])
+			
+			```
+		formatString: General Date
+		lineageTag: 0fd0a08b-fc17-4c39-8fad-9994cf330970
+
+	measure 'Activities Achieved Previous Date' =
+			
+			sum('01 XER_TASK'[Completed of Planned Last Period])
+		formatString: 0
+		lineageTag: e254c767-ab54-4a12-9150-724f232d53db
+
+	measure 'Activities Planned Previous Date' =
+			
+			sum('01 XER_TASK'[Planned Last Period])
+		formatString: #,0
+		lineageTag: 2d1c71c2-1e34-4833-a35c-7835763f32ea
+
+	measure 'Completion Score Previous Date' =
+			
+			divide([Activities Achieved Previous Date],[Activities Planned Previous Date],0)
+		formatString: 0%;-0%;0%
+		lineageTag: 2faef2a8-c38c-49d2-a23d-3553d661c39e
+
+	measure PreviousDate = ```
+			
+			    CALCULATE(
+			        MAX(CurrentDate[UpdateDate]),
+			        FILTER(
+			            ALL(CurrentDate),
+			            CurrentDate[UpdateDate] < [CurrentDate]
+			        )
+			    )
+			```
+		formatString: General Date
+		lineageTag: 913a023d-2373-4859-b66e-1ad1e6af1b11
+
+	measure CurrentDataDate =
+			
+			VAR CurrentMonthValue = [CurrentDate]
+			VAR CurrentProject = SELECTEDVALUE('01 XER_TASK'[ProjectName])
+			RETURN
+			    CALCULATE(
+			        MAX('01 XER_TASK'[data_date]),
+			        '01 XER_TASK'[UpdateDate] = CurrentMonthValue,
+			        '01 XER_TASK'[ProjectName] = CurrentProject
+			    )
+		formatString: dd/mm/yyyy
+		lineageTag: 2af11dba-9c5f-4154-b331-d10c048304c8
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	measure PreviousDataDate =
+			
+			VAR CurrentProject = SELECTEDVALUE('01 XER_TASK'[ProjectName])
+			VAR CurrentDataDate = MAX('01 XER_TASK'[data_date])
+			VAR PreviousDataDate =
+			    CALCULATE(
+			        MAX('01 XER_TASK'[data_date]),
+			        FILTER(
+			            ALL('01 XER_TASK'),
+			            '01 XER_TASK'[ProjectName] = CurrentProject &&
+			            '01 XER_TASK'[data_date] < CurrentDataDate
+			        )
+			    )
+			RETURN
+			    PreviousDataDate
+		formatString: General Date
+		lineageTag: 51260f0c-3349-4a75-bcff-6945db6e8c37
+
+	measure 'Activities Completed Last Period' =
+			
+			sum('01 XER_TASK'[Completed Last Period])
+		formatString: 0
+		lineageTag: bf110535-93b8-4229-b93a-54b379ef85f5
+
+	measure Average_Finish_Variance_PNC =
+			
+			CALCULATE(
+			    AVERAGE('01 XER_TASK'[Finish_Variance_Previous_Month]),
+			    '01 XER_TASK'[Planned Last Period] = 1
+			)
+		lineageTag: 379c8174-6a2c-4019-891b-d71d8fcc333a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition 'Activity Completion' = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

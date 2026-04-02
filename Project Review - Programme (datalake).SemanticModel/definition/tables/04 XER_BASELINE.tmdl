@@ -1,0 +1,251 @@
+table '04 XER_BASELINE'
+	lineageTag: af4b1256-6095-4e3f-9357-ed2535c6aeb5
+
+	measure 'BL Month Update' =
+			
+			CALCULATE(
+			    MIN('04 XER_BASELINE'[First_Project_Month]),
+			    FILTER(
+			        ALL('04 XER_BASELINE'),
+			        '04 XER_BASELINE'[ProjectCode] IN VALUES('01 XER_TASK'[ProjectCode])
+			    )
+			)
+		formatString: mmmm yyyy
+		lineageTag: 376f681b-acae-4523-9944-fe379b3099df
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column task_id_key
+		lineageTag: e06edf12-2c30-41d2-a790-8e28cdc16ad4
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [task_id_key]
+
+		annotation SummarizationSetBy = Automatic
+
+	column wbs_id_key
+		lineageTag: 536631ca-a62c-4207-aeec-68c8e7e02e6e
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [wbs_id_key]
+
+		annotation SummarizationSetBy = Automatic
+
+	column task_type
+		lineageTag: 12609db3-5a6d-4098-bad6-4e8614abdd2f
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [task_type]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Start
+		formatString: dd/mm/yyyy
+		lineageTag: 64a16804-4689-468a-b5ad-bbb651421cbf
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Start]
+
+		variation Variation
+			isDefault
+			relationship: a2598ad4-8622-4d63-b98a-072219a075ad
+			defaultHierarchy: LocalDateTable_cef81a88-781d-4bb2-afe6-215e5e582809.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column Finish
+		formatString: dd/mm/yyyy
+		lineageTag: 9ee2acaf-d4bd-4671-ac51-f752a5c0816d
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Finish]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column 'Remaining Duration'
+		formatString: 0
+		lineageTag: 404ed500-eeac-4bdd-9fa9-b4ed4fcbeeb8
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Remaining Duration]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Data Date'
+		formatString: dd/mm/yyyy
+		lineageTag: 3cc27b96-ff0c-42fe-8a96-61ee2b9468b2
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Data Date]
+
+		variation Variation
+			isDefault
+			relationship: 73f9c568-0ccb-43ca-8612-728695b48537
+			defaultHierarchy: LocalDateTable_f9fa0049-4ece-4889-a16f-e9fd4bcbeedd.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column status_code
+		lineageTag: f2115859-6faf-42b7-a432-24cde3b4001c
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [status_code]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Effective_Early_End
+		formatString: dd/mm/yyyy
+		lineageTag: b1705b97-e97b-455f-9e6e-08243ce4ac62
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Effective_Early_End]
+
+		variation Variation
+			isDefault
+			relationship: 930baacb-bda5-4d8a-8121-c5881042d397
+			defaultHierarchy: LocalDateTable_d24a623d-b54d-476a-8f53-79bb612c537a.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column Effective_Late_End
+		formatString: dd/mm/yyyy
+		lineageTag: c79c6ceb-f630-4c38-b310-bc39b9154f63
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Effective_Late_End]
+
+		variation Variation
+			isDefault
+			relationship: a9ce5a05-a165-4596-aa59-c39bdd7640fb
+			defaultHierarchy: LocalDateTable_0747e17e-11ad-419d-b613-3313c930573d.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column early_start_date
+		formatString: dd/mm/yyyy
+		lineageTag: 1f8088a8-88e4-4003-96c3-750498599135
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [early_start_date]
+
+		variation Variation
+			isDefault
+			relationship: e9a0db00-a0fc-4f15-aafe-7a65b95e398e
+			defaultHierarchy: LocalDateTable_f79ff20c-76b6-4baf-8de9-e9e6b7e760a8.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column early_end_date
+		formatString: dd/mm/yyyy
+		lineageTag: 5ace78c8-94da-42f5-9336-7943d262b3d7
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [early_end_date]
+
+		variation Variation
+			isDefault
+			relationship: cbe27884-4fce-4805-8399-0bc4d1752dfb
+			defaultHierarchy: LocalDateTable_6a9a6000-bff2-4281-8cef-507996f2532a.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column First_Project_Month
+		formatString: Long Date
+		lineageTag: 302bb091-9726-4557-9028-4083acea3e80
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [First_Project_Month]
+
+		variation Variation
+			isDefault
+			relationship: cc9b8076-b0fd-441c-9ce2-6286b31aa909
+			defaultHierarchy: LocalDateTable_627d255f-434c-4411-ac0d-3a15bdca3259.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column task_code
+		lineageTag: b4cd6fee-b535-4735-9374-056a8dd7398c
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [task_code]
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProjectCode
+		lineageTag: 630ee949-0941-4377-8043-8ffff8e540fd
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: 01 XER_TASK[ProjectCode]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition '04 XER_BASELINE' = calculated
+		mode: import
+		source =
+				
+				VAR ProjectStartMonths =
+				    SUMMARIZE(
+				        '01 XER_TASK',
+				        '01 XER_TASK'[ProjectCode],
+				        "First_Project_Month", MIN( '01 XER_TASK'[UpdateDate] )
+				    )
+				RETURN
+				    GENERATE(
+				        ProjectStartMonths,
+				        VAR CurrentProject = '01 XER_TASK'[ProjectCode]
+				        VAR BaselineDate = [First_Project_Month]
+				        RETURN
+				            SELECTCOLUMNS(
+				                FILTER(
+				                    '01 XER_TASK',
+				                    '01 XER_TASK'[ProjectCode] = CurrentProject &&
+				                    '01 XER_TASK'[UpdateDate] = BaselineDate
+				                ),
+				                "task_id_key", '01 XER_TASK'[task_id_key],
+				                "wbs_id_key", '01 XER_TASK'[wbs_id_key],
+				                "task_type", '01 XER_TASK'[task_type],
+				                "Start", '01 XER_TASK'[Start],
+				                "Finish", '01 XER_TASK'[Finish],
+				                "Remaining Duration", '01 XER_TASK'[remaining_working_days],
+				                "Data Date", '01 XER_TASK'[data_date],
+				                "task_code", '01 XER_TASK'[task_code],
+				                "status_code", '01 XER_TASK'[status_code],
+				                "early_start_date", '01 XER_TASK'[early_start_date],
+				                "early_end_date", '01 XER_TASK'[early_end_date],
+				                "Effective_Early_End", '01 XER_TASK'[Effective_Early_End],
+				                "Effective_Late_End", '01 XER_TASK'[Effective_Late_End]
+				            )
+				    )
+
+	annotation PBI_Id = 960966e01ba34e338059b5ad6d0b01ab
+

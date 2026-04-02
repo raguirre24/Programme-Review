@@ -1,0 +1,28 @@
+table Filter_Duration
+	lineageTag: f49209a5-bfdf-4112-a5d2-bff470085b2f
+
+	column DurationCategory
+		lineageTag: e0ec0292-9dbb-46b4-a7be-f1b090e1f223
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [DurationCategory]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Filter_Duration = calculated
+		mode: import
+		source =
+				
+				DATATABLE(
+				    "DurationCategory", STRING,
+				    {
+				        {"0 < Dur. ≤ 10"},
+				        {"10 < Dur. ≤ 20"},
+				        {"20 < Dur. ≤ 30"},
+				        {"30 < Dur. ≤ 44"},
+				        {"44 < Dur."}
+				    }
+				)
+
+	annotation PBI_Id = a71c2067678846509b6afec24733a96d
+

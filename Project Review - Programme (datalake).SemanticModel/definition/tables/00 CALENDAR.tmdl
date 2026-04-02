@@ -1,0 +1,85 @@
+table '00 CALENDAR'
+	lineageTag: 9ab3ff51-12e9-4ac1-921a-03ddc9df0c6a
+
+	column Date
+		formatString: Long Date
+		lineageTag: 0fbb4d6a-f69d-415d-9fa4-3a5461758960
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+		variation Variation
+			isDefault
+			relationship: e83048ed-5068-45ad-a775-5d8a8ae4a791
+			defaultHierarchy: LocalDateTable_d515ec98-6097-4406-be54-27cab266f793.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Year = year([date])
+		formatString: 0
+		lineageTag: 96a2454f-a58c-4b24-a05b-f7ad2f499016
+		summarizeBy: none
+
+		annotation SummarizationSetBy = User
+
+	column Month = DATE([Year], MONTH([Date]), 1)
+		dataType: dateTime
+		formatString: mmmm yyyy
+		lineageTag: edfe828e-e92a-42fc-b002-fae966716c7a
+		summarizeBy: none
+
+		variation Variation
+			isDefault
+			relationship: ea352bef-db33-4eda-89d5-5fb559e0f807
+			defaultHierarchy: LocalDateTable_387636b7-eafe-401f-a098-09fe66c279c9.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	partition '00 CALENDAR' = calculated
+		mode: import
+		source =
+				
+				VAR MinDate01 = MINX(
+				    FILTER(
+				        {
+				            MIN('01 XER_TASK'[early_end_date]),
+				            MIN('01 XER_TASK'[act_end_date]),
+				            MIN('01 XER_TASK'[late_end_date]),
+				            MIN('01 XER_TASK'[Finish])
+				        },
+				        NOT(ISBLANK([Value]))
+				    ),
+				    [Value]
+				)
+				
+				VAR MaxDate01 = MAXX(
+				    FILTER(
+				        {
+				            MAX('01 XER_TASK'[early_end_date]),
+				            MAX('01 XER_TASK'[act_end_date]),
+				            MAX('01 XER_TASK'[late_end_date]),
+				            MAX('01 XER_TASK'[Finish])
+				        },
+				        NOT(ISBLANK([Value]))
+				    ),
+				    [Value]
+				)
+				
+				VAR AbsoluteMinDate = MinDate01
+				
+				VAR AbsoluteMaxDate = MaxDate01
+				
+				RETURN
+				CALENDAR(
+				    AbsoluteMinDate,
+				    AbsoluteMaxDate
+				)
+
+	annotation PBI_Id = 7e7336ea8a83482db92e487ff8bb6ae9
+

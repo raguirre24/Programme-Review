@@ -1,0 +1,1472 @@
+table '01 XER_TASK'
+	lineageTag: de86e8cb-d782-4301-95e1-09a8fd150627
+
+	column task_type
+		dataType: string
+		lineageTag: f1565957-af11-4f1e-8524-207541bcd9c3
+		summarizeBy: none
+		sourceColumn: task_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column status_code
+		dataType: string
+		lineageTag: 6f1c76d3-7397-4917-8e89-0541d93a3aa6
+		summarizeBy: none
+		sourceColumn: status_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column task_code
+		dataType: string
+		lineageTag: 53c1cd6d-c886-4639-9ef2-2a56c751dd9c
+		summarizeBy: none
+		sourceColumn: task_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column task_name
+		dataType: string
+		lineageTag: 958a1112-311f-4220-a612-aed548fd7d7c
+		summarizeBy: none
+		sourceColumn: task_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column cstr_type
+		dataType: string
+		lineageTag: 1aa455af-ff12-4d85-a3af-9305c30ee911
+		summarizeBy: none
+		sourceColumn: cstr_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column driving_path_flag
+		dataType: string
+		lineageTag: df8c5746-e757-44e2-a1bd-1d48af8bc8d3
+		summarizeBy: none
+		sourceColumn: driving_path_flag
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'TimePeriod (h/day)' =
+			
+			LOOKUPVALUE(
+			    '10 XER_CALENDARS'[day_hr_cnt],
+			    '10 XER_CALENDARS'[clndr_id_key],
+			    [calendar_id_key]
+			    )
+		formatString: 0
+		lineageTag: 31c26617-0d53-4e3b-94cc-9ec12145cae1
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column StatusCategory =
+			
+			IF(
+			    '01 XER_TASK'[status_code] = "Complete",
+			    "Complete",
+			    "Not Complete"
+			)
+		lineageTag: 4143997f-d77d-4c87-9b34-0e4dc77610e3
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column CriticalStatus = ```
+			
+			VAR TaskStatus = TRIM(UPPER('01 XER_TASK'[status_code]))
+			VAR FloatValue = '01 XER_TASK'[total_float]
+			RETURN
+			    IF(
+			        TaskStatus <> "COMPLETE",
+			        SWITCH(
+			            TRUE(),
+			            FloatValue <= 0, "Critical",
+			            FloatValue > 0 && FloatValue <= 10, "Near Critical",
+			            "Non-Critical"
+			        ),
+			        BLANK()
+			    )
+			
+			```
+		lineageTag: d8c504df-6a4d-49ad-9b83-1c8b123677b6
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column FinishDateCategory = ```
+			
+			IF(
+			   '01 XER_TASK'[status_code] <> "Complete",
+			    VAR StartDate = '01 XER_TASK'[Finish]
+			    VAR DataDate = '01 XER_TASK'[data_date]
+			    VAR MonthsDifference = 
+			        DATEDIFF(DataDate, StartDate, MONTH) + 
+			        IF(DAY(StartDate) < DAY(DataDate), -1, 0)
+			    RETURN
+			        SWITCH(
+			            TRUE(),
+			            StartDate < DataDate, "Outside Range",
+			            MonthsDifference < 1, " <1 Month",
+			            MonthsDifference >= 1 && MonthsDifference < 3, " 1-3 Months",
+			            MonthsDifference >= 3 && MonthsDifference < 6, " 3-6 Months",
+			            MonthsDifference >= 6, ">6 Months",
+			            BLANK()
+			        ),
+			    BLANK()
+			)
+			
+			```
+		lineageTag: b634f4d2-0ad4-4833-b622-257f56d60210
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column StartDateCategory = ```
+			
+			IF(
+			    // Only proceed if task_type is "TT_Task" and Activity_Status is "Not Started"
+			   '01 XER_TASK'[status_code] = "Not Started",
+			    
+			    // Define variables
+			    VAR StartDate = '01 XER_TASK'[Start]
+			    VAR DataDate = '01 XER_TASK'[data_date]
+			    VAR MonthsDifference = 
+			        DATEDIFF(DataDate, StartDate, MONTH) + 
+			        IF(DAY(StartDate) < DAY(DataDate), -1, 0)
+			    
+			    // Return the category based on MonthsDifference
+			    RETURN
+			        SWITCH(
+			            TRUE(),
+			            StartDate < DataDate, "Outside Range",
+			            MonthsDifference < 1, " <1 Month",
+			            MonthsDifference >= 1 && MonthsDifference < 3, " 1-3 Months",
+			            MonthsDifference >= 3 && MonthsDifference < 6, " 3-6 Months",
+			            MonthsDifference >= 6, ">6 Months",
+			            BLANK()
+			        ),
+			    
+			    // If conditions are not met, return BLANK()
+			    BLANK()
+			)
+			```
+		lineageTag: b718f299-5eee-4a98-9cc9-369593fb4096
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Finish_Variance_Previous_Month = ```
+			
+			VAR CurrentTaskCode = '01 XER_TASK'[task_code]
+			VAR CurrentProjectName = '01 XER_TASK'[ProjectName]
+			VAR CurrentMonthUpdate = '01 XER_TASK'[UpdateDate]
+			VAR CurrentFinishDate = '01 XER_TASK'[Finish]
+			
+			VAR PreviousMonthUpdate = 
+			    CALCULATE(
+			        MAX('01 XER_TASK'[UpdateDate]),
+			        FILTER(
+			            '01 XER_TASK',
+			            '01 XER_TASK'[task_code] = CurrentTaskCode &&
+			            '01 XER_TASK'[ProjectName] = CurrentProjectName &&
+			            '01 XER_TASK'[UpdateDate] < CurrentMonthUpdate
+			        )
+			    )
+			
+			VAR PreviousFinishDate = 
+			    CALCULATE(
+			        MAX('01 XER_TASK'[Finish]),
+			        FILTER(
+			            '01 XER_TASK',
+			            '01 XER_TASK'[task_code] = CurrentTaskCode &&
+			            '01 XER_TASK'[ProjectName] = CurrentProjectName &&
+			            '01 XER_TASK'[UpdateDate] = PreviousMonthUpdate
+			        )
+			    )
+			
+			RETURN
+			    IF(
+			        NOT(ISBLANK(PreviousFinishDate)) &&
+			        NOT(ISBLANK(CurrentFinishDate)),
+			        IF(
+			            PreviousFinishDate = CurrentFinishDate,
+			            0,
+			            NETWORKDAYS(PreviousFinishDate, CurrentFinishDate)
+			        ),
+			        0
+			    )
+			```
+		formatString: 0
+		lineageTag: 40bdc0d3-a016-4c81-a60a-154fdd803918
+		summarizeBy: none
+
+		annotation SummarizationSetBy = User
+
+	column 'No Predecessor' = if(CALCULATE(COUNTA('06 XER_PREDECESSOR'[pred_task_id_key]))=BLANK(),1,0)
+		formatString: 0
+		lineageTag: a09ffef3-83b6-400e-bfcb-d129f64a7cdd
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column Driven_DataDate = ```
+			
+			VAR CurrentDataDate = '01 XER_TASK'[data_date]
+			VAR PreviousDataDate = '01 XER_TASK'[PreviousDataDate]
+			
+			-- Extract date-only portions
+			VAR CurrentDataDateOnly = DATE(YEAR(CurrentDataDate), MONTH(CurrentDataDate), DAY(CurrentDataDate))
+			VAR TaskStartDateOnly = DATE(YEAR('01 XER_TASK'[Start]), MONTH('01 XER_TASK'[Start]), DAY('01 XER_TASK'[Start]))
+			VAR TaskFinishDateOnly = DATE(YEAR('01 XER_TASK'[Finish]), MONTH('01 XER_TASK'[Finish]), DAY('01 XER_TASK'[Finish]))
+			
+			-- Calculate Date Gaps (Positive = Future, Negative = Past)
+			VAR StartGap = DATEDIFF(CurrentDataDateOnly, TaskStartDateOnly, DAY)
+			VAR FinishGap = DATEDIFF(CurrentDataDateOnly, TaskFinishDateOnly, DAY)
+			
+			VAR UpdatePeriod = 
+			    IF(
+			        NOT(ISBLANK(PreviousDataDate)),
+			        DATEDIFF(PreviousDataDate, CurrentDataDate, DAY),
+			        0
+			    )
+			
+			VAR TaskStartSlippage = 
+			    IF(
+			        NOT(ISBLANK('01 XER_TASK'[Previous Month Start])),
+			        DATEDIFF('01 XER_TASK'[Previous Month Start], '01 XER_TASK'[Start], DAY),
+			        0
+			    )
+			
+			VAR CurrentDuration = DATEDIFF('01 XER_TASK'[Start], '01 XER_TASK'[Finish], DAY)
+			VAR PreviousDuration = 
+			    IF(
+			        NOT(ISBLANK('01 XER_TASK'[Previous Month Finish])) && NOT(ISBLANK('01 XER_TASK'[Previous Month Start])),
+			        DATEDIFF('01 XER_TASK'[Previous Month Start], '01 XER_TASK'[Previous Month Finish], DAY),
+			        BLANK()
+			    )
+			
+			RETURN
+			SWITCH( TRUE(),
+			
+			    -- 1. IN PROGRESS STAGNATION (Behavioral)
+			    -- Highest priority: Identifies work that is "riding" the line because updates stopped.
+			    ('01 XER_TASK'[status_code] = "In Progress"
+			        && UpdatePeriod > 0
+			        && NOT(ISBLANK('01 XER_TASK'[Previous Remaining Working Days]))
+			        && '01 XER_TASK'[remaining_working_days] >= ('01 XER_TASK'[Previous Remaining Working Days] - 1) 
+			    ), "Stagnating Progress",
+			
+			    -- 2. TRUE SLIPPAGE (Behavioral)
+			    -- Second priority: Identifies unstarted work that shifted exactly with the update cycle.
+			    ('01 XER_TASK'[status_code] = "Not Started"
+			        && UpdatePeriod > 0
+			        && TaskStartSlippage > 0 
+			        && ABS(TaskStartSlippage - UpdatePeriod) <= 1  
+			        && ABS(CurrentDuration - PreviousDuration) <= 1 
+			    ), "Slippage Matches Update Period",
+			
+			    -- 3. PAST DUE START (Hygiene)
+			    -- Task should have started but hasn't.
+			    ('01 XER_TASK'[status_code] = "Not Started" && TaskStartDateOnly < CurrentDataDateOnly),
+			    "Start Date in Past",
+			
+			    -- 4. OVERDUE FINISH (Hygiene)
+			    -- Task is In Progress but the finish date is in the past.
+			    ('01 XER_TASK'[status_code] = "In Progress" && TaskFinishDateOnly <= CurrentDataDateOnly),
+			    "Finish Date in Past",
+			
+			    -- 5. PROXIMITY CHECK (Positional)
+			    -- Generic check: Is the Start or Finish within 0-3 days of the Data Date?
+			    -- This catches tasks validly scheduled 'now' or on the immediate horizon.
+			    (StartGap >= 0 && StartGap <= 3), "Scheduled Start Near Data Date",
+			    
+			    (FinishGap >= 0 && FinishGap <= 3), "Scheduled Finish Near Data Date",
+			    
+			    -- DEFAULT
+			    "Not Driven"
+			)
+			```
+		lineageTag: 94225685-becc-4744-a625-f9973e146094
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column act_end_date
+		dataType: dateTime
+		formatString: dd/mm/yy
+		lineageTag: b1c39a59-0c64-4b03-bf09-077f8c4de963
+		summarizeBy: none
+		sourceColumn: act_end_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column 'Float Category' = ```
+			
+			IF(
+			    '01 XER_TASK'[status_code] = "Complete",
+			    "Complete",
+			    SWITCH(
+			        TRUE(),
+			        '01 XER_TASK'[total_float] < 0, " Float < 0",
+			        '01 XER_TASK'[total_float] >= 0 && '01 XER_TASK'[total_float] <= 10, "0 ≤ Float ≤ 10",
+			        '01 XER_TASK'[total_float] > 10 && '01 XER_TASK'[total_float] <= 30, "10 < Float ≤ 30",
+			        '01 XER_TASK'[total_float] > 30 && '01 XER_TASK'[total_float] <= 50, "30 < Float ≤ 50",
+			        '01 XER_TASK'[total_float] > 50, "50 < Float",
+			        "Other Incomplete"
+			    )
+			)
+			
+			```
+		lineageTag: a888ea7c-93cc-413b-a691-f95b0875b92e
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column TaskType_Classified = ```
+			
+			SWITCH(
+			    TRUE(),
+			    '01 XER_TASK'[task_type] = "TT_Task", "Activity",
+			    '01 XER_TASK'[task_type] = "TT_Rsrc", "Activity",
+			    '01 XER_TASK'[task_type] = "TT_FinMile", "Milestone",
+			    '01 XER_TASK'[task_type] = "TT_Mile", "Milestone",
+			    '01 XER_TASK'[task_type] = "TT_LOE", "Level Of Effort",
+			    '01 XER_TASK'[task_type] = "TT_WBS", "WBS Summary",
+			    "Other"
+			)
+			
+			```
+		lineageTag: dfc59af2-9eae-4347-9cd7-31a2e45af94a
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column wbs_id_key
+		dataType: string
+		lineageTag: 0fdde693-247e-4f91-aed7-fb733134d297
+		summarizeBy: none
+		sourceColumn: wbs_id_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column task_id_key
+		dataType: string
+		lineageTag: a7f183c6-8fe9-422c-8ae7-26f32fcfcbc6
+		summarizeBy: none
+		sourceColumn: task_id_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column PreviousMonthFinishVarianceCategory = ```
+			
+			    SWITCH(
+			        TRUE(),
+			        '01 XER_TASK'[Finish_Variance_Previous_Month] = 0, "   No Variance",
+			        '01 XER_TASK'[Finish_Variance_Previous_Month] > 0 && '01 XER_TASK'[Finish_Variance_Previous_Month] < 21, " <1 Month",
+			        '01 XER_TASK'[Finish_Variance_Previous_Month] >= 21 && '01 XER_TASK'[Finish_Variance_Previous_Month] < 63, " 1-3 Months",
+			        '01 XER_TASK'[Finish_Variance_Previous_Month] >= 63 && '01 XER_TASK'[Finish_Variance_Previous_Month] < 126, " 3-6 Months",
+			        '01 XER_TASK'[Finish_Variance_Previous_Month] >= 126, ">6 Months",
+			        '01 XER_TASK'[Finish_Variance_Previous_Month] < 0, "  Ahead",
+			        BLANK()
+			    )
+			 
+			```
+		lineageTag: 239ae7b8-fd36-4e68-8b94-1e5eaaa1537a
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Remaining Duration Category' =
+			
+			IF(
+			    '01 XER_TASK'[status_code] = "Complete",
+			    "Complete",
+			    SWITCH(
+			        TRUE(),
+			        '01 XER_TASK'[remaining_working_days] > 0 && '01 XER_TASK'[remaining_working_days] <= 10, "0 < Dur. ≤ 10",
+			        '01 XER_TASK'[remaining_working_days] > 10 && '01 XER_TASK'[remaining_working_days] <= 20, "10 < Dur. ≤ 20",
+			        '01 XER_TASK'[remaining_working_days] > 20 && '01 XER_TASK'[remaining_working_days] <= 30, "20 < Dur. ≤ 30",
+			        '01 XER_TASK'[remaining_working_days] > 30 && '01 XER_TASK'[remaining_working_days] <= 44, "30 < Dur. ≤ 44",
+			        '01 XER_TASK'[remaining_working_days] > 44, "44 < Dur.",
+			        "Other Incomplete"
+			    )
+			)
+		lineageTag: a172b330-82a0-414d-a753-ef805e9bc7e0
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column cstr_date
+		dataType: dateTime
+		formatString: dd/mm/yy
+		lineageTag: c214af36-b90f-4258-9fe0-13e6475c8b38
+		summarizeBy: none
+		sourceColumn: cstr_date
+
+		variation Variation
+			isDefault
+			relationship: ba12a1f8-071a-410d-8ec8-d4fe2d2f657e
+			defaultHierarchy: LocalDateTable_29db2f21-e9f9-431b-8a8e-6fde710d3a90.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column early_end_date
+		dataType: dateTime
+		formatString: dd/mm/yy
+		lineageTag: af2b83ec-de7f-4396-abe4-4caab4e3aeab
+		summarizeBy: none
+		sourceColumn: early_end_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column late_end_date
+		dataType: dateTime
+		formatString: dd/mm/yy
+		lineageTag: 635f5342-290f-49cf-af8f-43babd552399
+		summarizeBy: none
+		sourceColumn: late_end_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column Variance_Finish_BL = ```
+			
+			VAR TaskCode = '01 XER_TASK'[task_code]
+			VAR ProjectName = '01 XER_TASK'[ProjectCode]
+			VAR TaskFinishDate = '01 XER_TASK'[Finish]
+			
+			VAR BaselineFinishDate = 
+			    MAXX(
+			        FILTER(
+			            ALL('04 XER_BASELINE'),
+			            '04 XER_BASELINE'[task_code] = TaskCode &&
+			            '04 XER_BASELINE'[ProjectCode] = ProjectName
+			        ),
+			        '04 XER_BASELINE'[Finish]
+			    )
+			
+			// Adjust to handle the NETWORKDAYS off-by-one issue
+			RETURN
+			    IF(
+			        NOT(ISBLANK(BaselineFinishDate)) && 
+			        NOT(ISBLANK(TaskFinishDate)),
+			        IF(
+			            BaselineFinishDate = TaskFinishDate,
+			            0,
+			            NETWORKDAYS(BaselineFinishDate, TaskFinishDate)
+			        ),
+			        BLANK()
+			    )
+			```
+		formatString: 0
+		lineageTag: 0e8adf17-4283-49ba-8ca9-5f48c7067f76
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Baseline Finish' =
+			
+			VAR CurrentTaskCode = '01 XER_TASK'[task_code]
+			VAR CurrentProject = '01 XER_TASK'[ProjectCode]
+			
+			RETURN
+			    MAXX(
+			        FILTER(
+			            ALL('04 XER_BASELINE'),
+			            '04 XER_BASELINE'[task_code] = CurrentTaskCode &&
+			            '04 XER_BASELINE'[ProjectCode] = CurrentProject
+			        ),
+			        '04 XER_BASELINE'[Finish]
+			    )
+		formatString: dd/mm/yy
+		lineageTag: f0312e68-3181-4671-a8e0-0b7c0937e2df
+		summarizeBy: none
+
+		variation Variation
+			isDefault
+			relationship: 8d586938-56c2-49ee-867a-580c1f5f4a61
+			defaultHierarchy: LocalDateTable_6573150e-0e7c-40d1-a29d-2ac5a0ae40a9.'Date Hierarchy'
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column 'Baseline Start' =
+			
+			VAR CurrentTaskCode = '01 XER_TASK'[task_code]
+			VAR CurrentProject = '01 XER_TASK'[ProjectCode]
+			
+			RETURN
+			    MAXX(
+			        FILTER(
+			            ALL('04 XER_BASELINE'),
+			            '04 XER_BASELINE'[task_code] = CurrentTaskCode &&
+			            '04 XER_BASELINE'[ProjectCode] = CurrentProject
+			        ),
+			        '04 XER_BASELINE'[Start]
+			    )
+		formatString: dd/mm/yy
+		lineageTag: ac5b153b-e238-4351-b588-7b8a7720b8eb
+		summarizeBy: none
+
+		variation Variation
+			isDefault
+			relationship: e71c523a-9a76-4bb0-a12b-9ec1df2403d6
+			defaultHierarchy: LocalDateTable_4fea8041-d152-4b40-a3ae-598e8b46e8c6.'Date Hierarchy'
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column 'Previous Month Start' = ```
+			
+			VAR CurrentTaskCode = '01 XER_TASK'[task_code]
+			VAR CurrentProject = '01 XER_TASK'[ProjectName]
+			VAR CurrentMonthUpdate = '01 XER_TASK'[UpdateDate]
+			VAR CurrentStart = '01 XER_TASK'[Start]
+			
+			-- Find the previous month update (closest but less than current)
+			VAR PreviousMonthUpdate = 
+			    CALCULATE(
+			        MAX('01 XER_TASK'[UpdateDate]),
+			        FILTER(
+			            ALL('01 XER_TASK'),
+			            '01 XER_TASK'[task_code] = CurrentTaskCode &&
+			            '01 XER_TASK'[ProjectName] = CurrentProject &&
+			            '01 XER_TASK'[UpdateDate] < CurrentMonthUpdate
+			        )
+			    )
+			
+			-- Get the Start date from the previous month update
+			VAR PreviousStart = 
+			    CALCULATE(
+			        MAX('01 XER_TASK'[Start]),
+			        FILTER(
+			            ALL('01 XER_TASK'),
+			            '01 XER_TASK'[task_code] = CurrentTaskCode &&
+			            '01 XER_TASK'[ProjectName] = CurrentProject &&
+			            '01 XER_TASK'[UpdateDate] = PreviousMonthUpdate
+			        )
+			    )
+			
+			-- Return previous month's Start, or current Start if no previous found
+			RETURN
+			    IF(
+			        ISBLANK(PreviousStart),
+			        CurrentStart,
+			        PreviousStart
+			    )
+			```
+		formatString: dd/mm/yyyy
+		lineageTag: e4a7c40e-6556-495c-ba7b-e2be8359b963
+		summarizeBy: none
+
+		variation Variation
+			isDefault
+			relationship: eaec5b22-0a13-454a-ba89-fe28024e5e9d
+			defaultHierarchy: LocalDateTable_9e5d4f73-ef28-4bfd-a51a-04ee23132c19.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column 'Previous Month Finish' = ```
+			
+			VAR CurrentTaskCode = '01 XER_TASK'[task_code]
+			VAR CurrentProject = '01 XER_TASK'[ProjectName]
+			VAR CurrentMonthUpdate = '01 XER_TASK'[UpdateDate]
+			VAR CurrentFinish = '01 XER_TASK'[Finish]
+			
+			-- Find the previous month update (closest but less than current)
+			VAR PreviousMonthUpdate = 
+			    CALCULATE(
+			        MAX('01 XER_TASK'[UpdateDate]),
+			        FILTER(
+			            ALL('01 XER_TASK'),
+			            '01 XER_TASK'[task_code] = CurrentTaskCode &&
+			            '01 XER_TASK'[ProjectName] = CurrentProject &&
+			            '01 XER_TASK'[UpdateDate] < CurrentMonthUpdate
+			        )
+			    )
+			
+			-- Get the Finish date from the previous month update
+			VAR PreviousFinish = 
+			    CALCULATE(
+			        MAX('01 XER_TASK'[Finish]),
+			        FILTER(
+			            ALL('01 XER_TASK'),
+			            '01 XER_TASK'[task_code] = CurrentTaskCode &&
+			            '01 XER_TASK'[ProjectName] = CurrentProject &&
+			            '01 XER_TASK'[UpdateDate] = PreviousMonthUpdate
+			        )
+			    )
+			
+			-- Return previous month's Finish, or current Finish if no previous found
+			RETURN
+			    IF(
+			        ISBLANK(PreviousFinish),
+			        CurrentFinish,
+			        PreviousFinish
+			    )
+			```
+		formatString: dd/mm/yyyy
+		lineageTag: 5ebab4a3-2e89-4b98-aeb0-c20ecc3a19c1
+		summarizeBy: none
+
+		variation Variation
+			isDefault
+			relationship: 90769743-4eae-4f9b-b61a-626a3ca89cbd
+			defaultHierarchy: LocalDateTable_cb744347-8e0e-436f-b8ac-7dce3a20f3d3.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column 'Planned Not Completed Last Period' = ```
+			
+			// 1. Get Current Row Context
+			VAR CurrentProject = '01 XER_TASK'[ProjectName]
+			VAR CurrentMonth = '01 XER_TASK'[UpdateDate]
+			VAR CurrentDataDate = '01 XER_TASK'[data_date]
+			VAR CurrentStatus = '01 XER_TASK'[status_code]
+			
+			// 2. Find Previous Month
+			VAR PrevMonth = 
+			    CALCULATE(
+			        MAX('01 XER_TASK'[UpdateDate]),
+			        ALLEXCEPT('01 XER_TASK', '01 XER_TASK'[ProjectName]),
+			        '01 XER_TASK'[UpdateDate] < CurrentMonth
+			    )
+			
+			// 3. Get Start of Window
+			VAR PrevDataDate = 
+			    CALCULATE(
+			        MAX('01 XER_TASK'[data_date]),
+			        ALLEXCEPT('01 XER_TASK', '01 XER_TASK'[ProjectName]),
+			        '01 XER_TASK'[UpdateDate] = PrevMonth
+			    )
+			
+			// 4. Look up Previous Plan
+			VAR PreviousTaskFinish = 
+			    CALCULATE(
+			        MAX('01 XER_TASK'[Finish]),
+			        ALLEXCEPT('01 XER_TASK', '01 XER_TASK'[ProjectName], '01 XER_TASK'[Task_Code]),
+			        '01 XER_TASK'[UpdateDate] = PrevMonth
+			    )
+			
+			// 5. Logic: Was it planned? AND Is it NOT Complete?
+			VAR WasPlanned = 
+			    PreviousTaskFinish > PrevDataDate && 
+			    PreviousTaskFinish <= CurrentDataDate
+			
+			VAR IsNotComplete = 
+			    CurrentStatus <> "Complete"
+			
+			RETURN
+			    IF(NOT(ISBLANK(PrevMonth)) && WasPlanned && IsNotComplete, 1, 0)
+			```
+		formatString: 0
+		lineageTag: 8c747bb2-1423-4133-9b13-3859d9891053
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column priority_type
+		dataType: string
+		lineageTag: 0e7a8a8c-f6ec-4414-bc6b-0e90c020912c
+		summarizeBy: none
+		sourceColumn: priority_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column proj_id_key
+		dataType: string
+		lineageTag: 52ddaef5-f47e-4b65-babd-448416f76212
+		summarizeBy: none
+		sourceColumn: proj_id_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column calendar_id_key
+		dataType: string
+		lineageTag: f0b65635-7f8a-410a-b176-5ea20f7d8301
+		summarizeBy: none
+		sourceColumn: calendar_id_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column Start_Variance_Previous_Month = ```
+			
+			VAR CurrentTaskCode = '01 XER_TASK'[task_code]
+			VAR CurrentProjectName = '01 XER_TASK'[ProjectName]
+			VAR CurrentMonthUpdate = '01 XER_TASK'[UpdateDate]
+			VAR CurrentStartDate = '01 XER_TASK'[Start]
+			
+			VAR PreviousMonthUpdate = 
+			    CALCULATE(
+			        MAX('01 XER_TASK'[UpdateDate]),
+			        FILTER(
+			            '01 XER_TASK',
+			            '01 XER_TASK'[task_code] = CurrentTaskCode &&
+			            '01 XER_TASK'[ProjectName] = CurrentProjectName &&
+			            '01 XER_TASK'[UpdateDate] < CurrentMonthUpdate
+			        )
+			    )
+			
+			VAR PreviousStartDate = 
+			    CALCULATE(
+			        MAX('01 XER_TASK'[Start]),
+			        FILTER(
+			            '01 XER_TASK',
+			            '01 XER_TASK'[task_code] = CurrentTaskCode &&
+			            '01 XER_TASK'[ProjectName] = CurrentProjectName &&
+			            '01 XER_TASK'[UpdateDate] = PreviousMonthUpdate
+			        )
+			    )
+			
+			RETURN
+			    IF(
+			        NOT(ISBLANK(PreviousStartDate)) &&
+			        NOT(ISBLANK(CurrentStartDate)),
+			        IF(
+			            PreviousStartDate = CurrentStartDate,
+			            0,
+			            NETWORKDAYS(PreviousStartDate, CurrentStartDate)
+			        ),
+			        0
+			    )
+			```
+		formatString: 0
+		lineageTag: cab1bd4a-03d4-4599-ad13-bfcc37c0d6ac
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column PreviousMonthStartVarianceCategory = ```
+			
+			    SWITCH(
+			        TRUE(),
+			        '01 XER_TASK'[Start_Variance_Previous_Month] = 0, "   No Variance",
+			        '01 XER_TASK'[Start_Variance_Previous_Month] > 0 && '01 XER_TASK'[Start_Variance_Previous_Month] < 21, " <1 Month",
+			        '01 XER_TASK'[Start_Variance_Previous_Month] >= 21 && '01 XER_TASK'[Start_Variance_Previous_Month] < 63, " 1-3 Months",
+			        '01 XER_TASK'[Start_Variance_Previous_Month] >= 63 && '01 XER_TASK'[Start_Variance_Previous_Month] < 126, " 3-6 Months",
+			        '01 XER_TASK'[Start_Variance_Previous_Month] >= 126, ">6 Months",
+			        '01 XER_TASK'[Start_Variance_Previous_Month] < 0, "  Ahead",
+			        BLANK()
+			    )
+			```
+		lineageTag: b0f3aa18-1852-47d3-a513-3e54e95aab3d
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column PreviousDataDate =
+			
+			VAR CurrentDataDate = '01 XER_TASK'[data_date]
+			VAR CurrentProject = '01 XER_TASK'[ProjectName]
+			RETURN
+			    MAXX(
+			        FILTER(
+			            ALL('01 XER_TASK'), -- Use ALL to remove existing filters on the table
+			            '01 XER_TASK'[data_date] < CurrentDataDate &&
+			            '01 XER_TASK'[ProjectName] = CurrentProject
+			        ),
+			        '01 XER_TASK'[data_date]
+			    )
+		formatString: dd/mm/yyyy
+		lineageTag: 53e4dfbc-8348-4392-8f3b-d2ca94275449
+		summarizeBy: none
+
+		variation Variation
+			isDefault
+			relationship: 85e1c11a-29dc-4b2e-be05-d6c731aca274
+			defaultHierarchy: LocalDateTable_1d9ae8d2-881a-41e7-ab02-7ae2b12bfabd.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column act_start_date
+		dataType: dateTime
+		formatString: dd/mm/yy
+		lineageTag: c4877cee-1db3-4d25-a9f6-56ab100e5996
+		summarizeBy: none
+		sourceColumn: act_start_date
+
+		variation Variation
+			isDefault
+			relationship: 624b9297-da6f-45f6-854e-3a2d96a1609f
+			defaultHierarchy: LocalDateTable_dd8b3217-2ccc-4f03-9aa5-5034a8076171.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column early_start_date
+		dataType: dateTime
+		formatString: dd/mm/yy
+		lineageTag: 86180d61-b856-462b-b1df-f06c59c73035
+		summarizeBy: none
+		sourceColumn: early_start_date
+
+		variation Variation
+			isDefault
+			relationship: 5840c102-ee01-4adc-a276-20f7229ccf2a
+			defaultHierarchy: LocalDateTable_a5dac925-d78e-4913-b64d-3604fd6e1c33.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column late_start_date
+		dataType: dateTime
+		formatString: dd/mm/yy
+		lineageTag: 2f29c175-857f-49c0-8b77-94b8e05b76e8
+		summarizeBy: none
+		sourceColumn: late_start_date
+
+		variation Variation
+			isDefault
+			relationship: 269127b9-10ba-43a5-b7eb-0e472780edfe
+			defaultHierarchy: LocalDateTable_9f2dd7d0-c208-414e-b29c-ea8c020c833e.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column target_start_date
+		dataType: dateTime
+		formatString: dd/mm/yy
+		lineageTag: 6bc9f2f9-fad3-4b7c-99ff-f83491e15bd0
+		summarizeBy: none
+		sourceColumn: target_start_date
+
+		variation Variation
+			isDefault
+			relationship: 72f892a4-ea38-462b-b514-f2fb3b5ee128
+			defaultHierarchy: LocalDateTable_ce9951f2-ddff-4ffc-b9e2-344b5d4127f3.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column target_end_date
+		dataType: dateTime
+		formatString: dd/mm/yy
+		lineageTag: c9ea07a1-a2fc-48d6-8479-64dfb509b6c5
+		summarizeBy: none
+		sourceColumn: target_end_date
+
+		variation Variation
+			isDefault
+			relationship: c24ec7f4-629a-496d-8bf6-c955f42db1e5
+			defaultHierarchy: LocalDateTable_206a3ec9-c4f5-4df2-9eae-886d579dd9d8.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column 'No Successor' =
+			IF(
+			    CALCULATE(
+			        COUNTROWS('06 XER_PREDECESSOR'),
+			        FILTER(
+			            '06 XER_PREDECESSOR',
+			            '06 XER_PREDECESSOR'[pred_task_id_key] = '01 XER_TASK'[task_id_key]
+			        )
+			    ) = BLANK(),
+			    1,
+			    0
+			)
+		formatString: 0
+		lineageTag: 59509a72-dfcd-40eb-ac1b-408f4ef6184c
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Previous Remaining Working Days' = ```
+			
+			VAR CurrentTaskCode = '01 XER_TASK'[task_code]
+			VAR CurrentProject = '01 XER_TASK'[ProjectName]
+			VAR CurrentMonthUpdate = '01 XER_TASK'[UpdateDate]
+			
+			-- Find the previous month update (closest but less than current)
+			VAR PreviousMonthUpdate = 
+			    CALCULATE(
+			        MAX('01 XER_TASK'[UpdateDate]),
+			        FILTER(
+			            ALL('01 XER_TASK'),
+			            '01 XER_TASK'[task_code] = CurrentTaskCode &&
+			            '01 XER_TASK'[ProjectName] = CurrentProject &&
+			            '01 XER_TASK'[UpdateDate] < CurrentMonthUpdate
+			        )
+			    )
+			
+			-- Get the Start date from the previous month update
+			RETURN
+			    CALCULATE(
+			        MAX('01 XER_TASK'[remaining_working_days]),
+			        FILTER(
+			            ALL('01 XER_TASK'),
+			            '01 XER_TASK'[task_code] = CurrentTaskCode &&
+			            '01 XER_TASK'[ProjectName] = CurrentProject &&
+			            '01 XER_TASK'[UpdateDate] = PreviousMonthUpdate
+			        )
+			    )
+			```
+		formatString: 0
+		lineageTag: 66508a05-8f53-4635-9ad8-d0fac6e07849
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column Effective_Late_End =
+			
+			IF(
+			    '01 XER_TASK'[status_code] = "Complete",
+			    '01 XER_TASK'[Finish],
+			    '01 XER_TASK'[late_end_date]
+			)
+		formatString: dd/mm/yy
+		lineageTag: ea9955ee-a9e5-433f-96eb-fbe80c35b281
+		summarizeBy: none
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column Effective_Early_End =
+			
+			IF(
+			    '01 XER_TASK'[status_code] = "Complete",
+			    '01 XER_TASK'[Finish],
+			    '01 XER_TASK'[early_end_date]
+			)
+		formatString: dd/mm/yy
+		lineageTag: 6e83a192-10a1-43a3-825c-df94ace771ff
+		summarizeBy: none
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column project_task_code = '01 XER_TASK'[ProjectName]&"."&'01 XER_TASK'[task_code]
+		lineageTag: 7b29a1f1-eea1-4adf-8898-53a1c4585609
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Calendar = related('10 XER_CALENDARS'[clndr_name])
+		lineageTag: 715710dd-9060-483d-bbe5-8e91a64ca32e
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Planned Last Period' = ```
+			
+			// 1. Get Current Row Context
+			VAR CurrentProject = '01 XER_TASK'[ProjectName]
+			VAR CurrentMonth = '01 XER_TASK'[UpdateDate]
+			VAR CurrentDataDate = '01 XER_TASK'[data_date]
+			
+			// 2. Find Previous Month for this Project
+			VAR PrevMonth = 
+			    CALCULATE(
+			        MAX('01 XER_TASK'[UpdateDate]),
+			        ALLEXCEPT('01 XER_TASK', '01 XER_TASK'[ProjectName]),
+			        '01 XER_TASK'[UpdateDate] < CurrentMonth
+			    )
+			
+			// 3. Get the Start of the Window (Previous Data Date)
+			VAR PrevDataDate = 
+			    CALCULATE(
+			        MAX('01 XER_TASK'[data_date]),
+			        ALLEXCEPT('01 XER_TASK', '01 XER_TASK'[ProjectName]),
+			        '01 XER_TASK'[UpdateDate] = PrevMonth
+			    )
+			
+			// 4. Look up the Scheduled Finish Date from the PREVIOUS Month's row
+			VAR PreviousTaskFinish = 
+			    CALCULATE(
+			        MAX('01 XER_TASK'[Finish]),
+			        ALLEXCEPT('01 XER_TASK', '01 XER_TASK'[ProjectName], '01 XER_TASK'[Task_Code]),
+			        '01 XER_TASK'[UpdateDate] = PrevMonth
+			    )
+			
+			// 5. Logic: Was the previous planned finish inside the current window?
+			VAR IsPlanned = 
+			    PreviousTaskFinish > PrevDataDate && 
+			    PreviousTaskFinish <= CurrentDataDate
+			
+			RETURN
+			    IF(NOT(ISBLANK(PrevMonth)) && IsPlanned, 1, 0)
+			```
+		formatString: 0
+		lineageTag: 7d9025b8-9b83-40bb-a7a7-dd03c9e5d223
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Completed Last Period' = ```
+			
+			// 1. Get Current Row Context
+			VAR CurrentProject = '01 XER_TASK'[ProjectName]
+			VAR CurrentTaskID = '01 XER_TASK'[task_code]  // You need a unique Task ID
+			VAR CurrentMonth = '01 XER_TASK'[UpdateDate]
+			VAR CurrentStatus = '01 XER_TASK'[status_code]
+			
+			// 2. Find the Previous Month available for this project
+			VAR PrevMonth = 
+			    CALCULATE(
+			        MAX('01 XER_TASK'[UpdateDate]),
+			        ALLEXCEPT('01 XER_TASK', '01 XER_TASK'[ProjectName]),
+			        '01 XER_TASK'[UpdateDate] < CurrentMonth
+			    )
+			
+			// 3. Look up what the status was in that previous month
+			VAR PrevStatus = 
+			    CALCULATE(
+			        SELECTEDVALUE('01 XER_TASK'[status_code]),
+			        ALLEXCEPT('01 XER_TASK', '01 XER_TASK'[ProjectName]),
+			        '01 XER_TASK'[task_code] = CurrentTaskID,
+			        '01 XER_TASK'[UpdateDate] = PrevMonth
+			    )
+			
+			// 4. Logic: Is it Complete now AND was it something else before?
+			VAR IsNewlyCompleted = 
+			    CurrentStatus = "Complete" && 
+			    PrevStatus <> "Complete" && 
+			    NOT(ISBLANK(PrevStatus)) // Ensures we don't count brand new tasks as "Newly Completed"
+			
+			RETURN
+			    IF(IsNewlyCompleted, 1, 0)
+			```
+		formatString: 0
+		lineageTag: 66890f4d-b926-4890-ac92-dc3021681782
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Completed of Planned Last Period' = ```
+			
+			// 1. Get Current Row Context
+			VAR CurrentProject = '01 XER_TASK'[ProjectName]
+			VAR CurrentMonth = '01 XER_TASK'[UpdateDate]
+			VAR CurrentDataDate = '01 XER_TASK'[data_date]
+			VAR CurrentStatus = '01 XER_TASK'[status_code]
+			
+			// 2. Find Previous Month
+			VAR PrevMonth = 
+			    CALCULATE(
+			        MAX('01 XER_TASK'[UpdateDate]),
+			        ALLEXCEPT('01 XER_TASK', '01 XER_TASK'[ProjectName]),
+			        '01 XER_TASK'[UpdateDate] < CurrentMonth
+			    )
+			
+			// 3. Get Start of Window
+			VAR PrevDataDate = 
+			    CALCULATE(
+			        MAX('01 XER_TASK'[data_date]),
+			        ALLEXCEPT('01 XER_TASK', '01 XER_TASK'[ProjectName]),
+			        '01 XER_TASK'[UpdateDate] = PrevMonth
+			    )
+			
+			// 4. Look up Previous Plan
+			VAR PreviousTaskFinish = 
+			    CALCULATE(
+			        MAX('01 XER_TASK'[Finish]),
+			        ALLEXCEPT('01 XER_TASK', '01 XER_TASK'[ProjectName], '01 XER_TASK'[Task_Code]),
+			        '01 XER_TASK'[UpdateDate] = PrevMonth
+			    )
+			
+			// 5. Logic: Was it planned? AND Is it Complete now?
+			VAR WasPlanned = 
+			    PreviousTaskFinish > PrevDataDate && 
+			    PreviousTaskFinish <= CurrentDataDate
+			
+			VAR IsComplete = 
+			    CurrentStatus = "Complete"
+			
+			RETURN
+			    IF(NOT(ISBLANK(PrevMonth)) && WasPlanned && IsComplete, 1, 0)
+			```
+		formatString: 0
+		lineageTag: aa1f9e14-7e09-47eb-87be-fb9371fcf07c
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Baseline Effective_Early_End' =
+			
+			VAR CurrentTaskCode = '01 XER_TASK'[task_code]
+			VAR CurrentProject = '01 XER_TASK'[ProjectCode]
+			
+			RETURN
+			    MAXX(
+			        FILTER(
+			            ALL('04 XER_BASELINE'),
+			            '04 XER_BASELINE'[task_code] = CurrentTaskCode &&
+			            '04 XER_BASELINE'[ProjectCode] = CurrentProject
+			        ),
+			        '04 XER_BASELINE'[Effective_Early_End]
+			    )
+		formatString: dd/mm/yy
+		lineageTag: 8c16bccd-6097-4552-a58e-eb0087b36a6b
+		summarizeBy: none
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column 'Baseline Effective_Late_End' =
+			
+			VAR CurrentTaskCode = '01 XER_TASK'[task_code]
+			VAR CurrentProject = '01 XER_TASK'[ProjectCode]
+			
+			RETURN
+			    MAXX(
+			        FILTER(
+			            ALL('04 XER_BASELINE'),
+			            '04 XER_BASELINE'[task_code] = CurrentTaskCode &&
+			            '04 XER_BASELINE'[ProjectCode] = CurrentProject
+			        ),
+			        '04 XER_BASELINE'[Effective_Late_End]
+			    )
+		formatString: dd/mm/yy
+		lineageTag: 7dd994a7-6e21-4f7b-968e-973a25a68916
+		summarizeBy: none
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column server
+		dataType: string
+		lineageTag: e2fbbd3c-71f3-4dcd-8e0b-547430bb01e2
+		summarizeBy: none
+		sourceColumn: server
+
+		annotation SummarizationSetBy = Automatic
+
+	column database
+		dataType: string
+		lineageTag: 076a4005-9bd3-4f29-ba05-87e7d8e11530
+		summarizeBy: none
+		sourceColumn: database
+
+		annotation SummarizationSetBy = Automatic
+
+	column task_id
+		dataType: string
+		lineageTag: 71a61a92-e8be-47f3-9931-8e780fb92d85
+		summarizeBy: none
+		sourceColumn: task_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column proj_id
+		dataType: string
+		lineageTag: c9324c92-81b1-492c-85f8-2083be30ecdf
+		summarizeBy: none
+		sourceColumn: proj_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column wbs_id
+		dataType: string
+		lineageTag: 636d198c-b35d-4d19-b571-87de04c540a7
+		summarizeBy: none
+		sourceColumn: wbs_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column clndr_id
+		dataType: string
+		lineageTag: 92a36dc0-65e3-4dfb-94c0-3b0f29723c36
+		summarizeBy: none
+		sourceColumn: clndr_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column rsrc_id
+		dataType: string
+		lineageTag: a2419b1f-98a3-48d5-aa36-fefcd204cd0c
+		summarizeBy: none
+		sourceColumn: rsrc_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column float_path
+		dataType: string
+		lineageTag: 346224ab-63a6-416b-9671-f90cea7f24fc
+		summarizeBy: none
+		sourceColumn: float_path
+
+		annotation SummarizationSetBy = Automatic
+
+	column float_path_order
+		dataType: string
+		lineageTag: 33bdc1b1-3480-465e-80c1-e275479941d2
+		summarizeBy: none
+		sourceColumn: float_path_order
+
+		annotation SummarizationSetBy = Automatic
+
+	column Start
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: b0646acd-dd4e-46fe-9f1a-3dc024af32b1
+		summarizeBy: none
+		sourceColumn: Start
+
+		variation Variation
+			isDefault
+			relationship: d157972d-f8be-4406-9610-956934573680
+			defaultHierarchy: LocalDateTable_20ed8d13-3f4e-467b-8812-ed7802a1bad2.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column Finish
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: 8694ef00-cde3-40e9-bbed-d0766f0a9530
+		summarizeBy: none
+		sourceColumn: Finish
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column id_name
+		dataType: string
+		lineageTag: d0dc52e6-6090-487c-872f-32eb17da22ba
+		summarizeBy: none
+		sourceColumn: id_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column remaining_working_days
+		dataType: double
+		lineageTag: 8a7d509b-0be6-4829-823e-a00cfe863200
+		summarizeBy: sum
+		sourceColumn: remaining_working_days
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column original_duration
+		dataType: double
+		lineageTag: d41d60c5-89be-4a2d-8f04-b625fc7d6695
+		summarizeBy: sum
+		sourceColumn: original_duration
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column total_float
+		dataType: double
+		lineageTag: ef9db39d-29a7-43b4-8108-47bb512bfba8
+		summarizeBy: sum
+		sourceColumn: total_float
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column free_float
+		dataType: double
+		lineageTag: e7052c2c-352e-4627-8f78-216aad769f19
+		summarizeBy: sum
+		sourceColumn: free_float
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column percent_complete
+		dataType: double
+		lineageTag: 71b07c8c-5653-49cb-9286-8c2b8a35e88d
+		summarizeBy: sum
+		sourceColumn: percent_complete
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column data_date
+		dataType: dateTime
+		formatString: dd/mm/yy
+		lineageTag: d4cde42b-ee39-48e2-8855-1de90e4b9dbf
+		summarizeBy: none
+		sourceColumn: data_date
+
+		variation Variation
+			isDefault
+			relationship: 985c654a-144a-4d81-b8fd-bea65fd814a1
+			defaultHierarchy: LocalDateTable_de83b0b7-8cf7-4f27-a1f4-f5107a6680a7.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column filename
+		dataType: string
+		lineageTag: fb75265e-1ba1-43f3-8ec8-c9c0d17f3396
+		summarizeBy: none
+		sourceColumn: filename
+
+		annotation SummarizationSetBy = Automatic
+
+	column refresh_date
+		dataType: dateTime
+		formatString: dd/mm/yy
+		lineageTag: 20f251ae-9467-4b1c-981f-259cb4395814
+		summarizeBy: none
+		sourceColumn: refresh_date
+
+		variation Variation
+			isDefault
+			relationship: 6ce9ea4e-3c87-42a1-9bad-e804bfeddae5
+			defaultHierarchy: LocalDateTable_6996700e-ec92-465e-996f-3652a88b3d7b.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column ProjectName
+		dataType: string
+		lineageTag: 2998c837-2a83-4749-8ef4-5b80c161c3cf
+		summarizeBy: none
+		sourceColumn: ProjectName
+
+		annotation SummarizationSetBy = Automatic
+
+	column UpdateDate
+		dataType: dateTime
+		formatString: MMM yy
+		lineageTag: 99377e12-b3cb-4484-8650-e3e81f5b3f1c
+		summarizeBy: none
+		sourceColumn: UpdateDate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	column ProjectCode
+		dataType: string
+		lineageTag: fbbe2e5e-d874-421d-86b8-5f4a2a7e2b27
+		summarizeBy: none
+		sourceColumn: ProjectCode
+
+		annotation SummarizationSetBy = Automatic
+
+	partition '01 XER_TASK' = m
+		mode: import
+		queryGroup: XER
+		source = ```
+				let
+				    // Single call replaces: table reference + -C- filter + fnFilterByFilename
+				    Source = fnAthenaSource("01_xer_task"),
+				
+				    // Extract ProjectCode from filename
+				    AddProjectName = Table.AddColumn(Source, "ProjectCode", each Text.BeforeDelimiter([filename], "-"), type text),
+				    
+				    // Parse the UpdateDate using your original, correct underscore ("_") delimiters
+				    AddUpdateDate = Table.AddColumn(AddProjectName, "UpdateDate", each
+				        let
+				            cPart = Text.BeforeDelimiter(Text.AfterDelimiter([filename], "-C-"), "_"),
+				            datePart = Text.BeforeDelimiter(Text.AfterDelimiter([filename], "_"), ".")
+				        in
+				            if Text.StartsWith(cPart, "BL") then
+				                Date.EndOfMonth(Date.FromText(datePart))
+				            else
+				                Date.EndOfMonth(
+				                    #date(
+				                        2000 + Number.FromText(Text.Start(cPart, 2)),
+				                        Number.FromText(Text.End(cPart, 2)),
+				                        1
+				                    )
+				                ),
+				        type date
+				    ),
+				    
+				    // Convert percent complete
+				    DividePercent = Table.TransformColumns(AddUpdateDate, {{"percent_complete", each Number.FromText(_) / 100}}),
+				    
+				    // Apply correct data types
+				    FinalTypes = Table.TransformColumnTypes(DividePercent, {
+				        {"act_start_date", type datetime},
+				        {"act_end_date", type datetime},
+				        {"early_start_date", type datetime},
+				        {"early_end_date", type datetime},
+				        {"late_start_date", type datetime},
+				        {"late_end_date", type datetime},
+				        {"target_start_date", type datetime},
+				        {"target_end_date", type datetime},
+				        {"cstr_date", type datetime},
+				        {"start", type datetime},
+				        {"finish", type datetime},
+				        {"data_date", type datetime},
+				        {"refresh_date", type datetime},
+				        {"percent_complete", Percentage.Type},
+				        {"total_float", type number},
+				        {"free_float", type number},
+				        {"remaining_working_days", type number},
+				        {"original_duration", type number}
+				    }),
+				    
+				    // Rename start and finish columns
+				    #"Renamed Columns" = Table.RenameColumns(FinalTypes,{{"start", "Start"}, {"finish", "Finish"}}),
+				    
+				    BufferedProjects = Table.Buffer(dbo_project),
+				    #"Merged Projects" = Table.NestedJoin(#"Renamed Columns", {"ProjectCode"}, BufferedProjects, {"projectno"}, "ProjectLookup", JoinKind.LeftOuter),
+				    #"Expanded ProjectName" = Table.ExpandTableColumn(#"Merged Projects", "ProjectLookup", {"projectname"}, {"ProjectName"})
+				
+				in
+				    #"Expanded ProjectName"
+				```
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Exception
+

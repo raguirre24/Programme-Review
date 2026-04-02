@@ -1,0 +1,80 @@
+table UserPermission
+	lineageTag: 16634cc5-2311-4145-a599-5cdf61ee38c3
+
+	column UserPrincipalName
+		dataType: string
+		lineageTag: c3c85e97-2c51-4e64-8422-afacb8a1e253
+		summarizeBy: none
+		sourceColumn: UserPrincipalName
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'All Access'
+		dataType: int64
+		formatString: 0
+		lineageTag: b5fa43c6-608d-4c99-aa54-71ef34c921a6
+		summarizeBy: sum
+		sourceColumn: All Access
+
+		annotation SummarizationSetBy = Automatic
+
+	column Project
+		dataType: string
+		lineageTag: 3c9900ba-5986-46f4-87bc-0e5b17759840
+		summarizeBy: none
+		sourceColumn: Project
+
+		annotation SummarizationSetBy = Automatic
+
+	column State
+		dataType: string
+		lineageTag: 971f163d-3d32-471b-85be-a7067eeede29
+		summarizeBy: none
+		sourceColumn: State
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProjectID
+		dataType: string
+		lineageTag: b3d363b4-d9ed-4f5f-8b4e-a1a8485373eb
+		summarizeBy: none
+		sourceColumn: ProjectID
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Privilege Name'
+		dataType: string
+		lineageTag: 722c8354-4067-4697-a9e3-4502dbcbd4e8
+		summarizeBy: none
+		sourceColumn: Privilege Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column ExternalUserPrincipalName
+		dataType: string
+		lineageTag: a8f99c2f-1776-4928-a86a-18e57785e927
+		summarizeBy: none
+		sourceColumn: ExternalUserPrincipalName
+
+		annotation SummarizationSetBy = Automatic
+
+	partition UserPermission = m
+		mode: import
+		queryGroup: XER
+		source =
+				let
+				    Permissions = SharePoint.Contents(SharePointSite, [ApiVersion = 15])
+				        { [Name="Documents"] }[Content]
+				        { [Name="P6"] }[Content]
+				        { [Name="Programme"] }[Content],
+				    #"Permissions xlsx" = Permissions{[Name="Permissions.xlsx"]}[Content],
+				    #"Imported Excel Workbook" = Excel.Workbook(#"Permissions xlsx"),
+				    UserPermission_Table1 = #"Imported Excel Workbook"{[Item="UserPermission",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(UserPermission_Table1,{{"All Access", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

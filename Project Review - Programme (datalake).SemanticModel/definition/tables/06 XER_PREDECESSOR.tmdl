@@ -1,0 +1,713 @@
+table '06 XER_PREDECESSOR'
+	lineageTag: 6c97f080-826d-44db-8576-0c805feced04
+
+	column lag_hr_cnt
+		dataType: string
+		lineageTag: 21dcf587-15da-4090-817b-418823107ea8
+		summarizeBy: none
+		sourceColumn: lag_hr_cnt
+
+		annotation SummarizationSetBy = Automatic
+
+	column task_id_key
+		dataType: string
+		lineageTag: 413cd052-da64-489c-9ccb-a4ace2599412
+		summarizeBy: none
+		sourceColumn: task_id_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column pred_task_id_key
+		dataType: string
+		lineageTag: 4af8f8c9-5f9e-4aa0-b6b6-a1d4e38d1462
+		summarizeBy: none
+		sourceColumn: pred_task_id_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column pred_type
+		dataType: string
+		lineageTag: c41a1bf7-7c8b-498f-b239-42f4ba495eba
+		summarizeBy: none
+		sourceColumn: pred_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column task_code = RELATED('01 XER_TASK'[task_code])
+		lineageTag: b81e33c5-66e8-422a-8d6c-340fee286d42
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Remaining Working Days' = RELATED('01 XER_TASK'[remaining_working_days])
+		formatString: 0
+		lineageTag: 8345b7c4-f7f0-4743-abf5-85b9faec79f8
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Variance to Baseline' = RELATED('01 XER_TASK'[Variance_Finish_BL])
+		formatString: 0
+		lineageTag: 9d9cebcf-7e56-4af4-a443-857602730001
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Variance to Previous Month' = RELATED('01 XER_TASK'[Finish_Variance_Previous_Month])
+		formatString: 0
+		lineageTag: cc63d83c-ebf8-4e85-a31d-286a63af2300
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column TaskCodeAndName =
+			
+			VAR _taskCode = RELATED('01 XER_TASK'[task_code])
+			VAR _taskName = RELATED('01 XER_TASK'[task_name])
+			RETURN
+			    _taskCode & " - " & _taskName
+		lineageTag: b6d53fc7-0751-4f43-a8cc-c36dd9fbab0c
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Total Float' = RELATED('01 XER_TASK'[total_float])
+		formatString: 0
+		lineageTag: e14ca113-edc2-4687-9253-81df78ea22a9
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column predecessor_task_code = LOOKUPVALUE('01 XER_TASK'[task_code],'01 XER_TASK'[Task_ID_key],[pred_task_id_key])
+		lineageTag: f6f3a806-3c26-44ba-b90b-880b9a7eb127
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Baseline Start' =
+			
+			VAR CurrentTaskCode = '06 XER_PREDECESSOR'[task_code]
+			VAR CurrentProject = '06 XER_PREDECESSOR'[ProjectCode]
+			
+			RETURN
+			    MAXX(
+			        FILTER(
+			            ALL('04 XER_BASELINE'),
+			            '04 XER_BASELINE'[task_code] = CurrentTaskCode &&
+			            '04 XER_BASELINE'[ProjectCode] = CurrentProject
+			        ),
+			        '04 XER_BASELINE'[early_start_date]
+			    )
+		lineageTag: 4437b4bd-ccc3-45ee-aa72-74825c4fd048
+		summarizeBy: none
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Baseline Finish' =
+			
+			VAR CurrentTaskCode = '06 XER_PREDECESSOR'[task_code]
+			VAR CurrentProject = '06 XER_PREDECESSOR'[ProjectCode]
+			
+			RETURN
+			    MAXX(
+			        FILTER(
+			            ALL('04 XER_BASELINE'),
+			            '04 XER_BASELINE'[task_code] = CurrentTaskCode &&
+			            '04 XER_BASELINE'[ProjectCode] = CurrentProject
+			        ),
+			        '04 XER_BASELINE'[early_end_date]
+			    )
+		lineageTag: 523861ed-a746-484b-87f0-36c627742b32
+		summarizeBy: none
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Previous Update Start' =
+			
+			VAR CurrentTaskCode = '06 XER_PREDECESSOR'[task_code]
+			VAR CurrentProject = '06 XER_PREDECESSOR'[ProjectCode]
+			VAR CurrentMonthUpdate = '06 XER_PREDECESSOR'[UpdateDate]
+			-- Find the previous month update (closest but less than current)
+			VAR PreviousMonthUpdate =
+			CALCULATE(
+			MAX('01 XER_TASK'[UpdateDate]),
+			FILTER(
+			ALL('01 XER_TASK'),
+			'01 XER_TASK'[task_code] = CurrentTaskCode &&
+			'01 XER_TASK'[ProjectCode] = CurrentProject &&
+			'01 XER_TASK'[UpdateDate] < CurrentMonthUpdate
+			)
+			)
+			-- Get the Start date from the previous month update
+			RETURN
+			CALCULATE(
+			MAX('01 XER_TASK'[early_start_date]),
+			FILTER(
+			ALL('01 XER_TASK'),
+			'01 XER_TASK'[task_code] = CurrentTaskCode &&
+			'01 XER_TASK'[ProjectCode] = CurrentProject &&
+			'01 XER_TASK'[UpdateDate] = PreviousMonthUpdate
+			)
+			)
+		formatString: dd/mm/yyyy
+		lineageTag: 1eabe51d-e8c4-4329-a971-0d89b1f10c71
+		summarizeBy: none
+
+		variation Variation
+			isDefault
+			relationship: 696a1a04-917d-443a-8352-d3cf6ec386ab
+			defaultHierarchy: LocalDateTable_6fdedf85-45cf-4d10-8e46-cf75440ec0c5.'Date Hierarchy'
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column 'Previous Update Finish' = ```
+			
+			VAR CurrentTaskCode = '06 XER_PREDECESSOR'[task_code]
+			VAR CurrentProject = '06 XER_PREDECESSOR'[ProjectCode]
+			VAR CurrentMonthUpdate = '06 XER_PREDECESSOR'[UpdateDate]
+			
+			-- Find the previous month update (closest but less than current)
+			VAR PreviousMonthUpdate = 
+			    CALCULATE(
+			        MAX('01 XER_TASK'[UpdateDate]),
+			        FILTER(
+			            ALL('01 XER_TASK'),
+			            '01 XER_TASK'[task_code] = CurrentTaskCode &&
+			            '01 XER_TASK'[ProjectCode] = CurrentProject &&
+			            '01 XER_TASK'[UpdateDate] < CurrentMonthUpdate
+			        )
+			    )
+			
+			-- Get the Start date from the previous month update
+			RETURN
+			    CALCULATE(
+			        MAX('01 XER_TASK'[early_end_date]),
+			        FILTER(
+			            ALL('01 XER_TASK'),
+			            '01 XER_TASK'[task_code] = CurrentTaskCode &&
+			            '01 XER_TASK'[ProjectCode] = CurrentProject &&
+			            '01 XER_TASK'[UpdateDate] = PreviousMonthUpdate
+			        )
+			    )
+			```
+		formatString: dd/mm/yyyy
+		lineageTag: 0b0776b0-4580-474d-9450-afe4210a8ac1
+		summarizeBy: none
+
+		variation Variation
+			isDefault
+			relationship: 34b1f7ac-7296-41ad-850d-f7ffcf5c5573
+			defaultHierarchy: LocalDateTable_a0fa430a-8fdf-48d9-af3a-dc6ff7f56890.'Date Hierarchy'
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column Successor_Level_2 = ```
+			
+			VAR SuccTaskID = '06 XER_PREDECESSOR'[task_id_key]
+			VAR SuccessorWBS_ID = 
+			    CALCULATE(
+			        SELECTEDVALUE('01 XER_TASK'[wbs_id_key]),
+			        FILTER(
+			            ALL('01 XER_TASK'),
+			            '01 XER_TASK'[task_id_key] = SuccTaskID
+			        )
+			    )
+			VAR SuccLevel2 = 
+			    IF(
+			        NOT ISBLANK(SuccessorWBS_ID),
+			        CALCULATE(
+			            MINX(
+			                FILTER(
+			                    ALL('03 XER_PROJWBS'),
+			                    '03 XER_PROJWBS'[wbs_id_key] = SuccessorWBS_ID
+			                ),
+			                '03 XER_PROJWBS'[Level_2]
+			            )
+			        )
+			    )
+			RETURN
+			    SuccLevel2
+			```
+		lineageTag: edd8bac4-29f2-4178-9030-2130db1006ed
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Predecessor_Level_2 = ```
+			
+			VAR PredTaskID = '06 XER_PREDECESSOR'[pred_task_id_key]
+			VAR PredecessorWBS_ID = 
+			    CALCULATE(
+			        SELECTEDVALUE('01 XER_TASK'[wbs_id_key]),
+			        FILTER(
+			            ALL('01 XER_TASK'),
+			            '01 XER_TASK'[task_id_key] = PredTaskID
+			        )
+			    )
+			VAR PredLevel2 = 
+			    IF(
+			        NOT ISBLANK(PredecessorWBS_ID),
+			        CALCULATE(
+			            MINX(
+			                FILTER(
+			                    ALL('03 XER_PROJWBS'),
+			                    '03 XER_PROJWBS'[wbs_id_key] = PredecessorWBS_ID
+			                ),
+			                '03 XER_PROJWBS'[Level_2]
+			            )
+			        )
+			    )
+			RETURN
+			    PredLevel2
+			```
+		lineageTag: 1cfa0aa8-f050-434a-8ad5-40c9f5725f1f
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Link_Type =
+			
+			IF(
+			    '06 XER_PREDECESSOR'[Successor_Level_2] = '06 XER_PREDECESSOR'[Predecessor_Level_2],
+			    "Internal Link",
+			    "Cross-WBS Link"
+			)
+		lineageTag: 95640178-8db4-4f4c-8273-243f59583603
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column WBS_Link_Direction =
+			
+			'06 XER_PREDECESSOR'[Predecessor_Level_2] & " → " & '06 XER_PREDECESSOR'[Successor_Level_2]
+		lineageTag: de16278c-97f0-4bd4-86cc-fc20a5bfd566
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column PredTaskCodeAndName =
+			
+			VAR _taskCode = LOOKUPVALUE('01 XER_TASK'[task_code],'01 XER_TASK'[task_id_key],'06 XER_PREDECESSOR'[pred_task_id_key])
+			VAR _taskName = LOOKUPVALUE('01 XER_TASK'[task_name],'01 XER_TASK'[task_id_key],'06 XER_PREDECESSOR'[pred_task_id_key])
+			RETURN
+			    _taskCode & " - " & _taskName
+		lineageTag: 24353972-bb3b-4b28-86f3-55cc2ef440cb
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column CriticalLink = ```
+			
+			VAR crit_succ = 
+			    LOOKUPVALUE(
+			        '01 XER_TASK'[CriticalStatus],
+			        '01 XER_TASK'[task_id_key], '06 XER_PREDECESSOR'[task_id_key]
+			    )
+			VAR crit_pred = 
+			    LOOKUPVALUE(
+			        '01 XER_TASK'[CriticalStatus],
+			        '01 XER_TASK'[task_id_key], '06 XER_PREDECESSOR'[pred_task_id_key]
+			    )
+			RETURN
+			    IF(
+			        NOT(ISBLANK(crit_pred)) && NOT(ISBLANK(crit_succ)),
+			        crit_pred & " → " & crit_succ,
+			        BLANK()
+			    )
+			```
+		lineageTag: d5223047-9831-495c-a6a7-7598adab917f
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Is Driving Predecessor' =
+			
+			VAR CurrentTaskID = '06 XER_PREDECESSOR'[task_id_key]
+			VAR CurrentFreeFloat = '06 XER_PREDECESSOR'[free_float]
+			
+			VAR MinFreeFloatForTask =
+			    CALCULATE (
+			        MIN ( '06 XER_PREDECESSOR'[free_float] ),
+			        FILTER (
+			            ALL ( '06 XER_PREDECESSOR' ),
+			            '06 XER_PREDECESSOR'[task_id_key] = CurrentTaskID
+			        )
+			    )
+			
+			RETURN
+			    IF (
+			        NOT ISBLANK ( CurrentFreeFloat ) && CurrentFreeFloat = MinFreeFloatForTask,
+			        "Driving",
+			        "Not Driving"
+			    )
+		lineageTag: 9c5ebbb1-dcd8-402b-861b-3e4b5fd11321
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Type Validity' =
+			
+			VAR taskType = '06 XER_PREDECESSOR'[task_type]
+			VAR predTaskType = '06 XER_PREDECESSOR'[predecessor_task_type]
+			VAR invalidTypes = { "TT_WBS", "TT_LOE" }
+			
+			RETURN
+			    IF (
+			        taskType IN invalidTypes || predTaskType IN invalidTypes,
+			        "Invalid",
+			        "Valid"
+			    )
+		lineageTag: 10c66ca2-309a-4bc6-bc92-0f0c44b0d730
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'predecessor_Total Float' = LOOKUPVALUE('01 XER_TASK'[total_float],'01 XER_TASK'[Task_ID_key],[pred_task_id_key])
+		formatString: 0
+		lineageTag: f364cc56-9492-4ea2-bad0-53ec4f4b39e5
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column predecessor_name = LOOKUPVALUE('01 XER_TASK'[task_name],'01 XER_TASK'[Task_ID_key],[pred_task_id_key])
+		lineageTag: c3df4ebf-7cfd-4fa7-8210-d00d460d86f4
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column server
+		dataType: string
+		lineageTag: bfc2bab3-47c4-4823-8753-40f5c3a73882
+		summarizeBy: none
+		sourceColumn: server
+
+		annotation SummarizationSetBy = Automatic
+
+	column database
+		dataType: string
+		lineageTag: 8743b239-cb2a-4353-b143-a2cf8e865498
+		summarizeBy: none
+		sourceColumn: database
+
+		annotation SummarizationSetBy = Automatic
+
+	column task_pred_id
+		dataType: string
+		lineageTag: 13ee31c8-8451-4e94-afc6-e414855a6db4
+		summarizeBy: none
+		sourceColumn: task_pred_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column task_id
+		dataType: string
+		lineageTag: ab5d69b9-59fe-4ec2-96db-8bb88d1c746b
+		summarizeBy: none
+		sourceColumn: task_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column pred_task_id
+		dataType: string
+		lineageTag: f3afc86e-69f0-472d-89b8-e32301137613
+		summarizeBy: none
+		sourceColumn: pred_task_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column proj_id
+		dataType: string
+		lineageTag: 6105b684-dc3a-4b2b-831e-714e100de3bd
+		summarizeBy: none
+		sourceColumn: proj_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column pred_proj_id
+		dataType: string
+		lineageTag: 922a13ba-49d8-44f9-808e-38089a4f1c4c
+		summarizeBy: none
+		sourceColumn: pred_proj_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column comments
+		dataType: string
+		lineageTag: b22a1146-a439-4671-82de-09e0616371ec
+		summarizeBy: none
+		sourceColumn: comments
+
+		annotation SummarizationSetBy = Automatic
+
+	column float_path
+		dataType: string
+		lineageTag: 1c54a882-50d7-430d-aae4-ec7c16d79854
+		summarizeBy: none
+		sourceColumn: float_path
+
+		annotation SummarizationSetBy = Automatic
+
+	column aref
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 44a4709f-e964-400d-be8e-1fbd1285aa3f
+		summarizeBy: none
+		sourceColumn: aref
+
+		variation Variation
+			isDefault
+			relationship: 163465f7-978f-4de0-877a-892f774697ee
+			defaultHierarchy: LocalDateTable_4d90b2b6-a903-4d3d-a697-e7c1ec4c4db4.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column arls
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 8e81c44e-3788-4b56-a929-4465206213f2
+		summarizeBy: none
+		sourceColumn: arls
+
+		variation Variation
+			isDefault
+			relationship: 4bd0b490-e2b4-473a-a199-971d7d82c2ed
+			defaultHierarchy: LocalDateTable_fc73dfc5-fa71-43de-9733-0ed919d629bb.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column filename
+		dataType: string
+		lineageTag: e74ff897-e07c-4684-af42-91fd42093472
+		summarizeBy: none
+		sourceColumn: filename
+
+		annotation SummarizationSetBy = Automatic
+
+	column refresh_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 2cde1828-8e1c-4346-bbfe-0eaf15d857a2
+		summarizeBy: none
+		sourceColumn: refresh_date
+
+		variation Variation
+			isDefault
+			relationship: 66785685-f3a4-48d6-a8f1-b555fdd50997
+			defaultHierarchy: LocalDateTable_ea375e41-2900-4d46-85fc-b8fde24435b3.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column UpdateDate
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 5a443bd6-b8e6-417e-a831-88df7b76d505
+		summarizeBy: none
+		sourceColumn: UpdateDate
+
+		variation Variation
+			isDefault
+			relationship: 1ec44fb4-08a0-464c-8500-9f75b1740658
+			defaultHierarchy: LocalDateTable_aa0ead3b-f445-49c8-ae3b-c62bc2978781.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column predecessor_task_type = LOOKUPVALUE('01 XER_TASK'[task_type],'01 XER_TASK'[Task_ID_key],[pred_task_id_key])
+		lineageTag: e7e6dfbd-586a-4001-86e5-1f2a6bd0a4f8
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column task_type = RELATED('01 XER_TASK'[task_type])
+		lineageTag: 2c3a2b40-4956-4763-b15c-5ee4553debe0
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column early_start_date = related('01 XER_TASK'[early_start_date])
+		formatString: dd/mm/yyyy
+		lineageTag: 19d14697-ab4d-4ced-8b77-7be4c3a78d19
+		summarizeBy: none
+
+		variation Variation
+			isDefault
+			relationship: 5fc17e57-c893-4372-aa55-efda0db03582
+			defaultHierarchy: LocalDateTable_1ad9cf2f-b435-4609-9ee6-8aed013dca6f.'Date Hierarchy'
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column early_end_date = related('01 XER_TASK'[early_end_date])
+		formatString: dd/mm/yyyy
+		lineageTag: 8979992a-8a41-4da9-ae17-37f2cf9957fb
+		summarizeBy: none
+
+		variation Variation
+			isDefault
+			relationship: f505b996-8fc2-4414-a3d7-6b971b1feb53
+			defaultHierarchy: LocalDateTable_489f16e3-9a93-47bc-be07-0568ac76e80d.'Date Hierarchy'
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column status_code_successor = RELATED('01 XER_TASK'[status_code])
+		lineageTag: a1b2c3d4-1111-4aaa-bbbb-000000000001
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column predecessor_status_code = LOOKUPVALUE('01 XER_TASK'[status_code], '01 XER_TASK'[task_id_key], [pred_task_id_key])
+		lineageTag: a1b2c3d4-1111-4aaa-bbbb-000000000002
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column predecessor_start = LOOKUPVALUE('01 XER_TASK'[early_start_date], '01 XER_TASK'[task_id_key], [pred_task_id_key])
+		formatString: dd/mm/yyyy
+		lineageTag: a1b2c3d4-1111-4aaa-bbbb-000000000003
+		summarizeBy: none
+
+		variation Variation
+			isDefault
+			relationship: 37e0588d-bb91-484a-9384-f3ac22891fe9
+			defaultHierarchy: LocalDateTable_36bfa387-a05c-4031-aa0d-3fc71bf3dd49.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column predecessor_finish = LOOKUPVALUE('01 XER_TASK'[early_end_date], '01 XER_TASK'[task_id_key], [pred_task_id_key])
+		formatString: dd/mm/yyyy
+		lineageTag: a1b2c3d4-1111-4aaa-bbbb-000000000004
+		summarizeBy: none
+
+		variation Variation
+			isDefault
+			relationship: dd316367-4839-4722-ac6f-db8b72f47ced
+			defaultHierarchy: LocalDateTable_674d22cd-9003-4348-a16f-3fd0e5eae750.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column lag =
+			VAR _lagRaw   = '06 XER_PREDECESSOR'[lag_hr_cnt]
+			VAR _lagHours = IF(ISBLANK(_lagRaw) || _lagRaw = "", 0, VALUE(_lagRaw))
+			VAR _pk       = '06 XER_PREDECESSOR'[pred_task_id_key]
+			VAR _predCalKey = LOOKUPVALUE(
+			    '01 XER_TASK'[calendar_id_key],
+			    '01 XER_TASK'[task_id_key], _pk
+			)
+			VAR _predHPD = LOOKUPVALUE(
+			    '10 XER_CALENDARS'[day_hr_cnt],
+			    '10 XER_CALENDARS'[clndr_id_key], _predCalKey
+			)
+			VAR _hpd = IF(ISBLANK(_predHPD) || _predHPD <= 0, 8, _predHPD)
+			RETURN
+			    IF(_lagHours = 0, 0, ROUND(_lagHours / _hpd, 2))
+		formatString: 0.00
+		lineageTag: a1b2c3d4-1111-4aaa-bbbb-000000000005
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column free_float = LOOKUPVALUE('01 XER_TASK'[free_float], '01 XER_TASK'[task_id_key], [pred_task_id_key])
+		formatString: 0.00
+		lineageTag: a1b2c3d4-1111-4aaa-bbbb-000000000006
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column clndr_id_key = RELATED('01 XER_TASK'[calendar_id_key])
+		lineageTag: a1b2c3d4-1111-4aaa-bbbb-000000000007
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column predecessor_clndr_id_key = LOOKUPVALUE('01 XER_TASK'[calendar_id_key], '01 XER_TASK'[task_id_key], [pred_task_id_key])
+		lineageTag: a1b2c3d4-1111-4aaa-bbbb-000000000008
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column time_period_hours_per_day = LOOKUPVALUE('10 XER_CALENDARS'[day_hr_cnt], '10 XER_CALENDARS'[clndr_id_key], [clndr_id_key])
+		lineageTag: a1b2c3d4-1111-4aaa-bbbb-000000000009
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProjectCode
+		dataType: string
+		lineageTag: 559d3191-e1d5-45b6-b610-54608f4c4b7c
+		summarizeBy: none
+		sourceColumn: ProjectCode
+
+		annotation SummarizationSetBy = Automatic
+
+	partition '06 XER_PREDECESSOR' = m
+		mode: import
+		queryGroup: XER
+		source =
+				let
+				    Source = fnAthenaSource("06_xer_predecessor"),
+				    #"Changed Type" = Table.TransformColumnTypes(Source, {{"refresh_date", type datetime}, {"arls", type datetime}, {"aref", type datetime}}),
+				    #"Added Custom" = Table.AddColumn(#"Changed Type", "ProjectCode", each Text.BeforeDelimiter([filename], "-"), type text),
+				    #"Added Custom1" = Table.AddColumn(#"Added Custom", "UpdateDate", each
+				        let
+				            cPart = Text.BeforeDelimiter(Text.AfterDelimiter([filename], "-C-"), "_"),
+				            datePart = Text.BeforeDelimiter(Text.AfterDelimiter([filename], "_"), ".")
+				        in
+				            if Text.StartsWith(cPart, "BL") then
+				                Date.EndOfMonth(Date.FromText(datePart))
+				            else
+				                Date.EndOfMonth(
+				                    #date(
+				                        2000 + Number.FromText(Text.Start(cPart, 2)),
+				                        Number.FromText(Text.End(cPart, 2)),
+				                        1
+				                    )
+				                ),
+				        type date
+				    )
+				in
+				    #"Added Custom1"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

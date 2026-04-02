@@ -1,0 +1,26 @@
+table Filter_Activity_Status
+	lineageTag: 27a42665-ac66-442b-a9f9-e9a58bbcf112
+
+	column status_code
+		lineageTag: 7f0086ac-5523-4200-a92c-82f99fcfa6b4
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [status_code]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Filter_Activity_Status = calculated
+		mode: import
+		source =
+				
+				DATATABLE(
+				    "status_code", STRING,
+				    {
+				        {"Complete"},
+				        {"In Progress"},
+				        {"Not Started"}
+				    }
+				)
+
+	annotation PBI_Id = 7914b52f6f4b4e34a44fa08966ee3a07
+

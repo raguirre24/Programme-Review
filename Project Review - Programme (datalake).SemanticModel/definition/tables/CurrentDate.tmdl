@@ -1,0 +1,27 @@
+table CurrentDate
+	lineageTag: 25298bd9-45e5-4bed-8d85-5e6fa4f98bd6
+
+	column UpdateDate
+		formatString: MMM yyyy
+		lineageTag: c51f8363-0d04-4bd6-85b5-09a6706cb097
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: 01 XER_TASK[UpdateDate]
+
+		variation Variation
+			isDefault
+			relationship: b4c46b6a-1737-4911-b27b-196f809965ea
+			defaultHierarchy: LocalDateTable_b0bcbbc7-7c1c-4451-b162-fcbba61edf95.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	partition CurrentDate = calculated
+		mode: import
+		source = DISTINCT('01 XER_TASK'[UpdateDate])
+
+	annotation PBI_Id = 711c63fed9394fb5afe01f757ed53662
+

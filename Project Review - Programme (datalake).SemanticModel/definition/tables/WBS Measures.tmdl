@@ -1,0 +1,61 @@
+table 'WBS Measures'
+	lineageTag: 075ff10b-d681-4a2b-ac84-012ad91336ac
+
+	measure 'Finish Variance (Working Days)' = ```
+			
+			VAR MaxActualFinish = 
+			    MAX('01 XER_TASK'[Finish])
+			VAR MaxBaselineFinish = 
+			    MAX('01 XER_TASK'[Baseline Finish])
+			VAR HasBothDates = 
+			    NOT(ISBLANK(MaxActualFinish)) && NOT(ISBLANK(MaxBaselineFinish))
+			VAR SameDates = 
+			    MaxActualFinish = MaxBaselineFinish
+			VAR WorkingDaysDiff = 
+			    NETWORKDAYS(MaxBaselineFinish, MaxActualFinish) - 1
+			RETURN
+			    IF (
+			        HasBothDates,
+			        IF (SameDates, 0, WorkingDaysDiff),
+			        BLANK()
+			    )
+			```
+		formatString: 0
+		lineageTag: a5a6165b-9371-4314-8fb5-97e08dba855c
+
+	measure 'Sum of Free Float' =
+			
+			SUM('06 XER_PREDECESSOR'[free_float])
+		lineageTag: da3853b0-a8e2-462a-abb4-142b8aa29f75
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Count of Links' = COUNTROWS('06 XER_PREDECESSOR')
+		formatString: 0
+		lineageTag: bfc5265a-b677-4d74-992c-eb2634fd4d71
+
+	measure 'Driving Ratio' = [Driving Predecessor Count]/[Count of Links]
+		lineageTag: 8fd80d7f-4c69-4aa0-9c5c-c40fd6e7b561
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Driving Predecessor Count' =
+			
+			CALCULATE(
+			    COUNTROWS('06 XER_PREDECESSOR'),
+			    '06 XER_PREDECESSOR'[Is Driving Predecessor] = "Driving"
+			)
+		formatString: 0
+		lineageTag: 346fe8a4-8ee0-4167-9205-2c38167026f6
+
+	partition 'WBS Measures' = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Removed Columns" = Table.RemoveColumns(Source,{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

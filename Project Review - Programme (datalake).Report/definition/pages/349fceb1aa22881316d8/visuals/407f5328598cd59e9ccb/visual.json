@@ -1,0 +1,84 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.6.0/schema.json",
+  "name": "407f5328598cd59e9ccb",
+  "position": {
+    "x": 0,
+    "y": 145.82278481012659,
+    "z": 2000,
+    "height": 69.87341772151899,
+    "width": 1786.3291139240507,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "This interactive visualization supports two modes. In "
+                  },
+                  {
+                    "value": "Float-Based mode",
+                    "textStyle": {
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": " (default), it highlights as critical all tasks with a Total Float ≤ 0, with users able to expand the view by adjusting the near-critical float threshold. In "
+                  },
+                  {
+                    "value": "Longest Path mode",
+                    "textStyle": {
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": ", it identifies the longest path, the sequence of tasks that, based solely on durations, lags, and logic, defines the minimum project duration. In both modes, users can select tasks to trace dependencies, toggle between showing only critical/longest-path tasks or all tasks, and view relationship types. For comparative analysis, there are toggles to display "
+                  },
+                  {
+                    "value": "Baseline",
+                    "textStyle": {
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": " bars (in green) and "
+                  },
+                  {
+                    "value": "Previous Update",
+                    "textStyle": {
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": " bars (in violet). To prioritize milestones and key activities in large datasets, the visual excludes Level of Effort and WBS Summary activities."
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}
