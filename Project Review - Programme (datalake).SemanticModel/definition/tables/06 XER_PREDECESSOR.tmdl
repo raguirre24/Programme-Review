@@ -39,7 +39,7 @@ table '06 XER_PREDECESSOR'
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Remaining Working Days' = RELATED('01 XER_TASK'[remaining_working_days])
+	column remaining_duration = RELATED('01 XER_TASK'[remaining_duration])
 		formatString: 0
 		lineageTag: 8345b7c4-f7f0-4743-abf5-85b9faec79f8
 		summarizeBy: sum
@@ -533,18 +533,6 @@ table '06 XER_PREDECESSOR'
 
 		annotation UnderlyingDateTimeDataType = Date
 
-	column predecessor_task_type = LOOKUPVALUE('01 XER_TASK'[task_type],'01 XER_TASK'[Task_ID_key],[pred_task_id_key])
-		lineageTag: e7e6dfbd-586a-4001-86e5-1f2a6bd0a4f8
-		summarizeBy: none
-
-		annotation SummarizationSetBy = Automatic
-
-	column task_type = RELATED('01 XER_TASK'[task_type])
-		lineageTag: 2c3a2b40-4956-4763-b15c-5ee4553debe0
-		summarizeBy: none
-
-		annotation SummarizationSetBy = Automatic
-
 	column early_start_date = related('01 XER_TASK'[early_start_date])
 		formatString: dd/mm/yyyy
 		lineageTag: 19d14697-ab4d-4ced-8b77-7be4c3a78d19
@@ -587,87 +575,9 @@ table '06 XER_PREDECESSOR'
 
 		annotation SummarizationSetBy = Automatic
 
-	column predecessor_status_code = LOOKUPVALUE('01 XER_TASK'[status_code], '01 XER_TASK'[task_id_key], [pred_task_id_key])
-		lineageTag: a1b2c3d4-1111-4aaa-bbbb-000000000002
-		summarizeBy: none
-
-		annotation SummarizationSetBy = Automatic
-
-	column predecessor_start = LOOKUPVALUE('01 XER_TASK'[early_start_date], '01 XER_TASK'[task_id_key], [pred_task_id_key])
-		formatString: dd/mm/yyyy
-		lineageTag: a1b2c3d4-1111-4aaa-bbbb-000000000003
-		summarizeBy: none
-
-		variation Variation
-			isDefault
-			relationship: 37e0588d-bb91-484a-9384-f3ac22891fe9
-			defaultHierarchy: LocalDateTable_36bfa387-a05c-4031-aa0d-3fc71bf3dd49.'Date Hierarchy'
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation UnderlyingDateTimeDataType = Date
-
-		annotation PBI_FormatHint = {"isDateTimeCustom":true}
-
-	column predecessor_finish = LOOKUPVALUE('01 XER_TASK'[early_end_date], '01 XER_TASK'[task_id_key], [pred_task_id_key])
-		formatString: dd/mm/yyyy
-		lineageTag: a1b2c3d4-1111-4aaa-bbbb-000000000004
-		summarizeBy: none
-
-		variation Variation
-			isDefault
-			relationship: dd316367-4839-4722-ac6f-db8b72f47ced
-			defaultHierarchy: LocalDateTable_674d22cd-9003-4348-a16f-3fd0e5eae750.'Date Hierarchy'
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation UnderlyingDateTimeDataType = Date
-
-		annotation PBI_FormatHint = {"isDateTimeCustom":true}
-
-	column lag =
-			VAR _lagRaw   = '06 XER_PREDECESSOR'[lag_hr_cnt]
-			VAR _lagHours = IF(ISBLANK(_lagRaw) || _lagRaw = "", 0, VALUE(_lagRaw))
-			VAR _pk       = '06 XER_PREDECESSOR'[pred_task_id_key]
-			VAR _predCalKey = LOOKUPVALUE(
-			    '01 XER_TASK'[calendar_id_key],
-			    '01 XER_TASK'[task_id_key], _pk
-			)
-			VAR _predHPD = LOOKUPVALUE(
-			    '10 XER_CALENDARS'[day_hr_cnt],
-			    '10 XER_CALENDARS'[clndr_id_key], _predCalKey
-			)
-			VAR _hpd = IF(ISBLANK(_predHPD) || _predHPD <= 0, 8, _predHPD)
-			RETURN
-			    IF(_lagHours = 0, 0, ROUND(_lagHours / _hpd, 2))
-		formatString: 0.00
-		lineageTag: a1b2c3d4-1111-4aaa-bbbb-000000000005
-		summarizeBy: sum
-
-		annotation SummarizationSetBy = Automatic
-
-	column free_float = LOOKUPVALUE('01 XER_TASK'[free_float], '01 XER_TASK'[task_id_key], [pred_task_id_key])
-		formatString: 0.00
-		lineageTag: a1b2c3d4-1111-4aaa-bbbb-000000000006
-		summarizeBy: sum
-
-		annotation SummarizationSetBy = Automatic
-
 	column clndr_id_key = RELATED('01 XER_TASK'[calendar_id_key])
 		lineageTag: a1b2c3d4-1111-4aaa-bbbb-000000000007
 		summarizeBy: none
-
-		annotation SummarizationSetBy = Automatic
-
-	column predecessor_clndr_id_key = LOOKUPVALUE('01 XER_TASK'[calendar_id_key], '01 XER_TASK'[task_id_key], [pred_task_id_key])
-		lineageTag: a1b2c3d4-1111-4aaa-bbbb-000000000008
-		summarizeBy: none
-
-		annotation SummarizationSetBy = Automatic
-
-	column time_period_hours_per_day = LOOKUPVALUE('10 XER_CALENDARS'[day_hr_cnt], '10 XER_CALENDARS'[clndr_id_key], [clndr_id_key])
-		lineageTag: a1b2c3d4-1111-4aaa-bbbb-000000000009
-		summarizeBy: sum
 
 		annotation SummarizationSetBy = Automatic
 
@@ -679,33 +589,204 @@ table '06 XER_PREDECESSOR'
 
 		annotation SummarizationSetBy = Automatic
 
+	column calendar_id_key
+		dataType: string
+		lineageTag: f32e219a-19f2-4390-bbbf-a0f4ee16844a
+		summarizeBy: none
+		sourceColumn: calendar_id_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column predecessor_clndr_id_key
+		dataType: string
+		lineageTag: e43ac4bc-e756-4090-9228-047b9be7a71a
+		summarizeBy: none
+		sourceColumn: predecessor_clndr_id_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column status_code
+		dataType: string
+		lineageTag: 5e92998f-aba3-4fb3-9b5f-829777232436
+		summarizeBy: none
+		sourceColumn: status_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column predecessor_status_code
+		dataType: string
+		lineageTag: 3637482a-d2d3-4a61-bfa5-b3bec6d23e51
+		summarizeBy: none
+		sourceColumn: predecessor_status_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column task_type
+		dataType: string
+		lineageTag: 46178a8a-cfeb-4d5f-b885-cfea597ffa05
+		summarizeBy: none
+		sourceColumn: task_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column predecessor_task_type
+		dataType: string
+		lineageTag: a261abba-88dd-45ec-981f-1a2624cfc0ac
+		summarizeBy: none
+		sourceColumn: predecessor_task_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column lag
+		dataType: double
+		lineageTag: fe0d1768-553c-4dbb-832e-6bd6201c8c37
+		summarizeBy: sum
+		sourceColumn: lag
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column time_period_hours_per_day
+		dataType: double
+		lineageTag: c178e389-fc4f-470f-8d39-d4b8cb16e401
+		summarizeBy: sum
+		sourceColumn: time_period_hours_per_day
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column start
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 0111cd41-c633-4ee4-b53b-15335bf96b5a
+		summarizeBy: none
+		sourceColumn: start
+
+		variation Variation
+			isDefault
+			relationship: f97257b3-e424-409c-b066-f4e0bd2a513a
+			defaultHierarchy: LocalDateTable_6f00d8c2-1e75-4496-9704-ddfc0c311c3f.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column finish
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 062b45b4-0b20-4eb5-807f-8cb21fb21f47
+		summarizeBy: none
+		sourceColumn: finish
+
+		variation Variation
+			isDefault
+			relationship: 53cfdde3-b508-430a-ba47-33184f8f04f7
+			defaultHierarchy: LocalDateTable_d1583395-3a6f-4408-a9d3-4200d16e5d12.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column predecessor_start
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 485def26-ab97-4bb8-9621-16ce13548840
+		summarizeBy: none
+		sourceColumn: predecessor_start
+
+		variation Variation
+			isDefault
+			relationship: 982e1198-5cc2-436e-992e-1b112a22e3f6
+			defaultHierarchy: LocalDateTable_97752607-5cb7-40e7-aa27-0c8cd83d4f25.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column predecessor_finish
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: e525075f-c1c4-4c71-a023-a9d9101f490a
+		summarizeBy: none
+		sourceColumn: predecessor_finish
+
+		variation Variation
+			isDefault
+			relationship: 022226a7-28db-45d5-b2ff-96121b9991e6
+			defaultHierarchy: LocalDateTable_e1bdc92b-b8be-4bbd-9fe4-fe8d7fcc24c3.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column free_float
+		dataType: double
+		lineageTag: 6d4de28d-5fc9-4954-8983-31e8ae35443c
+		summarizeBy: sum
+		sourceColumn: free_float
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column total_float
+		dataType: double
+		lineageTag: 75867e6a-f400-4588-8178-94b00b22d20a
+		summarizeBy: sum
+		sourceColumn: total_float
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column monthupdate
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: ff9111a5-7db0-46ce-bd4e-1275190aea5f
+		summarizeBy: none
+		sourceColumn: monthupdate
+
+		variation Variation
+			isDefault
+			relationship: 25b9fb20-f916-49d0-afa6-caba18de2986
+			defaultHierarchy: LocalDateTable_bf6c8fe5-d487-4c1f-b7c0-32b3e237fe00.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
 	partition '06 XER_PREDECESSOR' = m
 		mode: import
 		queryGroup: XER
 		source =
 				let
 				    Source = fnAthenaSource("06_xer_predecessor"),
-				    #"Changed Type" = Table.TransformColumnTypes(Source, {{"refresh_date", type datetime}, {"arls", type datetime}, {"aref", type datetime}}),
-				    #"Added Custom" = Table.AddColumn(#"Changed Type", "ProjectCode", each Text.BeforeDelimiter([filename], "-"), type text),
-				    #"Added Custom1" = Table.AddColumn(#"Added Custom", "UpdateDate", each
-				        let
-				            cPart = Text.BeforeDelimiter(Text.AfterDelimiter([filename], "-C-"), "_"),
-				            datePart = Text.BeforeDelimiter(Text.AfterDelimiter([filename], "_"), ".")
-				        in
-				            if Text.StartsWith(cPart, "BL") then
-				                Date.EndOfMonth(Date.FromText(datePart))
-				            else
-				                Date.EndOfMonth(
-				                    #date(
-				                        2000 + Number.FromText(Text.Start(cPart, 2)),
-				                        Number.FromText(Text.End(cPart, 2)),
-				                        1
-				                    )
-				                ),
+				
+				    AddParsedColumns = Table.AddColumn(
+				        Table.AddColumn(Source, "ProjectCode", each Text.BeforeDelimiter([filename], "-"), type text),
+				        "UpdateDate", each
+				            let
+				                parts = Text.Split(Text.BeforeDelimiter([filename], "_"), "-"),
+				                cPart = if List.Count(parts) >= 3 then parts{2} else "",
+				                datePart = Text.BeforeDelimiter(Text.AfterDelimiter([filename], "_"), ".")
+				            in
+				                if Text.StartsWith(cPart, "BL") then
+				                    Date.EndOfMonth(Date.FromText(datePart))
+				                else
+				                    let
+				                        p1 = Number.FromText(Text.Start(cPart, 2)),
+				                        p2 = Number.FromText(Text.End(cPart, 2)),
+				                        yr = if p2 > 12 then p2 else p1,
+				                        mo = if p2 > 12 then p1 else p2
+				                    in
+				                        Date.EndOfMonth(#date(2000 + yr, mo, 1)),
 				        type date
-				    )
+				    ),
+				
+				    Typed = Table.TransformColumnTypes(AddParsedColumns, {
+				        {"refresh_date", type datetime}, {"arls", type datetime}, {"aref", type datetime},
+				        {"start", type datetime}, {"finish", type datetime},
+				        {"predecessor_start", type datetime}, {"predecessor_finish", type datetime},
+				        {"free_float", type number}, {"total_float", type number},
+				        {"time_period_hours_per_day", type number}, {"lag", type number},
+				        {"monthupdate", type date}
+				    })
 				in
-				    #"Added Custom1"
+				    Typed
 
 	annotation PBI_NavigationStepName = Navigation
 

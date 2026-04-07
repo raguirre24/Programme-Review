@@ -315,6 +315,22 @@ table 12_XER_RSRC
 
 		annotation SummarizationSetBy = Automatic
 
+	column unit_id_key
+		dataType: string
+		lineageTag: a9db94f1-817a-4b61-a7b2-4f4d208f6aa1
+		summarizeBy: none
+		sourceColumn: unit_id_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column monthupdate
+		dataType: string
+		lineageTag: 7f91125f-e3a6-4c5c-b19d-094cd79a8711
+		summarizeBy: none
+		sourceColumn: monthupdate
+
+		annotation SummarizationSetBy = Automatic
+
 	partition 12_XER_RSRC = m
 		mode: import
 		queryGroup: XER

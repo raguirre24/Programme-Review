@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.6.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
   "name": "224fd832199fc5bc1ac1",
   "position": {
     "x": 20,
@@ -92,6 +92,21 @@
             },
             {
               "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "15_XER_RESOURCE_DISTRIBUTION"
+                    }
+                  },
+                  "Property": "unit"
+                }
+              },
+              "queryRef": "15_XER_RESOURCE_DISTRIBUTION.unit",
+              "nativeQueryRef": "Unit",
+              "displayName": "Unit"
+            },
+            {
+              "field": {
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
@@ -163,7 +178,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "510.6290190193434D"
+                  "Value": "424.66701512966335D"
                 }
               }
             }
@@ -325,6 +340,20 @@
           "selector": {
             "metadata": "Resources.Remaining Quantity"
           }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "82D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "15_XER_RESOURCE_DISTRIBUTION.unit"
+          }
         }
       ],
       "values": [
@@ -484,6 +513,118 @@
             }
           ]
         }
+      },
+      {
+        "name": "bb368639fd6578dd8212",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "01 XER_TASK"
+              }
+            },
+            "Property": "task_code"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "985c156d7198e433262f",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "01 XER_TASK"
+              }
+            },
+            "Property": "task_name"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "38ab240eae8113207bca",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "01 XER_TASK"
+              }
+            },
+            "Property": "Start"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "7ef691abd157f5e9168d",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "01 XER_TASK"
+              }
+            },
+            "Property": "Finish"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "587220e707c419240315",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "15_XER_RESOURCE_DISTRIBUTION"
+              }
+            },
+            "Property": "rsrc_name"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "b17dcb54ee2d9d663f49",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Resources"
+              }
+            },
+            "Property": "Actual Quantity"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "8b878b252c1d2893c0b0",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Resources"
+              }
+            },
+            "Property": "Remaining Quantity"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "7114e43174610fdcf62c",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "15_XER_RESOURCE_DISTRIBUTION"
+              }
+            },
+            "Property": "unit"
+          }
+        },
+        "type": "Categorical"
       }
     ]
   }

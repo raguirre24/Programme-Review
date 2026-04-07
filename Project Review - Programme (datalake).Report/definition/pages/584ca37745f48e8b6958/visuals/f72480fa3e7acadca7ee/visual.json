@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.6.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
   "name": "f72480fa3e7acadca7ee",
   "position": {
     "x": 7.5,
@@ -470,5 +470,65 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "4a9baec78939bc5fc3ce",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Activity Completion"
+              }
+            },
+            "Property": "Activities Planned Previous Date"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "1241ccebd843e0f51294",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Activity Completion"
+              }
+            },
+            "Property": "Activities Achieved Previous Date"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "26c65497c51dfe0c3402",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Activity Completion"
+              }
+            },
+            "Property": "Completion Score Previous Date"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "08e439f95d418cf80ec5",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Activity Completion"
+              }
+            },
+            "Property": "Activities Completed Last Period"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

@@ -76,11 +76,16 @@ expression fnAthenaSource =
 		        let
 		            DB = AthenaDB,
 		
+		            // ── Programme Type Filter (C / T / ALL) ──
+		            progType = Text.Upper(Text.Trim(SelectedProgrammeType)),
+		            programmeTypeFilter =
+		                if progType = "ALL" then "(filename LIKE '%-C-%' OR filename LIKE '%-T-%')"
+		                else if progType = "T" then "filename LIKE '%-T-%'"
+		                else "filename LIKE '%-C-%'",
+		
+		            // ── Project Filter ──
 		            filterList = ProjectFilterList,
-		
-		            baseWhere = "WHERE filename LIKE '%-C-%'",
-		
-		            projectWhere =
+		            projectFilter =
 		                if filterList = null then
 		                    ""
 		                else
@@ -92,7 +97,43 @@ expression fnAthenaSource =
 		                    in
 		                        " AND SPLIT_PART(filename, '-', 1) IN (" & inClause & ")",
 		
-		            sql = "SELECT * FROM prod_projectcontrols_p6.""" & tableName & """ " & baseWhere & projectWhere,
+		            // ── Athena CTE: kept_filenames ──
+		            cte =
+		                "WITH " &
+		                "parsed AS (" &
+		                    "SELECT filename, last_recalc_date, " &
+		                    "SPLIT_PART(filename, '-', 1) AS project_code, " &
+		                    "SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3) AS tag, " &
+		                    "CASE WHEN REGEXP_LIKE(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), '^BL[0-9]+') THEN TRUE ELSE FALSE END AS is_baseline, " &
+		                    "CASE WHEN REGEXP_LIKE(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), '^BL[0-9]+') THEN CAST(REGEXP_EXTRACT(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), 'BL([0-9]+)', 1) AS INTEGER) END AS bl_number, " &
+		                    "CASE WHEN REGEXP_LIKE(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), '^BL[0-9]+') THEN NULLIF(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 4), '') END AS bl_revision " &
+		                    "FROM prod_projectcontrols_p6.""02_xer_project"" " &
+		                    "WHERE (" & programmeTypeFilter & ")" & projectFilter &
+		                "), " &
+		                "deduped AS (" &
+		                    "SELECT *, ROW_NUMBER() OVER (PARTITION BY filename ORDER BY last_recalc_date DESC NULLS LAST) AS rn " &
+		                    "FROM parsed" &
+		                "), " &
+		                "unique_rows AS (" &
+		                    "SELECT * FROM deduped WHERE rn = 1" &
+		                "), " &
+		                "ranked_baselines AS (" &
+		                    "SELECT *, ROW_NUMBER() OVER (PARTITION BY project_code ORDER BY bl_number DESC, bl_revision DESC NULLS LAST, last_recalc_date DESC NULLS LAST) AS bl_rank " &
+		                    "FROM unique_rows WHERE is_baseline = TRUE" &
+		                "), " &
+		                "latest_baseline AS (" &
+		                    "SELECT project_code, last_recalc_date AS anchor_date " &
+		                    "FROM ranked_baselines WHERE bl_rank = 1" &
+		                "), " &
+		                "kept_filenames AS (" &
+		                    "SELECT u.filename " &
+		                    "FROM unique_rows u " &
+		                    "LEFT JOIN latest_baseline lb ON u.project_code = lb.project_code " &
+		                    "WHERE lb.anchor_date IS NULL OR u.last_recalc_date >= lb.anchor_date" &
+		                ") ",
+		
+		            // ── Final query: CTE + INNER JOIN to target table ──
+		            sql = cte & "SELECT t.* FROM prod_projectcontrols_p6.""" & tableName & """ t INNER JOIN kept_filenames kf ON t.filename = kf.filename",
 		
 		            Result = Value.NativeQuery(DB, sql)
 		        in
@@ -120,87 +161,6 @@ expression AthenaDB =
 
 	annotation PBI_ResultType = Table
 
-expression Staging_TaskRsrc =
-		let
-		    Source = #"13_XER_TASKRSRC",
-		    Narrow = Table.SelectColumns(Source,
-		        {"task_id_key", "rsrc_id_key", "act_ot_qty", "act_reg_qty",
-		         "act_start_date", "act_end_date", "restart_date", "reend_date", "remain_qty"}
-		    )
-		in
-		    Narrow
-	lineageTag: befe97fa-b35f-47a2-a58d-ffc701e9e53c
-	queryGroup: 'Resource Staging'
-
-	annotation PBI_NavigationStepName = Navigation
-
-	annotation PBI_ResultType = Table
-
-expression Staging_Task =
-		let
-		    Source = #"01 XER_TASK",
-		    Narrow = Table.SelectColumns(Source,
-		        {"task_id_key", "status_code", "task_code", "calendar_id_key", "data_date"}
-		    )
-		in
-		    Narrow
-	lineageTag: 9bf59e02-72de-458a-aee8-734e8b35375c
-	queryGroup: 'Resource Staging'
-
-	annotation PBI_NavigationStepName = Navigation
-
-	annotation PBI_ResultType = Table
-
-expression Staging_Rsrc =
-		let
-		    Source = #"12_XER_RSRC",
-		    Narrow = Table.SelectColumns(Source,
-		        {"rsrc_id_key", "rsrc_short_name", "rsrc_name", "rsrc_type"}
-		    )
-		in
-		    Narrow
-	lineageTag: 34d9bac9-ec29-4aeb-8dfb-e2e090cb05d5
-	queryGroup: 'Resource Staging'
-
-	annotation PBI_NavigationStepName = Navigation
-
-	annotation PBI_ResultType = Table
-
-expression Staging_Calendar_Standard =
-		let
-		    Source = #"11_XER_CALENDAR_DETAILED",
-		    Filtered = Table.SelectRows(Source, each
-		        [exception_type] = "Standard"
-		        and [date] = null
-		        and [working_day_int] = 1
-		    ),
-		    Narrow = Table.SelectColumns(Filtered, {"clndr_id_key", "day_of_week_num"})
-		in
-		    Narrow
-	lineageTag: 7665903a-d88e-41e8-9866-b698d507986f
-	queryGroup: 'Resource Staging'
-
-	annotation PBI_NavigationStepName = Navigation
-
-	annotation PBI_ResultType = Table
-
-expression Staging_Calendar_Exceptions =
-		let
-		    Source = #"11_XER_CALENDAR_DETAILED",
-		    Filtered = Table.SelectRows(Source, each
-		        ([exception_type] = "Holiday" or [exception_type] = "Exception - Working")
-		        and [date] <> null
-		    ),
-		    Narrow = Table.SelectColumns(Filtered, {"clndr_id_key", "date", "working_day_int"})
-		in
-		    Narrow
-	lineageTag: 080cf725-1f32-4490-b189-1e17fe4a3b17
-	queryGroup: 'Resource Staging'
-
-	annotation PBI_NavigationStepName = Navigation
-
-	annotation PBI_ResultType = Table
-
 expression dbo_project =
 		let
 		    Source = AmazonAthena.Databases("primary_p6_bi_reporting", null, [EnableNativeQuery = true]),
@@ -216,4 +176,12 @@ expression dbo_project =
 	annotation PBI_NavigationStepName = Navigation
 
 	annotation PBI_ResultType = Table
+
+expression SelectedProgrammeType = "C" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: d4e5f6a7-8b9c-0d1e-2f3a-456789012345
+	queryGroup: Database
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
 

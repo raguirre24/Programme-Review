@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/report/3.1.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/report/3.2.0/schema.json",
   "themeCollection": {
     "baseTheme": {
       "name": "CY23SU08",
@@ -40,7 +40,7 @@
           "expanded": {
             "expr": {
               "Literal": {
-                "Value": "false"
+                "Value": "true"
               }
             }
           },
@@ -65,38 +65,8 @@
       "type": "RegisteredResources",
       "items": [
         {
-          "name": "EBA_Theme967697128845173.json",
-          "path": "EBA_Theme967697128845173.json",
-          "type": "Image"
-        },
-        {
-          "name": "Contract_Background3133289438451782.png",
-          "path": "Contract_Background3133289438451782.png",
-          "type": "Image"
-        },
-        {
-          "name": "Contract_Background16681237200337828.png",
-          "path": "Contract_Background16681237200337828.png",
-          "type": "Image"
-        },
-        {
-          "name": "Contract_Background5191918144524167.png",
-          "path": "Contract_Background5191918144524167.png",
-          "type": "Image"
-        },
-        {
-          "name": "Contract_Background862193420064858.png",
-          "path": "Contract_Background862193420064858.png",
-          "type": "Image"
-        },
-        {
-          "name": "Contract_Background1603920230288043.png",
-          "path": "Contract_Background1603920230288043.png",
-          "type": "Image"
-        },
-        {
-          "name": "Contract_Background2056174827887961.png",
-          "path": "Contract_Background2056174827887961.png",
+          "name": "Contract_Background012134579492858788.png",
+          "path": "Contract_Background012134579492858788.png",
           "type": "Image"
         },
         {
@@ -105,28 +75,23 @@
           "type": "Image"
         },
         {
-          "name": "Contract_Background012134579492858788.png",
-          "path": "Contract_Background012134579492858788.png",
+          "name": "Contract_Background1603920230288043.png",
+          "path": "Contract_Background1603920230288043.png",
           "type": "Image"
         },
         {
-          "name": "Contract_Background5353206385383082.png",
-          "path": "Contract_Background5353206385383082.png",
+          "name": "Contract_Background16681237200337828.png",
+          "path": "Contract_Background16681237200337828.png",
           "type": "Image"
         },
         {
-          "name": "Contract_Background8849239318655949.png",
-          "path": "Contract_Background8849239318655949.png",
+          "name": "Contract_Background2056174827887961.png",
+          "path": "Contract_Background2056174827887961.png",
           "type": "Image"
         },
         {
-          "name": "Contract_Background4282366191581779.png",
-          "path": "Contract_Background4282366191581779.png",
-          "type": "Image"
-        },
-        {
-          "name": "Contract_Background6253722335837282.png",
-          "path": "Contract_Background6253722335837282.png",
+          "name": "Contract_Background3133289438451782.png",
+          "path": "Contract_Background3133289438451782.png",
           "type": "Image"
         },
         {
@@ -135,13 +100,48 @@
           "type": "Image"
         },
         {
+          "name": "Contract_Background4282366191581779.png",
+          "path": "Contract_Background4282366191581779.png",
+          "type": "Image"
+        },
+        {
           "name": "Contract_Background48224271266992547.png",
           "path": "Contract_Background48224271266992547.png",
           "type": "Image"
         },
         {
+          "name": "Contract_Background5191918144524167.png",
+          "path": "Contract_Background5191918144524167.png",
+          "type": "Image"
+        },
+        {
+          "name": "Contract_Background5353206385383082.png",
+          "path": "Contract_Background5353206385383082.png",
+          "type": "Image"
+        },
+        {
           "name": "Contract_Background5930294960647637.png",
           "path": "Contract_Background5930294960647637.png",
+          "type": "Image"
+        },
+        {
+          "name": "Contract_Background6253722335837282.png",
+          "path": "Contract_Background6253722335837282.png",
+          "type": "Image"
+        },
+        {
+          "name": "Contract_Background862193420064858.png",
+          "path": "Contract_Background862193420064858.png",
+          "type": "Image"
+        },
+        {
+          "name": "Contract_Background8849239318655949.png",
+          "path": "Contract_Background8849239318655949.png",
+          "type": "Image"
+        },
+        {
+          "name": "EBA_Theme967697128845173.json",
+          "path": "EBA_Theme967697128845173.json",
           "type": "Image"
         }
       ]

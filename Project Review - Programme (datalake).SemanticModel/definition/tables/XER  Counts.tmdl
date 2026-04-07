@@ -410,8 +410,8 @@ table 'XER  Counts'
 			        CALCULATE (
 			            COUNTROWS ( '01 XER_TASK' ),
 			            '01 XER_TASK'[status_code] <> "Complete",
-			            '01 XER_TASK'[remaining_working_days] > 0,
-			            '01 XER_TASK'[remaining_working_days] <= 10
+			            '01 XER_TASK'[remaining_duration] > 0,
+			            '01 XER_TASK'[remaining_duration] <= 10
 			        ) + 0
 			    )
 		formatString: #,0
@@ -428,8 +428,8 @@ table 'XER  Counts'
 			        CALCULATE (
 			            COUNTROWS ( '01 XER_TASK' ),
 			            '01 XER_TASK'[status_code] <> "Complete",
-			            '01 XER_TASK'[remaining_working_days] > 10,
-			            '01 XER_TASK'[remaining_working_days] <= 20
+			            '01 XER_TASK'[remaining_duration] > 10,
+			            '01 XER_TASK'[remaining_duration] <= 20
 			        ) + 0
 			    )
 		formatString: #,0
@@ -446,8 +446,8 @@ table 'XER  Counts'
 			        CALCULATE (
 			            COUNTROWS ( '01 XER_TASK' ),
 			            '01 XER_TASK'[status_code] <> "Complete",
-			            '01 XER_TASK'[remaining_working_days] > 20,
-			            '01 XER_TASK'[remaining_working_days] <= 30
+			            '01 XER_TASK'[remaining_duration] > 20,
+			            '01 XER_TASK'[remaining_duration] <= 30
 			        ) + 0
 			    )
 		formatString: #,0
@@ -464,8 +464,8 @@ table 'XER  Counts'
 			        CALCULATE (
 			            COUNTROWS ( '01 XER_TASK' ),
 			            '01 XER_TASK'[status_code] <> "Complete",
-			            '01 XER_TASK'[remaining_working_days] > 30,
-			            '01 XER_TASK'[remaining_working_days] <= 44
+			            '01 XER_TASK'[remaining_duration] > 30,
+			            '01 XER_TASK'[remaining_duration] <= 44
 			        ) + 0
 			    )
 		formatString: #,0
@@ -482,7 +482,7 @@ table 'XER  Counts'
 			        CALCULATE (
 			            COUNTROWS ( '01 XER_TASK' ),
 			            '01 XER_TASK'[status_code] <> "Complete",
-			            '01 XER_TASK'[remaining_working_days] > 44
+			            '01 XER_TASK'[remaining_duration] > 44
 			        ) + 0
 			    )
 		formatString: #,0
@@ -499,7 +499,7 @@ table 'XER  Counts'
 			        CALCULATE (
 			            COUNTROWS ( '01 XER_TASK' ),
 			            '01 XER_TASK'[status_code] <> "Complete",
-			            '01 XER_TASK'[remaining_working_days] < 44
+			            '01 XER_TASK'[remaining_duration] < 44
 			        ) + 0
 			    )
 		formatString: #,0
@@ -516,7 +516,7 @@ table 'XER  Counts'
 			        CALCULATE (
 			            COUNTROWS ( '01 XER_TASK' ),
 			            '01 XER_TASK'[status_code] <> "Complete",
-			            '01 XER_TASK'[remaining_working_days] < 30
+			            '01 XER_TASK'[remaining_duration] < 30
 			        ) + 0
 			    )
 		formatString: #,0
@@ -533,7 +533,7 @@ table 'XER  Counts'
 			        CALCULATE (
 			            COUNTROWS ( '01 XER_TASK' ),
 			            '01 XER_TASK'[status_code] <> "Complete",
-			            '01 XER_TASK'[remaining_working_days] < 20
+			            '01 XER_TASK'[remaining_duration] < 20
 			        ) + 0
 			    )
 		formatString: #,0
@@ -550,7 +550,7 @@ table 'XER  Counts'
 			        CALCULATE (
 			            COUNTROWS ( '01 XER_TASK' ),
 			            '01 XER_TASK'[status_code] <> "Complete",
-			            '01 XER_TASK'[remaining_working_days] < 10
+			            '01 XER_TASK'[remaining_duration] < 10
 			        ) + 0
 			    )
 		formatString: #,0

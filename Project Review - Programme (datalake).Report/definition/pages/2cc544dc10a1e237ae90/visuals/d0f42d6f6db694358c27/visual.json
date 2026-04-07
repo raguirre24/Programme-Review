@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.6.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
   "name": "d0f42d6f6db694358c27",
   "position": {
     "x": 75.590551181102356,
@@ -10,7 +10,7 @@
     "tabOrder": 7000
   },
   "visual": {
-    "visualType": "slicer",
+    "visualType": "advancedSlicerVisual",
     "query": {
       "queryState": {
         "Values": {
@@ -27,8 +27,7 @@
                 }
               },
               "queryRef": "CurrentDate.UpdateDate",
-              "nativeQueryRef": "UpdateDate",
-              "active": true
+              "nativeQueryRef": "UpdateDate"
             }
           ]
         }
@@ -54,15 +53,7 @@
     "objects": {
       "data": [
         {
-          "properties": {
-            "mode": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Basic'"
-                }
-              }
-            }
-          }
+          "properties": {}
         }
       ],
       "selection": [
@@ -81,32 +72,6 @@
       "general": [
         {
           "properties": {
-            "outlineColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "ThemeDataColor": {
-                      "ColorId": 1,
-                      "Percent": 0
-                    }
-                  }
-                }
-              }
-            },
-            "orientation": {
-              "expr": {
-                "Literal": {
-                  "Value": "1D"
-                }
-              }
-            },
-            "responsive": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
             "filter": {
               "filter": {
                 "Version": 2,
@@ -137,7 +102,7 @@
                           [
                             {
                               "Literal": {
-                                "Value": "datetime'2026-02-28T00:00:00'"
+                                "Value": "datetime'2026-03-31T00:00:00'"
                               }
                             }
                           ]
@@ -151,52 +116,47 @@
           }
         }
       ],
-      "header": [
+      "layout": [
         {
           "properties": {
-            "show": {
+            "rowCount": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "1L"
+                }
+              }
+            },
+            "orientation": {
+              "expr": {
+                "Literal": {
+                  "Value": "2D"
+                }
+              }
+            },
+            "autoGrid": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "maxTiles": {
+              "expr": {
+                "Literal": {
+                  "Value": "6L"
                 }
               }
             }
           }
         }
       ],
-      "items": [
+      "overFlow": [
         {
           "properties": {
-            "textSize": {
+            "overFlowDirection": {
               "expr": {
                 "Literal": {
-                  "Value": "10D"
-                }
-              }
-            },
-            "bold": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            },
-            "fontColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "ThemeDataColor": {
-                      "ColorId": 9,
-                      "Percent": 0
-                    }
-                  }
-                }
-              }
-            },
-            "padding": {
-              "expr": {
-                "Literal": {
-                  "Value": "0D"
+                  "Value": "1D"
                 }
               }
             }
@@ -268,6 +228,13 @@
                   "Value": "true"
                 }
               }
+            },
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
             }
           }
         }
@@ -283,7 +250,7 @@
   "filterConfig": {
     "filters": [
       {
-        "name": "6b2561e6470e03157de1",
+        "name": "2e55b60a75d795fef142",
         "field": {
           "Column": {
             "Expression": {

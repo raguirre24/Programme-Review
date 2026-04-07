@@ -48,7 +48,7 @@ table '04 XER_BASELINE'
 
 		variation Variation
 			isDefault
-			relationship: a2598ad4-8622-4d63-b98a-072219a075ad
+			relationship: 1c1cf5e7-2aa8-4bae-8fc9-620fe8eb707d
 			defaultHierarchy: LocalDateTable_cef81a88-781d-4bb2-afe6-215e5e582809.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
@@ -88,7 +88,7 @@ table '04 XER_BASELINE'
 
 		variation Variation
 			isDefault
-			relationship: 73f9c568-0ccb-43ca-8612-728695b48537
+			relationship: dd8ceb85-982b-4ea3-9460-5038393b7974
 			defaultHierarchy: LocalDateTable_f9fa0049-4ece-4889-a16f-e9fd4bcbeedd.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
@@ -114,7 +114,7 @@ table '04 XER_BASELINE'
 
 		variation Variation
 			isDefault
-			relationship: 930baacb-bda5-4d8a-8121-c5881042d397
+			relationship: 11fb84c4-240a-40af-841c-bfdc6c751d94
 			defaultHierarchy: LocalDateTable_d24a623d-b54d-476a-8f53-79bb612c537a.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
@@ -132,7 +132,7 @@ table '04 XER_BASELINE'
 
 		variation Variation
 			isDefault
-			relationship: a9ce5a05-a165-4596-aa59-c39bdd7640fb
+			relationship: a92a7a29-01ad-44c7-ace4-c7a57ea29b00
 			defaultHierarchy: LocalDateTable_0747e17e-11ad-419d-b613-3313c930573d.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
@@ -150,7 +150,7 @@ table '04 XER_BASELINE'
 
 		variation Variation
 			isDefault
-			relationship: e9a0db00-a0fc-4f15-aafe-7a65b95e398e
+			relationship: 28412cc4-c992-4ddc-8e5b-524267d36b8f
 			defaultHierarchy: LocalDateTable_f79ff20c-76b6-4baf-8de9-e9e6b7e760a8.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
@@ -168,7 +168,7 @@ table '04 XER_BASELINE'
 
 		variation Variation
 			isDefault
-			relationship: cbe27884-4fce-4805-8399-0bc4d1752dfb
+			relationship: 7b6573a5-c911-44b5-87d5-d7179fb1b8c6
 			defaultHierarchy: LocalDateTable_6a9a6000-bff2-4281-8cef-507996f2532a.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
@@ -186,7 +186,7 @@ table '04 XER_BASELINE'
 
 		variation Variation
 			isDefault
-			relationship: cc9b8076-b0fd-441c-9ce2-6286b31aa909
+			relationship: 462c7fb1-8ac7-4f47-90bb-441429efae19
 			defaultHierarchy: LocalDateTable_627d255f-434c-4411-ac0d-3a15bdca3259.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
@@ -236,7 +236,7 @@ table '04 XER_BASELINE'
 				                "task_type", '01 XER_TASK'[task_type],
 				                "Start", '01 XER_TASK'[Start],
 				                "Finish", '01 XER_TASK'[Finish],
-				                "Remaining Duration", '01 XER_TASK'[remaining_working_days],
+				                "Remaining Duration", '01 XER_TASK'[remaining_duration],
 				                "Data Date", '01 XER_TASK'[data_date],
 				                "task_code", '01 XER_TASK'[task_code],
 				                "status_code", '01 XER_TASK'[status_code],

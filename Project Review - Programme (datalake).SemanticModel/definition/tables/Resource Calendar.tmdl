@@ -10,7 +10,7 @@ table 'Resource Calendar'
 
 		variation Variation
 			isDefault
-			relationship: 63a477ee-e3fc-4c17-bbe6-0449b4e63288
+			relationship: d80ab5ee-10bc-4140-a252-25531d16c708
 			defaultHierarchy: LocalDateTable_b96da9ad-77fa-429a-b6e7-85d8829f802b.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
@@ -21,9 +21,9 @@ table 'Resource Calendar'
 		mode: import
 		source = ```
 				
-				VAR MinDate = MIN('15_XER_RESOURCE_DISTRIBUTION'[start_date])
+				VAR MinDate = MIN('15_XER_RESOURCE_DISTRIBUTION'[start])
 				
-				VAR MaxDate = MAX('15_XER_RESOURCE_DISTRIBUTION'[end_date])
+				VAR MaxDate = MAX('15_XER_RESOURCE_DISTRIBUTION'[finish])
 				RETURN
 				DISTINCT (
 				    SELECTCOLUMNS (

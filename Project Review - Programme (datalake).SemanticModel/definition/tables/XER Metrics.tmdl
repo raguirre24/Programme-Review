@@ -63,7 +63,7 @@ table 'XER Metrics'
 			COALESCE(
 			    CALCULATE(
 			        COUNTA('01 XER_TASK'[task_name]),
-			        '01 XER_TASK'[remaining_working_days] > 44
+			        '01 XER_TASK'[remaining_duration] > 44
 			    ),
 			    0
 			)

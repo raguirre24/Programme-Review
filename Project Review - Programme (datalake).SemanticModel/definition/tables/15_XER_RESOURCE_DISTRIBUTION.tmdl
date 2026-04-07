@@ -18,67 +18,14 @@ table 15_XER_RESOURCE_DISTRIBUTION
 
 		annotation SummarizationSetBy = Automatic
 
-	column clndr_id_key
-		dataType: string
-		lineageTag: eac86223-0377-4e4c-99e9-af918edb1eab
-		summarizeBy: none
-		sourceColumn: clndr_id_key
-
-		annotation SummarizationSetBy = Automatic
-
-	column start_date
-		dataType: dateTime
-		formatString: Long Date
-		lineageTag: f4936ebb-6199-433c-b797-6ce7c666b648
-		summarizeBy: none
-		sourceColumn: start_date
-
-		variation Variation
-			isDefault
-			relationship: b4c807dd-39c7-4f94-8538-d8f72a4ce90c
-			defaultHierarchy: LocalDateTable_7d1f540e-1d9c-481a-8b9c-57df2e8b74ae.'Date Hierarchy'
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation UnderlyingDateTimeDataType = Date
-
-	column end_date
-		dataType: dateTime
-		formatString: Long Date
-		lineageTag: bc8c712d-ce26-4977-9405-23f284844d10
-		summarizeBy: none
-		sourceColumn: end_date
-
-		variation Variation
-			isDefault
-			relationship: e0b10d65-d111-43c5-8ede-e578454a9d82
-			defaultHierarchy: LocalDateTable_70091d0d-0a27-4768-a3e3-bdeea2786c8e.'Date Hierarchy'
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation UnderlyingDateTimeDataType = Date
-
-	column quantity
-		dataType: double
-		lineageTag: dd617f8c-7ef8-448b-a4e8-37c6387cf905
-		summarizeBy: sum
-		sourceColumn: quantity
-
-		annotation SummarizationSetBy = Automatic
-
 	column is_actual
 		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
 		lineageTag: 1b796626-b81e-4475-b92e-0fd47ad7133b
 		summarizeBy: none
 		sourceColumn: is_actual
 
-		annotation SummarizationSetBy = Automatic
-
-	column status_code
-		dataType: string
-		lineageTag: c50e42a3-711b-45ed-b523-51a4dcafba3c
-		summarizeBy: none
-		sourceColumn: status_code
+		changedProperty = DataType
 
 		annotation SummarizationSetBy = Automatic
 
@@ -112,8 +59,6 @@ table 15_XER_RESOURCE_DISTRIBUTION
 
 		annotation SummarizationSetBy = Automatic
 
-		annotation UnderlyingDateTimeDataType = Date
-
 	column month_end_date
 		dataType: dateTime
 		formatString: Long Date
@@ -128,22 +73,20 @@ table 15_XER_RESOURCE_DISTRIBUTION
 
 		annotation SummarizationSetBy = Automatic
 
-		annotation UnderlyingDateTimeDataType = Date
-
 	column month_working_days
-		dataType: int64
-		formatString: 0
+		dataType: double
 		lineageTag: b9a4cc4b-13fe-4bfd-b692-277d90e2793b
 		summarizeBy: sum
 		sourceColumn: month_working_days
 
 		annotation SummarizationSetBy = Automatic
 
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
 	column month_calendar_days
-		dataType: int64
-		formatString: 0
+		dataType: string
 		lineageTag: 8a5ec838-8793-4c45-b1a6-9c145c054cb7
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: month_calendar_days
 
 		annotation SummarizationSetBy = Automatic
@@ -155,6 +98,8 @@ table 15_XER_RESOURCE_DISTRIBUTION
 		sourceColumn: monthly_quantity
 
 		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	column task_code
 		dataType: string
@@ -188,254 +133,203 @@ table 15_XER_RESOURCE_DISTRIBUTION
 
 		annotation SummarizationSetBy = Automatic
 
-	column is_working_day_dist
-		dataType: boolean
-		formatString: """TRUE"";""TRUE"";""FALSE"""
-		lineageTag: e8b4aaac-527b-4ab1-8350-08ed76f1f62b
+	column server
+		dataType: string
+		lineageTag: 12284865-4fec-4e6b-924f-e672f1549fd4
 		summarizeBy: none
-		sourceColumn: is_working_day_dist
+		sourceColumn: server
+
+		annotation SummarizationSetBy = Automatic
+
+	column database
+		dataType: string
+		lineageTag: 34156fce-e0b3-4f80-83ca-3bc3f405a44f
+		summarizeBy: none
+		sourceColumn: database
+
+		annotation SummarizationSetBy = Automatic
+
+	column clndr_id_key
+		dataType: string
+		lineageTag: b00f1184-7205-436f-b9d9-b77446116790
+		summarizeBy: none
+		sourceColumn: clndr_id_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column proj_id_key
+		dataType: string
+		lineageTag: 9be10ab4-166e-40c5-9e13-6b9924745220
+		summarizeBy: none
+		sourceColumn: proj_id_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column distribution_type
+		dataType: string
+		lineageTag: 5c5816ae-0085-4831-81eb-4ff7f77ea5f1
+		summarizeBy: none
+		sourceColumn: distribution_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_working_hours
+		dataType: double
+		lineageTag: a6052bd1-c12f-4b9c-9d65-df3e0ec73c08
+		summarizeBy: sum
+		sourceColumn: month_working_hours
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column total_working_hours
+		dataType: double
+		lineageTag: 78e44d2c-ba84-4ee6-b71e-a73538549673
+		summarizeBy: sum
+		sourceColumn: total_working_hours
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column calendar_hours_per_day
+		dataType: double
+		lineageTag: a65ba60a-0f0d-40ba-a15c-e6bd5a6d29fb
+		summarizeBy: sum
+		sourceColumn: calendar_hours_per_day
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column total_working_days
+		dataType: double
+		lineageTag: 95eec2a2-d6c0-46d4-b7aa-8cfacff39a52
+		summarizeBy: sum
+		sourceColumn: total_working_days
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column total_calendar_days
+		dataType: string
+		lineageTag: 7c11757e-b301-46f7-b2b5-eb7ac6455446
+		summarizeBy: none
+		sourceColumn: total_calendar_days
+
+		annotation SummarizationSetBy = Automatic
+
+	column start
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 98c66405-7568-4f36-8488-63aaa56248f6
+		summarizeBy: none
+		sourceColumn: start
+
+		variation Variation
+			isDefault
+			relationship: 4c898638-688d-4fc4-9fdc-bdbb4d702809
+			defaultHierarchy: LocalDateTable_5c803c1f-f4bd-4bde-94ff-2db0fc06b286.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column finish
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 21ce1db9-65dc-4c54-bbca-cf83468625d6
+		summarizeBy: none
+		sourceColumn: finish
+
+		variation Variation
+			isDefault
+			relationship: 46875baf-a02d-4ab3-bee4-9024acb6f6f5
+			defaultHierarchy: LocalDateTable_6c8ebc92-7dc4-4842-bf4e-33894f2ef956.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column status_code
+		dataType: string
+		lineageTag: 5b0d9c21-1a8b-4085-8653-e771311a0630
+		summarizeBy: none
+		sourceColumn: status_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column unit
+		dataType: string
+		lineageTag: ae960faf-67d8-4533-b3ec-dc512c16e2bd
+		summarizeBy: none
+		sourceColumn: unit
+
+		annotation SummarizationSetBy = Automatic
+
+	column monthupdate
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 0963a4e4-20ec-4c33-bcba-742e2c71feff
+		summarizeBy: none
+		sourceColumn: monthupdate
+
+		variation Variation
+			isDefault
+			relationship: 1832420f-79a6-41bd-86e9-2781cc133edc
+			defaultHierarchy: LocalDateTable_34ef6ecb-545f-4dff-82e4-dac80870285c.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column refresh_date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 440a2a8e-7425-4a71-86e7-a97e2cb0b929
+		summarizeBy: none
+		sourceColumn: refresh_date
+
+		variation Variation
+			isDefault
+			relationship: 6102668a-94dd-481c-bdf6-803ad50bfae9
+			defaultHierarchy: LocalDateTable_939b5b0c-887d-4ecd-929c-314ecf797bd2.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column filename
+		dataType: string
+		lineageTag: 0a1bf5a5-3c52-4ef3-9657-4b2530767e94
+		summarizeBy: none
+		sourceColumn: filename
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProjectCode
+		dataType: string
+		lineageTag: c62bd8a5-5b13-4a6e-8ab0-887addc54dc5
+		summarizeBy: none
+		sourceColumn: ProjectCode
 
 		annotation SummarizationSetBy = Automatic
 
 	partition 15_XER_RESOURCE_DISTRIBUTION = m
 		mode: import
 		queryGroup: XER
-		source = ```
+		source =
 				let
-				    // ── Reference staging queries ──
-				    TaskRsrc = Staging_TaskRsrc,
-				    Task = Staging_Task,
-				    CalStandard = Staging_Calendar_Standard,
-				    CalExceptions = Staging_Calendar_Exceptions,
+				    Source = fnAthenaSource("15_xer_resource_distribution"),
 				
-				    // ══════════════════════════════════════════════════════════════
-				    // PHASE 1: Build narrow working table
-				    // ══════════════════════════════════════════════════════════════
+				    AddProjectCode = Table.AddColumn(Source, "ProjectCode", each Text.BeforeDelimiter([filename], "-"), type text),
 				
-				    TaskLookup = Table.SelectColumns(Task, {"task_id_key", "status_code", "calendar_id_key", "data_date"}),
-				    TaskRsrcJoined = Table.NestedJoin(TaskRsrc, {"task_id_key"}, TaskLookup, {"task_id_key"}, "TaskData", JoinKind.LeftOuter),
-				    TaskRsrcExpanded = Table.ExpandTableColumn(TaskRsrcJoined, "TaskData",
-				        {"status_code", "calendar_id_key", "data_date"},
-				        {"_status_code", "_clndr_id_key", "_data_date"}
-				    ),
-				
-				    Actuals = Table.SelectRows(TaskRsrcExpanded, each
-				        List.Contains({"Complete", "In Progress"}, [_status_code])
-				        and ([act_ot_qty] + [act_reg_qty]) > 0
-				        and [act_start_date] <> null
-				    ),
-				    ActualsNarrow = Table.SelectColumns(
-				        Table.AddColumn(
-				            Table.AddColumn(
-				                Table.AddColumn(
-				                    Table.AddColumn(Actuals,
-				                        "start_date", each Date.From([act_start_date]), type date),
-				                    "end_date", each if [_status_code] = "Complete" then Date.From([act_end_date]) else Date.From([_data_date]), type date),
-				                "quantity", each [act_ot_qty] + [act_reg_qty], type number),
-				            "is_actual", each true, type logical),
-				        {"task_id_key", "rsrc_id_key", "_clndr_id_key", "start_date", "end_date", "quantity", "is_actual", "_status_code"}
-				    ),
-				
-				    Remaining = Table.SelectRows(TaskRsrcExpanded, each
-				        List.Contains({"Not Started", "In Progress"}, [_status_code])
-				        and [remain_qty] > 0
-				        and [restart_date] <> null and [reend_date] <> null
-				    ),
-				    RemainingNarrow = Table.SelectColumns(
-				        Table.AddColumn(
-				            Table.AddColumn(
-				                Table.AddColumn(
-				                    Table.AddColumn(Remaining,
-				                        "start_date", each Date.From([restart_date]), type date),
-				                    "end_date", each Date.From([reend_date]), type date),
-				                "quantity", each [remain_qty], type number),
-				            "is_actual", each false, type logical),
-				        {"task_id_key", "rsrc_id_key", "_clndr_id_key", "start_date", "end_date", "quantity", "is_actual", "_status_code"}
-				    ),
-				
-				    Combined = Table.Combine({ActualsNarrow, RemainingNarrow}),
-				    ValidRows = Table.SelectRows(Combined, each [start_date] <> null and [end_date] <> null and [start_date] <= [end_date]),
-				
-				    // ══════════════════════════════════════════════════════════════
-				    // PHASE 2: Calendar lookups
-				    // ══════════════════════════════════════════════════════════════
-				
-				    StandardDaysByCalendar = Table.Group(CalStandard, {"clndr_id_key"},
-				        {{"WorkDayNums", each List.Buffer(List.Distinct([day_of_week_num])), type list}}
-				    ),
-				
-				    Holidays = Table.Group(
-				        Table.SelectRows(CalExceptions, each [working_day_int] = 0),
-				        {"clndr_id_key"},
-				        {{"HolidayDates", each List.Buffer(List.Distinct([date])), type list}}
-				    ),
-				    ExtraWork = Table.Group(
-				        Table.SelectRows(CalExceptions, each [working_day_int] = 1),
-				        {"clndr_id_key"},
-				        {{"ExtraWorkDates", each List.Buffer(List.Distinct([date])), type list}}
-				    ),
-				
-				    // Formula-based working day count: arithmetic for standard weeks,
-				    // iterate only exceptions. Replaces day-by-day loop.
-				    CountWorkingDays = (periodStart as date, periodEnd as date, workDayNums as list, holidayDates as list, extraWorkDates as list) as number =>
-				        let
-				            totalDays = Duration.Days(periodEnd - periodStart) + 1,
-				            fullWeeks = Number.IntegerDivide(totalDays, 7),
-				            remainderDays = Number.Mod(totalDays, 7),
-				
-				            workDaysPerWeek = List.Count(workDayNums),
-				            baseFromFullWeeks = fullWeeks * workDaysPerWeek,
-				
-				            startDow = Date.DayOfWeek(periodStart, Day.Monday) + 1,
-				            remainderWorkDays = List.Count(
-				                List.Select({0..remainderDays - 1}, (offset) =>
-				                    let
-				                        dow = Number.Mod(startDow + offset - 1, 7) + 1
-				                    in
-				                        List.Contains(workDayNums, dow)
-				                )
-				            ),
-				
-				            standardTotal = baseFromFullWeeks + remainderWorkDays,
-				
-				            holidaysInRange = List.Select(holidayDates, each _ >= periodStart and _ <= periodEnd),
-				            holidayAdjust = List.Count(
-				                List.Select(holidaysInRange, (d) =>
-				                    let dow = Date.DayOfWeek(d, Day.Monday) + 1
-				                    in List.Contains(workDayNums, dow)
-				                )
-				            ),
-				
-				            extrasInRange = List.Select(extraWorkDates, each _ >= periodStart and _ <= periodEnd),
-				            extraAdjust = List.Count(
-				                List.Select(extrasInRange, (d) =>
-				                    let dow = Date.DayOfWeek(d, Day.Monday) + 1
-				                    in not List.Contains(workDayNums, dow)
-				                )
-				            ),
-				
-				            result = standardTotal - holidayAdjust + extraAdjust
-				        in
-				            if result < 0 then 0 else result,
-				
-				            
-				    // ── Merge calendar data ──
-				    WithCalendarData = Table.ExpandTableColumn(
-				        Table.NestedJoin(ValidRows, {"_clndr_id_key"}, StandardDaysByCalendar, {"clndr_id_key"}, "StdData", JoinKind.LeftOuter),
-				        "StdData", {"WorkDayNums"}, {"_WorkDayNums"}
-				    ),
-				    WithHolidays = Table.ExpandTableColumn(
-				        Table.NestedJoin(WithCalendarData, {"_clndr_id_key"}, Holidays, {"clndr_id_key"}, "HolData", JoinKind.LeftOuter),
-				        "HolData", {"HolidayDates"}, {"_HolidayDates"}
-				    ),
-				    WithExtras = Table.ExpandTableColumn(
-				        Table.NestedJoin(WithHolidays, {"_clndr_id_key"}, ExtraWork, {"clndr_id_key"}, "ExtData", JoinKind.LeftOuter),
-				        "ExtData", {"ExtraWorkDates"}, {"_ExtraWorkDates"}
-				    ),
-				    CleanedData = Table.TransformColumns(WithExtras, {
-				        {"_WorkDayNums", each if _ = null then {} else _, type list},
-				        {"_HolidayDates", each if _ = null then {} else _, type list},
-				        {"_ExtraWorkDates", each if _ = null then {} else _, type list}
-				    }),
-				
-				    // ══════════════════════════════════════════════════════════════
-				    // PHASE 3: Month expansion + distribution
-				    // ══════════════════════════════════════════════════════════════
-				
-				    Distributed = Table.AddColumn(CleanedData, "MonthlyRows", each
-				        let
-				            sd = [start_date],
-				            ed = [end_date],
-				            qty = [quantity],
-				            wdNums = [_WorkDayNums],
-				            holDates = [_HolidayDates],
-				            extDates = [_ExtraWorkDates],
-				            firstMonth = #date(Date.Year(sd), Date.Month(sd), 1),
-				            lastMonth = #date(Date.Year(ed), Date.Month(ed), 1),
-				            monthCount = (Date.Year(lastMonth) - Date.Year(firstMonth)) * 12
-				                         + Date.Month(lastMonth) - Date.Month(firstMonth) + 1,
-				
-				            months = List.Transform({0..monthCount - 1}, (i) =>
-				                let
-				                    cmStart = Date.AddMonths(firstMonth, i),
-				                    cmEnd = Date.EndOfMonth(cmStart),
-				                    periodStart = List.Max({cmStart, sd}),
-				                    periodEnd = List.Min({cmEnd, ed}),
-				                    mWD = CountWorkingDays(periodStart, periodEnd, wdNums, holDates, extDates),
-				                    mCD = Duration.Days(periodEnd - periodStart) + 1
-				                in
-				                    [distribution_month = cmStart, month_start_date = periodStart, month_end_date = periodEnd,
-				                     month_working_days = mWD, month_calendar_days = mCD]
-				            ),
-				
-				            totalWD = List.Sum(List.Transform(months, each [month_working_days])),
-				            totalCD = List.Sum(List.Transform(months, each [month_calendar_days])),
-				            useWD = totalWD > 0,
-				
-				            distributed = List.Select(
-				                List.Transform(months, (m) =>
-				                    let
-				                        mq = if useWD
-				                             then m[month_working_days] * qty / totalWD
-				                             else m[month_calendar_days] * qty / totalCD
-				                    in
-				                        [distribution_month = m[distribution_month],
-				                         month_start_date = m[month_start_date],
-				                         month_end_date = m[month_end_date],
-				                         month_working_days = m[month_working_days],
-				                         month_calendar_days = m[month_calendar_days],
-				                         monthly_quantity = mq,
-				                         is_working_day_dist = useWD]
-				                ),
-				                each [monthly_quantity] > 0
-				            )
-				        in
-				            distributed,
-				        type list
-				    ),
-				
-				    PreExpand = Table.RemoveColumns(Distributed, {"_WorkDayNums", "_HolidayDates", "_ExtraWorkDates"}),
-				
-				    Expanded = Table.ExpandListColumn(PreExpand, "MonthlyRows"),
-				    ExpandedRecords = Table.ExpandRecordColumn(Expanded, "MonthlyRows",
-				        {"distribution_month", "month_start_date", "month_end_date", "month_working_days",
-				         "month_calendar_days", "monthly_quantity", "is_working_day_dist"}
-				    ),
-				
-				    // ══════════════════════════════════════════════════════════════
-				    // PHASE 4: Join descriptive columns LAST
-				    // ══════════════════════════════════════════════════════════════
-				
-				    TaskDescriptive = Table.SelectColumns(Staging_Task, {"task_id_key", "task_code"}),
-				    WithTaskDesc = Table.ExpandTableColumn(
-				        Table.NestedJoin(ExpandedRecords, {"task_id_key"}, TaskDescriptive, {"task_id_key"}, "_TD", JoinKind.LeftOuter),
-				        "_TD", {"task_code"}, {"task_code"}
-				    ),
-				
-				    WithRsrcDesc = Table.ExpandTableColumn(
-				        Table.NestedJoin(WithTaskDesc, {"rsrc_id_key"}, Staging_Rsrc, {"rsrc_id_key"}, "_RD", JoinKind.LeftOuter),
-				        "_RD", {"rsrc_short_name", "rsrc_name", "rsrc_type"}
-				    ),
-				
-				    Renamed = Table.RenameColumns(WithRsrcDesc, {{"_clndr_id_key", "clndr_id_key"}, {"_status_code", "status_code"}}),
-				
-				    FinalColumns = Table.SelectColumns(Renamed,
-				        {"task_id_key", "rsrc_id_key", "clndr_id_key", "start_date", "end_date", "quantity", "is_actual", "status_code",
-				         "task_code", "distribution_month", "month_start_date", "month_end_date", "month_working_days", "month_calendar_days",
-				         "monthly_quantity", "is_working_day_dist",
-				         "rsrc_short_name", "rsrc_name", "rsrc_type"}
-				    ),
-				
-				    FinalTyped = Table.TransformColumnTypes(FinalColumns, {
-				        {"start_date", type date}, {"end_date", type date},
-				        {"distribution_month", type date}, {"month_start_date", type date}, {"month_end_date", type date},
-				        {"quantity", type number}, {"monthly_quantity", type number},
-				        {"month_working_days", Int64.Type}, {"month_calendar_days", Int64.Type},
-				        {"is_actual", type logical}, {"is_working_day_dist", type logical}
+				    Typed = Table.TransformColumnTypes(AddProjectCode, {
+				        {"distribution_month", type date}, {"monthupdate", type date},
+				        {"month_start_date", type datetime}, {"month_end_date", type datetime},
+				        {"start", type datetime}, {"finish", type datetime}, {"refresh_date", type datetime},
+				        {"monthly_quantity", type number}, {"month_working_hours", type number},
+				        {"total_working_hours", type number}, {"calendar_hours_per_day", type number},
+				        {"month_working_days", type number}, {"total_working_days", type number}
 				    })
 				in
-				    FinalTyped
-				```
+				    Typed
 
 	annotation PBI_Id = 67b96e3bda7547809e01d736027b8fa7
 

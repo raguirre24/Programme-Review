@@ -256,7 +256,7 @@ table '01 XER_TASK'
 			    ('01 XER_TASK'[status_code] = "In Progress"
 			        && UpdatePeriod > 0
 			        && NOT(ISBLANK('01 XER_TASK'[Previous Remaining Working Days]))
-			        && '01 XER_TASK'[remaining_working_days] >= ('01 XER_TASK'[Previous Remaining Working Days] - 1) 
+			        && '01 XER_TASK'[remaining_duration] >= ('01 XER_TASK'[Previous Remaining Working Days] - 1) 
 			    ), "Stagnating Progress",
 			
 			    -- 2. TRUE SLIPPAGE (Behavioral)
@@ -388,11 +388,11 @@ table '01 XER_TASK'
 			    "Complete",
 			    SWITCH(
 			        TRUE(),
-			        '01 XER_TASK'[remaining_working_days] > 0 && '01 XER_TASK'[remaining_working_days] <= 10, "0 < Dur. ≤ 10",
-			        '01 XER_TASK'[remaining_working_days] > 10 && '01 XER_TASK'[remaining_working_days] <= 20, "10 < Dur. ≤ 20",
-			        '01 XER_TASK'[remaining_working_days] > 20 && '01 XER_TASK'[remaining_working_days] <= 30, "20 < Dur. ≤ 30",
-			        '01 XER_TASK'[remaining_working_days] > 30 && '01 XER_TASK'[remaining_working_days] <= 44, "30 < Dur. ≤ 44",
-			        '01 XER_TASK'[remaining_working_days] > 44, "44 < Dur.",
+			        '01 XER_TASK'[remaining_duration] > 0 && '01 XER_TASK'[remaining_duration] <= 10, "0 < Dur. ≤ 10",
+			        '01 XER_TASK'[remaining_duration] > 10 && '01 XER_TASK'[remaining_duration] <= 20, "10 < Dur. ≤ 20",
+			        '01 XER_TASK'[remaining_duration] > 20 && '01 XER_TASK'[remaining_duration] <= 30, "20 < Dur. ≤ 30",
+			        '01 XER_TASK'[remaining_duration] > 30 && '01 XER_TASK'[remaining_duration] <= 44, "30 < Dur. ≤ 44",
+			        '01 XER_TASK'[remaining_duration] > 44, "44 < Dur.",
 			        "Other Incomplete"
 			    )
 			)
@@ -660,7 +660,7 @@ table '01 XER_TASK'
 			VAR PrevDataDate = 
 			    CALCULATE(
 			        MAX('01 XER_TASK'[data_date]),
-			        ALLEXCEPT('01 XER_TASK', '01 XER_TASK'[ProjectName]),
+			        ALLEXCEPT('01 XER_TASK', '01 XER_TASK'[ProjectName],'01 XER_TASK'[Task_Code]),
 			        '01 XER_TASK'[UpdateDate] = PrevMonth
 			    )
 			
@@ -923,7 +923,7 @@ table '01 XER_TASK'
 			-- Get the Start date from the previous month update
 			RETURN
 			    CALCULATE(
-			        MAX('01 XER_TASK'[remaining_working_days]),
+			        MAX('01 XER_TASK'[remaining_duration]),
 			        FILTER(
 			            ALL('01 XER_TASK'),
 			            '01 XER_TASK'[task_code] = CurrentTaskCode &&
@@ -1007,7 +1007,7 @@ table '01 XER_TASK'
 			VAR PrevDataDate = 
 			    CALCULATE(
 			        MAX('01 XER_TASK'[data_date]),
-			        ALLEXCEPT('01 XER_TASK', '01 XER_TASK'[ProjectName]),
+			        ALLEXCEPT('01 XER_TASK', '01 XER_TASK'[ProjectName],'01 XER_TASK'[Task_Code]),
 			        '01 XER_TASK'[UpdateDate] = PrevMonth
 			    )
 			
@@ -1093,7 +1093,7 @@ table '01 XER_TASK'
 			VAR PrevDataDate = 
 			    CALCULATE(
 			        MAX('01 XER_TASK'[data_date]),
-			        ALLEXCEPT('01 XER_TASK', '01 XER_TASK'[ProjectName]),
+			        ALLEXCEPT('01 XER_TASK', '01 XER_TASK'[ProjectName],'01 XER_TASK'[Task_Code]),
 			        '01 XER_TASK'[UpdateDate] = PrevMonth
 			    )
 			
@@ -1281,16 +1281,6 @@ table '01 XER_TASK'
 
 		annotation SummarizationSetBy = Automatic
 
-	column remaining_working_days
-		dataType: double
-		lineageTag: 8a7d509b-0be6-4829-823e-a00cfe863200
-		summarizeBy: sum
-		sourceColumn: remaining_working_days
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
 	column original_duration
 		dataType: double
 		lineageTag: d41d60c5-89be-4a2d-8f04-b625fc7d6695
@@ -1400,73 +1390,83 @@ table '01 XER_TASK'
 
 		annotation SummarizationSetBy = Automatic
 
+	column remaining_duration
+		dataType: double
+		lineageTag: 699a859d-06c4-433c-b859-48a4f23b1d4f
+		summarizeBy: sum
+		sourceColumn: remaining_duration
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column monthupdate
+		dataType: string
+		lineageTag: d0999a4f-5e63-4b8a-9a35-3ff4d279647b
+		summarizeBy: none
+		sourceColumn: monthupdate
+
+		annotation SummarizationSetBy = Automatic
+
 	partition '01 XER_TASK' = m
 		mode: import
 		queryGroup: XER
-		source = ```
+		source =
 				let
-				    // Single call replaces: table reference + -C- filter + fnFilterByFilename
 				    Source = fnAthenaSource("01_xer_task"),
 				
-				    // Extract ProjectCode from filename
-				    AddProjectName = Table.AddColumn(Source, "ProjectCode", each Text.BeforeDelimiter([filename], "-"), type text),
-				    
-				    // Parse the UpdateDate using your original, correct underscore ("_") delimiters
-				    AddUpdateDate = Table.AddColumn(AddProjectName, "UpdateDate", each
-				        let
-				            cPart = Text.BeforeDelimiter(Text.AfterDelimiter([filename], "-C-"), "_"),
-				            datePart = Text.BeforeDelimiter(Text.AfterDelimiter([filename], "_"), ".")
-				        in
-				            if Text.StartsWith(cPart, "BL") then
-				                Date.EndOfMonth(Date.FromText(datePart))
-				            else
-				                Date.EndOfMonth(
-				                    #date(
-				                        2000 + Number.FromText(Text.Start(cPart, 2)),
-				                        Number.FromText(Text.End(cPart, 2)),
-				                        1
-				                    )
-				                ),
+				    // Add ProjectCode + UpdateDate in one pass via Table.AddColumns (fewer iterations)
+				    AddParsedColumns = Table.AddColumn(
+				        Table.AddColumn(Source, "ProjectCode", each Text.BeforeDelimiter([filename], "-"), type text),
+				        "UpdateDate", each
+				            let
+				                parts = Text.Split(Text.BeforeDelimiter([filename], "_"), "-"),
+				                cPart = if List.Count(parts) >= 3 then parts{2} else "",
+				                datePart = Text.BeforeDelimiter(Text.AfterDelimiter([filename], "_"), ".")
+				            in
+				                if Text.StartsWith(cPart, "BL") then
+				                    Date.EndOfMonth(Date.FromText(datePart))
+				                else
+				                    let
+				                        p1 = Number.FromText(Text.Start(cPart, 2)),
+				                        p2 = Number.FromText(Text.End(cPart, 2)),
+				                        yr = if p2 > 12 then p2 else p1,
+				                        mo = if p2 > 12 then p1 else p2
+				                    in
+				                        Date.EndOfMonth(#date(2000 + yr, mo, 1)),
 				        type date
 				    ),
-				    
-				    // Convert percent complete
-				    DividePercent = Table.TransformColumns(AddUpdateDate, {{"percent_complete", each Number.FromText(_) / 100}}),
-				    
-				    // Apply correct data types
-				    FinalTypes = Table.TransformColumnTypes(DividePercent, {
-				        {"act_start_date", type datetime},
-				        {"act_end_date", type datetime},
-				        {"early_start_date", type datetime},
-				        {"early_end_date", type datetime},
-				        {"late_start_date", type datetime},
-				        {"late_end_date", type datetime},
-				        {"target_start_date", type datetime},
-				        {"target_end_date", type datetime},
-				        {"cstr_date", type datetime},
-				        {"start", type datetime},
-				        {"finish", type datetime},
-				        {"data_date", type datetime},
-				        {"refresh_date", type datetime},
-				        {"percent_complete", Percentage.Type},
-				        {"total_float", type number},
-				        {"free_float", type number},
-				        {"remaining_working_days", type number},
-				        {"original_duration", type number}
-				    }),
-				    
-				    // Rename start and finish columns
-				    #"Renamed Columns" = Table.RenameColumns(FinalTypes,{{"start", "Start"}, {"finish", "Finish"}}),
-				    
-				    BufferedProjects = Table.Buffer(dbo_project),
-				    #"Merged Projects" = Table.NestedJoin(#"Renamed Columns", {"ProjectCode"}, BufferedProjects, {"projectno"}, "ProjectLookup", JoinKind.LeftOuter),
-				    #"Expanded ProjectName" = Table.ExpandTableColumn(#"Merged Projects", "ProjectLookup", {"projectname"}, {"ProjectName"})
 				
+				    // Transform percent_complete + all type conversions in one step
+				    Typed = Table.TransformColumnTypes(
+				        Table.TransformColumns(AddParsedColumns, {{"percent_complete", each Number.FromText(_) / 100}}),
+				        {
+				            {"act_start_date", type datetime}, {"act_end_date", type datetime},
+				            {"early_start_date", type datetime}, {"early_end_date", type datetime},
+				            {"late_start_date", type datetime}, {"late_end_date", type datetime},
+				            {"target_start_date", type datetime}, {"target_end_date", type datetime},
+				            {"cstr_date", type datetime}, {"start", type datetime}, {"finish", type datetime},
+				            {"data_date", type datetime}, {"refresh_date", type datetime},
+				            {"percent_complete", Percentage.Type},
+				            {"total_float", type number}, {"free_float", type number},
+				            {"remainingduration", type number}, {"original_duration", type number}
+				        }
+				    ),
+				
+				    // All renames consolidated
+				    Renamed = Table.RenameColumns(Typed, {
+				        {"start", "Start"}, {"finish", "Finish"}, {"remainingduration", "remaining_duration"}
+				    }),
+				
+				    // Join with project lookup (buffer inlined)
+				    Merged = Table.ExpandTableColumn(
+				        Table.NestedJoin(Renamed, {"ProjectCode"}, Table.Buffer(dbo_project), {"projectno"}, "ProjectLookup", JoinKind.LeftOuter),
+				        "ProjectLookup", {"projectname"}, {"ProjectName"}
+				    )
 				in
-				    #"Expanded ProjectName"
-				```
+				    Merged
 
 	annotation PBI_NavigationStepName = Navigation
 
-	annotation PBI_ResultType = Exception
+	annotation PBI_ResultType = Table
 

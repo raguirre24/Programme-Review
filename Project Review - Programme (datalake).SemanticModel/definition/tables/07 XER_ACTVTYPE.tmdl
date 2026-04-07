@@ -105,6 +105,14 @@ table '07 XER_ACTVTYPE'
 
 		annotation SummarizationSetBy = Automatic
 
+	column monthupdate
+		dataType: string
+		lineageTag: 05da71ea-ae55-49e8-b663-b71ad13cc968
+		summarizeBy: none
+		sourceColumn: monthupdate
+
+		annotation SummarizationSetBy = Automatic
+
 	partition '07 XER_ACTVTYPE' = m
 		mode: import
 		queryGroup: XER

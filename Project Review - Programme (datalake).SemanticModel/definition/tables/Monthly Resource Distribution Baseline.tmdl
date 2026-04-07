@@ -25,43 +25,8 @@ table 'Monthly Resource Distribution Baseline'
 
 		annotation SummarizationSetBy = Automatic
 
-	column start_date
-		formatString: General Date
-		lineageTag: db1de127-37d0-442b-9f14-770b21e3afbf
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[start_date]
-
-		variation Variation
-			isDefault
-			relationship: 5594728e-7a3d-4ef8-b159-a6c280ca9d69
-			defaultHierarchy: LocalDateTable_44882935-f89c-4eba-bec8-bc1877730500.'Date Hierarchy'
-
-		annotation SummarizationSetBy = Automatic
-
-	column end_date
-		formatString: General Date
-		lineageTag: 7428e904-2cf7-4fd1-9edf-230096c8fa71
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[end_date]
-
-		variation Variation
-			isDefault
-			relationship: ec98e802-a7e3-4597-8161-b08bced173d2
-			defaultHierarchy: LocalDateTable_1d0cbfa7-6dfb-4703-b301-97b8f21253a4.'Date Hierarchy'
-
-		annotation SummarizationSetBy = Automatic
-
-	column quantity
-		lineageTag: 79fae4e4-a4ce-4020-bd01-759850d4929c
-		summarizeBy: sum
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[quantity]
-
-		annotation SummarizationSetBy = Automatic
-
 	column is_actual
+		formatString: """TRUE"";""TRUE"";""FALSE"""
 		lineageTag: 799e4e83-1b9c-4120-a564-788eab9c6aee
 		summarizeBy: none
 		isNameInferred
@@ -128,7 +93,6 @@ table 'Monthly Resource Distribution Baseline'
 		annotation SummarizationSetBy = Automatic
 
 	column month_working_days
-		formatString: 0
 		lineageTag: 5152f8c3-48a3-4d1d-811c-3015986afc63
 		summarizeBy: sum
 		isNameInferred
@@ -136,10 +100,11 @@ table 'Monthly Resource Distribution Baseline'
 
 		annotation SummarizationSetBy = Automatic
 
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
 	column month_calendar_days
-		formatString: 0
 		lineageTag: fddb7dc5-35dc-4813-9918-174a8590b586
-		summarizeBy: sum
+		summarizeBy: none
 		isNameInferred
 		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[month_calendar_days]
 
@@ -152,6 +117,8 @@ table 'Monthly Resource Distribution Baseline'
 		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[monthly_quantity]
 
 		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	column rsrc_short_name
 		lineageTag: 21b17443-b45f-47fa-afd3-3568b8eac0ab
@@ -177,12 +144,163 @@ table 'Monthly Resource Distribution Baseline'
 
 		annotation SummarizationSetBy = Automatic
 
-	column is_working_day_dist
-		formatString: """TRUE"";""TRUE"";""FALSE"""
-		lineageTag: dc649e53-6a58-457d-be14-e4fe8f350d0f
+	column server
+		lineageTag: c8218b49-5f8e-4727-8cfd-58eefd876ea7
 		summarizeBy: none
 		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[is_working_day_dist]
+		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[server]
+
+		annotation SummarizationSetBy = Automatic
+
+	column database
+		lineageTag: 3cf58bfc-bf83-42ea-89b7-267c0ffeb80a
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[database]
+
+		annotation SummarizationSetBy = Automatic
+
+	column proj_id_key
+		lineageTag: 21574e3e-ef12-47d7-a538-1f09cbd1b452
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[proj_id_key]
+
+		annotation SummarizationSetBy = Automatic
+
+	column distribution_type
+		lineageTag: f18233ba-47cd-41dc-b10f-788ec3989ba5
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[distribution_type]
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_working_hours
+		lineageTag: d47e7cc8-f44b-4630-92b0-da188644640c
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[month_working_hours]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column total_working_hours
+		lineageTag: 2af9748f-535c-4afd-a0e1-04c1ab61682b
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[total_working_hours]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column calendar_hours_per_day
+		lineageTag: 26d2cd57-c8a2-4587-84c8-ed1336768b1f
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[calendar_hours_per_day]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column total_working_days
+		lineageTag: 936bf2c4-d197-4eb5-99b9-6303285920de
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[total_working_days]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column total_calendar_days
+		lineageTag: 7bd5369d-4e58-4e91-bf42-5256983378de
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[total_calendar_days]
+
+		annotation SummarizationSetBy = Automatic
+
+	column start
+		formatString: General Date
+		lineageTag: 3ec11e59-958c-4701-a85a-279999cef093
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[start]
+
+		variation Variation
+			isDefault
+			relationship: 01db4563-de0d-44a2-b623-ace24813c216
+			defaultHierarchy: LocalDateTable_ddb08b0f-b2ac-4123-b7dd-5d66c43f3404.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column finish
+		formatString: General Date
+		lineageTag: b384f75e-964f-49cb-b048-19723c653c7e
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[finish]
+
+		variation Variation
+			isDefault
+			relationship: 952b8c24-d063-4ac8-a9a2-8e5aa765e3f7
+			defaultHierarchy: LocalDateTable_c765e116-586a-4b38-a807-dd3c2f60895f.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column unit
+		lineageTag: 6c02607e-0dd1-455b-a484-f7998b5b596e
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[unit]
+
+		annotation SummarizationSetBy = Automatic
+
+	column monthupdate
+		formatString: General Date
+		lineageTag: 356395ca-7af7-43bb-aaff-751c6e11a569
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[monthupdate]
+
+		variation Variation
+			isDefault
+			relationship: 02e404c8-8e6a-49ad-89a3-09886bc16b73
+			defaultHierarchy: LocalDateTable_0d9e2382-7e29-4d80-ab47-7a7bd0d62fdf.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column refresh_date
+		formatString: General Date
+		lineageTag: 1f9fee0f-030d-43bd-971e-d79fe967ab4c
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[refresh_date]
+
+		variation Variation
+			isDefault
+			relationship: c03b20bd-1394-4047-827d-c278e95ab0d4
+			defaultHierarchy: LocalDateTable_5af48053-feab-4e96-8f66-49d87ea54e4c.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column filename
+		lineageTag: 6176be9a-09d5-49da-986a-b39431e3d74b
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[filename]
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProjectCode
+		lineageTag: 35f544e4-02c3-41c6-aab9-dd9cf7e29c83
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[ProjectCode]
 
 		annotation SummarizationSetBy = Automatic
 

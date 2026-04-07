@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.6.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
   "name": "f0c9695069063ce1e7a5",
   "position": {
     "x": 12.5,
@@ -424,5 +424,107 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "12af1bffb1d3ca492590",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "01 XER_TASK"
+              }
+            },
+            "Property": "UpdateDate"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "014377a7fa64ff8a82a8",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "Count_Remaining_Tasks"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "d8840a2300281eaa518f",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "Count_Rem_Duration_>44d"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "466d4ba69f948a6d8e56",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "Count_Rem_Duration_0_to_10"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "7f66027903304af29c9b",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "Count_Rem_Duration_10_to_20"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "b3c5a2dacb95da6fef91",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "Count_Rem_Duration_20_to_30"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "bc8fd19b9c1a78fe5bb1",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "Count_Rem_Duration_30_to_44"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

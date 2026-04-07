@@ -142,7 +142,7 @@ table 'XER Measures'
 			
 			IF(
 			    ISINSCOPE('01 XER_TASK'[task_code]),
-			    SELECTEDVALUE('01 XER_TASK'[remaining_working_days]),
+			    SELECTEDVALUE('01 XER_TASK'[remaining_duration]),
 			    BLANK()
 			)
 		formatString: 0

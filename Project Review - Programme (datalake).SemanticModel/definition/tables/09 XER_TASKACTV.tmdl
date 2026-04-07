@@ -93,6 +93,14 @@ table '09 XER_TASKACTV'
 
 		annotation SummarizationSetBy = Automatic
 
+	column monthupdate
+		dataType: string
+		lineageTag: be8c27ee-baad-43e3-828c-4e59343ff1e0
+		summarizeBy: none
+		sourceColumn: monthupdate
+
+		annotation SummarizationSetBy = Automatic
+
 	partition '09 XER_TASKACTV' = m
 		mode: import
 		queryGroup: XER

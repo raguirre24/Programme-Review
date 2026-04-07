@@ -586,6 +586,14 @@ table 13_XER_TASKRSRC
 
 		annotation SummarizationSetBy = Automatic
 
+	column monthupdate
+		dataType: string
+		lineageTag: 5ea69cba-d66b-4bac-b70c-df8fc3f014ad
+		summarizeBy: none
+		sourceColumn: monthupdate
+
+		annotation SummarizationSetBy = Automatic
+
 	partition 13_XER_TASKRSRC = m
 		mode: import
 		queryGroup: XER
@@ -593,24 +601,27 @@ table 13_XER_TASKRSRC
 				let
 				    Source = fnAthenaSource("13_xer_taskrsrc"),
 				
-				    // Parse date text columns explicitly (Athena returns "2026-01-22 17:00" as text)
-				    DateColumns = {"act_start_date", "act_end_date", "restart_date", "reend_date", "target_start_date", "target_end_date", "rem_late_start_date", "rem_late_end_date"},
+				    DateColumns = {"act_start_date", "act_end_date", "restart_date", "reend_date",
+				                   "target_start_date", "target_end_date", "rem_late_start_date", "rem_late_end_date"},
+				
 				    ParsedDates = List.Accumulate(DateColumns, Source, (tbl, col) =>
 				        Table.TransformColumns(tbl, {{col, each try Date.From(DateTime.FromText(_)) otherwise null, type date}})
 				    ),
 				
-				    #"Changed Type" = Table.TransformColumnTypes(ParsedDates, {
-				        {"remain_qty_per_hr", type number}, {"target_lag_drtn_hr_cnt", type number}, {"target_qty_per_hr", type number},
-				        {"act_ot_qty", type number}, {"act_reg_qty", type number}, {"relag_drtn_hr_cnt", type number},
-				        {"ot_factor", type number}, {"cost_per_qty", type number}, {"target_cost", type number},
-				        {"act_reg_cost", type number}, {"act_ot_cost", type number}, {"remain_cost", type number},
-				        {"remain_qty", type number}, {"target_qty", type number}, {"act_this_per_cost", type number},
-				        {"act_this_per_qty", type number}
+				    Typed = Table.TransformColumnTypes(ParsedDates, {
+				        {"remain_qty_per_hr", type number}, {"target_lag_drtn_hr_cnt", type number},
+				        {"target_qty_per_hr", type number}, {"act_ot_qty", type number},
+				        {"act_reg_qty", type number}, {"relag_drtn_hr_cnt", type number},
+				        {"ot_factor", type number}, {"cost_per_qty", type number},
+				        {"target_cost", type number}, {"act_reg_cost", type number},
+				        {"act_ot_cost", type number}, {"remain_cost", type number},
+				        {"remain_qty", type number}, {"target_qty", type number},
+				        {"act_this_per_cost", type number}, {"act_this_per_qty", type number}
 				    }),
 				
-				    #"Added Custom" = Table.AddColumn(#"Changed Type", "ProjectCode", each Text.BeforeDelimiter([filename], "-"), type text)
+				    AddProjectCode = Table.AddColumn(Typed, "ProjectCode", each Text.BeforeDelimiter([filename], "-"), type text)
 				in
-				    #"Added Custom"
+				    AddProjectCode
 
 	annotation PBI_NavigationStepName = Navigation
 

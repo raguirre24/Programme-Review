@@ -385,6 +385,14 @@ table '03 XER_PROJWBS'
 
 		annotation SummarizationSetBy = Automatic
 
+	column monthupdate
+		dataType: string
+		lineageTag: 55740fbc-8529-4f50-a3c0-14c19e3a4d4a
+		summarizeBy: none
+		sourceColumn: monthupdate
+
+		annotation SummarizationSetBy = Automatic
+
 	partition '03 XER_PROJWBS' = m
 		mode: import
 		queryGroup: XER

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.6.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
   "name": "92a3e137070d4b221c37",
   "position": {
     "x": 11.428571428571429,
@@ -214,6 +214,13 @@
               "expr": {
                 "Literal": {
                   "Value": "10D"
+                }
+              }
+            },
+            "showAxisTitle": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }
@@ -478,5 +485,121 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "258e3e2a94396dbbc7dd",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "01 XER_TASK"
+              }
+            },
+            "Property": "UpdateDate"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "fad63a26ec8702e17332",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "Count_Complete_Tasks"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "d978a4183ebacad0801e",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "Count_Tasks"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "014ecb86e0c60ac815ee",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "Count_Remaining_Tasks"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "f41ebf22528dad4d962a",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "Count_Incomplete_Float_Less_50"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "6e0ab9e0d1da81f7e93b",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "Count_Incomplete_Float_Less_30"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "cee23e818b032b28ec7e",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "Count_Incomplete_Float_Less_10"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "dfff9a09d4cee430caef",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "Count_Incomplete_Float_Less_0"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

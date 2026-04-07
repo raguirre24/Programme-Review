@@ -134,20 +134,31 @@ table 11_XER_CALENDAR_DETAILED
 
 		annotation SummarizationSetBy = Automatic
 
+	column monthupdate
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: b15b88a2-c4e1-46f3-9958-50fb7b0dd9eb
+		summarizeBy: none
+		sourceColumn: monthupdate
+
+		variation Variation
+			isDefault
+			relationship: 697caf22-b255-4f13-940a-dc9247837824
+			defaultHierarchy: LocalDateTable_7ba776b5-f0d7-44d6-bde5-17c15266359f.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
 	partition 11_XER_CALENDAR_DETAILED = m
 		mode: import
 		queryGroup: XER
 		source =
 				let
 				    Source = fnAthenaSource("11_xer_calendar_detailed"),
-				    #"Changed Type" = Table.TransformColumnTypes(Source, {{"date", type date}, {"work_hours", type number}}),
-				    #"Added Conditional Column" = Table.AddColumn(#"Changed Type", "working_day_int", each if [working_day] = "Y" then 1 else 0, Int64.Type),
-				    #"Added Custom" = Table.AddColumn(#"Added Conditional Column", "day_of_week_num", each List.PositionOf(
-				        {"Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"},
-				        [day_of_week]
-				    ) + 1, Int64.Type)
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"date", type date}, {"work_hours", type number}, {"day_of_week_num", Int64.Type}, {"working_day_int", Int64.Type}, {"monthupdate", type date}})
 				in
-				    #"Added Custom"
+				    #"Changed Type"
 
 	annotation PBI_NavigationStepName = Navigation
 

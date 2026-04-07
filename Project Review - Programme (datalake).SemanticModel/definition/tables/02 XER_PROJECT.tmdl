@@ -659,38 +659,6 @@ table '02 XER_PROJECT'
 
 		annotation SummarizationSetBy = Automatic
 
-	column project
-		dataType: string
-		lineageTag: 4ec62923-4655-4365-b408-9680b8ffb7c6
-		summarizeBy: none
-		sourceColumn: project
-
-		annotation SummarizationSetBy = Automatic
-
-	column wbs_path
-		dataType: string
-		lineageTag: e4701dc4-4a45-4357-b75f-3ddc33ca6b86
-		summarizeBy: none
-		sourceColumn: wbs_path
-
-		annotation SummarizationSetBy = Automatic
-
-	column udf_datalake_status_date
-		dataType: dateTime
-		formatString: Long Date
-		lineageTag: c83a5fc0-87d8-414b-bf17-b1484227245c
-		summarizeBy: none
-		sourceColumn: udf_datalake_status_date
-
-		variation Variation
-			isDefault
-			relationship: 5f5df819-7c59-4aff-961d-bc2c79c0515a
-			defaultHierarchy: LocalDateTable_a3ba81c9-ca15-4a52-8f32-4ff2153758ba.'Date Hierarchy'
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation UnderlyingDateTimeDataType = Date
-
 	column filename
 		dataType: string
 		lineageTag: 63f8515a-267c-4e91-9ba7-6b982a72085a
@@ -715,16 +683,36 @@ table '02 XER_PROJECT'
 
 		annotation UnderlyingDateTimeDataType = Date
 
+	column monthupdate
+		dataType: string
+		lineageTag: 49cd5cf2-ab8e-4f15-818a-615e86e4385e
+		summarizeBy: none
+		sourceColumn: monthupdate
+
+		annotation SummarizationSetBy = Automatic
+
 	partition '02 XER_PROJECT' = m
 		mode: import
 		queryGroup: XER
 		source =
 				let
 				    Source = fnAthenaSource("02_xer_project"),
-				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"last_recalc_date", type datetime}, {"plan_start_date", type datetime}, {"scd_end_date", type datetime}, {"plan_end_date", type datetime}, {"add_date", type datetime}, {"last_tasksum_date", type datetime}, {"fcst_start_date", type datetime}, {"refresh_date", type datetime}, {"udf_datalake_status_date", type datetime}, {"sum_refresh_date", type datetime}}),
-				    #"Changed Type1" = Table.TransformColumnTypes(#"Changed Type",{{"last_recalc_date", type date}, {"plan_start_date", type date}, {"scd_end_date", type date}, {"plan_end_date", type date}, {"add_date", type date}, {"last_tasksum_date", type date}, {"fcst_start_date", type date}, {"refresh_date", type date}, {"udf_datalake_status_date", type date}, {"sum_refresh_date", type date}})
+				    ToDatetime = Table.TransformColumnTypes(Source, {
+				        {"last_recalc_date", type datetime}, {"plan_start_date", type datetime},
+				        {"scd_end_date", type datetime}, {"plan_end_date", type datetime},
+				        {"add_date", type datetime}, {"last_tasksum_date", type datetime},
+				        {"fcst_start_date", type datetime}, {"refresh_date", type datetime},
+				        {"sum_refresh_date", type datetime}
+				    }),
+				    ToDate = Table.TransformColumnTypes(ToDatetime, {
+				        {"last_recalc_date", type date}, {"plan_start_date", type date},
+				        {"scd_end_date", type date}, {"plan_end_date", type date},
+				        {"add_date", type date}, {"last_tasksum_date", type date},
+				        {"fcst_start_date", type date}, {"refresh_date", type date},
+				        {"sum_refresh_date", type date}
+				    })
 				in
-				    #"Changed Type1"
+				    ToDate
 
 	annotation PBI_NavigationStepName = Navigation
 
