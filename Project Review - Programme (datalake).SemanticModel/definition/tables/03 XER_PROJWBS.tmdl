@@ -26,9 +26,6 @@ table '03 XER_PROJWBS'
 	column Level_1 = '03 XER_PROJWBS'[ProjectCode]
 		lineageTag: 20447cf6-1c34-4bde-999c-ac027f78a9b7
 		summarizeBy: none
-		sortByColumn: Sort_1
-
-		changedProperty = SortByColumn
 
 		annotation SummarizationSetBy = Automatic
 
@@ -43,9 +40,6 @@ table '03 XER_PROJWBS'
 			    COALESCE(WBS4_Name, '03 XER_PROJWBS'[Level_1])
 		lineageTag: f4aea9f6-5d2c-4eee-bdb9-f44e82ec3031
 		summarizeBy: none
-		sortByColumn: Sort_2
-
-		changedProperty = SortByColumn
 
 		annotation SummarizationSetBy = Automatic
 

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.6.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
   "name": "f0d83bea745d929136aa",
   "position": {
     "x": 5.4429482636428066,
@@ -670,7 +670,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "298.99999226750583D"
+                  "Value": "274.5413947043992D"
                 }
               }
             }
@@ -720,6 +720,19 @@
           }
         },
         {
+          "properties": {},
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 1
+                }
+              }
+            ],
+            "metadata": "XER S-Curve.Percentage_Actual_Finish"
+          }
+        },
+        {
           "properties": {
             "fontColor": {
               "solid": {
@@ -761,19 +774,6 @@
               }
             }
           },
-          "selector": {
-            "data": [
-              {
-                "dataViewWildcard": {
-                  "matchingOption": 1
-                }
-              }
-            ],
-            "metadata": "XER S-Curve.Percentage_Actual_Finish"
-          }
-        },
-        {
-          "properties": {},
           "selector": {
             "data": [
               {
@@ -1467,6 +1467,315 @@
             }
           ]
         }
+      },
+      {
+        "name": "f59f7e07644ad12c16a2",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Project_Dimension"
+              }
+            },
+            "Property": "Level_2"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "8913db181c15fedf6973",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Project_Dimension"
+              }
+            },
+            "Property": "Level_3"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "443ea27df19dac193c23",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Project_Dimension"
+              }
+            },
+            "Property": "Level_4"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "c36e7a3a92e43a1a318a",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "Count_Tasks"
+          }
+        },
+        "type": "Advanced",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "x1",
+              "Entity": "XER  Counts",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "Not": {
+                  "Expression": {
+                    "Comparison": {
+                      "ComparisonKind": 0,
+                      "Left": {
+                        "Measure": {
+                          "Expression": {
+                            "SourceRef": {
+                              "Source": "x1"
+                            }
+                          },
+                          "Property": "Count_Tasks"
+                        }
+                      },
+                      "Right": {
+                        "Literal": {
+                          "Value": "null"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "2514ed89ceb41fef0d3f",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "Count_Remaining_Tasks"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "7fca5ab3bc3781092c9b",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER S-Curve"
+              }
+            },
+            "Property": "Percentage_Actual_Finish"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "1bebeb0af986e172215b",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER S-Curve"
+              }
+            },
+            "Property": "Percentage_Baseline_Finish"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "e9cdc856591a45f5559f",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "Count_Critical_Tasks"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "2b1f0f46e7661f0fa6ce",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "Count_NearCritical_Tasks"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "8549cf87a998f7a9b8b4",
+        "field": {
+          "Aggregation": {
+            "Expression": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "01 XER_TASK"
+                  }
+                },
+                "Property": "free_float"
+              }
+            },
+            "Function": 1
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "3b6974a51faee82ca655",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "PreviousMonth_FinishVariance_Ahead_TT_Task"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "8d867fc06f9cff145767",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "PreviousMonth_FinishVariance_<1_Month_TT_Task"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "3a59a6214aba6b1ec3aa",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "PreviousMonth_FinishVariance_<3_Month_TT_Task"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "033aa7da37a0dd455845",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "PreviousMonth_FinishVariance_<6_Month_TT_Task"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "76f8f0a4ed0ec7051d6a",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "PreviousMonth_FinishVariance_>6_Month_TT_Task"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "a4d32a369532b7fa685a",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Activity Completion"
+              }
+            },
+            "Property": "Activities Planned Previous Date"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "a9b3eb576aed041eb97a",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Activity Completion"
+              }
+            },
+            "Property": "Activities Achieved Previous Date"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "b6c35dcc061ad1686089",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Activity Completion"
+              }
+            },
+            "Property": "Completion Score Previous Date"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "b112e9852b30be1bea97",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Activity Completion"
+              }
+            },
+            "Property": "Average_Finish_Variance_PNC"
+          }
+        },
+        "type": "Advanced"
       }
     ]
   }

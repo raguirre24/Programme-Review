@@ -1458,15 +1458,14 @@ table '01 XER_TASK'
 				        {"start", "Start"}, {"finish", "Finish"}, {"remainingduration", "remaining_duration"}
 				    }),
 				
-				    // Join with project lookup (buffer inlined)
+				    // Join with project lookup
+				    BufferedProjects = Table.Buffer(dbo_project),
 				    Merged = Table.ExpandTableColumn(
-				        Table.NestedJoin(Renamed, {"ProjectCode"}, Table.Buffer(dbo_project), {"projectno"}, "ProjectLookup", JoinKind.LeftOuter),
+				        Table.NestedJoin(Renamed, {"ProjectCode"}, BufferedProjects, {"projectno"}, "ProjectLookup", JoinKind.LeftOuter),
 				        "ProjectLookup", {"projectname"}, {"ProjectName"}
 				    )
 				in
 				    Merged
 
 	annotation PBI_NavigationStepName = Navigation
-
-	annotation PBI_ResultType = Table
 

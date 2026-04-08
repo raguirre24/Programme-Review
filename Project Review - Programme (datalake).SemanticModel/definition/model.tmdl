@@ -3,6 +3,7 @@ model Model
 	defaultPowerBIDataSourceVersion: powerBI_V3
 	sourceQueryCulture: en-NZ
 	dataAccessOptions
+		fastCombine
 		legacyRedirects
 		returnErrorValuesAsNull
 
@@ -17,10 +18,6 @@ queryGroup XER
 queryGroup Database
 
 	annotation PBI_QueryGroupOrder = 2
-
-queryGroup 'Resource Staging'
-
-	annotation PBI_QueryGroupOrder = 3
 
 annotation PBI_QueryOrder = ["01 XER_TASK","02 XER_PROJECT","03 XER_PROJWBS","05 XER_DATA DATE","06 XER_PREDECESSOR","07 XER_ACTVTYPE","08 XER_ACTVCODE","09 XER_TASKACTV","10 XER_CALENDARS","11_XER_CALENDAR_DETAILED","12_XER_RSRC","13_XER_TASKRSRC","15_XER_RESOURCE_DISTRIBUTION","XER Measures","XER  Counts","XER Metrics","XER S-Curve","Dynamic Titles & Formatting","SharePointSite","Target Update","Current Update","Activity Completion","UserPermission","Project","Resources","WBS Measures","Logos","fnFilterByFilename","fnAthenaSource","ProjectFilterList","SelectedProjects","SelectedProgrammeType","AthenaDB","dbo_project"]
 

@@ -28,7 +28,7 @@ expression 'Current Update' =
 
 	annotation PBI_ResultType = Table
 
-expression SelectedProjects = "C5064, C4036" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+expression SelectedProjects = "C4068, C5064" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
 	lineageTag: a1b2c3d4-5e6f-7a8b-9c0d-ef1234567890
 	queryGroup: Database
 
@@ -101,8 +101,9 @@ expression fnAthenaSource =
 		            cte =
 		                "WITH " &
 		                "parsed AS (" &
-		                    "SELECT filename, last_recalc_date, " &
+		                    "SELECT filename, monthupdate, " &
 		                    "SPLIT_PART(filename, '-', 1) AS project_code, " &
+		                    "SPLIT_PART(filename, '-', 2) AS programme_type, " &
 		                    "SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3) AS tag, " &
 		                    "CASE WHEN REGEXP_LIKE(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), '^BL[0-9]+') THEN TRUE ELSE FALSE END AS is_baseline, " &
 		                    "CASE WHEN REGEXP_LIKE(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), '^BL[0-9]+') THEN CAST(REGEXP_EXTRACT(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), 'BL([0-9]+)', 1) AS INTEGER) END AS bl_number, " &
@@ -110,26 +111,19 @@ expression fnAthenaSource =
 		                    "FROM prod_projectcontrols_p6.""02_xer_project"" " &
 		                    "WHERE (" & programmeTypeFilter & ")" & projectFilter &
 		                "), " &
-		                "deduped AS (" &
-		                    "SELECT *, ROW_NUMBER() OVER (PARTITION BY filename ORDER BY last_recalc_date DESC NULLS LAST) AS rn " &
-		                    "FROM parsed" &
-		                "), " &
-		                "unique_rows AS (" &
-		                    "SELECT * FROM deduped WHERE rn = 1" &
-		                "), " &
 		                "ranked_baselines AS (" &
-		                    "SELECT *, ROW_NUMBER() OVER (PARTITION BY project_code ORDER BY bl_number DESC, bl_revision DESC NULLS LAST, last_recalc_date DESC NULLS LAST) AS bl_rank " &
-		                    "FROM unique_rows WHERE is_baseline = TRUE" &
+		                    "SELECT *, ROW_NUMBER() OVER (PARTITION BY project_code, programme_type ORDER BY bl_number DESC, bl_revision DESC NULLS LAST, monthupdate DESC NULLS LAST) AS bl_rank " &
+		                    "FROM parsed WHERE is_baseline = TRUE" &
 		                "), " &
 		                "latest_baseline AS (" &
-		                    "SELECT project_code, last_recalc_date AS anchor_date " &
+		                    "SELECT project_code, programme_type, monthupdate AS anchor_date, filename AS anchor_filename " &
 		                    "FROM ranked_baselines WHERE bl_rank = 1" &
 		                "), " &
 		                "kept_filenames AS (" &
-		                    "SELECT u.filename " &
-		                    "FROM unique_rows u " &
-		                    "LEFT JOIN latest_baseline lb ON u.project_code = lb.project_code " &
-		                    "WHERE lb.anchor_date IS NULL OR u.last_recalc_date >= lb.anchor_date" &
+		                    "SELECT DISTINCT p.filename " &
+		                    "FROM parsed p " &
+		                    "LEFT JOIN latest_baseline lb ON p.project_code = lb.project_code AND p.programme_type = lb.programme_type " &
+		                    "WHERE lb.anchor_date IS NULL OR p.filename = lb.anchor_filename OR p.monthupdate > lb.anchor_date" &
 		                ") ",
 		
 		            // ── Final query: CTE + INNER JOIN to target table ──

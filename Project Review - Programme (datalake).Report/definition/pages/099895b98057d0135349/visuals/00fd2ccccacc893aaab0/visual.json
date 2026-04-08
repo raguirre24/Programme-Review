@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.6.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
   "name": "00fd2ccccacc893aaab0",
   "position": {
     "x": 159.51649287082358,
@@ -316,5 +316,23 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "7fb3ad4abcab774c07c2",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "01 XER_TASK"
+              }
+            },
+            "Property": "TaskType_Classified"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
   }
 }

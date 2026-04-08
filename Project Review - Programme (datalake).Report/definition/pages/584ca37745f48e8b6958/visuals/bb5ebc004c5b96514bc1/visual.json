@@ -28,7 +28,8 @@
               },
               "queryRef": "CurrentDate.UpdateDate",
               "nativeQueryRef": "UpdateDate",
-              "active": true
+              "active": true,
+              "format": "MMMM yyyy"
             }
           ]
         }

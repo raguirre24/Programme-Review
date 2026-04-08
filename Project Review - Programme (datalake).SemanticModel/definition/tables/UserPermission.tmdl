@@ -58,6 +58,14 @@ table UserPermission
 
 		annotation SummarizationSetBy = Automatic
 
+	column ProjectCode
+		dataType: string
+		lineageTag: d84b84a7-f786-4fdd-9c8b-0665e48ac0ff
+		summarizeBy: none
+		sourceColumn: ProjectCode
+
+		annotation SummarizationSetBy = Automatic
+
 	partition UserPermission = m
 		mode: import
 		queryGroup: XER

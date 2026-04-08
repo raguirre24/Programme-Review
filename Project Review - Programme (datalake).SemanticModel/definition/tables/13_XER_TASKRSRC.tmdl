@@ -180,7 +180,7 @@ table 13_XER_TASKRSRC
 
 		annotation SummarizationSetBy = Automatic
 
-	column Unit = related('12_XER_RSRC'[Unit])
+	column Unit = related('12_XER_RSRC'[unit_id])
 		lineageTag: 6037b3ee-f8b0-4874-a8e3-939340a50613
 		summarizeBy: none
 

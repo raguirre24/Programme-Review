@@ -59,6 +59,14 @@ table Project_Dimension
 
 		annotation SummarizationSetBy = Automatic
 
+	column ProjectCode
+		lineageTag: 8c536fcc-4f90-45d3-82c3-5aeb6894f4f5
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [ProjectCode]
+
+		annotation SummarizationSetBy = Automatic
+
 	partition Project_Dimension = calculated
 		mode: import
 		source = ```
@@ -74,10 +82,11 @@ table Project_Dimension
 				            "wbs_id_key", '01 XER_TASK'[wbs_id_key]
 				        )
 				    ),
-				    "State", LOOKUPVALUE('Project'[State], 'Project'[projectname], [Project]),
-				    "Level_2", LOOKUPVALUE('03 XER_PROJWBS'[Level_2], '03 XER_PROJWBS'[wbs_id_key], [wbs_id_key]),
-				    "Level_3", LOOKUPVALUE('03 XER_PROJWBS'[Level_3], '03 XER_PROJWBS'[wbs_id_key], [wbs_id_key]),
-				    "Level_4", LOOKUPVALUE('03 XER_PROJWBS'[Level_4], '03 XER_PROJWBS'[wbs_id_key], [wbs_id_key])
+				    "ProjectCode", MAXX(FILTER('Project', 'Project'[projectname] = [Project]), 'Project'[projectno]),
+				    "State", MAXX(FILTER('Project', 'Project'[projectname] = [Project]), 'Project'[State]),
+				    "Level_2", MAXX(FILTER('03 XER_PROJWBS', '03 XER_PROJWBS'[wbs_id_key] = [wbs_id_key]), '03 XER_PROJWBS'[Level_2]),
+				    "Level_3", MAXX(FILTER('03 XER_PROJWBS', '03 XER_PROJWBS'[wbs_id_key] = [wbs_id_key]), '03 XER_PROJWBS'[Level_3]),
+				    "Level_4", MAXX(FILTER('03 XER_PROJWBS', '03 XER_PROJWBS'[wbs_id_key] = [wbs_id_key]), '03 XER_PROJWBS'[Level_4])
 				)
 				```
 

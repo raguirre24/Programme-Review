@@ -1,13 +1,9 @@
 role 'Project Access 3'
 	modelPermission: read
 
-	tablePermission Project
-
 	tablePermission Project_Dimension = ```
-			-- Identify the current user and convert to lowercase immediately.
 			VAR CurrentUser = LOWER(USERPRINCIPALNAME())
 			
-			-- Retrieve all permission rows. CRITICAL FIX: We must check BOTH internal and external UPN columns.
 			VAR CurrentUserPermissions = 
 			    FILTER(
 			        'UserPermission',
@@ -15,7 +11,6 @@ role 'Project Access 3'
 			        LOWER('UserPermission'[ExternalUserPrincipalName]) = CurrentUser
 			    )
 			
-			-- 1. Check for All Access (Level 1).
 			VAR HasAllAccess =
 			    COUNTROWS(
 			        FILTER(
@@ -24,10 +19,8 @@ role 'Project Access 3'
 			        )
 			    ) > 0
 			
-			-- Performance Optimization: If All Access is granted, stop checking immediately (Short-Circuit).
 			RETURN IF(HasAllAccess, TRUE(),
 			    
-			    -- 2. Gather State Level Access (Level 2)
 			    VAR AllowedStates = 
 			        SELECTCOLUMNS(
 			            FILTER(
@@ -37,19 +30,17 @@ role 'Project Access 3'
 			            "State", 'UserPermission'[State]
 			        )
 			
-			    -- 3. Gather Project Specific Access (Level 3)
 			    VAR AllowedProjects = 
 			        SELECTCOLUMNS(
 			            FILTER(
 			                CurrentUserPermissions,
 			                'UserPermission'[All Access] = 3
 			            ),
-			            "ProjectID", 'UserPermission'[ProjectID]
+			            "ProjectCode", 'UserPermission'[ProjectCode]
 			        )
 			
-			    -- Check if the current Project row matches allowed States OR allowed Projects.
 			    VAR IsStateMatch = 'Project_Dimension'[State] IN AllowedStates
-			    VAR IsProjectMatch = 'Project_Dimension'[Project] IN AllowedProjects
+			    VAR IsProjectMatch = 'Project_Dimension'[ProjectCode] IN AllowedProjects
 			
 			    RETURN IsStateMatch || IsProjectMatch
 			)

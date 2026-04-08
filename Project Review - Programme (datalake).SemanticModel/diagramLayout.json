@@ -4,14 +4,14 @@
     {
       "ordinal": 0,
       "scrollPosition": {
-        "x": 9767.9998779296875,
-        "y": 70056.0009765625
+        "x": 0,
+        "y": 0
       },
       "nodes": [
         {
           "location": {
-            "x": 5464.6105453154314,
-            "y": 74681.827965519973
+            "x": 1557.19782019761,
+            "y": 1324.7438396555192
           },
           "nodeIndex": "02 XER_PROJECT",
           "size": {
@@ -22,8 +22,8 @@
         },
         {
           "location": {
-            "x": 5367.430675331887,
-            "y": 75031.985073560732
+            "x": 1140.2368250269751,
+            "y": 1324.1147826250412
           },
           "nodeIndex": "01 XER_TASK",
           "size": {
@@ -34,8 +34,8 @@
         },
         {
           "location": {
-            "x": 5083.3035199543847,
-            "y": 74776.570607053043
+            "x": 557.95161186937639,
+            "y": 1354.8349274701616
           },
           "nodeIndex": "03 XER_PROJWBS",
           "size": {
@@ -46,21 +46,21 @@
         },
         {
           "location": {
-            "x": 852.36163941535983,
-            "y": 74555.212979028714
+            "x": 1173.3296293874723,
+            "y": 2201.026909339932
           },
           "nodeIndex": "05 XER_DATA DATE",
           "nodeLineageTag": "7c6c4c55-1081-4ac6-83d2-06c7002e1eb7",
           "size": {
-            "height": 152,
+            "height": 176,
             "width": 234
           },
           "zIndex": 0
         },
         {
           "location": {
-            "x": 1136.3616394153598,
-            "y": 74481.212979028714
+            "x": 2266.8604413593825,
+            "y": 1222.2922555379607
           },
           "nodeIndex": "10 XER_CALENDARS",
           "nodeLineageTag": "94ce6dcf-9bfd-48f9-b715-089c33d5f05c",
@@ -72,33 +72,33 @@
         },
         {
           "location": {
-            "x": 1420.3616394153598,
-            "y": 74579.212979028714
+            "x": 2753.7331786488739,
+            "y": 1170.9631600749588
           },
           "nodeIndex": "XER Measures",
           "nodeLineageTag": "1c5bb7e0-f6a8-44e3-a17e-f631a724c979",
           "size": {
-            "height": 104,
+            "height": 300,
             "width": 234
           },
           "zIndex": 0
         },
         {
           "location": {
-            "x": 1704.3616394153598,
-            "y": 74531.212979028714
+            "x": 852.20016832946988,
+            "y": 1398.2194096867561
           },
           "nodeIndex": "00 CALENDAR",
           "size": {
-            "height": 200,
+            "height": 152,
             "width": 234
           },
           "zIndex": 0
         },
         {
           "location": {
-            "x": 1988.3616394153598,
-            "y": 74481.212979028714
+            "x": 1465.7932748539029,
+            "y": 2032.7285481939784
           },
           "nodeIndex": "06 XER_PREDECESSOR",
           "nodeLineageTag": "6c97f080-826d-44db-8576-0c805feced04",
@@ -110,84 +110,84 @@
         },
         {
           "location": {
-            "x": 2556.3616394153596,
-            "y": 74579.212979028714
+            "x": 3037.7331786488739,
+            "y": 1170.9631600749588
           },
           "nodeIndex": "XER  Counts",
           "size": {
-            "height": 104,
+            "height": 300,
             "width": 234
           },
           "zIndex": 0
         },
         {
           "location": {
-            "x": 294.1847511806298,
-            "y": 74494.680424440041
+            "x": 881.31110951098049,
+            "y": 418.29141140311685
           },
           "nodeIndex": "08 XER_ACTVCODE",
           "nodeLineageTag": "94c1fcbc-2867-47c1-a3a4-33f0b7591422",
           "size": {
-            "height": 272,
+            "height": 300,
             "width": 234
           },
           "zIndex": 0
         },
         {
           "location": {
-            "x": 10,
-            "y": 74475.745533617388
+            "x": 588.34424634066511,
+            "y": 431.792686610029
           },
           "nodeIndex": "07 XER_ACTVTYPE",
           "nodeLineageTag": "a20352d7-2126-4b85-a8c7-2d39fe44994f",
           "size": {
-            "height": 272,
+            "height": 300,
             "width": 234
           },
           "zIndex": 0
         },
         {
           "location": {
-            "x": 578.36163941535983,
-            "y": 74556.005417072476
+            "x": 50,
+            "y": 1110.0852236560684
           },
           "nodeIndex": "09 XER_TASKACTV",
           "nodeLineageTag": "eaa0b48e-3c49-4e66-9990-a5c12154c2a0",
           "size": {
-            "height": 176,
+            "height": 300,
             "width": 234
           },
           "zIndex": 0
         },
         {
           "location": {
-            "x": 6022.7541391593168,
-            "y": 74538.595319522647
+            "x": 3321.7331786488739,
+            "y": 1170.9631600749588
           },
           "nodeIndex": "XER Metrics",
           "size": {
-            "height": 104,
+            "height": 300,
             "width": 234
           },
           "zIndex": 0
         },
         {
           "location": {
-            "x": 6306.7541391593168,
-            "y": 74538.595319522647
+            "x": 3605.7331786488739,
+            "y": 1170.9631600749588
           },
           "nodeIndex": "XER S-Curve",
           "nodeLineageTag": "bce5fdf6-3b4b-40cc-a2e5-8fc88110f0c4",
           "size": {
-            "height": 104,
+            "height": 300,
             "width": 234
           },
           "zIndex": 0
         },
         {
           "location": {
-            "x": 6590.7541391593168,
-            "y": 74490.595319522647
+            "x": 375.94057094587174,
+            "y": 1714.21044806295
           },
           "nodeIndex": "00 PLANNED DATE TABLE (PV)",
           "size": {
@@ -198,21 +198,21 @@
         },
         {
           "location": {
-            "x": 8274.7541391593168,
-            "y": 74217.900442503611
+            "x": 3889.7331786488739,
+            "y": 1172.9631600749588
           },
           "nodeIndex": "Activity Completion",
           "nodeLineageTag": "2521af7d-3989-47d9-adeb-b629cc490689",
           "size": {
-            "height": 104,
+            "height": 296,
             "width": 234
           },
           "zIndex": 0
         },
         {
           "location": {
-            "x": 8842.7541391593168,
-            "y": 74169.900442503611
+            "x": 2519.7331786488739,
+            "y": 952.72801486238359
           },
           "nodeIndex": "Filter_Activity_Status",
           "size": {
@@ -223,8 +223,8 @@
         },
         {
           "location": {
-            "x": 9390.7541391593168,
-            "y": 73735.850727402212
+            "x": 1140.2422833580981,
+            "y": 777.37794385570373
           },
           "nodeIndex": "Filter_Float",
           "size": {
@@ -235,8 +235,8 @@
         },
         {
           "location": {
-            "x": 9674.7541391593168,
-            "y": 73735.850727402212
+            "x": 1849.4539331263609,
+            "y": 1136.215379908816
           },
           "nodeIndex": "Filter_Duration",
           "size": {
@@ -247,8 +247,8 @@
         },
         {
           "location": {
-            "x": 9948.7541391593168,
-            "y": 71102.892563631351
+            "x": 1608.3912558533827,
+            "y": 670.24139447728157
           },
           "nodeIndex": "Filter_Finish_Within",
           "size": {
@@ -259,8 +259,8 @@
         },
         {
           "location": {
-            "x": 10222.754139159317,
-            "y": 70753.858977091717
+            "x": 1432.5298191571662,
+            "y": 926.58405351361716
           },
           "nodeIndex": "Filter_Start_Within",
           "size": {
@@ -271,8 +271,8 @@
         },
         {
           "location": {
-            "x": 10506.754139159317,
-            "y": 70753.858977091717
+            "x": 342.82347961672531,
+            "y": 917.15167042578332
           },
           "nodeIndex": "Filter_Critical_Status",
           "size": {
@@ -283,8 +283,8 @@
         },
         {
           "location": {
-            "x": 10790.754139159317,
-            "y": 70753.858977091717
+            "x": 1480.3570758765381,
+            "y": 2391.926320149918
           },
           "nodeIndex": "Filter_TaskType",
           "size": {
@@ -295,35 +295,10 @@
         },
         {
           "location": {
-            "x": 11064.754139159317,
-            "y": 69746.585849609372
+            "x": 852.68389044853825,
+            "y": 845.05925342507
           },
           "nodeIndex": "Filter_Driving",
-          "size": {
-            "height": 200,
-            "width": 234
-          },
-          "zIndex": 0
-        },
-        {
-          "location": {
-            "x": 11338.754139159317,
-            "y": 68640.054325492121
-          },
-          "nodeIndex": "UserPermission",
-          "nodeLineageTag": "16634cc5-2311-4145-a599-5cdf61ee38c3",
-          "size": {
-            "height": 224,
-            "width": 234
-          },
-          "zIndex": 0
-        },
-        {
-          "location": {
-            "x": 11622.754139159317,
-            "y": 68688.054325492121
-          },
-          "nodeIndex": "Project",
           "size": {
             "height": 128,
             "width": 234
@@ -332,8 +307,33 @@
         },
         {
           "location": {
-            "x": 9116.7541391593168,
-            "y": 73976.3718851665
+            "x": 4173.7331786488739,
+            "y": 1196.9631600749588
+          },
+          "nodeIndex": "UserPermission",
+          "nodeLineageTag": "16634cc5-2311-4145-a599-5cdf61ee38c3",
+          "size": {
+            "height": 248,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 4457.7331786488739,
+            "y": 1208.9631600749588
+          },
+          "nodeIndex": "Project",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1772.8196472120885,
+            "y": 2295.0889350771313
           },
           "nodeIndex": "Filter_Finish_Delay",
           "size": {
@@ -344,8 +344,8 @@
         },
         {
           "location": {
-            "x": 11896.754139159317,
-            "y": 67311.704519504274
+            "x": 2140.8132410849557,
+            "y": 963.06591782221608
           },
           "nodeIndex": "Filter_Start_Delay",
           "size": {
@@ -356,20 +356,20 @@
         },
         {
           "location": {
-            "x": 12170.754139159317,
-            "y": 65688.721832487121
+            "x": 2355.8013352722,
+            "y": 425.62712028691931
           },
           "nodeIndex": "Filter_Constraint_Types",
           "size": {
-            "height": 200,
+            "height": 176,
             "width": 234
           },
           "zIndex": 0
         },
         {
           "location": {
-            "x": 13012.754139159317,
-            "y": 63683.651693972992
+            "x": 1338.9504668118204,
+            "y": 1680.4080328149187
           },
           "nodeIndex": "11_XER_CALENDAR_DETAILED",
           "nodeLineageTag": "1f0a43f3-8544-4d87-a633-d2a20f36d916",
@@ -381,21 +381,21 @@
         },
         {
           "location": {
-            "x": 12778.754139159317,
-            "y": 63659.651693972992
+            "x": 1274.3009625759876,
+            "y": -50
           },
           "nodeIndex": "12_XER_RSRC",
           "nodeLineageTag": "e4336989-d4b0-42ee-88e3-6b90d448d516",
           "size": {
-            "height": 248,
+            "height": 300,
             "width": 234
           },
           "zIndex": 0
         },
         {
           "location": {
-            "x": 12494.754139159317,
-            "y": 63633.651693972992
+            "x": 1406.2406011425887,
+            "y": 310.98862109955053
           },
           "nodeIndex": "13_XER_TASKRSRC",
           "nodeLineageTag": "bf1a8f41-7390-4182-9b31-8922ded5cf83",
@@ -407,8 +407,8 @@
         },
         {
           "location": {
-            "x": 13296.754139159317,
-            "y": 63733.651693972992
+            "x": 4741.7331786488739,
+            "y": 1220.9631600749588
           },
           "nodeIndex": "Resource Calendar",
           "size": {
@@ -419,33 +419,33 @@
         },
         {
           "location": {
-            "x": 13580.754139159317,
-            "y": 63781.651693972992
+            "x": 5025.7331786488739,
+            "y": 1208.9631600749588
           },
           "nodeIndex": "Resources",
           "nodeLineageTag": "cf1806ab-9e2e-449b-9739-bc430ec62adf",
           "size": {
-            "height": 104,
+            "height": 224,
             "width": 234
           },
           "zIndex": 0
         },
         {
           "location": {
-            "x": 14148.754139159317,
-            "y": 63733.651693972992
+            "x": 5309.7331786488739,
+            "y": 1170.9631600749588
           },
           "nodeIndex": "Monthly Resource Distribution Baseline",
           "size": {
-            "height": 200,
+            "height": 300,
             "width": 234
           },
           "zIndex": 0
         },
         {
           "location": {
-            "x": 14422.754139159317,
-            "y": 61410.335883704596
+            "x": 5593.7331786488739,
+            "y": 1220.9631600749588
           },
           "nodeIndex": "Unique_Resources",
           "size": {
@@ -456,69 +456,69 @@
         },
         {
           "location": {
-            "x": 14696.754139159317,
-            "y": 53716.048568895159
+            "x": 5877.7331786488739,
+            "y": 1220.9631600749588
           },
           "nodeIndex": "WBS Measures",
           "nodeLineageTag": "075ff10b-d681-4a2b-ac84-012ad91336ac",
           "size": {
-            "height": 104,
+            "height": 200,
             "width": 234
           },
           "zIndex": 0
         },
         {
           "location": {
-            "x": 15264.754139159317,
-            "y": 53668.048568895159
+            "x": 2050.8628087653738,
+            "y": 1700.9963812502974
           },
           "nodeIndex": "06a XER_SUCCESSOR",
           "size": {
-            "height": 200,
+            "height": 300,
             "width": 234
           },
           "zIndex": 0
         },
         {
           "location": {
-            "x": 6864.7541391593168,
-            "y": 74405.870844212273
+            "x": 6161.7331786488739,
+            "y": 1184.9631600749588
           },
           "nodeIndex": "Dynamic Titles & Formatting",
           "size": {
-            "height": 104,
+            "height": 272,
             "width": 234
           },
           "zIndex": 0
         },
         {
           "location": {
-            "x": 16106.754139159317,
-            "y": 50262.636271431111
+            "x": 2228.0702166172186,
+            "y": 657.74251257561946
           },
           "nodeIndex": "Project_Dimension",
           "size": {
-            "height": 200,
+            "height": 248,
             "width": 234
           },
           "zIndex": 0
         },
         {
           "location": {
-            "x": 16380.754139159317,
-            "y": 44884.152145264728
+            "x": 850.65668285379934,
+            "y": 1025.6679762160873
           },
           "nodeIndex": "04 XER_BASELINE",
           "size": {
-            "height": 200,
+            "height": 300,
             "width": 234
           },
           "zIndex": 0
         },
         {
           "location": {
-            "x": 7432.7541391593168,
-            "y": 74357.870844212273
+            "x": 1758.1283145429152,
+            "y": 1975.5304915232362
           },
           "nodeIndex": "CurrentDate",
           "size": {
@@ -529,21 +529,21 @@
         },
         {
           "location": {
-            "x": 16948.754139159319,
-            "y": 44920.152145264728
+            "x": 6445.7331786488739,
+            "y": 1244.9631600749588
           },
           "nodeIndex": "Logos",
           "nodeLineageTag": "7d6cac0e-2a2a-4c92-992b-cae10d4ca417",
           "size": {
-            "height": 128,
+            "height": 152,
             "width": 234
           },
           "zIndex": 0
         },
         {
           "location": {
-            "x": 17222.754139159319,
-            "y": 38616.814944732323
+            "x": 1697.5451168462987,
+            "y": 178.39194381063317
           },
           "nodeIndex": "15_XER_RESOURCE_DISTRIBUTION",
           "size": {
@@ -554,7 +554,7 @@
         }
       ],
       "name": "All tables",
-      "zoomValue": 10,
+      "zoomValue": 19.28333019095399,
       "pinKeyFieldsToTop": false,
       "showExtraHeaderInfo": false,
       "hideKeyFieldsWhenCollapsed": false,
@@ -814,8 +814,8 @@
         },
         {
           "location": {
-            "x": 1491.3333301544189,
-            "y": 1790.8333587646484
+            "x": 1528.8333301544189,
+            "y": 1778.3333587646484
           },
           "nodeIndex": "Logos",
           "nodeLineageTag": "7d6cac0e-2a2a-4c92-992b-cae10d4ca417",
@@ -1012,8 +1012,8 @@
       "nodes": [
         {
           "location": {
-            "x": 457.026502012441,
-            "y": 775.39175543422141
+            "x": 418.18255267367817,
+            "y": 754.33677266254313
           },
           "nodeIndex": "Monthly Resource Distribution Baseline",
           "nodeLineageTag": "fa1cf293-638c-4a26-8dd7-9b7d1bbee83f",
@@ -1025,8 +1025,8 @@
         },
         {
           "location": {
-            "x": 852.38305001469382,
-            "y": 75
+            "x": 1420.57687716578,
+            "y": 254.04354838272104
           },
           "nodeIndex": "Unique_Resources",
           "nodeLineageTag": "b1122c23-14f0-4799-ad33-0ccd4e144db5",
@@ -1038,8 +1038,8 @@
         },
         {
           "location": {
-            "x": 480.97125505304052,
-            "y": 26.404807434637348
+            "x": 483.2502026505872,
+            "y": 179.46573667412355
           },
           "nodeIndex": "01 XER_TASK",
           "nodeLineageTag": "de86e8cb-d782-4301-95e1-09a8fd150627",
@@ -1051,8 +1051,8 @@
         },
         {
           "location": {
-            "x": 1136.3830500146937,
-            "y": 25
+            "x": 902.57687716577971,
+            "y": -50
           },
           "nodeIndex": "12_XER_RSRC",
           "nodeLineageTag": "e4336989-d4b0-42ee-88e3-6b90d448d516",
@@ -1064,8 +1064,8 @@
         },
         {
           "location": {
-            "x": 43.167590173811732,
-            "y": 328.93083348991655
+            "x": 50.000000000000014,
+            "y": 358.08709676544208
           },
           "nodeIndex": "15_XER_RESOURCE_DISTRIBUTION",
           "nodeLineageTag": "87556888-48ae-43af-af95-ce6b18405b46",
@@ -1077,8 +1077,8 @@
         },
         {
           "location": {
-            "x": 1469.0606862073714,
-            "y": 867.03260298886721
+            "x": 948.23521788107087,
+            "y": 345.56835447295873
           },
           "nodeIndex": "13_XER_TASKRSRC",
           "nodeLineageTag": "bf1a8f41-7390-4182-9b31-8922ded5cf83",
@@ -1090,8 +1090,8 @@
         },
         {
           "location": {
-            "x": 2247.8471340724541,
-            "y": 791.15714308007887
+            "x": 1704.57687716578,
+            "y": 254.04354838272104
           },
           "nodeIndex": "Resource Calendar",
           "nodeLineageTag": "cf0ce51c-a579-4d64-9c3b-4e7f5880e889",
@@ -1103,7 +1103,7 @@
         }
       ],
       "name": "Resources",
-      "zoomValue": 34.305427922565265,
+      "zoomValue": 63.057291038632123,
       "pinKeyFieldsToTop": false,
       "showExtraHeaderInfo": false,
       "hideKeyFieldsWhenCollapsed": false,
@@ -1138,6 +1138,6 @@
       "tablesLocked": false
     }
   ],
-  "selectedDiagram": "Resources",
+  "selectedDiagram": "XER",
   "defaultDiagram": "All tables"
 }

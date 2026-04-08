@@ -2,15 +2,15 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
   "name": "d0f42d6f6db694358c27",
   "position": {
-    "x": 75.590551181102356,
-    "y": 244.91338582677164,
+    "x": 75.714285714285722,
+    "y": 244,
     "z": 10000,
-    "height": 84.661417322834637,
-    "width": 917.66929133858264,
+    "height": 84,
+    "width": 917,
     "tabOrder": 7000
   },
   "visual": {
-    "visualType": "advancedSlicerVisual",
+    "visualType": "slicer",
     "query": {
       "queryState": {
         "Values": {
@@ -27,7 +27,9 @@
                 }
               },
               "queryRef": "CurrentDate.UpdateDate",
-              "nativeQueryRef": "UpdateDate"
+              "nativeQueryRef": "UpdateDate",
+              "active": true,
+              "format": "MMMM yyyy"
             }
           ]
         }
@@ -53,7 +55,15 @@
     "objects": {
       "data": [
         {
-          "properties": {}
+          "properties": {
+            "mode": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Basic'"
+                }
+              }
+            }
+          }
         }
       ],
       "selection": [
@@ -65,6 +75,13 @@
                   "Value": "true"
                 }
               }
+            },
+            "singleSelect": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
             }
           }
         }
@@ -72,6 +89,32 @@
       "general": [
         {
           "properties": {
+            "orientation": {
+              "expr": {
+                "Literal": {
+                  "Value": "1D"
+                }
+              }
+            },
+            "responsive": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "outlineColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
             "filter": {
               "filter": {
                 "Version": 2,
@@ -116,47 +159,38 @@
           }
         }
       ],
-      "layout": [
+      "header": [
         {
           "properties": {
-            "rowCount": {
+            "show": {
               "expr": {
                 "Literal": {
-                  "Value": "1L"
-                }
-              }
-            },
-            "orientation": {
-              "expr": {
-                "Literal": {
-                  "Value": "2D"
-                }
-              }
-            },
-            "autoGrid": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "maxTiles": {
-              "expr": {
-                "Literal": {
-                  "Value": "6L"
+                  "Value": "false"
                 }
               }
             }
           }
         }
       ],
-      "overFlow": [
+      "items": [
         {
           "properties": {
-            "overFlowDirection": {
+            "padding": {
               "expr": {
                 "Literal": {
-                  "Value": "1D"
+                  "Value": "0D"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0
+                    }
+                  }
                 }
               }
             }
@@ -238,6 +272,19 @@
             }
           }
         }
+      ],
+      "general": [
+        {
+          "properties": {
+            "keepLayerOrder": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
       ]
     },
     "syncGroup": {
@@ -250,7 +297,7 @@
   "filterConfig": {
     "filters": [
       {
-        "name": "2e55b60a75d795fef142",
+        "name": "68ed62bc3da0246f71e6",
         "field": {
           "Column": {
             "Expression": {

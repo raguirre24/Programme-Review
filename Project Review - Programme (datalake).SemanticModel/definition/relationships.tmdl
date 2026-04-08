@@ -429,10 +429,6 @@ relationship 6248db3c-2fe9-40fd-99a5-d7687b412433
 	fromColumn: 15_XER_RESOURCE_DISTRIBUTION.month_end_date
 	toColumn: LocalDateTable_0ca9f382-b2de-4063-9664-72e49daad1d1.Date
 
-relationship b8722003-1c5c-1b4c-b829-55152087201d
-	fromColumn: '01 XER_TASK'.wbs_id_key
-	toColumn: Project_Dimension.wbs_id_key
-
 relationship f97257b3-e424-409c-b066-f4e0bd2a513a
 	joinOnDateBehavior: datePartOnly
 	fromColumn: '06 XER_PREDECESSOR'.start
@@ -559,4 +555,14 @@ relationship d80ab5ee-10bc-4140-a252-25531d16c708
 	joinOnDateBehavior: datePartOnly
 	fromColumn: 'Resource Calendar'.Month
 	toColumn: LocalDateTable_b96da9ad-77fa-429a-b6e7-85d8829f802b.Date
+
+relationship f24c4706-b9e8-0508-7a78-7b0aca8b7799
+	crossFilteringBehavior: bothDirections
+	toCardinality: many
+	fromColumn: 'Monthly Resource Distribution Baseline'.project_resource
+	toColumn: 15_XER_RESOURCE_DISTRIBUTION.project_resource
+
+relationship b8722003-1c5c-1b4c-b829-55152087201d
+	fromColumn: '01 XER_TASK'.wbs_id_key
+	toColumn: Project_Dimension.wbs_id_key
 

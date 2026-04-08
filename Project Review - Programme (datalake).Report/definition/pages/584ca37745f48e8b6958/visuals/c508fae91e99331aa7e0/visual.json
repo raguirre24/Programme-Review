@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.6.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
   "name": "c508fae91e99331aa7e0",
   "position": {
     "x": 5,
@@ -933,5 +933,98 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "694542e2829ccfb26e12",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "00 CALENDAR"
+              }
+            },
+            "Property": "Month"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "ce83064af6d44028507c",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "01 XER_TASK"
+              }
+            },
+            "Property": "status_code"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "48f200392586856c2cfc",
+        "field": {
+          "Aggregation": {
+            "Expression": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "01 XER_TASK"
+                  }
+                },
+                "Property": "Finish"
+              }
+            },
+            "Function": 5
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "15959a77da56e6ce1b7b",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER S-Curve"
+              }
+            },
+            "Property": "Cumulative_Count_BL_Finish_TT_Task"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "f5b010d60990593164b3",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER S-Curve"
+              }
+            },
+            "Property": "Cumulative_Count_Finish_TT_Task"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "31c2d358c668eac4eef6",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER S-Curve"
+              }
+            },
+            "Property": "Cumulative_Count_Actual_Finish"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

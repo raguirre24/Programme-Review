@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.6.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
   "name": "bb2e46e5dbae497008e6",
   "position": {
     "x": 19.950738916256157,
@@ -624,6 +624,76 @@
           ]
         },
         "howCreated": "User"
+      },
+      {
+        "name": "6f972420bea63d6cf72d",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Resource Calendar"
+              }
+            },
+            "Property": "Month"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "9f509e28772ebaa430e4",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Resources"
+              }
+            },
+            "Property": "Actual Quantity"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "c276dda5f60efdb37758",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Resources"
+              }
+            },
+            "Property": "Remaining Quantity"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "f92dcf81c76fca09dbc5",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Resources"
+              }
+            },
+            "Property": "Cumulative Baseline Quantity"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "02ef201389cff61f469b",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Resources"
+              }
+            },
+            "Property": "Cumulative Quantity"
+          }
+        },
+        "type": "Advanced"
       }
     ]
   }

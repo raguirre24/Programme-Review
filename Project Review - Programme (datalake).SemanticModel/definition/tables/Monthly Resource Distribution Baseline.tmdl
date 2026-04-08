@@ -304,6 +304,23 @@ table 'Monthly Resource Distribution Baseline'
 
 		annotation SummarizationSetBy = Automatic
 
+	column project_resource
+		formatString: 0
+		lineageTag: f4728275-f00e-4d83-9663-62d1626f1988
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[project_resource]
+
+		annotation SummarizationSetBy = Automatic
+
+	column project_task_code
+		lineageTag: 6908b45f-a483-4733-a553-8ff0f4a4fb66
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[project_task_code]
+
+		annotation SummarizationSetBy = Automatic
+
 	partition 'Monthly Resource Distribution Baseline' = calculated
 		mode: import
 		source =

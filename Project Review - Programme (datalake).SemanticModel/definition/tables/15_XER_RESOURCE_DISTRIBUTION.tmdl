@@ -1,5 +1,4 @@
 table 15_XER_RESOURCE_DISTRIBUTION
-	excludeFromModelRefresh
 	lineageTag: 87556888-48ae-43af-af95-ce6b18405b46
 
 	column task_id_key
@@ -308,6 +307,22 @@ table 15_XER_RESOURCE_DISTRIBUTION
 		lineageTag: c62bd8a5-5b13-4a6e-8ab0-887addc54dc5
 		summarizeBy: none
 		sourceColumn: ProjectCode
+
+		annotation SummarizationSetBy = Automatic
+
+	column project_resource =
+			
+			'15_XER_RESOURCE_DISTRIBUTION'[project_task_code] & "." &
+			'15_XER_RESOURCE_DISTRIBUTION'[rsrc_short_name] & "." &
+			'15_XER_RESOURCE_DISTRIBUTION'[rsrc_type]
+		lineageTag: 571e7efb-67c0-4cf3-8e7c-13af24b9a0a6
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column project_task_code = '15_XER_RESOURCE_DISTRIBUTION'[ProjectCode]&"."&'15_XER_RESOURCE_DISTRIBUTION'[task_code]
+		lineageTag: 9c7871d4-40ae-4c35-8bcf-7944a56631ff
+		summarizeBy: none
 
 		annotation SummarizationSetBy = Automatic
 

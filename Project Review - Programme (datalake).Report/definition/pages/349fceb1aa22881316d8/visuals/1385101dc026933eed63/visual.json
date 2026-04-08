@@ -28,7 +28,8 @@
               },
               "queryRef": "CurrentDate.UpdateDate",
               "nativeQueryRef": "UpdateDate",
-              "active": true
+              "active": true,
+              "format": "MMMM yyyy"
             }
           ]
         }
@@ -268,5 +269,23 @@
       "filterChanges": true
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "e561cc8200bd30cbe0ce",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "CurrentDate"
+              }
+            },
+            "Property": "UpdateDate"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
   }
 }

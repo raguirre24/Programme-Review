@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.6.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
   "name": "e9af69e6897909605e00",
   "position": {
     "x": 960.00000000000011,
@@ -278,5 +278,37 @@
       "filterChanges": true
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "6a3f0afa5ac51f344796",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "15_XER_RESOURCE_DISTRIBUTION"
+              }
+            },
+            "Property": "rsrc_type"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "563853d0b3ba8fd50dd0",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "15_XER_RESOURCE_DISTRIBUTION"
+              }
+            },
+            "Property": "rsrc_name"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
   }
 }
