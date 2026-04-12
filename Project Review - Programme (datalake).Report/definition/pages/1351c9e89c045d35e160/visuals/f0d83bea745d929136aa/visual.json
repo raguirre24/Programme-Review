@@ -448,6 +448,59 @@
                   ]
                 }
               ]
+            },
+            {
+              "identityValues": [
+                {
+                  "Literal": {
+                    "Value": "'MALABAR (Internal Payroll / ACA Expense Claims Use ONLY)'"
+                  }
+                }
+              ],
+              "children": [
+                {
+                  "identityValues": [
+                    {
+                      "Literal": {
+                        "Value": "'Vendor Data/Shop drawings/Review'"
+                      }
+                    }
+                  ],
+                  "children": [
+                    {
+                      "identityValues": [
+                        {
+                          "Literal": {
+                            "Value": "'Workshops'"
+                          }
+                        }
+                      ],
+                      "isToggled": true
+                    }
+                  ]
+                },
+                {
+                  "identityValues": [
+                    {
+                      "Literal": {
+                        "Value": "'C5064'"
+                      }
+                    }
+                  ],
+                  "children": [
+                    {
+                      "identityValues": [
+                        {
+                          "Literal": {
+                            "Value": "'C5064'"
+                          }
+                        }
+                      ],
+                      "isToggled": true
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
@@ -1480,7 +1533,7 @@
             "Property": "Level_2"
           }
         },
-        "type": "Categorical"
+        "type": "Advanced"
       },
       {
         "name": "8913db181c15fedf6973",
@@ -1527,7 +1580,7 @@
           "Version": 2,
           "From": [
             {
-              "Name": "x1",
+              "Name": "x",
               "Entity": "XER  Counts",
               "Type": 0
             }
@@ -1543,7 +1596,7 @@
                         "Measure": {
                           "Expression": {
                             "SourceRef": {
-                              "Source": "x1"
+                              "Source": "x"
                             }
                           },
                           "Property": "Count_Tasks"
