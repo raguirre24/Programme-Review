@@ -91,12 +91,16 @@ table Resources
 			
 			VAR CurrentMonthValue = MAX('Resource Calendar'[Month])
 			
+			-- Capture active project filter before REMOVEFILTERS
+			VAR ActiveProjects = VALUES('15_XER_RESOURCE_DISTRIBUTION'[ProjectCode])
+			
 			-- Find the last month with baseline data
 			VAR LastMonthWithBaselineData = 
 			    CALCULATE(
 			        MAX('Monthly Resource Distribution Baseline'[distribution_month]),
 			        ALL('Resource Calendar'),
 			        ALL('Monthly Resource Distribution Baseline'[distribution_month]),
+			        TREATAS(ActiveProjects, 'Monthly Resource Distribution Baseline'[ProjectCode]),
 			        REMOVEFILTERS(CurrentDate)
 			    )
 			
@@ -122,6 +126,7 @@ table Resources
 			    CALCULATE(
 			        SUM('Monthly Resource Distribution Baseline'[monthly_quantity]),
 			        TREATAS(AllMonthsUpToCurrent, 'Monthly Resource Distribution Baseline'[distribution_month]),
+			        TREATAS(ActiveProjects, 'Monthly Resource Distribution Baseline'[ProjectCode]),
 			        REMOVEFILTERS(CurrentDate)
 			    )
 			
@@ -141,7 +146,9 @@ table Resources
 			
 			CALCULATE (
 			    SUM ( 'Monthly Resource Distribution Baseline'[monthly_quantity] ),
-			    ALL ( 'Resource Calendar' )
+			    ALL ( 'Resource Calendar' ),
+			    TREATAS(VALUES('15_XER_RESOURCE_DISTRIBUTION'[ProjectCode]), 'Monthly Resource Distribution Baseline'[ProjectCode]),
+			    REMOVEFILTERS(CurrentDate)
 			)
 		displayFolder: Baseline
 		lineageTag: c985c4ff-17b7-4bab-b30f-2f316c6bb3df
