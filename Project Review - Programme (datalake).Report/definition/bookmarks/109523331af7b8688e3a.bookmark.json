@@ -1,10 +1,10 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.0.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
   "displayName": "Clear Filters",
   "name": "109523331af7b8688e3a",
   "options": {
     "targetVisualNames": [
-      "d0f42d6f6db694358c27"
+      "e473b21d676622c41e5d"
     ],
     "suppressActiveSection": true,
     "suppressDisplay": true
@@ -272,7 +272,7 @@
             "filters": {
               "byExpr": [
                 {
-                  "name": "c45989793e7a9b2306e6",
+                  "name": "68ed62bc3da0246f71e6",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -325,7 +325,7 @@
                                       [
                                         {
                                           "Literal": {
-                                            "Value": "datetime'2026-02-28T00:00:00'"
+                                            "Value": "datetime'2026-03-31T00:00:00'"
                                           }
                                         }
                                       ]
@@ -402,7 +402,7 @@
             "filters": {
               "byExpr": [
                 {
-                  "name": "700569600d70b80a120b",
+                  "name": "fd116fdd7656a40e7d43",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -417,7 +417,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "f9628eb4e0d03243640d",
+                  "name": "12be8c444ab7d206e872",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -432,7 +432,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "c9e0ca0601cc1de67907",
+                  "name": "b02c5a9d4e4e44609cd1",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -447,7 +447,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "4b265e72d661725a2e5b",
+                  "name": "6c809505d2b0c89d742b",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -591,44 +591,6 @@
                 {
                   "name": "64330dffa6131376b98d",
                   "type": "Advanced",
-                  "filter": {
-                    "Version": 2,
-                    "From": [
-                      {
-                        "Name": "p",
-                        "Entity": "Project_Dimension",
-                        "Type": 0
-                      }
-                    ],
-                    "Where": [
-                      {
-                        "Condition": {
-                          "Not": {
-                            "Expression": {
-                              "Comparison": {
-                                "ComparisonKind": 0,
-                                "Left": {
-                                  "Column": {
-                                    "Expression": {
-                                      "SourceRef": {
-                                        "Source": "p"
-                                      }
-                                    },
-                                    "Property": "Project"
-                                  }
-                                },
-                                "Right": {
-                                  "Literal": {
-                                    "Value": "null"
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
-                    ]
-                  },
                   "expression": {
                     "Column": {
                       "Expression": {
@@ -637,21 +599,6 @@
                         }
                       },
                       "Property": "Project"
-                    }
-                  },
-                  "howCreated": 1
-                },
-                {
-                  "name": "e0fc33eaa4b71729ca11",
-                  "type": "Categorical",
-                  "expression": {
-                    "Column": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "Project_Dimension"
-                        }
-                      },
-                      "Property": "Project Name"
                     }
                   },
                   "howCreated": 0
@@ -690,7 +637,7 @@
             "filters": {
               "byExpr": [
                 {
-                  "name": "4c01a3ac1a4ce8c42219",
+                  "name": "6c39131d4a1d39255928",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -705,7 +652,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "270257ea9d7e92487784",
+                  "name": "d17d3eab1e28d98c0ab4",
                   "type": "Categorical",
                   "expression": {
                     "Column": {

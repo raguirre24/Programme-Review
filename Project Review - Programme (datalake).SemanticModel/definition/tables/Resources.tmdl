@@ -4,7 +4,7 @@ table Resources
 	measure 'Actual Quantity' =
 			
 			CALCULATE(
-			    SUM('15_XER_RESOURCE_DISTRIBUTION'[monthly_quantity]),
+			    SUM('15_XER_RESOURCE_DISTRIBUTION'[monthly_hours]),
 			    '15_XER_RESOURCE_DISTRIBUTION'[is_actual] = TRUE,
 			    TREATAS(VALUES('Resource Calendar'[Month]), '15_XER_RESOURCE_DISTRIBUTION'[distribution_month])
 			)
@@ -46,7 +46,7 @@ table Resources
 			    
 			VAR CumulativeValue = 
 			    CALCULATE(
-			        SUM('15_XER_RESOURCE_DISTRIBUTION'[monthly_quantity]),
+			        SUM('15_XER_RESOURCE_DISTRIBUTION'[monthly_hours]),
 			        TREATAS(AllMonthsUpToCurrent, '15_XER_RESOURCE_DISTRIBUTION'[distribution_month])
 			    )
 			
@@ -65,7 +65,7 @@ table Resources
 	measure 'Remaining Quantity' =
 			
 			CALCULATE(
-			    SUM('15_XER_RESOURCE_DISTRIBUTION'[monthly_quantity]),
+			    SUM('15_XER_RESOURCE_DISTRIBUTION'[monthly_hours]),
 			    '15_XER_RESOURCE_DISTRIBUTION'[is_actual] = FALSE,
 			    TREATAS(VALUES('Resource Calendar'[Month]), '15_XER_RESOURCE_DISTRIBUTION'[distribution_month])
 			)
@@ -78,7 +78,7 @@ table Resources
 	measure 'Total Quantity' =
 			
 			CALCULATE(
-			    SUM('15_XER_RESOURCE_DISTRIBUTION'[monthly_quantity]),
+			    SUM('15_XER_RESOURCE_DISTRIBUTION'[monthly_hours]),
 			    TREATAS(VALUES('Resource Calendar'[Month]), '15_XER_RESOURCE_DISTRIBUTION'[distribution_month])
 			)
 		formatString: #,0
@@ -124,7 +124,7 @@ table Resources
 			    
 			VAR CumulativeValue = 
 			    CALCULATE(
-			        SUM('Monthly Resource Distribution Baseline'[monthly_quantity]),
+			        SUM('Monthly Resource Distribution Baseline'[monthly_hours]),
 			        TREATAS(AllMonthsUpToCurrent, 'Monthly Resource Distribution Baseline'[distribution_month]),
 			        TREATAS(ActiveProjects, 'Monthly Resource Distribution Baseline'[ProjectCode]),
 			        REMOVEFILTERS(CurrentDate)
@@ -145,7 +145,7 @@ table Resources
 	measure 'Total Baseline Quantity' =
 			
 			CALCULATE (
-			    SUM ( 'Monthly Resource Distribution Baseline'[monthly_quantity] ),
+			    SUM ( 'Monthly Resource Distribution Baseline'[monthly_hours] ),
 			    ALL ( 'Resource Calendar' ),
 			    TREATAS(VALUES('15_XER_RESOURCE_DISTRIBUTION'[ProjectCode]), 'Monthly Resource Distribution Baseline'[ProjectCode]),
 			    REMOVEFILTERS(CurrentDate)

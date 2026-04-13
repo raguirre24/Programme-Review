@@ -57,11 +57,28 @@ table 'Dynamic Titles & Formatting'
 	measure 'Resource Selected' =
 			
 			VAR _SelectedName = SELECTEDVALUE ( '15_XER_RESOURCE_DISTRIBUTION'[rsrc_name] )
+			VAR _SelectedType = SELECTEDVALUE ( '15_XER_RESOURCE_DISTRIBUTION'[rsrc_type] )
+			VAR _SelectedUnit = SELECTEDVALUE ( '15_XER_RESOURCE_DISTRIBUTION'[unit] )
+			
+			VAR _DisplayUnit =
+			    IF (
+			        _SelectedType = "RT_Labor",
+			        "Hours",
+			        _SelectedUnit
+			    )
+			
+			VAR _UnitString =
+			    IF (
+			        NOT ISBLANK ( _DisplayUnit ),
+			        " (Unit: " & _DisplayUnit & ")",
+			        ""
+			    )
+			
 			RETURN
 			    IF (
 			        ISBLANK ( _SelectedName ),
-			        "Multiple Resources Selected",
-			        "Selected Resource: " & _SelectedName
+			        "Multiple Resources Selected" & _UnitString,
+			        "Selected Resource: " & _SelectedName & _UnitString
 			    )
 		lineageTag: 963b9af2-1f55-43ce-9f49-2a45a2c5299d
 

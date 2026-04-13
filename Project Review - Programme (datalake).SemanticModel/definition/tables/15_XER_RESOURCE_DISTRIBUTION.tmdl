@@ -326,6 +326,25 @@ table 15_XER_RESOURCE_DISTRIBUTION
 
 		annotation SummarizationSetBy = Automatic
 
+	column monthly_hours =
+			
+			VAR Qty = '15_XER_RESOURCE_DISTRIBUTION'[monthly_quantity]
+			VAR RsrcType = '15_XER_RESOURCE_DISTRIBUTION'[rsrc_type]
+			VAR QtyPerHr = VALUE(LOOKUPVALUE('12_XER_RSRC'[def_qty_per_hr], '12_XER_RSRC'[rsrc_id_key], '15_XER_RESOURCE_DISTRIBUTION'[rsrc_id_key]))
+			RETURN
+			    IF(
+			        RsrcType = "RT_Labor",
+			        IF(QtyPerHr <> 0, Qty / QtyPerHr, Qty),
+			        Qty
+			    )
+		formatString: #,0.00
+		lineageTag: d2e4f6a8-b0c2-4d6e-8f01-234567890abc
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
 	partition 15_XER_RESOURCE_DISTRIBUTION = m
 		mode: import
 		queryGroup: XER

@@ -321,6 +321,17 @@ table 'Monthly Resource Distribution Baseline'
 
 		annotation SummarizationSetBy = Automatic
 
+	column monthly_hours
+		formatString: #,0.00
+		lineageTag: e3f4a5b6-c7d8-9012-3456-789abcdef012
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[monthly_hours]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
 	partition 'Monthly Resource Distribution Baseline' = calculated
 		mode: import
 		source =
