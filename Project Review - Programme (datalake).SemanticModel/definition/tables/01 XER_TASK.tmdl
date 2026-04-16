@@ -1415,7 +1415,7 @@ table '01 XER_TASK'
 				let
 				    Source = fnAthenaSource("01_xer_task"),
 				
-				    // Add ProjectCode + UpdateDate in one pass via Table.AddColumns (fewer iterations)
+				    // Add ProjectCode + UpdateDate in one pass
 				    AddParsedColumns = Table.AddColumn(
 				        Table.AddColumn(Source, "ProjectCode", each Text.BeforeDelimiter([filename], "-"), type text),
 				        "UpdateDate", each
@@ -1458,14 +1458,45 @@ table '01 XER_TASK'
 				        {"start", "Start"}, {"finish", "Finish"}, {"remainingduration", "remaining_duration"}
 				    }),
 				
-				    // Join with project lookup
+				    // --- PROJECT NAME LOOKUP WITH J-CODE FALLBACK ---
+				
+				    // Create the alternate code: replace leading "C" with "J"
+				    AddAltCode = Table.AddColumn(
+				        Renamed, "AltProjectCode",
+				        each if Text.StartsWith([ProjectCode], "C") then
+				                "J" & Text.Middle([ProjectCode], 1)
+				             else
+				                [ProjectCode],
+				        type text
+				    ),
+				
 				    BufferedProjects = Table.Buffer(dbo_project),
-				    Merged = Table.ExpandTableColumn(
-				        Table.NestedJoin(Renamed, {"ProjectCode"}, BufferedProjects, {"projectno"}, "ProjectLookup", JoinKind.LeftOuter),
-				        "ProjectLookup", {"projectname"}, {"ProjectName"}
-				    )
+				
+				    // 1) Try joining on the alternate J-code first
+				    MergedAlt = Table.ExpandTableColumn(
+				        Table.NestedJoin(AddAltCode, {"AltProjectCode"}, BufferedProjects, {"projectno"}, "AltLookup", JoinKind.LeftOuter),
+				        "AltLookup", {"projectname"}, {"AltProjectName"}
+				    ),
+				
+				    // 2) Also join on the original code as fallback
+				    MergedOrig = Table.ExpandTableColumn(
+				        Table.NestedJoin(MergedAlt, {"ProjectCode"}, BufferedProjects, {"projectno"}, "OrigLookup", JoinKind.LeftOuter),
+				        "OrigLookup", {"projectname"}, {"OrigProjectName"}
+				    ),
+				
+				    // 3) Pick the J-code name if it exists, otherwise fall back to original
+				    AddProjectName = Table.AddColumn(
+				        MergedOrig, "ProjectName",
+				        each if [AltProjectName] <> null then [AltProjectName] else [OrigProjectName],
+				        type text
+				    ),
+				
+				    // Clean up helper columns
+				    Cleanup = Table.RemoveColumns(AddProjectName, {"AltProjectCode", "AltProjectName", "OrigProjectName"})
 				in
-				    Merged
+				    Cleanup
 
 	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
 

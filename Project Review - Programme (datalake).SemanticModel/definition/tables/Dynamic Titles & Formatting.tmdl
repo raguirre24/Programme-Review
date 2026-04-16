@@ -11,7 +11,7 @@ table 'Dynamic Titles & Formatting'
 
 	measure SelectedTitle =
 			
-			VAR SelectedProject = SELECTEDVALUE('01 XER_TASK'[ProjectCode])
+			VAR SelectedProject = SELECTEDVALUE(Project_Dimension[Project])
 			VAR SelectedMonth = SELECTEDVALUE(CurrentDate[UpdateDate]) // This captures the selected month (likely a date value)
 			
 			RETURN
