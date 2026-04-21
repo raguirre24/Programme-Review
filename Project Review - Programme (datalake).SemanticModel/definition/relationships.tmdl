@@ -560,3 +560,13 @@ relationship b8722003-1c5c-1b4c-b829-55152087201d
 	fromColumn: '01 XER_TASK'.wbs_id_key
 	toColumn: Project_Dimension.wbs_id_key
 
+relationship 86388273-94f8-4cae-adc6-5069573929d7
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '06 XER_PREDECESSOR'.'Baseline Start'
+	toColumn: LocalDateTable_d96ec7c2-3e0e-4145-a9ce-40ce65832843.Date
+
+relationship 370b9666-69d6-4484-9142-d5df193d8f5d
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '06 XER_PREDECESSOR'.'Baseline Finish'
+	toColumn: LocalDateTable_2b950cd1-bbfa-4fbb-ae49-3664cfd3f6be.Date
+

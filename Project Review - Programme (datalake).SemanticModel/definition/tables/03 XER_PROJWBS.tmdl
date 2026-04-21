@@ -387,6 +387,12 @@ table '03 XER_PROJWBS'
 
 		annotation SummarizationSetBy = Automatic
 
+	column ProjectName = LOOKUPVALUE('01 XER_TASK'[ProjectName],'01 XER_TASK'[ProjectCode],'03 XER_PROJWBS'[ProjectCode])
+		lineageTag: 3ee2cfee-4d02-411a-9833-4f75fc51028c
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
 	partition '03 XER_PROJWBS' = m
 		mode: import
 		queryGroup: XER

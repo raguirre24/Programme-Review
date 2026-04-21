@@ -1,8 +1,8 @@
 {
   "version": "2.0.1.0",
   "author": {
-    "name": "Your Name",
-    "email": "your.email@example.com"
+    "name": "Ricardo Aguirre",
+    "email": "ricardoaguirregarcia@gmail.com"
   },
   "resources": [
     {
@@ -16,9 +16,9 @@
     "name": "LongestPathVisual",
     "displayName": "Longest Path Visual",
     "version": "2.0.1.0",
-    "description": "Displays the longest path of tasks using CPM analysis.",
-    "supportUrl": "https://github.com/your-repo",
-    "gitHubUrl": "https://github.com/your-repo",
+    "description": "Critical Path Method Gantt chart. © 2026 Ricardo Aguirre. All rights reserved. Licensed use only — see LICENSE.md in distribution. Contact ricardoaguirregarcia@gmail.com for licensing.",
+    "supportUrl": "mailto:ricardoaguirregarcia@gmail.com",
+    "gitHubUrl": "",
     "visualClassName": "Visual"
   },
   "metadata": {

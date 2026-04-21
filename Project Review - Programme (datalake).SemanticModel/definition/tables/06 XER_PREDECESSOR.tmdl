@@ -101,6 +101,11 @@ table '06 XER_PREDECESSOR'
 		lineageTag: 4437b4bd-ccc3-45ee-aa72-74825c4fd048
 		summarizeBy: none
 
+		variation Variation
+			isDefault
+			relationship: 86388273-94f8-4cae-adc6-5069573929d7
+			defaultHierarchy: LocalDateTable_d96ec7c2-3e0e-4145-a9ce-40ce65832843.'Date Hierarchy'
+
 		changedProperty = DataType
 
 		annotation SummarizationSetBy = Automatic
@@ -123,6 +128,11 @@ table '06 XER_PREDECESSOR'
 			    )
 		lineageTag: 523861ed-a746-484b-87f0-36c627742b32
 		summarizeBy: none
+
+		variation Variation
+			isDefault
+			relationship: 370b9666-69d6-4484-9142-d5df193d8f5d
+			defaultHierarchy: LocalDateTable_2b950cd1-bbfa-4fbb-ae49-3664cfd3f6be.'Date Hierarchy'
 
 		changedProperty = DataType
 

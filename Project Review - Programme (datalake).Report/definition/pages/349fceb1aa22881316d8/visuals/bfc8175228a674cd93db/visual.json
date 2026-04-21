@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.6.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
   "name": "bfc8175228a674cd93db",
   "position": {
     "x": 670,
@@ -81,7 +81,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'P6 Critical Path'"
+                  "Value": "'Gantt Chart'"
                 }
               }
             },
