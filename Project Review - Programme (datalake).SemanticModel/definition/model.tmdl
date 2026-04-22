@@ -19,7 +19,7 @@ queryGroup Database
 
 	annotation PBI_QueryGroupOrder = 2
 
-annotation PBI_QueryOrder = ["01 XER_TASK","02 XER_PROJECT","03 XER_PROJWBS","05 XER_DATA DATE","06 XER_PREDECESSOR","07 XER_ACTVTYPE","08 XER_ACTVCODE","09 XER_TASKACTV","10 XER_CALENDARS","11_XER_CALENDAR_DETAILED","12_XER_RSRC","13_XER_TASKRSRC","14_XER_UMEASURE","15_XER_RESOURCE_DISTRIBUTION","XER Measures","XER  Counts","XER Metrics","XER S-Curve","Dynamic Titles & Formatting","SharePointSite","Target Update","Current Update","Activity Completion","UserPermission","Project","Resources","WBS Measures","Logos","fnAthenaSource","ProjectFilterList","SelectedProjects","SelectedProgrammeType","AthenaDB","dbo_project"]
+annotation PBI_QueryOrder = ["01 XER_TASK","02 XER_PROJECT","03 XER_PROJWBS","05 XER_DATA DATE","06 XER_PREDECESSOR","07 XER_ACTVTYPE","08 XER_ACTVCODE","09 XER_TASKACTV","10 XER_CALENDARS","11_XER_CALENDAR_DETAILED","12_XER_RSRC","13_XER_TASKRSRC","14_XER_UMEASURE","15_XER_RESOURCE_DISTRIBUTION","XER Measures","XER  Counts","XER Metrics","XER S-Curve","Dynamic Titles & Formatting","SharePointSite","Target Update","Current Update","Activity Completion","UserPermission","Project","Resources","WBS Measures","Logos","fnAthenaSource","ProjectFilterList","SelectedProjects","SelectedProgrammeType","AthenaDB","dbo_project","AthenaScopeSql"]
 
 annotation PBI_ProTooling = ["TMDLView_Desktop","DevMode"]
 
@@ -149,6 +149,7 @@ ref table LocalDateTable_b96da9ad-77fa-429a-b6e7-85d8829f802b
 ref table 14_XER_UMEASURE
 ref table LocalDateTable_d96ec7c2-3e0e-4145-a9ce-40ce65832843
 ref table LocalDateTable_2b950cd1-bbfa-4fbb-ae49-3664cfd3f6be
+ref table AthenaScopeSql
 
 ref role 'Project Access'
 ref role 'Project Access 2'

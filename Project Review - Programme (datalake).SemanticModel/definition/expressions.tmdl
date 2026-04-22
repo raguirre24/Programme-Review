@@ -38,11 +38,24 @@ expression SelectedProjects = "C4068, C5064" meta [IsParameterQuery=true, Type="
 
 expression ProjectFilterList =
 		let
-		    raw = SelectedProjects,
-		    isAll = Text.Upper(Text.Trim(raw)) = "ALL",
-		    splitList = if isAll then null else List.Transform(Text.Split(raw, ","), each Text.Trim(_))
+		    Raw = Text.Trim(SelectedProjects),
+		    Tokens =
+		        List.Select(
+		            List.Transform(Text.Split(Raw, ","), each Text.Trim(_)),
+		            each _ <> ""
+		        ),
+		    UpperTokens = List.Transform(Tokens, each Text.Upper(_)),
+		    Result =
+		        if List.Count(Tokens) = 0 then
+		            error "SelectedProjects must contain a comma-separated list of project codes or ALL."
+		        else if List.Count(Tokens) = 1 and UpperTokens{0} = "ALL" then
+		            null
+		        else if List.Contains(UpperTokens, "ALL") then
+		            error "Use ALL by itself, not mixed with project codes."
+		        else
+		            List.Sort(List.Distinct(Tokens))
 		in
-		    splitList
+		    Result
 	lineageTag: b2c3d4e5-6f7a-8b9c-0d1e-f23456789012
 	queryGroup: Database
 
@@ -52,64 +65,37 @@ expression ProjectFilterList =
 
 expression fnAthenaSource =
 		let
-		    fn = (tableName as text) as table =>
+		    fn = (tableName as text, optional selectList as nullable text) as table =>
 		        let
 		            DB = AthenaDB,
 		
-		            // ── Programme Type Filter (C / T / ALL) ──
-		            progType = Text.Upper(Text.Trim(SelectedProgrammeType)),
-		            programmeTypeFilter =
-		                if progType = "ALL" then "(filename LIKE '%-C-%' OR filename LIKE '%-T-%')"
-		                else if progType = "T" then "filename LIKE '%-T-%'"
-		                else "filename LIKE '%-C-%'",
+		            AllowedChars =
+		                List.Combine({
+		                    List.Transform({48..57}, each Character.FromNumber(_)),
+		                    List.Transform({65..90}, each Character.FromNumber(_)),
+		                    List.Transform({97..122}, each Character.FromNumber(_)),
+		                    {"_"}
+		                }),
 		
-		            // ── Project Filter ──
-		            filterList = ProjectFilterList,
-		            projectFilter =
-		                if filterList = null then
-		                    ""
+		            SafeTableName =
+		                if Text.Length(tableName) > 0 and Text.Length(Text.Remove(tableName, AllowedChars)) = 0 then
+		                    tableName
 		                else
-		                    let
-		                        quoted = List.Transform(filterList, each
-		                            "'" & Text.Replace(_, "'", "''") & "'"
-		                        ),
-		                        inClause = Text.Combine(quoted, ", ")
-		                    in
-		                        " AND SPLIT_PART(filename, '-', 1) IN (" & inClause & ")",
+		                    error "Invalid table name.",
 		
-		            // ── Athena CTE: kept_filenames ──
-		            cte =
-		                "WITH " &
-		                "parsed AS (" &
-		                    "SELECT filename, monthupdate, " &
-		                    "SPLIT_PART(filename, '-', 1) AS project_code, " &
-		                    "SPLIT_PART(filename, '-', 2) AS programme_type, " &
-		                    "SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3) AS tag, " &
-		                    "CASE WHEN REGEXP_LIKE(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), '^BL[0-9]+') THEN TRUE ELSE FALSE END AS is_baseline, " &
-		                    "CASE WHEN REGEXP_LIKE(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), '^BL[0-9]+') THEN CAST(REGEXP_EXTRACT(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), 'BL([0-9]+)', 1) AS INTEGER) END AS bl_number, " &
-		                    "CASE WHEN REGEXP_LIKE(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), '^BL[0-9]+') THEN NULLIF(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 4), '') END AS bl_revision " &
-		                    "FROM prod_projectcontrols_p6.""02_xer_project"" " &
-		                    "WHERE (" & programmeTypeFilter & ")" & projectFilter &
-		                "), " &
-		                "ranked_baselines AS (" &
-		                    "SELECT *, ROW_NUMBER() OVER (PARTITION BY project_code, programme_type ORDER BY bl_number DESC, bl_revision DESC NULLS LAST, monthupdate DESC NULLS LAST) AS bl_rank " &
-		                    "FROM parsed WHERE is_baseline = TRUE" &
-		                "), " &
-		                "latest_baseline AS (" &
-		                    "SELECT project_code, programme_type, monthupdate AS anchor_date, filename AS anchor_filename " &
-		                    "FROM ranked_baselines WHERE bl_rank = 1" &
-		                "), " &
-		                "kept_filenames AS (" &
-		                    "SELECT DISTINCT p.filename " &
-		                    "FROM parsed p " &
-		                    "LEFT JOIN latest_baseline lb ON p.project_code = lb.project_code AND p.programme_type = lb.programme_type " &
-		                    "WHERE lb.anchor_date IS NULL OR p.filename = lb.anchor_filename OR p.monthupdate > lb.anchor_date" &
-		                ") ",
+		            SelectClause =
+		                if selectList = null or Text.Trim(selectList) = "" then
+		                    "t.*"
+		                else
+		                    selectList,
 		
-		            // ── Final query: CTE + INNER JOIN to target table ──
-		            sql = cte & "SELECT t.* FROM prod_projectcontrols_p6.""" & tableName & """ t INNER JOIN kept_filenames kf ON t.filename = kf.filename",
+		            Sql =
+		                AthenaScopeSql &
+		                "SELECT " & SelectClause & " " &
+		                "FROM prod_projectcontrols_p6.""" & SafeTableName & """ t " &
+		                "INNER JOIN kept_filenames kf ON t.filename = kf.filename",
 		
-		            Result = Value.NativeQuery(DB, sql)
+		            Result = Value.NativeQuery(DB, Sql, null)
 		        in
 		            Result
 		in

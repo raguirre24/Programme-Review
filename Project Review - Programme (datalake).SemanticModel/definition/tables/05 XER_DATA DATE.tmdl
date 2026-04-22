@@ -48,7 +48,7 @@ table '05 XER_DATA DATE'
 		queryGroup: XER
 		source =
 				let
-				    Source = #"02 XER_PROJECT",
+				    Source = Table.Buffer(#"02 XER_PROJECT"),
 				    #"Removed Other Columns" = Table.SelectColumns(Source,{"proj_short_name", "last_recalc_date", "proj_id_key", "filename"})
 				in
 				    #"Removed Other Columns"
