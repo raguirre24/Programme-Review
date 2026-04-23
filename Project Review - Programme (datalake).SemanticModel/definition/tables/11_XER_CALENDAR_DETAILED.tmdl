@@ -32,11 +32,6 @@ table 11_XER_CALENDAR_DETAILED
 		summarizeBy: none
 		sourceColumn: date
 
-		variation Variation
-			isDefault
-			relationship: 4cfda5d0-5bdd-4929-b05e-9490cd56cdb5
-			defaultHierarchy: LocalDateTable_73dd2f81-3f46-4e40-b34a-37f6368a1c02.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
@@ -140,11 +135,6 @@ table 11_XER_CALENDAR_DETAILED
 		lineageTag: b15b88a2-c4e1-46f3-9958-50fb7b0dd9eb
 		summarizeBy: none
 		sourceColumn: monthupdate
-
-		variation Variation
-			isDefault
-			relationship: 697caf22-b255-4f13-940a-dc9247837824
-			defaultHierarchy: LocalDateTable_7ba776b5-f0d7-44d6-bde5-17c15266359f.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
 

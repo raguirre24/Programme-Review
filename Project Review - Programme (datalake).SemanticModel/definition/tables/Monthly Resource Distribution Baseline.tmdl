@@ -57,11 +57,6 @@ table 'Monthly Resource Distribution Baseline'
 		isNameInferred
 		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[distribution_month]
 
-		variation Variation
-			isDefault
-			relationship: 80f363eb-1272-4862-8715-11683b953cfb
-			defaultHierarchy: LocalDateTable_803d298b-03ae-478b-8b98-ac49cd51b064.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 	column month_start_date
@@ -71,11 +66,6 @@ table 'Monthly Resource Distribution Baseline'
 		isNameInferred
 		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[month_start_date]
 
-		variation Variation
-			isDefault
-			relationship: dd451cf3-2a6a-4dd9-b478-5a86cd8abd25
-			defaultHierarchy: LocalDateTable_24a96da4-33f8-4af3-8a3c-534c4e73e40b.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 	column month_end_date
@@ -84,11 +74,6 @@ table 'Monthly Resource Distribution Baseline'
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[month_end_date]
-
-		variation Variation
-			isDefault
-			relationship: 63093ff6-6213-49bf-bd9c-22c5046e76cb
-			defaultHierarchy: LocalDateTable_7c1823f2-f20a-4078-be94-efcffb8aadd2.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
 
@@ -231,11 +216,6 @@ table 'Monthly Resource Distribution Baseline'
 		isNameInferred
 		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[start]
 
-		variation Variation
-			isDefault
-			relationship: 01db4563-de0d-44a2-b623-ace24813c216
-			defaultHierarchy: LocalDateTable_ddb08b0f-b2ac-4123-b7dd-5d66c43f3404.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 	column finish
@@ -244,11 +224,6 @@ table 'Monthly Resource Distribution Baseline'
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[finish]
-
-		variation Variation
-			isDefault
-			relationship: 952b8c24-d063-4ac8-a9a2-8e5aa765e3f7
-			defaultHierarchy: LocalDateTable_c765e116-586a-4b38-a807-dd3c2f60895f.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
 
@@ -267,11 +242,6 @@ table 'Monthly Resource Distribution Baseline'
 		isNameInferred
 		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[monthupdate]
 
-		variation Variation
-			isDefault
-			relationship: 02e404c8-8e6a-49ad-89a3-09886bc16b73
-			defaultHierarchy: LocalDateTable_0d9e2382-7e29-4d80-ab47-7a7bd0d62fdf.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 	column refresh_date
@@ -280,11 +250,6 @@ table 'Monthly Resource Distribution Baseline'
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[refresh_date]
-
-		variation Variation
-			isDefault
-			relationship: c03b20bd-1394-4047-827d-c278e95ab0d4
-			defaultHierarchy: LocalDateTable_5af48053-feab-4e96-8f66-49d87ea54e4c.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
 

@@ -44,11 +44,6 @@ table '06a XER_SUCCESSOR'
 		isNameInferred
 		sourceColumn: [successor_start]
 
-		variation Variation
-			isDefault
-			relationship: 42daf3f7-d73f-463e-ba83-0c507ca534a1
-			defaultHierarchy: LocalDateTable_49b15a61-76d7-46ea-8275-623fdde212e4.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
@@ -61,11 +56,6 @@ table '06a XER_SUCCESSOR'
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [successor_finish]
-
-		variation Variation
-			isDefault
-			relationship: c3ed9120-fc3a-4ee5-b3c2-4a5bcb75c879
-			defaultHierarchy: LocalDateTable_10ccfe4d-c0c1-4e4b-8cd5-715a2b41d9ea.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
 

@@ -35,11 +35,6 @@ table 15_XER_RESOURCE_DISTRIBUTION
 		summarizeBy: none
 		sourceColumn: distribution_month
 
-		variation Variation
-			isDefault
-			relationship: 629356e8-6c4a-46da-9268-66cd4bd95f67
-			defaultHierarchy: LocalDateTable_7621cc0e-f722-4ff3-be50-6d607a231ba9.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
@@ -51,11 +46,6 @@ table 15_XER_RESOURCE_DISTRIBUTION
 		summarizeBy: none
 		sourceColumn: month_start_date
 
-		variation Variation
-			isDefault
-			relationship: fdd5722d-7bb3-4975-a13d-eebff4725467
-			defaultHierarchy: LocalDateTable_4ebabe90-cf58-48c8-a36f-99cc6b685e65.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 	column month_end_date
@@ -64,11 +54,6 @@ table 15_XER_RESOURCE_DISTRIBUTION
 		lineageTag: 8c47064f-889b-4cba-b578-83ce73e662b8
 		summarizeBy: none
 		sourceColumn: month_end_date
-
-		variation Variation
-			isDefault
-			relationship: 6248db3c-2fe9-40fd-99a5-d7687b412433
-			defaultHierarchy: LocalDateTable_0ca9f382-b2de-4063-9664-72e49daad1d1.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
 
@@ -227,11 +212,6 @@ table 15_XER_RESOURCE_DISTRIBUTION
 		summarizeBy: none
 		sourceColumn: start
 
-		variation Variation
-			isDefault
-			relationship: 4c898638-688d-4fc4-9fdc-bdbb4d702809
-			defaultHierarchy: LocalDateTable_5c803c1f-f4bd-4bde-94ff-2db0fc06b286.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 	column finish
@@ -240,11 +220,6 @@ table 15_XER_RESOURCE_DISTRIBUTION
 		lineageTag: 21ce1db9-65dc-4c54-bbca-cf83468625d6
 		summarizeBy: none
 		sourceColumn: finish
-
-		variation Variation
-			isDefault
-			relationship: 46875baf-a02d-4ab3-bee4-9024acb6f6f5
-			defaultHierarchy: LocalDateTable_6c8ebc92-7dc4-4842-bf4e-33894f2ef956.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
 
@@ -271,11 +246,6 @@ table 15_XER_RESOURCE_DISTRIBUTION
 		summarizeBy: none
 		sourceColumn: monthupdate
 
-		variation Variation
-			isDefault
-			relationship: 1832420f-79a6-41bd-86e9-2781cc133edc
-			defaultHierarchy: LocalDateTable_34ef6ecb-545f-4dff-82e4-dac80870285c.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
@@ -286,11 +256,6 @@ table 15_XER_RESOURCE_DISTRIBUTION
 		lineageTag: 440a2a8e-7425-4a71-86e7-a97e2cb0b929
 		summarizeBy: none
 		sourceColumn: refresh_date
-
-		variation Variation
-			isDefault
-			relationship: 6102668a-94dd-481c-bdf6-803ad50bfae9
-			defaultHierarchy: LocalDateTable_939b5b0c-887d-4ecd-929c-314ecf797bd2.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
 

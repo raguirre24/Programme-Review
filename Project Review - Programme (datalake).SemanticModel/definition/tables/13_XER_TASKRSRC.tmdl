@@ -44,11 +44,6 @@ table 13_XER_TASKRSRC
 		summarizeBy: none
 		sourceColumn: act_start_date
 
-		variation Variation
-			isDefault
-			relationship: d4afbde3-1db7-4172-bbdb-75f9f456bc92
-			defaultHierarchy: LocalDateTable_0128c92f-464c-4d3d-b5cd-05a7a97871ca.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
@@ -59,11 +54,6 @@ table 13_XER_TASKRSRC
 		lineageTag: e7e6869d-839c-4ce7-98c8-95d2f872d0ff
 		summarizeBy: none
 		sourceColumn: act_end_date
-
-		variation Variation
-			isDefault
-			relationship: 3ca0f2b2-b3af-4081-9641-f69ceab4320d
-			defaultHierarchy: LocalDateTable_13a38ce0-965a-44e0-899d-fd153e7f4d99.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
 
@@ -76,11 +66,6 @@ table 13_XER_TASKRSRC
 		summarizeBy: none
 		sourceColumn: restart_date
 
-		variation Variation
-			isDefault
-			relationship: 6fa76ce1-cce2-4840-b9bc-07dddac31fb6
-			defaultHierarchy: LocalDateTable_a923ea0f-2aed-4bf1-9520-ea16e8b0ab50.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
@@ -91,11 +76,6 @@ table 13_XER_TASKRSRC
 		lineageTag: dd878e99-6b1f-4607-8b55-e756357fdac9
 		summarizeBy: none
 		sourceColumn: reend_date
-
-		variation Variation
-			isDefault
-			relationship: 0e26c684-3427-42f3-94b1-cc40f875f474
-			defaultHierarchy: LocalDateTable_8674d33e-4d53-4611-b53c-d7da94562d00.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
 
@@ -160,11 +140,6 @@ table 13_XER_TASKRSRC
 		formatString: dd/mm/yyyy
 		lineageTag: 37c64bce-b9c6-47ff-ad51-659c9c5c7bc5
 		summarizeBy: none
-
-		variation Variation
-			isDefault
-			relationship: c2e2203c-0a8d-4b58-acba-29aa3c056195
-			defaultHierarchy: LocalDateTable_338125bd-2a91-4452-a2ec-ac77af5aee2e.'Date Hierarchy'
 
 		changedProperty = DataType
 
@@ -381,11 +356,6 @@ table 13_XER_TASKRSRC
 		summarizeBy: none
 		sourceColumn: target_start_date
 
-		variation Variation
-			isDefault
-			relationship: fe27d598-2b30-4790-ab94-b88cc96e82e1
-			defaultHierarchy: LocalDateTable_7a3188ec-3b10-47a9-8029-efbbe567f8df.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
@@ -396,11 +366,6 @@ table 13_XER_TASKRSRC
 		lineageTag: 3f05052c-722e-4eb0-b767-bb5fbd42dd54
 		summarizeBy: none
 		sourceColumn: target_end_date
-
-		variation Variation
-			isDefault
-			relationship: 2f436058-721b-4cf6-9a2e-04046458acad
-			defaultHierarchy: LocalDateTable_48d93f20-8d35-4d5e-a448-f482225635e1.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
 
@@ -413,11 +378,6 @@ table 13_XER_TASKRSRC
 		summarizeBy: none
 		sourceColumn: rem_late_start_date
 
-		variation Variation
-			isDefault
-			relationship: a2bb1bab-6f53-4d0a-9b52-4a77683ed75c
-			defaultHierarchy: LocalDateTable_13030c5f-ab1e-4a1b-8bc7-7f418a45a26c.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
@@ -428,11 +388,6 @@ table 13_XER_TASKRSRC
 		lineageTag: e117672b-b140-42e0-9097-10cf00d3fb7f
 		summarizeBy: none
 		sourceColumn: rem_late_end_date
-
-		variation Variation
-			isDefault
-			relationship: 5b553e47-cbc6-4e66-8bae-43cd483391b6
-			defaultHierarchy: LocalDateTable_ff4bc417-181d-47fb-99d7-937aecb74316.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
 

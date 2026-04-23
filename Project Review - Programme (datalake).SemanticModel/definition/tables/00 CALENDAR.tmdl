@@ -8,11 +8,6 @@ table '00 CALENDAR'
 		isNameInferred
 		sourceColumn: [Date]
 
-		variation Variation
-			isDefault
-			relationship: e83048ed-5068-45ad-a775-5d8a8ae4a791
-			defaultHierarchy: LocalDateTable_d515ec98-6097-4406-be54-27cab266f793.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
@@ -29,11 +24,6 @@ table '00 CALENDAR'
 		formatString: mmmm yyyy
 		lineageTag: edfe828e-e92a-42fc-b002-fae966716c7a
 		summarizeBy: none
-
-		variation Variation
-			isDefault
-			relationship: ea352bef-db33-4eda-89d5-5fb559e0f807
-			defaultHierarchy: LocalDateTable_387636b7-eafe-401f-a098-09fe66c279c9.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
 

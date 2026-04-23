@@ -46,11 +46,6 @@ table '04 XER_BASELINE'
 		isNameInferred
 		sourceColumn: [Start]
 
-		variation Variation
-			isDefault
-			relationship: 1c1cf5e7-2aa8-4bae-8fc9-620fe8eb707d
-			defaultHierarchy: LocalDateTable_cef81a88-781d-4bb2-afe6-215e5e582809.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
@@ -86,11 +81,6 @@ table '04 XER_BASELINE'
 		isNameInferred
 		sourceColumn: [Data Date]
 
-		variation Variation
-			isDefault
-			relationship: dd8ceb85-982b-4ea3-9460-5038393b7974
-			defaultHierarchy: LocalDateTable_f9fa0049-4ece-4889-a16f-e9fd4bcbeedd.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
@@ -112,11 +102,6 @@ table '04 XER_BASELINE'
 		isNameInferred
 		sourceColumn: [Effective_Early_End]
 
-		variation Variation
-			isDefault
-			relationship: 11fb84c4-240a-40af-841c-bfdc6c751d94
-			defaultHierarchy: LocalDateTable_d24a623d-b54d-476a-8f53-79bb612c537a.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
@@ -129,11 +114,6 @@ table '04 XER_BASELINE'
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Effective_Late_End]
-
-		variation Variation
-			isDefault
-			relationship: a92a7a29-01ad-44c7-ace4-c7a57ea29b00
-			defaultHierarchy: LocalDateTable_0747e17e-11ad-419d-b613-3313c930573d.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
 
@@ -148,11 +128,6 @@ table '04 XER_BASELINE'
 		isNameInferred
 		sourceColumn: [early_start_date]
 
-		variation Variation
-			isDefault
-			relationship: 28412cc4-c992-4ddc-8e5b-524267d36b8f
-			defaultHierarchy: LocalDateTable_f79ff20c-76b6-4baf-8de9-e9e6b7e760a8.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
@@ -166,11 +141,6 @@ table '04 XER_BASELINE'
 		isNameInferred
 		sourceColumn: [early_end_date]
 
-		variation Variation
-			isDefault
-			relationship: 7b6573a5-c911-44b5-87d5-d7179fb1b8c6
-			defaultHierarchy: LocalDateTable_6a9a6000-bff2-4281-8cef-507996f2532a.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
@@ -183,11 +153,6 @@ table '04 XER_BASELINE'
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [First_Project_Month]
-
-		variation Variation
-			isDefault
-			relationship: 462c7fb1-8ac7-4f47-90bb-441429efae19
-			defaultHierarchy: LocalDateTable_627d255f-434c-4411-ac0d-3a15bdca3259.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
 

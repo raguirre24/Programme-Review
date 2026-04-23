@@ -8,11 +8,6 @@ table '02 XER_PROJECT'
 		summarizeBy: none
 		sourceColumn: last_recalc_date
 
-		variation Variation
-			isDefault
-			relationship: 8bb9386b-77c5-41d2-a683-344e95b77933
-			defaultHierarchy: LocalDateTable_ae67810d-93ce-4197-a74e-3bb20d9bed60.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
@@ -266,11 +261,6 @@ table '02 XER_PROJECT'
 		summarizeBy: none
 		sourceColumn: plan_start_date
 
-		variation Variation
-			isDefault
-			relationship: 99b9ad66-0068-43a4-8c80-c2217e75a527
-			defaultHierarchy: LocalDateTable_84b136d4-0c16-430a-b2a8-6b6e79f3cbc1.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
@@ -281,11 +271,6 @@ table '02 XER_PROJECT'
 		lineageTag: c43a3e73-9db0-49f0-bad3-674230e2b674
 		summarizeBy: none
 		sourceColumn: plan_end_date
-
-		variation Variation
-			isDefault
-			relationship: c0cf0c74-4a51-4198-8885-0f0d810fb174
-			defaultHierarchy: LocalDateTable_bfd2190b-c248-4ffa-ac5c-c17cb1978ba9.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
 
@@ -298,11 +283,6 @@ table '02 XER_PROJECT'
 		summarizeBy: none
 		sourceColumn: scd_end_date
 
-		variation Variation
-			isDefault
-			relationship: af828b89-f188-4776-b6f3-8de83a023bf0
-			defaultHierarchy: LocalDateTable_18c5c2b4-20fd-4cfb-a98d-bfcdfff2b369.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
@@ -313,11 +293,6 @@ table '02 XER_PROJECT'
 		lineageTag: e47c7450-8045-4f2e-8dde-f1ff3906e15c
 		summarizeBy: none
 		sourceColumn: add_date
-
-		variation Variation
-			isDefault
-			relationship: 34918c33-091b-45d5-899d-8496fc090881
-			defaultHierarchy: LocalDateTable_359244bb-a97a-4f99-85c1-e0cf0f71bdc7.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
 
@@ -330,11 +305,6 @@ table '02 XER_PROJECT'
 		summarizeBy: none
 		sourceColumn: last_tasksum_date
 
-		variation Variation
-			isDefault
-			relationship: f13bc119-5983-478b-a1e7-a499ad8334e7
-			defaultHierarchy: LocalDateTable_7190bfff-72ca-4039-82ae-864bae8e5acf.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
@@ -345,11 +315,6 @@ table '02 XER_PROJECT'
 		lineageTag: 3b31760b-6b7d-4651-9fe3-33f4db3b5f15
 		summarizeBy: none
 		sourceColumn: fcst_start_date
-
-		variation Variation
-			isDefault
-			relationship: 0bfd1021-8285-4f34-9441-d50613763ca4
-			defaultHierarchy: LocalDateTable_cfb244e8-624b-4c14-ba72-18e4b4423952.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
 
@@ -634,11 +599,6 @@ table '02 XER_PROJECT'
 		summarizeBy: none
 		sourceColumn: sum_refresh_date
 
-		variation Variation
-			isDefault
-			relationship: c020e527-9ce6-4b43-ad97-08a94ac12648
-			defaultHierarchy: LocalDateTable_2c36690b-0598-4562-be50-1776db5f0b56.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
@@ -673,11 +633,6 @@ table '02 XER_PROJECT'
 		lineageTag: c6346e1e-af74-49db-ba13-ee228e7f491e
 		summarizeBy: none
 		sourceColumn: refresh_date
-
-		variation Variation
-			isDefault
-			relationship: e5fc6112-5cc5-45e9-897f-40d0f981440f
-			defaultHierarchy: LocalDateTable_76ea9526-88a5-43bf-9607-b2fbf158cc71.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
 
@@ -716,5 +671,5 @@ table '02 XER_PROJECT'
 
 	annotation PBI_NavigationStepName = Navigation
 
-	annotation PBI_ResultType = Table
+	annotation PBI_ResultType = Exception
 

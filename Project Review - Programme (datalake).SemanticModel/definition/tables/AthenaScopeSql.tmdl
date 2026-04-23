@@ -98,7 +98,7 @@ table AthenaScopeSql
 				            "WHERE bl_rank = 1" &
 				        "), " &
 				        "kept_filenames AS (" &
-				            "SELECT DISTINCT f.filename " &
+				            "SELECT DISTINCT f.filename, f.parent_recalc_date " &
 				            "FROM file_info f " &
 				            "LEFT JOIN latest_baseline lb " &
 				                "ON f.project_code = lb.project_code " &

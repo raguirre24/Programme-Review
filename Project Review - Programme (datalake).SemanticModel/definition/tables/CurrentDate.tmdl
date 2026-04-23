@@ -8,11 +8,6 @@ table CurrentDate
 		isNameInferred
 		sourceColumn: 01 XER_TASK[UpdateDate]
 
-		variation Variation
-			isDefault
-			relationship: b4c46b6a-1737-4911-b27b-196f809965ea
-			defaultHierarchy: LocalDateTable_b0bcbbc7-7c1c-4451-b162-fcbba61edf95.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date

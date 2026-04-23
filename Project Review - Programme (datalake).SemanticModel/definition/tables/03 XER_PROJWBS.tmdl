@@ -166,11 +166,6 @@ table '03 XER_PROJWBS'
 		lineageTag: 9dbbfd04-e0c8-4c0c-88f2-f8e482f4c265
 		summarizeBy: none
 
-		variation Variation
-			isDefault
-			relationship: 5268c639-e39e-49d9-9bab-e4c7c4726572
-			defaultHierarchy: LocalDateTable_99be05f3-da41-484b-b443-9abfb098934b.'Date Hierarchy'
-
 		changedProperty = DataType
 
 		annotation SummarizationSetBy = Automatic

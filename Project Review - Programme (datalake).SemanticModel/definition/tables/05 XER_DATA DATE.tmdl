@@ -8,11 +8,6 @@ table '05 XER_DATA DATE'
 		summarizeBy: none
 		sourceColumn: last_recalc_date
 
-		variation Variation
-			isDefault
-			relationship: 50041d5a-1958-44bf-88f1-4a17f5dce969
-			defaultHierarchy: LocalDateTable_0ec6d4fe-5a03-4580-9a01-d93c95c653ac.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date

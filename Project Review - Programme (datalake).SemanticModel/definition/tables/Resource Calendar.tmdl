@@ -8,11 +8,6 @@ table 'Resource Calendar'
 		isNameInferred
 		sourceColumn: [Month]
 
-		variation Variation
-			isDefault
-			relationship: d80ab5ee-10bc-4140-a252-25531d16c708
-			defaultHierarchy: LocalDateTable_b96da9ad-77fa-429a-b6e7-85d8829f802b.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date

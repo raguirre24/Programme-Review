@@ -101,11 +101,6 @@ table '06 XER_PREDECESSOR'
 		lineageTag: 4437b4bd-ccc3-45ee-aa72-74825c4fd048
 		summarizeBy: none
 
-		variation Variation
-			isDefault
-			relationship: 86388273-94f8-4cae-adc6-5069573929d7
-			defaultHierarchy: LocalDateTable_d96ec7c2-3e0e-4145-a9ce-40ce65832843.'Date Hierarchy'
-
 		changedProperty = DataType
 
 		annotation SummarizationSetBy = Automatic
@@ -128,11 +123,6 @@ table '06 XER_PREDECESSOR'
 			    )
 		lineageTag: 523861ed-a746-484b-87f0-36c627742b32
 		summarizeBy: none
-
-		variation Variation
-			isDefault
-			relationship: 370b9666-69d6-4484-9142-d5df193d8f5d
-			defaultHierarchy: LocalDateTable_2b950cd1-bbfa-4fbb-ae49-3664cfd3f6be.'Date Hierarchy'
 
 		changedProperty = DataType
 
@@ -170,11 +160,6 @@ table '06 XER_PREDECESSOR'
 		formatString: dd/mm/yyyy
 		lineageTag: 1eabe51d-e8c4-4329-a971-0d89b1f10c71
 		summarizeBy: none
-
-		variation Variation
-			isDefault
-			relationship: 696a1a04-917d-443a-8352-d3cf6ec386ab
-			defaultHierarchy: LocalDateTable_6fdedf85-45cf-4d10-8e46-cf75440ec0c5.'Date Hierarchy'
 
 		changedProperty = DataType
 
@@ -217,11 +202,6 @@ table '06 XER_PREDECESSOR'
 		formatString: dd/mm/yyyy
 		lineageTag: 0b0776b0-4580-474d-9450-afe4210a8ac1
 		summarizeBy: none
-
-		variation Variation
-			isDefault
-			relationship: 34b1f7ac-7296-41ad-850d-f7ffcf5c5573
-			defaultHierarchy: LocalDateTable_a0fa430a-8fdf-48d9-af3a-dc6ff7f56890.'Date Hierarchy'
 
 		changedProperty = DataType
 
@@ -484,11 +464,6 @@ table '06 XER_PREDECESSOR'
 		summarizeBy: none
 		sourceColumn: aref
 
-		variation Variation
-			isDefault
-			relationship: 163465f7-978f-4de0-877a-892f774697ee
-			defaultHierarchy: LocalDateTable_4d90b2b6-a903-4d3d-a697-e7c1ec4c4db4.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 	column arls
@@ -497,11 +472,6 @@ table '06 XER_PREDECESSOR'
 		lineageTag: 8e81c44e-3788-4b56-a929-4465206213f2
 		summarizeBy: none
 		sourceColumn: arls
-
-		variation Variation
-			isDefault
-			relationship: 4bd0b490-e2b4-473a-a199-971d7d82c2ed
-			defaultHierarchy: LocalDateTable_fc73dfc5-fa71-43de-9733-0ed919d629bb.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
 
@@ -520,11 +490,6 @@ table '06 XER_PREDECESSOR'
 		summarizeBy: none
 		sourceColumn: refresh_date
 
-		variation Variation
-			isDefault
-			relationship: 66785685-f3a4-48d6-a8f1-b555fdd50997
-			defaultHierarchy: LocalDateTable_ea375e41-2900-4d46-85fc-b8fde24435b3.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 	column UpdateDate
@@ -534,11 +499,6 @@ table '06 XER_PREDECESSOR'
 		summarizeBy: none
 		sourceColumn: UpdateDate
 
-		variation Variation
-			isDefault
-			relationship: 1ec44fb4-08a0-464c-8500-9f75b1740658
-			defaultHierarchy: LocalDateTable_aa0ead3b-f445-49c8-ae3b-c62bc2978781.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
@@ -547,11 +507,6 @@ table '06 XER_PREDECESSOR'
 		formatString: dd/mm/yyyy
 		lineageTag: 19d14697-ab4d-4ced-8b77-7be4c3a78d19
 		summarizeBy: none
-
-		variation Variation
-			isDefault
-			relationship: 5fc17e57-c893-4372-aa55-efda0db03582
-			defaultHierarchy: LocalDateTable_1ad9cf2f-b435-4609-9ee6-8aed013dca6f.'Date Hierarchy'
 
 		changedProperty = DataType
 
@@ -565,11 +520,6 @@ table '06 XER_PREDECESSOR'
 		formatString: dd/mm/yyyy
 		lineageTag: 8979992a-8a41-4da9-ae17-37f2cf9957fb
 		summarizeBy: none
-
-		variation Variation
-			isDefault
-			relationship: f505b996-8fc2-4414-a3d7-6b971b1feb53
-			defaultHierarchy: LocalDateTable_489f16e3-9a93-47bc-be07-0568ac76e80d.'Date Hierarchy'
 
 		changedProperty = DataType
 
@@ -674,11 +624,6 @@ table '06 XER_PREDECESSOR'
 		summarizeBy: none
 		sourceColumn: start
 
-		variation Variation
-			isDefault
-			relationship: f97257b3-e424-409c-b066-f4e0bd2a513a
-			defaultHierarchy: LocalDateTable_6f00d8c2-1e75-4496-9704-ddfc0c311c3f.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 	column finish
@@ -687,11 +632,6 @@ table '06 XER_PREDECESSOR'
 		lineageTag: 062b45b4-0b20-4eb5-807f-8cb21fb21f47
 		summarizeBy: none
 		sourceColumn: finish
-
-		variation Variation
-			isDefault
-			relationship: 53cfdde3-b508-430a-ba47-33184f8f04f7
-			defaultHierarchy: LocalDateTable_d1583395-3a6f-4408-a9d3-4200d16e5d12.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
 
@@ -702,11 +642,6 @@ table '06 XER_PREDECESSOR'
 		summarizeBy: none
 		sourceColumn: predecessor_start
 
-		variation Variation
-			isDefault
-			relationship: 982e1198-5cc2-436e-992e-1b112a22e3f6
-			defaultHierarchy: LocalDateTable_97752607-5cb7-40e7-aa27-0c8cd83d4f25.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 	column predecessor_finish
@@ -715,11 +650,6 @@ table '06 XER_PREDECESSOR'
 		lineageTag: e525075f-c1c4-4c71-a023-a9d9101f490a
 		summarizeBy: none
 		sourceColumn: predecessor_finish
-
-		variation Variation
-			isDefault
-			relationship: 022226a7-28db-45d5-b2ff-96121b9991e6
-			defaultHierarchy: LocalDateTable_e1bdc92b-b8be-4bbd-9fe4-fe8d7fcc24c3.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
 
@@ -749,11 +679,6 @@ table '06 XER_PREDECESSOR'
 		lineageTag: ff9111a5-7db0-46ce-bd4e-1275190aea5f
 		summarizeBy: none
 		sourceColumn: monthupdate
-
-		variation Variation
-			isDefault
-			relationship: 25b9fb20-f916-49d0-afa6-caba18de2986
-			defaultHierarchy: LocalDateTable_bf6c8fe5-d487-4c1f-b7c0-32b3e237fe00.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
 
