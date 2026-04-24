@@ -932,19 +932,6 @@ table 'XER  Counts'
 		displayFolder: Previous Month Finish Variance
 		lineageTag: 0afd5a56-1428-49bb-910c-a394c2aaea65
 
-	measure PreviousMonth_FinishVariance_No_Variance =
-			
-			[PreviousMonth_FinishVariance_<1_Month_TT_Task]-[PreviousMonth_FinishVariance_Ahead_TT_Task (-1)]
-		formatString: 0
-		displayFolder: Previous Month Finish Variance
-		lineageTag: f7e43f11-ce22-4370-8460-ac61a98b998f
-
-	measure PreviousMonth_FiniNoVariance =
-			
-			0 - [PreviousMonth_FinishVariance_Ahead_TT_Task (-1)]
-		formatString: 0
-		lineageTag: 05ec007d-fe69-46bf-be06-01e8a787f132
-
 	partition 'XER  Counts' = m
 		mode: import
 		source =

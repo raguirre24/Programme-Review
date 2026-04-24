@@ -39,42 +39,6 @@ table 15_XER_RESOURCE_DISTRIBUTION
 
 		annotation UnderlyingDateTimeDataType = Date
 
-	column month_start_date
-		dataType: dateTime
-		formatString: Long Date
-		lineageTag: 814ba270-2b20-4407-9669-1dbf5618adef
-		summarizeBy: none
-		sourceColumn: month_start_date
-
-		annotation SummarizationSetBy = Automatic
-
-	column month_end_date
-		dataType: dateTime
-		formatString: Long Date
-		lineageTag: 8c47064f-889b-4cba-b578-83ce73e662b8
-		summarizeBy: none
-		sourceColumn: month_end_date
-
-		annotation SummarizationSetBy = Automatic
-
-	column month_working_days
-		dataType: double
-		lineageTag: b9a4cc4b-13fe-4bfd-b692-277d90e2793b
-		summarizeBy: sum
-		sourceColumn: month_working_days
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	column month_calendar_days
-		dataType: string
-		lineageTag: 8a5ec838-8793-4c45-b1a6-9c145c054cb7
-		summarizeBy: none
-		sourceColumn: month_calendar_days
-
-		annotation SummarizationSetBy = Automatic
-
 	column monthly_quantity
 		dataType: double
 		lineageTag: 53e28e4f-c102-440c-a8ee-2b24b71b0c92
@@ -84,22 +48,6 @@ table 15_XER_RESOURCE_DISTRIBUTION
 		annotation SummarizationSetBy = Automatic
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	column task_code
-		dataType: string
-		lineageTag: 1f578f35-4eea-49a9-8c5c-5d12b55211cc
-		summarizeBy: none
-		sourceColumn: task_code
-
-		annotation SummarizationSetBy = Automatic
-
-	column rsrc_short_name
-		dataType: string
-		lineageTag: c46e7acc-270f-4351-84f6-549025dc5037
-		summarizeBy: none
-		sourceColumn: rsrc_short_name
-
-		annotation SummarizationSetBy = Automatic
 
 	column rsrc_name
 		dataType: string
@@ -117,120 +65,6 @@ table 15_XER_RESOURCE_DISTRIBUTION
 
 		annotation SummarizationSetBy = Automatic
 
-	column server
-		dataType: string
-		lineageTag: 12284865-4fec-4e6b-924f-e672f1549fd4
-		summarizeBy: none
-		sourceColumn: server
-
-		annotation SummarizationSetBy = Automatic
-
-	column database
-		dataType: string
-		lineageTag: 34156fce-e0b3-4f80-83ca-3bc3f405a44f
-		summarizeBy: none
-		sourceColumn: database
-
-		annotation SummarizationSetBy = Automatic
-
-	column clndr_id_key
-		dataType: string
-		lineageTag: b00f1184-7205-436f-b9d9-b77446116790
-		summarizeBy: none
-		sourceColumn: clndr_id_key
-
-		annotation SummarizationSetBy = Automatic
-
-	column proj_id_key
-		dataType: string
-		lineageTag: 9be10ab4-166e-40c5-9e13-6b9924745220
-		summarizeBy: none
-		sourceColumn: proj_id_key
-
-		annotation SummarizationSetBy = Automatic
-
-	column distribution_type
-		dataType: string
-		lineageTag: 5c5816ae-0085-4831-81eb-4ff7f77ea5f1
-		summarizeBy: none
-		sourceColumn: distribution_type
-
-		annotation SummarizationSetBy = Automatic
-
-	column month_working_hours
-		dataType: double
-		lineageTag: a6052bd1-c12f-4b9c-9d65-df3e0ec73c08
-		summarizeBy: sum
-		sourceColumn: month_working_hours
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	column total_working_hours
-		dataType: double
-		lineageTag: 78e44d2c-ba84-4ee6-b71e-a73538549673
-		summarizeBy: sum
-		sourceColumn: total_working_hours
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	column calendar_hours_per_day
-		dataType: double
-		lineageTag: a65ba60a-0f0d-40ba-a15c-e6bd5a6d29fb
-		summarizeBy: sum
-		sourceColumn: calendar_hours_per_day
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	column total_working_days
-		dataType: double
-		lineageTag: 95eec2a2-d6c0-46d4-b7aa-8cfacff39a52
-		summarizeBy: sum
-		sourceColumn: total_working_days
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	column total_calendar_days
-		dataType: string
-		lineageTag: 7c11757e-b301-46f7-b2b5-eb7ac6455446
-		summarizeBy: none
-		sourceColumn: total_calendar_days
-
-		annotation SummarizationSetBy = Automatic
-
-	column start
-		dataType: dateTime
-		formatString: General Date
-		lineageTag: 98c66405-7568-4f36-8488-63aaa56248f6
-		summarizeBy: none
-		sourceColumn: start
-
-		annotation SummarizationSetBy = Automatic
-
-	column finish
-		dataType: dateTime
-		formatString: General Date
-		lineageTag: 21ce1db9-65dc-4c54-bbca-cf83468625d6
-		summarizeBy: none
-		sourceColumn: finish
-
-		annotation SummarizationSetBy = Automatic
-
-	column status_code
-		dataType: string
-		lineageTag: 5b0d9c21-1a8b-4085-8653-e771311a0630
-		summarizeBy: none
-		sourceColumn: status_code
-
-		annotation SummarizationSetBy = Automatic
-
 	column unit
 		dataType: string
 		lineageTag: ae960faf-67d8-4533-b3ec-dc512c16e2bd
@@ -239,55 +73,11 @@ table 15_XER_RESOURCE_DISTRIBUTION
 
 		annotation SummarizationSetBy = Automatic
 
-	column monthupdate
-		dataType: dateTime
-		formatString: Long Date
-		lineageTag: 0963a4e4-20ec-4c33-bcba-742e2c71feff
-		summarizeBy: none
-		sourceColumn: monthupdate
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation UnderlyingDateTimeDataType = Date
-
-	column refresh_date
-		dataType: dateTime
-		formatString: General Date
-		lineageTag: 440a2a8e-7425-4a71-86e7-a97e2cb0b929
-		summarizeBy: none
-		sourceColumn: refresh_date
-
-		annotation SummarizationSetBy = Automatic
-
-	column filename
-		dataType: string
-		lineageTag: 0a1bf5a5-3c52-4ef3-9657-4b2530767e94
-		summarizeBy: none
-		sourceColumn: filename
-
-		annotation SummarizationSetBy = Automatic
-
 	column ProjectCode
 		dataType: string
 		lineageTag: c62bd8a5-5b13-4a6e-8ab0-887addc54dc5
 		summarizeBy: none
 		sourceColumn: ProjectCode
-
-		annotation SummarizationSetBy = Automatic
-
-	column project_resource =
-			
-			'15_XER_RESOURCE_DISTRIBUTION'[project_task_code] & "." &
-			'15_XER_RESOURCE_DISTRIBUTION'[rsrc_short_name] & "." &
-			'15_XER_RESOURCE_DISTRIBUTION'[rsrc_type]
-		lineageTag: 571e7efb-67c0-4cf3-8e7c-13af24b9a0a6
-		summarizeBy: none
-
-		annotation SummarizationSetBy = Automatic
-
-	column project_task_code = '15_XER_RESOURCE_DISTRIBUTION'[ProjectCode]&"."&'15_XER_RESOURCE_DISTRIBUTION'[task_code]
-		lineageTag: 9c7871d4-40ae-4c35-8bcf-7944a56631ff
-		summarizeBy: none
 
 		annotation SummarizationSetBy = Automatic
 
@@ -316,19 +106,21 @@ table 15_XER_RESOURCE_DISTRIBUTION
 		source =
 				let
 				    Source = fnAthenaSource("15_xer_resource_distribution"),
-				
+
 				    AddProjectCode = Table.AddColumn(Source, "ProjectCode", each Text.BeforeDelimiter([filename], "-"), type text),
-				
+
 				    Typed = Table.TransformColumnTypes(AddProjectCode, {
-				        {"distribution_month", type date}, {"monthupdate", type date},
-				        {"month_start_date", type datetime}, {"month_end_date", type datetime},
-				        {"start", type datetime}, {"finish", type datetime}, {"refresh_date", type datetime},
-				        {"monthly_quantity", type number}, {"month_working_hours", type number},
-				        {"total_working_hours", type number}, {"calendar_hours_per_day", type number},
-				        {"month_working_days", type number}, {"total_working_days", type number}
+				        {"distribution_month", type date},
+				        {"monthly_quantity", type number}
+				    }),
+
+				    SelectedColumns = Table.SelectColumns(Typed, {
+				        "task_id_key", "rsrc_id_key", "is_actual", "distribution_month",
+				        "rsrc_name", "rsrc_type",
+				        "unit", "monthly_quantity", "ProjectCode"
 				    })
 				in
-				    Typed
+				    SelectedColumns
 
 	annotation PBI_Id = 67b96e3bda7547809e01d736027b8fa7
 

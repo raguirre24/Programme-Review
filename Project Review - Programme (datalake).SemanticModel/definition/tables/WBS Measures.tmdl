@@ -23,13 +23,6 @@ table 'WBS Measures'
 		formatString: 0
 		lineageTag: a5a6165b-9371-4314-8fb5-97e08dba855c
 
-	measure 'Sum of Free Float' =
-			
-			SUM('06 XER_PREDECESSOR'[free_float])
-		lineageTag: da3853b0-a8e2-462a-abb4-142b8aa29f75
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
 	measure 'Count of Links' = COUNTROWS('06 XER_PREDECESSOR')
 		formatString: 0
 		lineageTag: bfc5265a-b677-4d74-992c-eb2634fd4d71

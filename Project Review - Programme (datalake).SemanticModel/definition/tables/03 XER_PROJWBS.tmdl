@@ -97,29 +97,6 @@ table '03 XER_PROJWBS'
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Min Start for Level 2' =
-			
-			VAR CurrentLevel2 = '03 XER_PROJWBS'[Level_2]
-			RETURN
-			CALCULATE(
-			    MIN('01 XER_TASK'[Start]),
-			    FILTER(
-			        ALL('03 XER_PROJWBS'),
-			        '03 XER_PROJWBS'[Level_2] = CurrentLevel2
-			    )
-			)
-		formatString: dd/mm/yyyy
-		lineageTag: 9dbbfd04-e0c8-4c0c-88f2-f8e482f4c265
-		summarizeBy: none
-
-		changedProperty = DataType
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation UnderlyingDateTimeDataType = Date
-
-		annotation PBI_FormatHint = {"isDateTimeCustom":true}
-
 	column ProjectCode
 		dataType: string
 		lineageTag: 5a0c250b-75e8-481f-8458-7fd22b012dad

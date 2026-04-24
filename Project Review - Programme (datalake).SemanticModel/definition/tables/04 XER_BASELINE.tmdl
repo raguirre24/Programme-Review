@@ -2,7 +2,7 @@ table '04 XER_BASELINE'
 	lineageTag: af4b1256-6095-4e3f-9357-ed2535c6aeb5
 
 	measure 'BL Month Update' =
-			
+
 			CALCULATE(
 			    MIN('04 XER_BASELINE'[First_Project_Month]),
 			    FILTER(
@@ -28,14 +28,6 @@ table '04 XER_BASELINE'
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [wbs_id_key]
-
-		annotation SummarizationSetBy = Automatic
-
-	column task_type
-		lineageTag: 12609db3-5a6d-4098-bad6-4e8614abdd2f
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: [task_type]
 
 		annotation SummarizationSetBy = Automatic
 
@@ -65,36 +57,6 @@ table '04 XER_BASELINE'
 
 		annotation PBI_FormatHint = {"isDateTimeCustom":true}
 
-	column 'Remaining Duration'
-		formatString: 0
-		lineageTag: 404ed500-eeac-4bdd-9fa9-b4ed4fcbeeb8
-		summarizeBy: sum
-		isNameInferred
-		sourceColumn: [Remaining Duration]
-
-		annotation SummarizationSetBy = Automatic
-
-	column 'Data Date'
-		formatString: dd/mm/yyyy
-		lineageTag: 3cc27b96-ff0c-42fe-8a96-61ee2b9468b2
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: [Data Date]
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation UnderlyingDateTimeDataType = Date
-
-		annotation PBI_FormatHint = {"isDateTimeCustom":true}
-
-	column status_code
-		lineageTag: f2115859-6faf-42b7-a432-24cde3b4001c
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: [status_code]
-
-		annotation SummarizationSetBy = Automatic
-
 	column Effective_Early_End
 		formatString: dd/mm/yyyy
 		lineageTag: b1705b97-e97b-455f-9e6e-08243ce4ac62
@@ -114,32 +76,6 @@ table '04 XER_BASELINE'
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Effective_Late_End]
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation UnderlyingDateTimeDataType = Date
-
-		annotation PBI_FormatHint = {"isDateTimeCustom":true}
-
-	column early_start_date
-		formatString: dd/mm/yyyy
-		lineageTag: 1f8088a8-88e4-4003-96c3-750498599135
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: [early_start_date]
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation UnderlyingDateTimeDataType = Date
-
-		annotation PBI_FormatHint = {"isDateTimeCustom":true}
-
-	column early_end_date
-		formatString: dd/mm/yyyy
-		lineageTag: 5ace78c8-94da-42f5-9336-7943d262b3d7
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: [early_end_date]
 
 		annotation SummarizationSetBy = Automatic
 
@@ -198,15 +134,9 @@ table '04 XER_BASELINE'
 				                ),
 				                "task_id_key", '01 XER_TASK'[task_id_key],
 				                "wbs_id_key", '01 XER_TASK'[wbs_id_key],
-				                "task_type", '01 XER_TASK'[task_type],
 				                "Start", '01 XER_TASK'[Start],
 				                "Finish", '01 XER_TASK'[Finish],
-				                "Remaining Duration", '01 XER_TASK'[remaining_duration],
-				                "Data Date", '01 XER_TASK'[data_date],
 				                "task_code", '01 XER_TASK'[task_code],
-				                "status_code", '01 XER_TASK'[status_code],
-				                "early_start_date", '01 XER_TASK'[early_start_date],
-				                "early_end_date", '01 XER_TASK'[early_end_date],
 				                "Effective_Early_End", '01 XER_TASK'[Effective_Early_End],
 				                "Effective_Late_End", '01 XER_TASK'[Effective_Late_End]
 				            )

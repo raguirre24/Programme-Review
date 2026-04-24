@@ -202,26 +202,6 @@ table 'XER Measures'
 		formatString: 0
 		lineageTag: 58233990-4eab-4e42-930b-8a068a32f4c0
 
-	measure 'Previous Data Date' = ```
-			
-			VAR CurrentTaskCode = SELECTEDVALUE('01 XER_TASK'[task_code])
-			VAR CurrentDataDate = MAX('01 XER_TASK'[data_date])
-			VAR PreviousDataDate =
-			    CALCULATE(
-			        MAX('01 XER_TASK'[data_date]),
-			        FILTER(
-			            ALL('01 XER_TASK'),
-			            '01 XER_TASK'[task_code] = CurrentTaskCode &&
-			            '01 XER_TASK'[data_date] < CurrentDataDate
-			        )
-			    )
-			RETURN
-			    PreviousDataDate
-			
-			```
-		formatString: General Date
-		lineageTag: 5694209f-6ac6-4f8f-bbdf-4d4eabb4269d
-
 	measure ShowConstraint =
 			
 			IF(

@@ -30,20 +30,6 @@ table '06 XER_PREDECESSOR'
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Variance to Baseline' = RELATED('01 XER_TASK'[Variance_Finish_BL])
-		formatString: 0
-		lineageTag: 9d9cebcf-7e56-4af4-a443-857602730001
-		summarizeBy: sum
-
-		annotation SummarizationSetBy = Automatic
-
-	column 'Variance to Previous Month' = RELATED('01 XER_TASK'[Finish_Variance_Previous_Month])
-		formatString: 0
-		lineageTag: cc63d83c-ebf8-4e85-a31d-286a63af2300
-		summarizeBy: sum
-
-		annotation SummarizationSetBy = Automatic
-
 	column TaskCodeAndName =
 			
 			VAR _taskCode = RELATED('01 XER_TASK'[task_code])
@@ -61,132 +47,11 @@ table '06 XER_PREDECESSOR'
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Baseline Start' =
-			
-			VAR CurrentTaskCode = '06 XER_PREDECESSOR'[task_code]
-			VAR CurrentProject = '06 XER_PREDECESSOR'[ProjectCode]
-			
-			RETURN
-			    MAXX(
-			        FILTER(
-			            ALL('04 XER_BASELINE'),
-			            '04 XER_BASELINE'[task_code] = CurrentTaskCode &&
-			            '04 XER_BASELINE'[ProjectCode] = CurrentProject
-			        ),
-			        '04 XER_BASELINE'[early_start_date]
-			    )
-		lineageTag: 4437b4bd-ccc3-45ee-aa72-74825c4fd048
+	column predecessor_name = LOOKUPVALUE('01 XER_TASK'[task_name], '01 XER_TASK'[task_id_key], [pred_task_id_key])
+		lineageTag: 83c18887-7ef2-4d4a-bce6-c35fd8389017
 		summarizeBy: none
 
-		changedProperty = DataType
-
 		annotation SummarizationSetBy = Automatic
-
-		annotation UnderlyingDateTimeDataType = Date
-
-	column 'Baseline Finish' =
-			
-			VAR CurrentTaskCode = '06 XER_PREDECESSOR'[task_code]
-			VAR CurrentProject = '06 XER_PREDECESSOR'[ProjectCode]
-			
-			RETURN
-			    MAXX(
-			        FILTER(
-			            ALL('04 XER_BASELINE'),
-			            '04 XER_BASELINE'[task_code] = CurrentTaskCode &&
-			            '04 XER_BASELINE'[ProjectCode] = CurrentProject
-			        ),
-			        '04 XER_BASELINE'[early_end_date]
-			    )
-		lineageTag: 523861ed-a746-484b-87f0-36c627742b32
-		summarizeBy: none
-
-		changedProperty = DataType
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation UnderlyingDateTimeDataType = Date
-
-	column 'Previous Update Start' =
-			
-			VAR CurrentTaskCode = '06 XER_PREDECESSOR'[task_code]
-			VAR CurrentProject = '06 XER_PREDECESSOR'[ProjectCode]
-			VAR CurrentMonthUpdate = '06 XER_PREDECESSOR'[UpdateDate]
-			-- Find the previous month update (closest but less than current)
-			VAR PreviousMonthUpdate =
-			CALCULATE(
-			MAX('01 XER_TASK'[UpdateDate]),
-			FILTER(
-			ALL('01 XER_TASK'),
-			'01 XER_TASK'[task_code] = CurrentTaskCode &&
-			'01 XER_TASK'[ProjectCode] = CurrentProject &&
-			'01 XER_TASK'[UpdateDate] < CurrentMonthUpdate
-			)
-			)
-			-- Get the Start date from the previous month update
-			RETURN
-			CALCULATE(
-			MAX('01 XER_TASK'[early_start_date]),
-			FILTER(
-			ALL('01 XER_TASK'),
-			'01 XER_TASK'[task_code] = CurrentTaskCode &&
-			'01 XER_TASK'[ProjectCode] = CurrentProject &&
-			'01 XER_TASK'[UpdateDate] = PreviousMonthUpdate
-			)
-			)
-		formatString: dd/mm/yyyy
-		lineageTag: 1eabe51d-e8c4-4329-a971-0d89b1f10c71
-		summarizeBy: none
-
-		changedProperty = DataType
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation UnderlyingDateTimeDataType = Date
-
-		annotation PBI_FormatHint = {"isDateTimeCustom":true}
-
-	column 'Previous Update Finish' = ```
-			
-			VAR CurrentTaskCode = '06 XER_PREDECESSOR'[task_code]
-			VAR CurrentProject = '06 XER_PREDECESSOR'[ProjectCode]
-			VAR CurrentMonthUpdate = '06 XER_PREDECESSOR'[UpdateDate]
-			
-			-- Find the previous month update (closest but less than current)
-			VAR PreviousMonthUpdate = 
-			    CALCULATE(
-			        MAX('01 XER_TASK'[UpdateDate]),
-			        FILTER(
-			            ALL('01 XER_TASK'),
-			            '01 XER_TASK'[task_code] = CurrentTaskCode &&
-			            '01 XER_TASK'[ProjectCode] = CurrentProject &&
-			            '01 XER_TASK'[UpdateDate] < CurrentMonthUpdate
-			        )
-			    )
-			
-			-- Get the Start date from the previous month update
-			RETURN
-			    CALCULATE(
-			        MAX('01 XER_TASK'[early_end_date]),
-			        FILTER(
-			            ALL('01 XER_TASK'),
-			            '01 XER_TASK'[task_code] = CurrentTaskCode &&
-			            '01 XER_TASK'[ProjectCode] = CurrentProject &&
-			            '01 XER_TASK'[UpdateDate] = PreviousMonthUpdate
-			        )
-			    )
-			```
-		formatString: dd/mm/yyyy
-		lineageTag: 0b0776b0-4580-474d-9450-afe4210a8ac1
-		summarizeBy: none
-
-		changedProperty = DataType
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation UnderlyingDateTimeDataType = Date
-
-		annotation PBI_FormatHint = {"isDateTimeCustom":true}
 
 	column Successor_Level_2 = ```
 			
@@ -338,17 +203,6 @@ table '06 XER_PREDECESSOR'
 
 		annotation SummarizationSetBy = Automatic
 
-	column UpdateDate
-		dataType: dateTime
-		formatString: Long Date
-		lineageTag: 5a443bd6-b8e6-417e-a831-88df7b76d505
-		summarizeBy: none
-		sourceColumn: UpdateDate
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation UnderlyingDateTimeDataType = Date
-
 	column early_start_date = related('01 XER_TASK'[early_start_date])
 		formatString: dd/mm/yyyy
 		lineageTag: 19d14697-ab4d-4ced-8b77-7be4c3a78d19
@@ -374,14 +228,6 @@ table '06 XER_PREDECESSOR'
 		annotation UnderlyingDateTimeDataType = Date
 
 		annotation PBI_FormatHint = {"isDateTimeCustom":true}
-
-	column ProjectCode
-		dataType: string
-		lineageTag: 559d3191-e1d5-45b6-b610-54608f4c4b7c
-		summarizeBy: none
-		sourceColumn: ProjectCode
-
-		annotation SummarizationSetBy = Automatic
 
 	column predecessor_status_code
 		dataType: string
@@ -535,81 +381,7 @@ table '06 XER_PREDECESSOR'
 				        Table.SelectColumns(Source,{"task_pred_id", "pred_type", "task_id_key", "pred_task_id_key", "status_code", "predecessor_status_code", "task_type", "predecessor_task_type", "lag", "start", "finish", "predecessor_start", "predecessor_finish", "free_float", "total_float", "filename"}),
 				    #"Inserted Merged Column" = Table.AddColumn(SelectedColumns, "task_pred_id_key", each Text.Combine({[filename], [task_pred_id]}, "."), type text),
 				
-				    AddParsedColumns =
-				        Table.ExpandRecordColumn(
-				            Table.AddColumn(
-				                #"Inserted Merged Column",
-				                "Parsed",
-				                each
-				                    let
-				                        FileName =
-				                            if [filename] = null then
-				                                null
-				                            else
-				                                Text.Trim([filename]),
-				
-				                        Prefix =
-				                            if FileName <> null and Text.Contains(FileName, "_") then
-				                                Text.BeforeDelimiter(FileName, "_")
-				                            else
-				                                FileName,
-				
-				                        Parts =
-				                            if Prefix <> null then
-				                                Text.Split(Prefix, "-")
-				                            else
-				                                {},
-				
-				                        ProjectCode =
-				                            if List.Count(Parts) >= 1 then
-				                                Parts{0}
-				                            else
-				                                null,
-				
-				                        CPart =
-				                            if List.Count(Parts) >= 3 then
-				                                Parts{2}
-				                            else
-				                                null,
-				
-				                        UpdateDate =
-				                            if CPart = null or CPart = "" then
-				                                null
-				                            else if Text.StartsWith(CPart, "BL") then
-				                                let
-				                                    DatePart =
-				                                        if FileName <> null and Text.Contains(FileName, "_") then
-				                                            try Text.BeforeDelimiter(Text.AfterDelimiter(FileName, "_"), ".") otherwise null
-				                                        else
-				                                            null
-				                                in
-				                                    try Date.EndOfMonth(Date.From(DateTime.FromText(DatePart))) otherwise null
-				                            else
-				                                let
-				                                    P1 = try Number.FromText(Text.Start(CPart, 2)) otherwise null,
-				                                    P2 = try Number.FromText(Text.End(CPart, 2)) otherwise null,
-				                                    Yr = if P1 = null or P2 = null then null else if P2 > 12 then P2 else P1,
-				                                    Mo = if P1 = null or P2 = null then null else if P2 > 12 then P1 else P2
-				                                in
-				                                    if Yr = null or Mo = null or Mo < 1 or Mo > 12 then
-				                                        null
-				                                    else
-				                                        Date.EndOfMonth(#date(2000 + Yr, Mo, 1))
-				                    in
-				                        [
-				                            ProjectCode = ProjectCode,
-				                            UpdateDate = UpdateDate
-				                        ],
-				                type [
-				                    ProjectCode = nullable text,
-				                    UpdateDate = nullable date
-				                ]
-				            ),
-				            "Parsed",
-				            {"ProjectCode", "UpdateDate"},
-				            {"ProjectCode", "UpdateDate"}
-				        ),
-				    #"Parsed Date" = Table.TransformColumns(AddParsedColumns,{{"start", each Date.From(DateTimeZone.From(_)), type date}, {"finish", each Date.From(DateTimeZone.From(_)), type date}, {"predecessor_start", each Date.From(DateTimeZone.From(_)), type date}, {"predecessor_finish", each Date.From(DateTimeZone.From(_)), type date}}),
+				    #"Parsed Date" = Table.TransformColumns(#"Inserted Merged Column",{{"start", each Date.From(DateTimeZone.From(_)), type date}, {"finish", each Date.From(DateTimeZone.From(_)), type date}, {"predecessor_start", each Date.From(DateTimeZone.From(_)), type date}, {"predecessor_finish", each Date.From(DateTimeZone.From(_)), type date}}),
 				
 				    Typed =
 				        Table.TransformColumnTypes(
@@ -617,8 +389,7 @@ table '06 XER_PREDECESSOR'
 				            {
 				                {"lag", type number},
 				                {"free_float", type number},
-				                {"total_float", type number},
-				                {"UpdateDate", type date}
+				                {"total_float", type number}
 				            }
 				        ),
 				    #"Removed Columns" = Table.RemoveColumns(Typed,{"task_pred_id", "filename"})

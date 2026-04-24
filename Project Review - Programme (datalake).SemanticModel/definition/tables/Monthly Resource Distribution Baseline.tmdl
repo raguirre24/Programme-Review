@@ -1,55 +1,6 @@
 table 'Monthly Resource Distribution Baseline'
 	lineageTag: fa1cf293-638c-4a26-8dd7-9b7d1bbee83f
 
-	column task_id_key
-		lineageTag: f785b738-6b16-4664-8561-7b9da8148ca5
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[task_id_key]
-
-		annotation SummarizationSetBy = Automatic
-
-	column rsrc_id_key
-		lineageTag: 60890a42-289d-4528-a0ac-d19f39695388
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[rsrc_id_key]
-
-		annotation SummarizationSetBy = Automatic
-
-	column clndr_id_key
-		lineageTag: 7c386f32-2eef-4627-8f2b-efabee3aaf3c
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[clndr_id_key]
-
-		annotation SummarizationSetBy = Automatic
-
-	column is_actual
-		formatString: """TRUE"";""TRUE"";""FALSE"""
-		lineageTag: 799e4e83-1b9c-4120-a564-788eab9c6aee
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[is_actual]
-
-		annotation SummarizationSetBy = Automatic
-
-	column status_code
-		lineageTag: 964d5fe2-8361-49f0-9a56-83747912babc
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[status_code]
-
-		annotation SummarizationSetBy = Automatic
-
-	column task_code
-		lineageTag: 56d93e62-f644-4f28-99b4-57f3a7caf676
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[task_code]
-
-		annotation SummarizationSetBy = Automatic
-
 	column distribution_month
 		formatString: General Date
 		lineageTag: 91060a6f-a529-4484-a660-a45fc726a5bc
@@ -59,230 +10,11 @@ table 'Monthly Resource Distribution Baseline'
 
 		annotation SummarizationSetBy = Automatic
 
-	column month_start_date
-		formatString: General Date
-		lineageTag: 061aa744-b9ea-4fa8-8048-ed1feb92a4ee
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[month_start_date]
-
-		annotation SummarizationSetBy = Automatic
-
-	column month_end_date
-		formatString: General Date
-		lineageTag: 099eb489-19ed-455b-aa04-989790336179
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[month_end_date]
-
-		annotation SummarizationSetBy = Automatic
-
-	column month_working_days
-		lineageTag: 5152f8c3-48a3-4d1d-811c-3015986afc63
-		summarizeBy: sum
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[month_working_days]
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	column month_calendar_days
-		lineageTag: fddb7dc5-35dc-4813-9918-174a8590b586
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[month_calendar_days]
-
-		annotation SummarizationSetBy = Automatic
-
-	column monthly_quantity
-		lineageTag: de673440-787b-416a-854f-ce348411b64d
-		summarizeBy: sum
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[monthly_quantity]
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	column rsrc_short_name
-		lineageTag: 21b17443-b45f-47fa-afd3-3568b8eac0ab
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[rsrc_short_name]
-
-		annotation SummarizationSetBy = Automatic
-
-	column rsrc_name
-		lineageTag: 6bbcc3d1-d4be-4a5f-a4e5-44cd9a784087
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[rsrc_name]
-
-		annotation SummarizationSetBy = Automatic
-
-	column rsrc_type
-		lineageTag: 65ab2dfa-deaf-4b4e-8c6b-600341e54284
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[rsrc_type]
-
-		annotation SummarizationSetBy = Automatic
-
-	column server
-		lineageTag: c8218b49-5f8e-4727-8cfd-58eefd876ea7
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[server]
-
-		annotation SummarizationSetBy = Automatic
-
-	column database
-		lineageTag: 3cf58bfc-bf83-42ea-89b7-267c0ffeb80a
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[database]
-
-		annotation SummarizationSetBy = Automatic
-
-	column proj_id_key
-		lineageTag: 21574e3e-ef12-47d7-a538-1f09cbd1b452
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[proj_id_key]
-
-		annotation SummarizationSetBy = Automatic
-
-	column distribution_type
-		lineageTag: f18233ba-47cd-41dc-b10f-788ec3989ba5
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[distribution_type]
-
-		annotation SummarizationSetBy = Automatic
-
-	column month_working_hours
-		lineageTag: d47e7cc8-f44b-4630-92b0-da188644640c
-		summarizeBy: sum
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[month_working_hours]
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	column total_working_hours
-		lineageTag: 2af9748f-535c-4afd-a0e1-04c1ab61682b
-		summarizeBy: sum
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[total_working_hours]
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	column calendar_hours_per_day
-		lineageTag: 26d2cd57-c8a2-4587-84c8-ed1336768b1f
-		summarizeBy: sum
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[calendar_hours_per_day]
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	column total_working_days
-		lineageTag: 936bf2c4-d197-4eb5-99b9-6303285920de
-		summarizeBy: sum
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[total_working_days]
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	column total_calendar_days
-		lineageTag: 7bd5369d-4e58-4e91-bf42-5256983378de
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[total_calendar_days]
-
-		annotation SummarizationSetBy = Automatic
-
-	column start
-		formatString: General Date
-		lineageTag: 3ec11e59-958c-4701-a85a-279999cef093
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[start]
-
-		annotation SummarizationSetBy = Automatic
-
-	column finish
-		formatString: General Date
-		lineageTag: b384f75e-964f-49cb-b048-19723c653c7e
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[finish]
-
-		annotation SummarizationSetBy = Automatic
-
-	column unit
-		lineageTag: 6c02607e-0dd1-455b-a484-f7998b5b596e
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[unit]
-
-		annotation SummarizationSetBy = Automatic
-
-	column monthupdate
-		formatString: General Date
-		lineageTag: 356395ca-7af7-43bb-aaff-751c6e11a569
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[monthupdate]
-
-		annotation SummarizationSetBy = Automatic
-
-	column refresh_date
-		formatString: General Date
-		lineageTag: 1f9fee0f-030d-43bd-971e-d79fe967ab4c
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[refresh_date]
-
-		annotation SummarizationSetBy = Automatic
-
-	column filename
-		lineageTag: 6176be9a-09d5-49da-986a-b39431e3d74b
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[filename]
-
-		annotation SummarizationSetBy = Automatic
-
 	column ProjectCode
 		lineageTag: 35f544e4-02c3-41c6-aab9-dd9cf7e29c83
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[ProjectCode]
-
-		annotation SummarizationSetBy = Automatic
-
-	column project_resource
-		formatString: 0
-		lineageTag: f4728275-f00e-4d83-9663-62d1626f1988
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[project_resource]
-
-		annotation SummarizationSetBy = Automatic
-
-	column project_task_code
-		lineageTag: 6908b45f-a483-4733-a553-8ff0f4a4fb66
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[project_task_code]
 
 		annotation SummarizationSetBy = Automatic
 
@@ -301,9 +33,14 @@ table 'Monthly Resource Distribution Baseline'
 		mode: import
 		source =
 				
-				FILTER(
-				    '15_XER_RESOURCE_DISTRIBUTION',
-				    '15_XER_RESOURCE_DISTRIBUTION'[task_id_key] IN VALUES('04 XER_BASELINE'[task_id_key])
+				SELECTCOLUMNS(
+				    FILTER(
+				        '15_XER_RESOURCE_DISTRIBUTION',
+				        '15_XER_RESOURCE_DISTRIBUTION'[task_id_key] IN VALUES('04 XER_BASELINE'[task_id_key])
+				    ),
+				    "distribution_month", '15_XER_RESOURCE_DISTRIBUTION'[distribution_month],
+				    "ProjectCode", '15_XER_RESOURCE_DISTRIBUTION'[ProjectCode],
+				    "monthly_hours", '15_XER_RESOURCE_DISTRIBUTION'[monthly_hours]
 				)
 
 	annotation PBI_Id = e8e5aed95e8c4576a9cdbf22ecc98dbc

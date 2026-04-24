@@ -1,8 +1,0 @@
-createOrReplace
-
-	relationship bf55c7c9-a457-d538-128b-3031335740b0
-		isActive: false
-		joinOnDateBehavior: datePartOnly
-		fromColumn: '01 XER_TASK'.act_end_date
-		toColumn: '00 CALENDAR'.Date
-

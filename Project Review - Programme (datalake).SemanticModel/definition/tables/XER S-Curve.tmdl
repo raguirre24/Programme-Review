@@ -449,11 +449,6 @@ table 'XER S-Curve'
 		formatString: 0.00%;-0.00%;0.00%
 		lineageTag: 2e589616-ca79-4e4c-aa2e-7f36d3de19a7
 
-	measure 'Percentage Completion Variance' = [Percentage_Actual_Finish]-[Percentage_Baseline_Finish]
-		lineageTag: 1ff5ecb0-e18c-4cd6-8ab8-bfd9f10afc4f
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
 	partition 'XER S-Curve' = m
 		mode: import
 		source =

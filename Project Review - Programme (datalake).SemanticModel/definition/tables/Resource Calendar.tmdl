@@ -16,9 +16,23 @@ table 'Resource Calendar'
 		mode: import
 		source = ```
 				
-				VAR MinDate = MIN('15_XER_RESOURCE_DISTRIBUTION'[start])
+				VAR MonthRange =
+				    FILTER (
+				        UNION (
+				            SELECTCOLUMNS (
+				                '15_XER_RESOURCE_DISTRIBUTION',
+				                "Month", '15_XER_RESOURCE_DISTRIBUTION'[distribution_month]
+				            ),
+				            SELECTCOLUMNS (
+				                'Monthly Resource Distribution Baseline',
+				                "Month", 'Monthly Resource Distribution Baseline'[distribution_month]
+				            )
+				        ),
+				        NOT ISBLANK ( [Month] )
+				    )
+				VAR MinDate = MINX ( MonthRange, [Month] )
 				
-				VAR MaxDate = MAX('15_XER_RESOURCE_DISTRIBUTION'[finish])
+				VAR MaxDate = MAXX ( MonthRange, [Month] )
 				RETURN
 				DISTINCT (
 				    SELECTCOLUMNS (

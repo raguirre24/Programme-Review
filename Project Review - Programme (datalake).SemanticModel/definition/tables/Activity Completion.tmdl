@@ -27,19 +27,6 @@ table 'Activity Completion'
 		formatString: 0%;-0%;0%
 		lineageTag: 2faef2a8-c38c-49d2-a23d-3553d661c39e
 
-	measure PreviousDate = ```
-			
-			    CALCULATE(
-			        MAX(CurrentDate[UpdateDate]),
-			        FILTER(
-			            ALL(CurrentDate),
-			            CurrentDate[UpdateDate] < [CurrentDate]
-			        )
-			    )
-			```
-		formatString: General Date
-		lineageTag: 913a023d-2373-4859-b66e-1ad1e6af1b11
-
 	measure CurrentDataDate =
 			
 			VAR CurrentMonthValue = [CurrentDate]

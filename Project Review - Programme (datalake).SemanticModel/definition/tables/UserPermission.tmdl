@@ -18,35 +18,11 @@ table UserPermission
 
 		annotation SummarizationSetBy = Automatic
 
-	column Project
-		dataType: string
-		lineageTag: 3c9900ba-5986-46f4-87bc-0e5b17759840
-		summarizeBy: none
-		sourceColumn: Project
-
-		annotation SummarizationSetBy = Automatic
-
 	column State
 		dataType: string
 		lineageTag: 971f163d-3d32-471b-85be-a7067eeede29
 		summarizeBy: none
 		sourceColumn: State
-
-		annotation SummarizationSetBy = Automatic
-
-	column ProjectID
-		dataType: string
-		lineageTag: b3d363b4-d9ed-4f5f-8b4e-a1a8485373eb
-		summarizeBy: none
-		sourceColumn: ProjectID
-
-		annotation SummarizationSetBy = Automatic
-
-	column 'Privilege Name'
-		dataType: string
-		lineageTag: 722c8354-4067-4697-a9e3-4502dbcbd4e8
-		summarizeBy: none
-		sourceColumn: Privilege Name
 
 		annotation SummarizationSetBy = Automatic
 
@@ -78,9 +54,10 @@ table UserPermission
 				    #"Permissions xlsx" = Permissions{[Name="Permissions.xlsx"]}[Content],
 				    #"Imported Excel Workbook" = Excel.Workbook(#"Permissions xlsx"),
 				    UserPermission_Table1 = #"Imported Excel Workbook"{[Item="UserPermission",Kind="Table"]}[Data],
-				    #"Changed Type" = Table.TransformColumnTypes(UserPermission_Table1,{{"All Access", Int64.Type}})
+				    #"Changed Type" = Table.TransformColumnTypes(UserPermission_Table1,{{"All Access", Int64.Type}}),
+				    #"Removed Other Columns" = Table.SelectColumns(#"Changed Type",{"UserPrincipalName", "All Access", "State", "ExternalUserPrincipalName", "ProjectCode"})
 				in
-				    #"Changed Type"
+				    #"Removed Other Columns"
 
 	annotation PBI_NavigationStepName = Navigation
 

@@ -228,10 +228,10 @@
                     "Measure": {
                       "Expression": {
                         "SourceRef": {
-                          "Entity": "Project"
+                          "Entity": "Project_Dimension"
                         }
                       },
-                      "Property": "Project Has Data Color"
+                      "Property": "Project Has Data"
                     }
                   }
                 }

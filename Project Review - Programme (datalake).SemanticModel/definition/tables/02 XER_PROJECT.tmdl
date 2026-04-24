@@ -14,27 +14,11 @@ table '02 XER_PROJECT'
 
 		annotation PBI_FormatHint = {"isDateTimeCustom":true}
 
-	column proj_short_name
-		dataType: string
-		lineageTag: bbc295b0-09b3-43cb-8d81-e8a50635b646
-		summarizeBy: none
-		sourceColumn: proj_short_name
-
-		annotation SummarizationSetBy = Automatic
-
 	column proj_id_key
 		dataType: string
 		lineageTag: 43bfde4d-82c8-4b06-a306-35d6426f5eb4
 		summarizeBy: none
 		sourceColumn: proj_id_key
-
-		annotation SummarizationSetBy = Automatic
-
-	column filename
-		dataType: string
-		lineageTag: 63f8515a-267c-4e91-9ba7-6b982a72085a
-		summarizeBy: none
-		sourceColumn: filename
 
 		annotation SummarizationSetBy = Automatic
 
@@ -49,10 +33,8 @@ table '02 XER_PROJECT'
 				        Table.SelectColumns(
 				            Source,
 				            {
-				                "proj_short_name",
 				                "last_recalc_date",
-				                "proj_id_key",
-				                "filename"
+				                "proj_id_key"
 				            }
 				        ),
 				

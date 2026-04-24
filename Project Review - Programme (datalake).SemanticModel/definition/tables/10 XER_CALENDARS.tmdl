@@ -1,15 +1,6 @@
 table '10 XER_CALENDARS'
 	lineageTag: 94ce6dcf-9bfd-48f9-b715-089c33d5f05c
 
-	column day_hr_cnt
-		dataType: double
-		formatString: 0
-		lineageTag: 2cb91832-b9c1-4b1c-b8ae-6fc72ca48f1f
-		summarizeBy: none
-		sourceColumn: day_hr_cnt
-
-		annotation SummarizationSetBy = Automatic
-
 	column clndr_id_key
 		dataType: string
 		lineageTag: 82773d05-0573-4c25-ade7-f4870a47b391
@@ -32,8 +23,7 @@ table '10 XER_CALENDARS'
 		source =
 				let
 				    Source = fnAthenaSource("10_xer_calendar"),
-				    #"Changed Type" = Table.TransformColumnTypes(Source, {{"day_hr_cnt", type number}, {"week_hr_cnt", type number}, {"month_hr_cnt", type number}}),
-				    #"Removed Other Columns" = Table.SelectColumns(#"Changed Type",{"clndr_name", "day_hr_cnt", "clndr_id_key"})
+				    #"Removed Other Columns" = Table.SelectColumns(Source,{"clndr_name", "clndr_id_key"})
 				in
 				    #"Removed Other Columns"
 

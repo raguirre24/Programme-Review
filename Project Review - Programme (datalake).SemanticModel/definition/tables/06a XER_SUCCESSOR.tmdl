@@ -9,14 +9,6 @@ table '06a XER_SUCCESSOR'
 
 		annotation SummarizationSetBy = Automatic
 
-	column succ_task_id_key
-		lineageTag: b4af0b81-dd4e-46fd-b19e-8c0a8673c4cc
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: [succ_task_id_key]
-
-		annotation SummarizationSetBy = Automatic
-
 	column succ_type
 		lineageTag: 98ae656a-c734-4e62-9ef2-a416f400238e
 		summarizeBy: none
@@ -58,15 +50,6 @@ table '06a XER_SUCCESSOR'
 		annotation UnderlyingDateTimeDataType = Date
 
 		annotation PBI_FormatHint = {"isDateTimeCustom":true}
-
-	column successor_total_float
-		formatString: 0
-		lineageTag: 776ac39e-c18a-4a9d-ac82-1927cd042dbb
-		summarizeBy: sum
-		isNameInferred
-		sourceColumn: [successor_total_float]
-
-		annotation SummarizationSetBy = Automatic
 
 	column succ_task_type
 		lineageTag: b6e4f78e-4b20-4432-a6c5-8fbc0be8e4e7
@@ -120,15 +103,13 @@ table '06a XER_SUCCESSOR'
 				    '06 XER_PREDECESSOR',
 				    "task_pred_id_key", '06 XER_PREDECESSOR'[task_pred_id_key],
 				    "task_id_key", '06 XER_PREDECESSOR'[pred_task_id_key],
-				    "succ_task_id_key", '06 XER_PREDECESSOR'[task_id_key],
 				    "succ_type", '06 XER_PREDECESSOR'[pred_type],
 				    "succ_task_type", '06 XER_PREDECESSOR'[task_type],
 				    "succ_status_code", '06 XER_PREDECESSOR'[status_code],
 				    "successor_task_code", '06 XER_PREDECESSOR'[task_code],
 				    "successor_name", LOOKUPVALUE('01 XER_TASK'[task_name],'01 XER_TASK'[Task_ID_key],'06 XER_PREDECESSOR'[task_id_key]),
 				    "successor_start", '06 XER_PREDECESSOR'[start],
-				    "successor_finish", '06 XER_PREDECESSOR'[finish],
-				    "successor_total_float", '06 XER_PREDECESSOR'[total_float]
+				    "successor_finish", '06 XER_PREDECESSOR'[finish]
 				)
 
 	annotation PBI_Id = b4fa624d95e9439fb486dd6786cd0082

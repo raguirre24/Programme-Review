@@ -240,7 +240,7 @@
                             "Entity": "01 XER_TASK"
                           }
                         },
-                        "Property": "Activity_Status"
+                        "Property": "status_code"
                       }
                     },
                     "Right": {
@@ -282,7 +282,7 @@
                             "Entity": "01 XER_TASK"
                           }
                         },
-                        "Property": "Activity_Status"
+                        "Property": "status_code"
                       }
                     },
                     "Right": {
@@ -324,7 +324,7 @@
                             "Entity": "01 XER_TASK"
                           }
                         },
-                        "Property": "Activity_Status"
+                        "Property": "status_code"
                       }
                     },
                     "Right": {
@@ -540,7 +540,7 @@
                             "Entity": "01 XER_TASK"
                           }
                         },
-                        "Property": "Activity_Status"
+                        "Property": "status_code"
                       }
                     },
                     "Right": {
@@ -597,10 +597,10 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Current Update"
+                      "Entity": "Activity Completion"
                     }
                   },
-                  "Property": "SelectedCurrentMonth"
+                  "Property": "CurrentDate"
                 }
               }
             },

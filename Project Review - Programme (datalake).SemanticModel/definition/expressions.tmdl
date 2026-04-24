@@ -6,28 +6,6 @@ expression SharePointSite = "https://acciona365-my.sharepoint.com/personal/ragui
 
 	annotation PBI_ResultType = Text
 
-expression 'Target Update' =
-		let
-		    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
-		    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
-		    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
-		in
-		    #"Removed Columns"
-	lineageTag: ba84a481-07d6-4011-be66-67db3eac8f8f
-
-	annotation PBI_ResultType = Table
-
-expression 'Current Update' =
-		let
-		    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
-		    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
-		    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
-		in
-		    #"Removed Columns"
-	lineageTag: 0894244c-99c2-4d01-a79f-215ea94f10d1
-
-	annotation PBI_ResultType = Table
-
 expression SelectedProjects = "C4068, C5064" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
 	lineageTag: a1b2c3d4-5e6f-7a8b-9c0d-ef1234567890
 	queryGroup: Database
@@ -62,6 +40,112 @@ expression ProjectFilterList =
 	annotation PBI_ResultType = List
 
 	annotation PBI_NavigationStepName = Navigation
+
+expression AthenaScopeSql =
+		let
+		    ProgTypeRaw = Text.Upper(Text.Trim(SelectedProgrammeType)),
+		    ProgType =
+		        if List.Contains({"C", "T", "ALL"}, ProgTypeRaw) then
+		            ProgTypeRaw
+		        else
+		            error "SelectedProgrammeType must be C, T, or ALL.",
+
+		    FilterList = ProjectFilterList,
+
+		    QuoteText = (value as text) as text =>
+		        "'" & Text.Replace(value, "'", "''") & "'",
+
+		    ProgrammeTypeFilter =
+		        if ProgType = "ALL" then
+		            "SPLIT_PART(filename, '-', 2) IN ('C', 'T')"
+		        else
+		            "SPLIT_PART(filename, '-', 2) = " & QuoteText(ProgType),
+
+		    ProjectFilter =
+		        if FilterList = null then
+		            ""
+		        else
+		            " AND SPLIT_PART(filename, '-', 1) IN (" &
+		            Text.Combine(List.Transform(FilterList, each QuoteText(_)), ", ") &
+		            ")",
+
+		    Sql =
+		        "WITH " &
+		        "parsed AS (" &
+		            "SELECT proj_short_name, filename, last_recalc_date, " &
+		            "REGEXP_REPLACE(filename, '_[0-9]{8}\.xer$', '') AS filename_stem, " &
+		            "SPLIT_PART(filename, '-', 1) AS project_code, " &
+		            "SPLIT_PART(filename, '-', 2) AS programme_type, " &
+		            "SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3) AS tag, " &
+		            "CASE WHEN REGEXP_LIKE(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), '^BL[0-9]+') THEN TRUE ELSE FALSE END AS is_baseline, " &
+		            "CASE WHEN REGEXP_LIKE(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), '^BL[0-9]+') THEN CAST(REGEXP_EXTRACT(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), 'BL([0-9]+)', 1) AS INTEGER) END AS bl_number " &
+		            "FROM prod_projectcontrols_p6.""02_xer_project"" " &
+		            "WHERE " & ProgrammeTypeFilter & ProjectFilter &
+		        "), " &
+		        "parent_ranked AS (" &
+		            "SELECT filename, proj_short_name, last_recalc_date, " &
+		            "REGEXP_EXTRACT(proj_short_name, 'BL[0-9]+-([A-Z])$', 1) AS bl_revision, " &
+		            "ROW_NUMBER() OVER (" &
+		                "PARTITION BY filename " &
+		                "ORDER BY " &
+		                    "CASE WHEN proj_short_name = filename_stem THEN 0 ELSE 1 END, " &
+		                    "LENGTH(proj_short_name), " &
+		                    "proj_short_name" &
+		            ") AS parent_rank " &
+		            "FROM parsed " &
+		            "WHERE proj_short_name = filename_stem OR proj_short_name LIKE filename_stem || '-%'" &
+		        "), " &
+		        "parent_map AS (" &
+		            "SELECT filename, " &
+		            "last_recalc_date AS parent_recalc_date, " &
+		            "NULLIF(bl_revision, '') AS bl_revision " &
+		            "FROM parent_ranked " &
+		            "WHERE parent_rank = 1" &
+		        "), " &
+		        "file_info AS (" &
+		            "SELECT DISTINCT p.filename, p.project_code, p.programme_type, " &
+		            "p.is_baseline, p.bl_number, " &
+		            "pm.parent_recalc_date, pm.bl_revision " &
+		            "FROM parsed p " &
+		            "LEFT JOIN parent_map pm ON p.filename = pm.filename" &
+		        "), " &
+		        "ranked_baselines AS (" &
+		            "SELECT *, ROW_NUMBER() OVER (" &
+		                "PARTITION BY project_code, programme_type " &
+		                "ORDER BY bl_number DESC, " &
+		                    "bl_revision DESC NULLS LAST, " &
+		                    "parent_recalc_date DESC NULLS LAST, " &
+		                    "filename DESC" &
+		            ") AS bl_rank " &
+		            "FROM file_info " &
+		            "WHERE is_baseline = TRUE" &
+		        "), " &
+		        "latest_baseline AS (" &
+		            "SELECT project_code, programme_type, " &
+		            "parent_recalc_date AS anchor_date, filename AS anchor_filename " &
+		            "FROM ranked_baselines " &
+		            "WHERE bl_rank = 1" &
+		        "), " &
+		        "kept_filenames AS (" &
+		            "SELECT DISTINCT f.filename, f.parent_recalc_date " &
+		            "FROM file_info f " &
+		            "LEFT JOIN latest_baseline lb " &
+		                "ON f.project_code = lb.project_code " &
+		                "AND f.programme_type = lb.programme_type " &
+		            "WHERE " &
+		                "lb.anchor_date IS NULL " &
+		                "OR f.filename = lb.anchor_filename " &
+		                "OR (f.is_baseline = FALSE AND f.parent_recalc_date > lb.anchor_date) " &
+		                "OR f.parent_recalc_date IS NULL" &
+		        ") "
+		in
+		    Sql
+	lineageTag: 697373d3-5d41-4354-ad93-6757a27eefee
+	queryGroup: Database
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
 
 expression fnAthenaSource =
 		let
@@ -127,7 +211,7 @@ expression dbo_project =
 		    AwsDataCatalog_Database = Source{[Name="AwsDataCatalog",Kind="Database"]}[Data],
 		    prod_projectcontrols_linkedsitereports_Schema1 = AwsDataCatalog_Database{[Name="prod_projectcontrols_linkedsitereports",Kind="Schema"]}[Data],
 		    dbo_project_Table = prod_projectcontrols_linkedsitereports_Schema1{[Name="dbo_project",Kind="Table"]}[Data],
-		    #"Removed Other Columns" = Table.SelectColumns(dbo_project_Table,{"projectno", "projectname", "companyname", "divisionname", "state", "country"})
+		    #"Removed Other Columns" = Table.SelectColumns(dbo_project_Table,{"projectno", "projectname", "state"})
 		in
 		    #"Removed Other Columns"
 	lineageTag: a9faa87e-1b47-430e-87e4-151b133169bb

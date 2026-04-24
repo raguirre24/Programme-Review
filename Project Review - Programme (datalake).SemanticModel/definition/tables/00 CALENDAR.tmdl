@@ -12,14 +12,7 @@ table '00 CALENDAR'
 
 		annotation UnderlyingDateTimeDataType = Date
 
-	column Year = year([date])
-		formatString: 0
-		lineageTag: 96a2454f-a58c-4b24-a05b-f7ad2f499016
-		summarizeBy: none
-
-		annotation SummarizationSetBy = User
-
-	column Month = DATE([Year], MONTH([Date]), 1)
+	column Month = DATE(YEAR([Date]), MONTH([Date]), 1)
 		dataType: dateTime
 		formatString: mmmm yyyy
 		lineageTag: edfe828e-e92a-42fc-b002-fae966716c7a

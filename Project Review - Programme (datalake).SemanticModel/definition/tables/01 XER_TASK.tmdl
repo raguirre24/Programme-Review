@@ -49,19 +49,6 @@ table '01 XER_TASK'
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'TimePeriod (h/day)' =
-			
-			LOOKUPVALUE(
-			    '10 XER_CALENDARS'[day_hr_cnt],
-			    '10 XER_CALENDARS'[clndr_id_key],
-			    [calendar_id_key]
-			    )
-		formatString: 0
-		lineageTag: 31c26617-0d53-4e3b-94cc-9ec12145cae1
-		summarizeBy: sum
-
-		annotation SummarizationSetBy = Automatic
-
 	column StatusCategory =
 			
 			IF(
@@ -857,12 +844,6 @@ table '01 XER_TASK'
 		annotation UnderlyingDateTimeDataType = Date
 
 		annotation PBI_FormatHint = {"isDateTimeCustom":true}
-
-	column project_task_code = '01 XER_TASK'[ProjectName]&"."&'01 XER_TASK'[task_code]
-		lineageTag: 7b29a1f1-eea1-4adf-8898-53a1c4585609
-		summarizeBy: none
-
-		annotation SummarizationSetBy = Automatic
 
 	column Calendar = related('10 XER_CALENDARS'[clndr_name])
 		lineageTag: 715710dd-9060-483d-bbe5-8e91a64ca32e
