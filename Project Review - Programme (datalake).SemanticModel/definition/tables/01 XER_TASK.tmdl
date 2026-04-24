@@ -401,17 +401,6 @@ table '01 XER_TASK'
 
 		annotation SummarizationSetBy = Automatic
 
-	column cstr_date
-		dataType: dateTime
-		formatString: dd/mm/yy
-		lineageTag: c214af36-b90f-4258-9fe0-13e6475c8b38
-		summarizeBy: none
-		sourceColumn: cstr_date
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation PBI_FormatHint = {"isDateTimeCustom":true}
-
 	column early_end_date
 		dataType: dateTime
 		formatString: dd/mm/yy
@@ -664,14 +653,6 @@ table '01 XER_TASK'
 
 		annotation SummarizationSetBy = Automatic
 
-	column priority_type
-		dataType: string
-		lineageTag: 0e7a8a8c-f6ec-4414-bc6b-0e90c020912c
-		summarizeBy: none
-		sourceColumn: priority_type
-
-		annotation SummarizationSetBy = Automatic
-
 	column proj_id_key
 		dataType: string
 		lineageTag: 52ddaef5-f47e-4b65-babd-448416f76212
@@ -774,56 +755,12 @@ table '01 XER_TASK'
 
 		annotation PBI_FormatHint = {"isDateTimeCustom":true}
 
-	column act_start_date
-		dataType: dateTime
-		formatString: dd/mm/yy
-		lineageTag: c4877cee-1db3-4d25-a9f6-56ab100e5996
-		summarizeBy: none
-		sourceColumn: act_start_date
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation PBI_FormatHint = {"isDateTimeCustom":true}
-
 	column early_start_date
 		dataType: dateTime
 		formatString: dd/mm/yy
 		lineageTag: 86180d61-b856-462b-b1df-f06c59c73035
 		summarizeBy: none
 		sourceColumn: early_start_date
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation PBI_FormatHint = {"isDateTimeCustom":true}
-
-	column late_start_date
-		dataType: dateTime
-		formatString: dd/mm/yy
-		lineageTag: 2f29c175-857f-49c0-8b77-94b8e05b76e8
-		summarizeBy: none
-		sourceColumn: late_start_date
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation PBI_FormatHint = {"isDateTimeCustom":true}
-
-	column target_start_date
-		dataType: dateTime
-		formatString: dd/mm/yy
-		lineageTag: 6bc9f2f9-fad3-4b7c-99ff-f83491e15bd0
-		summarizeBy: none
-		sourceColumn: target_start_date
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation PBI_FormatHint = {"isDateTimeCustom":true}
-
-	column target_end_date
-		dataType: dateTime
-		formatString: dd/mm/yy
-		lineageTag: c9ea07a1-a2fc-48d6-8479-64dfb509b6c5
-		summarizeBy: none
-		sourceColumn: target_end_date
 
 		annotation SummarizationSetBy = Automatic
 
@@ -1119,78 +1056,6 @@ table '01 XER_TASK'
 
 		annotation PBI_FormatHint = {"isDateTimeCustom":true}
 
-	column server
-		dataType: string
-		lineageTag: e2fbbd3c-71f3-4dcd-8e0b-547430bb01e2
-		summarizeBy: none
-		sourceColumn: server
-
-		annotation SummarizationSetBy = Automatic
-
-	column database
-		dataType: string
-		lineageTag: 076a4005-9bd3-4f29-ba05-87e7d8e11530
-		summarizeBy: none
-		sourceColumn: database
-
-		annotation SummarizationSetBy = Automatic
-
-	column task_id
-		dataType: string
-		lineageTag: 71a61a92-e8be-47f3-9931-8e780fb92d85
-		summarizeBy: none
-		sourceColumn: task_id
-
-		annotation SummarizationSetBy = Automatic
-
-	column proj_id
-		dataType: string
-		lineageTag: c9324c92-81b1-492c-85f8-2083be30ecdf
-		summarizeBy: none
-		sourceColumn: proj_id
-
-		annotation SummarizationSetBy = Automatic
-
-	column wbs_id
-		dataType: string
-		lineageTag: 636d198c-b35d-4d19-b571-87de04c540a7
-		summarizeBy: none
-		sourceColumn: wbs_id
-
-		annotation SummarizationSetBy = Automatic
-
-	column clndr_id
-		dataType: string
-		lineageTag: 92a36dc0-65e3-4dfb-94c0-3b0f29723c36
-		summarizeBy: none
-		sourceColumn: clndr_id
-
-		annotation SummarizationSetBy = Automatic
-
-	column rsrc_id
-		dataType: string
-		lineageTag: a2419b1f-98a3-48d5-aa36-fefcd204cd0c
-		summarizeBy: none
-		sourceColumn: rsrc_id
-
-		annotation SummarizationSetBy = Automatic
-
-	column float_path
-		dataType: string
-		lineageTag: 346224ab-63a6-416b-9671-f90cea7f24fc
-		summarizeBy: none
-		sourceColumn: float_path
-
-		annotation SummarizationSetBy = Automatic
-
-	column float_path_order
-		dataType: string
-		lineageTag: 33bdc1b1-3480-465e-80c1-e275479941d2
-		summarizeBy: none
-		sourceColumn: float_path_order
-
-		annotation SummarizationSetBy = Automatic
-
 	column Start
 		dataType: dateTime
 		formatString: dd/mm/yyyy
@@ -1221,16 +1086,6 @@ table '01 XER_TASK'
 
 		annotation SummarizationSetBy = Automatic
 
-	column original_duration
-		dataType: double
-		lineageTag: d41d60c5-89be-4a2d-8f04-b625fc7d6695
-		summarizeBy: sum
-		sourceColumn: original_duration
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
 	column total_float
 		dataType: double
 		lineageTag: ef9db39d-29a7-43b4-8108-47bb512bfba8
@@ -1246,16 +1101,6 @@ table '01 XER_TASK'
 		lineageTag: e7052c2c-352e-4627-8f78-216aad769f19
 		summarizeBy: sum
 		sourceColumn: free_float
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	column percent_complete
-		dataType: double
-		lineageTag: 71b07c8c-5653-49cb-9286-8c2b8a35e88d
-		summarizeBy: sum
-		sourceColumn: percent_complete
 
 		annotation SummarizationSetBy = Automatic
 
@@ -1280,17 +1125,6 @@ table '01 XER_TASK'
 
 		annotation SummarizationSetBy = Automatic
 
-	column refresh_date
-		dataType: dateTime
-		formatString: dd/mm/yy
-		lineageTag: 20f251ae-9467-4b1c-981f-259cb4395814
-		summarizeBy: none
-		sourceColumn: refresh_date
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation PBI_FormatHint = {"isDateTimeCustom":true}
-
 	column ProjectName
 		dataType: string
 		lineageTag: 2998c837-2a83-4749-8ef4-5b80c161c3cf
@@ -1301,7 +1135,7 @@ table '01 XER_TASK'
 
 	column UpdateDate
 		dataType: dateTime
-		formatString: MMM yy
+		formatString: Long Date
 		lineageTag: 99377e12-b3cb-4484-8650-e3e81f5b3f1c
 		summarizeBy: none
 		sourceColumn: UpdateDate
@@ -1309,8 +1143,6 @@ table '01 XER_TASK'
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
-
-		annotation PBI_FormatHint = {"isCustom":true}
 
 	column ProjectCode
 		dataType: string
@@ -1347,30 +1179,42 @@ table '01 XER_TASK'
 				        let
 				            SafeFileName = if fileName = null then null else Text.Trim(fileName),
 				
+				            Prefix =
+				                if SafeFileName <> null and Text.Contains(SafeFileName, "_") then
+				                    Text.BeforeDelimiter(SafeFileName, "_")
+				                else
+				                    SafeFileName,
+				
+				            PrefixParts =
+				                if Prefix <> null then
+				                    Text.Split(Prefix, "-")
+				                else
+				                    {},
+				
 				            ProjectCode =
-				                if SafeFileName <> null and Text.Contains(SafeFileName, "-") then
-				                    Text.BeforeDelimiter(SafeFileName, "-")
+				                if SafeFileName <> null and Text.Contains(SafeFileName, "-") and List.Count(PrefixParts) >= 1 then
+				                    PrefixParts{0}
 				                else
 				                    null,
 				
-				            HasUnderscore = SafeFileName <> null and Text.Contains(SafeFileName, "_"),
-				            PrefixPart = if HasUnderscore then Text.BeforeDelimiter(SafeFileName, "_") else null,
-				            SuffixPart = if HasUnderscore then Text.AfterDelimiter(SafeFileName, "_") else null,
-				
-				            PrefixParts = if PrefixPart <> null then Text.Split(PrefixPart, "-") else {},
-				            CPart = if List.Count(PrefixParts) >= 3 then PrefixParts{2} else null,
-				
-				            DatePart =
-				                if SuffixPart <> null and Text.Contains(SuffixPart, ".") then
-				                    Text.BeforeDelimiter(SuffixPart, ".")
+				            ProgType =
+				                if List.Count(PrefixParts) >= 2 then
+				                    PrefixParts{1}
 				                else
 				                    null,
+				
+				            CPart =
+				                if List.Count(PrefixParts) >= 3 then
+				                    PrefixParts{2}
+				                else
+				                    null,
+				
+				            IsBL =
+				                CPart <> null and Text.StartsWith(CPart, "BL"),
 				
 				            UpdateDate =
-				                if CPart = null or CPart = "" then
+				                if CPart = null or CPart = "" or IsBL then
 				                    null
-				                else if Text.StartsWith(CPart, "BL") then
-				                    null  // BL UpdateDate sourced from parent_recalc_date
 				                else
 				                    let
 				                        P1 = try Number.FromText(Text.Start(CPart, 2)) otherwise null,
@@ -1383,9 +1227,71 @@ table '01 XER_TASK'
 				                        else
 				                            Date.EndOfMonth(#date(2000 + Yr, Mo, 1))
 				        in
-				            [ProjectCode = ProjectCode, UpdateDate = UpdateDate],
+				            [
+				                ProjectCode = ProjectCode,
+				                UpdateDate = UpdateDate,
+				                _IsBL = IsBL,
+				                _ProgType = ProgType
+				            ],
 				
-				    Source = fnAthenaSource("01_xer_task", "t.*, kf.parent_recalc_date"),
+				    // Robust date parser: handles null, native date/datetime/datetimezone,
+				    // and text in several common Athena output formats. Culture-independent.
+				    fnToDate = (value) as nullable date =>
+				        if value = null then
+				            null
+				        else if Value.Is(value, type date) then
+				            value
+				        else if Value.Is(value, type datetime) or Value.Is(value, type datetimezone) then
+				            try Date.From(value) otherwise null
+				        else if Value.Is(value, type text) then
+				            let
+				                trimmed = Text.Trim(value),
+				                // Athena timestamps commonly arrive as "yyyy-MM-dd HH:mm:ss[.fff]"
+				                // or "yyyy-MM-ddTHH:mm:ss[Z]" — first 10 chars are the date part.
+				                datePart =
+				                    if Text.Length(trimmed) >= 10 then Text.Start(trimmed, 10) else trimmed,
+				                parsed =
+				                    try Date.FromText(datePart, [Format = "yyyy-MM-dd", Culture = "en-US"])
+				                    otherwise try Date.FromText(datePart, [Format = "yyyy/MM/dd", Culture = "en-US"])
+				                    otherwise try Date.From(trimmed)
+				                    otherwise null
+				            in
+				                parsed
+				        else
+				            try Date.From(value) otherwise null,
+				
+				    SourceRaw = fnAthenaSource("01_xer_task", "t.*, kf.parent_recalc_date"),
+				
+				    Source =
+				        Table.SelectColumns(
+				            SourceRaw,
+				            {
+				                "status_code",
+				                "task_code",
+				                "total_float",
+				                "task_type",
+				                "id_name",
+				                "early_start_date",
+				                "calendar_id_key",
+				                "task_id_key",
+				                "driving_path_flag",
+				                "remainingduration",
+				                "early_end_date",
+				                "monthupdate",
+				                "task_name",
+				                "data_date",
+				                "act_end_date",
+				                "finish",
+				                "proj_id_key",
+				                "wbs_id_key",
+				                "free_float",
+				                "cstr_type",
+				                "start",
+				                "filename",
+				                "late_end_date",
+				                "parent_recalc_date"
+				            }
+				        ),
 				
 				    AddParsedColumns =
 				        Table.ExpandRecordColumn(
@@ -1393,174 +1299,236 @@ table '01 XER_TASK'
 				                Source,
 				                "Parsed",
 				                each fnParseFileName([filename]),
-				                type [ProjectCode = nullable text, UpdateDate = nullable date]
+				                type [
+				                    ProjectCode = nullable text,
+				                    UpdateDate = nullable date,
+				                    _IsBL = logical,
+				                    _ProgType = nullable text
+				                ]
 				            ),
 				            "Parsed",
-				            {"ProjectCode", "UpdateDate"},
-				            {"ProjectCode", "UpdateDate"}
+				            {"ProjectCode", "UpdateDate", "_IsBL", "_ProgType"},
+				            {"ProjectCode", "UpdateDate", "_IsBL", "_ProgType"}
 				        ),
 				
-				    // For BL files, override null UpdateDate with EndOfMonth(parent_recalc_date)
-				    CoalesceBLDate = Table.TransformColumns(
-				        Table.TransformColumnTypes(AddParsedColumns, {{"parent_recalc_date", type datetime}}),
-				        {{"parent_recalc_date", each try Date.From(_) otherwise null, type nullable date}}
-				    ),
-				    FillBLUpdateDate = Table.ReplaceValue(
-				        CoalesceBLDate,
-				        each [UpdateDate],
-				        each if [UpdateDate] = null and [parent_recalc_date] <> null then Date.EndOfMonth([parent_recalc_date]) else [UpdateDate],
-				        Replacer.ReplaceValue,
-				        {"UpdateDate"}
-				    ),
-
-				    // --- BL UpdateDate collision avoidance ---
-				    // Tag each row with _IsBL and _ProgType (programme type from filename)
-				    AddBLFlag = Table.AddColumn(
-				        FillBLUpdateDate,
-				        "_IsBL",
-				        each
-				            let
-				                prefix = if [filename] <> null and Text.Contains([filename], "_")
-				                         then Text.BeforeDelimiter([filename], "_") else [filename] ?? "",
-				                parts  = Text.Split(prefix, "-")
-				            in
-				                List.Count(parts) >= 3 and Text.StartsWith(parts{2}, "BL"),
-				        type logical
-				    ),
-				    AddProgType = Table.AddColumn(
-				        AddBLFlag,
-				        "_ProgType",
-				        each
-				            let parts = if [filename] <> null then Text.Split([filename], "-") else {}
-				            in  if List.Count(parts) >= 2 then parts{1} else null,
-				        type nullable text
-				    ),
-
-				    // Collect distinct non-BL UpdateDates per (ProjectCode, ProgrammeType)
-				    _NonBLDates = Table.Group(
-				        Table.SelectRows(
-				            Table.SelectColumns(AddProgType, {"ProjectCode", "_ProgType", "UpdateDate", "_IsBL"}),
-				            each [_IsBL] = false and [UpdateDate] <> null
-				        ),
-				        {"ProjectCode", "_ProgType"},
-				        {{"_Dates", each List.Distinct([UpdateDate]), type list}}
-				    ),
-
-				    // Merge the occupied-dates lookup into the main table
-				    _WithOccupied = Table.ExpandTableColumn(
-				        Table.NestedJoin(
-				            AddProgType, {"ProjectCode", "_ProgType"},
-				            _NonBLDates, {"ProjectCode", "_ProgType"},
-				            "_LK", JoinKind.LeftOuter
-				        ),
-				        "_LK", {"_Dates"}, {"_OccupiedDates"}
-				    ),
-
-				    // Shift BL UpdateDate back one month at a time while it collides
-				    AdjustedBLDate = Table.ReplaceValue(
-				        _WithOccupied,
-				        each [UpdateDate],
-				        each
-				            if [_IsBL] and [UpdateDate] <> null and [_OccupiedDates] <> null then
-				                let
-				                    shift = (d as date, dates as list) =>
-				                        if List.Contains(dates, d)
-				                        then @shift(Date.EndOfMonth(Date.AddMonths(d, -1)), dates)
-				                        else d
-				                in
-				                    shift([UpdateDate], [_OccupiedDates])
-				            else
-				                [UpdateDate],
-				        Replacer.ReplaceValue,
-				        {"UpdateDate"}
-				    ),
-
-				    Typed = Table.TransformColumnTypes(
+				    ParentDateAsDate =
 				        Table.TransformColumns(
-				            AdjustedBLDate,
+				            AddParsedColumns,
 				            {
 				                {
-				                    "percent_complete",
-				                    each try if _ = null then null else Number.FromText(Text.From(_)) / 100 otherwise null,
-				                    Percentage.Type
+				                    "parent_recalc_date",
+				                    each fnToDate(_),
+				                    type nullable date
 				                }
 				            }
 				        ),
-				        {
-				            {"act_start_date", type datetime}, {"act_end_date", type datetime},
-				            {"early_start_date", type datetime}, {"early_end_date", type datetime},
-				            {"late_start_date", type datetime}, {"late_end_date", type datetime},
-				            {"target_start_date", type datetime}, {"target_end_date", type datetime},
-				            {"cstr_date", type datetime}, {"start", type datetime}, {"finish", type datetime},
-				            {"data_date", type datetime}, {"refresh_date", type datetime},
-				            {"total_float", type number}, {"free_float", type number},
-				            {"remainingduration", type number}, {"original_duration", type number}
-				        }
-				    ),
 				
-				    Renamed = Table.RenameColumns(
-				        Typed,
-				        {
-				            {"start", "Start"},
-				            {"finish", "Finish"},
-				            {"remainingduration", "remaining_duration"}
-				        }
-				    ),
+				    FillUpdateDate =
+				        Table.RenameColumns(
+				            Table.RemoveColumns(
+				                Table.AddColumn(
+				                    ParentDateAsDate,
+				                    "UpdateDate_Final",
+				                    each
+				                        if [UpdateDate] = null and [parent_recalc_date] <> null then
+				                            Date.EndOfMonth([parent_recalc_date])
+				                        else
+				                            [UpdateDate],
+				                    type nullable date
+				                ),
+				                {"UpdateDate"}
+				            ),
+				            {{"UpdateDate_Final", "UpdateDate"}}
+				        ),
 				
-				    AddAltCode = Table.AddColumn(
-				        Renamed,
-				        "AltProjectCode",
-				        each
-				            if [ProjectCode] <> null and Text.StartsWith([ProjectCode], "C") then
-				                "J" & Text.Middle([ProjectCode], 1)
-				            else
-				                [ProjectCode],
-				        type nullable text
-				    ),
+				    NonBLDates =
+				        Table.Group(
+				            Table.SelectRows(
+				                Table.SelectColumns(
+				                    FillUpdateDate,
+				                    {"ProjectCode", "_ProgType", "UpdateDate", "_IsBL"}
+				                ),
+				                each [_IsBL] = false and [UpdateDate] <> null
+				            ),
+				            {"ProjectCode", "_ProgType"},
+				            {
+				                {
+				                    "_OccupiedDates",
+				                    each List.Buffer(List.Distinct([UpdateDate])),
+				                    type list
+				                }
+				            }
+				        ),
 				
-				    BufferedProjects = Table.Buffer(dbo_project),
+				    WithOccupiedDates =
+				        Table.ExpandTableColumn(
+				            Table.NestedJoin(
+				                FillUpdateDate,
+				                {"ProjectCode", "_ProgType"},
+				                NonBLDates,
+				                {"ProjectCode", "_ProgType"},
+				                "OccupiedLookup",
+				                JoinKind.LeftOuter
+				            ),
+				            "OccupiedLookup",
+				            {"_OccupiedDates"},
+				            {"_OccupiedDates"}
+				        ),
 				
-				    MergedAlt = Table.ExpandTableColumn(
-				        Table.NestedJoin(
-				            AddAltCode,
-				            {"AltProjectCode"},
-				            BufferedProjects,
-				            {"projectno"},
+				    AdjustedUpdateDate =
+				        Table.RenameColumns(
+				            Table.RemoveColumns(
+				                Table.AddColumn(
+				                    WithOccupiedDates,
+				                    "UpdateDate_Adjusted",
+				                    each
+				                        if [_IsBL] and [UpdateDate] <> null and [_OccupiedDates] <> null then
+				                            let
+				                                OccupiedDates = [_OccupiedDates],
+				                                // Iteration cap prevents infinite recursion on corrupt data
+				                                ShiftDate =
+				                                    (d as date, iter as number) as nullable date =>
+				                                        if iter > 240 then
+				                                            d
+				                                        else if List.Contains(OccupiedDates, d) then
+				                                            @ShiftDate(Date.EndOfMonth(Date.AddMonths(d, -1)), iter + 1)
+				                                        else
+				                                            d
+				                            in
+				                                ShiftDate([UpdateDate], 0)
+				                        else
+				                            [UpdateDate],
+				                    type nullable date
+				                ),
+				                {"UpdateDate"}
+				            ),
+				            {{"UpdateDate_Adjusted", "UpdateDate"}}
+				        ),
+				
+				    Typed =
+				        Table.TransformColumnTypes(
+				            AdjustedUpdateDate,
+				            {
+				                {"act_end_date", type datetime},
+				                {"UpdateDate", type date},
+				                {"early_start_date", type datetime},
+				                {"early_end_date", type datetime},
+				                {"late_end_date", type datetime},
+				                {"start", type datetime},
+				                {"finish", type datetime},
+				                {"data_date", type datetime},
+				                {"total_float", type number},
+				                {"free_float", type number},
+				                {"remainingduration", type number}
+				            }
+				        ),
+				
+				    Renamed =
+				        Table.RenameColumns(
+				            Typed,
+				            {
+				                {"start", "Start"},
+				                {"finish", "Finish"},
+				                {"remainingduration", "remaining_duration"}
+				            }
+				        ),
+				
+				    AddAltCode =
+				        Table.AddColumn(
+				            Renamed,
+				            "AltProjectCode",
+				            each
+				                if [ProjectCode] <> null and Text.StartsWith([ProjectCode], "C") then
+				                    "J" & Text.Middle([ProjectCode], 1)
+				                else
+				                    [ProjectCode],
+				            type nullable text
+				        ),
+				
+				    BufferedProjects =
+				        Table.Buffer(
+				            Table.SelectColumns(
+				                dbo_project,
+				                {"projectno", "projectname"}
+				            )
+				        ),
+				
+				    MergedAlt =
+				        Table.ExpandTableColumn(
+				            Table.NestedJoin(
+				                AddAltCode,
+				                {"AltProjectCode"},
+				                BufferedProjects,
+				                {"projectno"},
+				                "AltLookup",
+				                JoinKind.LeftOuter
+				            ),
 				            "AltLookup",
-				            JoinKind.LeftOuter
+				            {"projectname"},
+				            {"AltProjectName"}
 				        ),
-				        "AltLookup",
-				        {"projectname"},
-				        {"AltProjectName"}
-				    ),
 				
-				    MergedOrig = Table.ExpandTableColumn(
-				        Table.NestedJoin(
-				            MergedAlt,
-				            {"ProjectCode"},
-				            BufferedProjects,
-				            {"projectno"},
+				    MergedOrig =
+				        Table.ExpandTableColumn(
+				            Table.NestedJoin(
+				                MergedAlt,
+				                {"ProjectCode"},
+				                BufferedProjects,
+				                {"projectno"},
+				                "OrigLookup",
+				                JoinKind.LeftOuter
+				            ),
 				            "OrigLookup",
-				            JoinKind.LeftOuter
+				            {"projectname"},
+				            {"OrigProjectName"}
 				        ),
-				        "OrigLookup",
-				        {"projectname"},
-				        {"OrigProjectName"}
-				    ),
 				
-				    AddProjectName = Table.AddColumn(
-				        MergedOrig,
-				        "ProjectName",
-				        each if [AltProjectName] <> null then [AltProjectName] else [OrigProjectName],
-				        type nullable text
-				    ),
+				    AddProjectName =
+				        Table.AddColumn(
+				            MergedOrig,
+				            "ProjectName",
+				            each
+				                if [AltProjectName] <> null then
+				                    [AltProjectName]
+				                else
+				                    [OrigProjectName],
+				            type nullable text
+				        ),
 				
-				    Cleanup = Table.RemoveColumns(
-				        AddProjectName,
-				        {"AltProjectCode", "AltProjectName", "OrigProjectName", "parent_recalc_date", "_IsBL", "_ProgType", "_OccupiedDates"}
-				    )
+				    Final =
+				        Table.SelectColumns(
+				            AddProjectName,
+				            {
+				                "status_code",
+				                "task_code",
+				                "total_float",
+				                "task_type",
+				                "ProjectName",
+				                "id_name",
+				                "early_start_date",
+				                "calendar_id_key",
+				                "task_id_key",
+				                "driving_path_flag",
+				                "remaining_duration",
+				                "early_end_date",
+				                "monthupdate",
+				                "task_name",
+				                "data_date",
+				                "act_end_date",
+				                "ProjectCode",
+				                "Finish",
+				                "proj_id_key",
+				                "wbs_id_key",
+				                "UpdateDate",
+				                "free_float",
+				                "cstr_type",
+				                "Start",
+				                "filename",
+				                "late_end_date"
+				            }
+				        )
 				in
-				    Cleanup
+				    Final
 
 	annotation PBI_NavigationStepName = Navigation
 

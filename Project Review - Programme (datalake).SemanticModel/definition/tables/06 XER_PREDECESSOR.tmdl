@@ -1,27 +1,11 @@
 table '06 XER_PREDECESSOR'
 	lineageTag: 6c97f080-826d-44db-8576-0c805feced04
 
-	column lag_hr_cnt
-		dataType: string
-		lineageTag: 21dcf587-15da-4090-817b-418823107ea8
-		summarizeBy: none
-		sourceColumn: lag_hr_cnt
-
-		annotation SummarizationSetBy = Automatic
-
 	column task_id_key
 		dataType: string
 		lineageTag: 413cd052-da64-489c-9ccb-a4ace2599412
 		summarizeBy: none
 		sourceColumn: task_id_key
-
-		annotation SummarizationSetBy = Automatic
-
-	column pred_task_id_key
-		dataType: string
-		lineageTag: 4af8f8c9-5f9e-4aa0-b6b6-a1d4e38d1462
-		summarizeBy: none
-		sourceColumn: pred_task_id_key
 
 		annotation SummarizationSetBy = Automatic
 
@@ -68,13 +52,6 @@ table '06 XER_PREDECESSOR'
 			    _taskCode & " - " & _taskName
 		lineageTag: b6d53fc7-0751-4f43-a8cc-c36dd9fbab0c
 		summarizeBy: none
-
-		annotation SummarizationSetBy = Automatic
-
-	column 'Total Float' = RELATED('01 XER_TASK'[total_float])
-		formatString: 0
-		lineageTag: e14ca113-edc2-4687-9253-81df78ea22a9
-		summarizeBy: sum
 
 		annotation SummarizationSetBy = Automatic
 
@@ -295,17 +272,6 @@ table '06 XER_PREDECESSOR'
 
 		annotation SummarizationSetBy = Automatic
 
-	column PredTaskCodeAndName =
-			
-			VAR _taskCode = LOOKUPVALUE('01 XER_TASK'[task_code],'01 XER_TASK'[task_id_key],'06 XER_PREDECESSOR'[pred_task_id_key])
-			VAR _taskName = LOOKUPVALUE('01 XER_TASK'[task_name],'01 XER_TASK'[task_id_key],'06 XER_PREDECESSOR'[pred_task_id_key])
-			RETURN
-			    _taskCode & " - " & _taskName
-		lineageTag: 24353972-bb3b-4b28-86f3-55cc2ef440cb
-		summarizeBy: none
-
-		annotation SummarizationSetBy = Automatic
-
 	column CriticalLink = ```
 			
 			VAR crit_succ = 
@@ -372,126 +338,6 @@ table '06 XER_PREDECESSOR'
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'predecessor_Total Float' = LOOKUPVALUE('01 XER_TASK'[total_float],'01 XER_TASK'[Task_ID_key],[pred_task_id_key])
-		formatString: 0
-		lineageTag: f364cc56-9492-4ea2-bad0-53ec4f4b39e5
-		summarizeBy: sum
-
-		annotation SummarizationSetBy = Automatic
-
-	column predecessor_name = LOOKUPVALUE('01 XER_TASK'[task_name],'01 XER_TASK'[Task_ID_key],[pred_task_id_key])
-		lineageTag: c3df4ebf-7cfd-4fa7-8210-d00d460d86f4
-		summarizeBy: none
-
-		annotation SummarizationSetBy = Automatic
-
-	column server
-		dataType: string
-		lineageTag: bfc2bab3-47c4-4823-8753-40f5c3a73882
-		summarizeBy: none
-		sourceColumn: server
-
-		annotation SummarizationSetBy = Automatic
-
-	column database
-		dataType: string
-		lineageTag: 8743b239-cb2a-4353-b143-a2cf8e865498
-		summarizeBy: none
-		sourceColumn: database
-
-		annotation SummarizationSetBy = Automatic
-
-	column task_pred_id
-		dataType: string
-		lineageTag: 13ee31c8-8451-4e94-afc6-e414855a6db4
-		summarizeBy: none
-		sourceColumn: task_pred_id
-
-		annotation SummarizationSetBy = Automatic
-
-	column task_id
-		dataType: string
-		lineageTag: ab5d69b9-59fe-4ec2-96db-8bb88d1c746b
-		summarizeBy: none
-		sourceColumn: task_id
-
-		annotation SummarizationSetBy = Automatic
-
-	column pred_task_id
-		dataType: string
-		lineageTag: f3afc86e-69f0-472d-89b8-e32301137613
-		summarizeBy: none
-		sourceColumn: pred_task_id
-
-		annotation SummarizationSetBy = Automatic
-
-	column proj_id
-		dataType: string
-		lineageTag: 6105b684-dc3a-4b2b-831e-714e100de3bd
-		summarizeBy: none
-		sourceColumn: proj_id
-
-		annotation SummarizationSetBy = Automatic
-
-	column pred_proj_id
-		dataType: string
-		lineageTag: 922a13ba-49d8-44f9-808e-38089a4f1c4c
-		summarizeBy: none
-		sourceColumn: pred_proj_id
-
-		annotation SummarizationSetBy = Automatic
-
-	column comments
-		dataType: string
-		lineageTag: b22a1146-a439-4671-82de-09e0616371ec
-		summarizeBy: none
-		sourceColumn: comments
-
-		annotation SummarizationSetBy = Automatic
-
-	column float_path
-		dataType: string
-		lineageTag: 1c54a882-50d7-430d-aae4-ec7c16d79854
-		summarizeBy: none
-		sourceColumn: float_path
-
-		annotation SummarizationSetBy = Automatic
-
-	column aref
-		dataType: dateTime
-		formatString: Long Date
-		lineageTag: 44a4709f-e964-400d-be8e-1fbd1285aa3f
-		summarizeBy: none
-		sourceColumn: aref
-
-		annotation SummarizationSetBy = Automatic
-
-	column arls
-		dataType: dateTime
-		formatString: Long Date
-		lineageTag: 8e81c44e-3788-4b56-a929-4465206213f2
-		summarizeBy: none
-		sourceColumn: arls
-
-		annotation SummarizationSetBy = Automatic
-
-	column filename
-		dataType: string
-		lineageTag: e74ff897-e07c-4684-af42-91fd42093472
-		summarizeBy: none
-		sourceColumn: filename
-
-		annotation SummarizationSetBy = Automatic
-
-	column refresh_date
-		dataType: dateTime
-		formatString: Long Date
-		lineageTag: 2cde1828-8e1c-4346-bbfe-0eaf15d857a2
-		summarizeBy: none
-		sourceColumn: refresh_date
-
-		annotation SummarizationSetBy = Automatic
-
 	column UpdateDate
 		dataType: dateTime
 		formatString: Long Date
@@ -529,47 +375,11 @@ table '06 XER_PREDECESSOR'
 
 		annotation PBI_FormatHint = {"isDateTimeCustom":true}
 
-	column status_code_successor = RELATED('01 XER_TASK'[status_code])
-		lineageTag: a1b2c3d4-1111-4aaa-bbbb-000000000001
-		summarizeBy: none
-
-		annotation SummarizationSetBy = Automatic
-
-	column clndr_id_key = RELATED('01 XER_TASK'[calendar_id_key])
-		lineageTag: a1b2c3d4-1111-4aaa-bbbb-000000000007
-		summarizeBy: none
-
-		annotation SummarizationSetBy = Automatic
-
 	column ProjectCode
 		dataType: string
 		lineageTag: 559d3191-e1d5-45b6-b610-54608f4c4b7c
 		summarizeBy: none
 		sourceColumn: ProjectCode
-
-		annotation SummarizationSetBy = Automatic
-
-	column calendar_id_key
-		dataType: string
-		lineageTag: f32e219a-19f2-4390-bbbf-a0f4ee16844a
-		summarizeBy: none
-		sourceColumn: calendar_id_key
-
-		annotation SummarizationSetBy = Automatic
-
-	column predecessor_clndr_id_key
-		dataType: string
-		lineageTag: e43ac4bc-e756-4090-9228-047b9be7a71a
-		summarizeBy: none
-		sourceColumn: predecessor_clndr_id_key
-
-		annotation SummarizationSetBy = Automatic
-
-	column status_code
-		dataType: string
-		lineageTag: 5e92998f-aba3-4fb3-9b5f-829777232436
-		summarizeBy: none
-		sourceColumn: status_code
 
 		annotation SummarizationSetBy = Automatic
 
@@ -607,51 +417,49 @@ table '06 XER_PREDECESSOR'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	column time_period_hours_per_day
-		dataType: double
-		lineageTag: c178e389-fc4f-470f-8d39-d4b8cb16e401
-		summarizeBy: sum
-		sourceColumn: time_period_hours_per_day
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
 	column start
 		dataType: dateTime
-		formatString: General Date
+		formatString: Long Date
 		lineageTag: 0111cd41-c633-4ee4-b53b-15335bf96b5a
 		summarizeBy: none
 		sourceColumn: start
 
 		annotation SummarizationSetBy = Automatic
 
+		annotation UnderlyingDateTimeDataType = Date
+
 	column finish
 		dataType: dateTime
-		formatString: General Date
+		formatString: Long Date
 		lineageTag: 062b45b4-0b20-4eb5-807f-8cb21fb21f47
 		summarizeBy: none
 		sourceColumn: finish
 
 		annotation SummarizationSetBy = Automatic
 
+		annotation UnderlyingDateTimeDataType = Date
+
 	column predecessor_start
 		dataType: dateTime
-		formatString: General Date
+		formatString: Long Date
 		lineageTag: 485def26-ab97-4bb8-9621-16ce13548840
 		summarizeBy: none
 		sourceColumn: predecessor_start
 
 		annotation SummarizationSetBy = Automatic
 
+		annotation UnderlyingDateTimeDataType = Date
+
 	column predecessor_finish
 		dataType: dateTime
-		formatString: General Date
+		formatString: Long Date
 		lineageTag: e525075f-c1c4-4c71-a023-a9d9101f490a
 		summarizeBy: none
 		sourceColumn: predecessor_finish
 
 		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
 
 	column free_float
 		dataType: double
@@ -663,9 +471,25 @@ table '06 XER_PREDECESSOR'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
+	column pred_task_id_key
+		dataType: string
+		lineageTag: fa5ed2b6-bdcb-4e95-a0fd-ff82c80f7ed0
+		summarizeBy: none
+		sourceColumn: pred_task_id_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column status_code
+		dataType: string
+		lineageTag: 659f26be-3f23-4225-9527-db386da77ef2
+		summarizeBy: none
+		sourceColumn: status_code
+
+		annotation SummarizationSetBy = Automatic
+
 	column total_float
 		dataType: double
-		lineageTag: 75867e6a-f400-4588-8178-94b00b22d20a
+		lineageTag: 81036ff5-a54a-4a53-aabc-5127aba7f20d
 		summarizeBy: sum
 		sourceColumn: total_float
 
@@ -673,16 +497,32 @@ table '06 XER_PREDECESSOR'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	column monthupdate
-		dataType: dateTime
-		formatString: Long Date
-		lineageTag: ff9111a5-7db0-46ce-bd4e-1275190aea5f
+	column task_pred_id_key
+		dataType: string
+		lineageTag: 2ab7e73e-18fa-44cf-8829-a5c520d1547e
 		summarizeBy: none
-		sourceColumn: monthupdate
+		sourceColumn: task_pred_id_key
 
 		annotation SummarizationSetBy = Automatic
 
-		annotation UnderlyingDateTimeDataType = Date
+	column PredTaskCodeAndName =
+			
+			VAR _taskCode = LOOKUPVALUE('01 XER_TASK'[task_code],'01 XER_TASK'[task_id_key],'06 XER_PREDECESSOR'[pred_task_id_key])
+			VAR _taskName = LOOKUPVALUE('01 XER_TASK'[task_name],'01 XER_TASK'[task_id_key],'06 XER_PREDECESSOR'[pred_task_id_key])
+			RETURN
+			    _taskCode & " - " & _taskName
+		lineageTag: ed994dd3-ba8c-4533-a6a9-3dcbeb5dc32e
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'predecessor_Total Float' = LOOKUPVALUE('01 XER_TASK'[total_float],'01 XER_TASK'[Task_ID_key],[pred_task_id_key])
+		lineageTag: 3ef7601a-6708-462b-95c2-9e65e33cb7a2
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	partition '06 XER_PREDECESSOR' = m
 		mode: import
@@ -691,37 +531,99 @@ table '06 XER_PREDECESSOR'
 				let
 				    Source = fnAthenaSource("06_xer_predecessor"),
 				
-				    AddParsedColumns = Table.AddColumn(
-				        Table.AddColumn(Source, "ProjectCode", each Text.BeforeDelimiter([filename], "-"), type text),
-				        "UpdateDate", each
-				            let
-				                parts = Text.Split(Text.BeforeDelimiter([filename], "_"), "-"),
-				                cPart = if List.Count(parts) >= 3 then parts{2} else "",
-				                datePart = Text.BeforeDelimiter(Text.AfterDelimiter([filename], "_"), ".")
-				            in
-				                if Text.StartsWith(cPart, "BL") then
-				                    Date.EndOfMonth(Date.FromText(datePart))
-				                else
-				                    let
-				                        p1 = Number.FromText(Text.Start(cPart, 2)),
-				                        p2 = Number.FromText(Text.End(cPart, 2)),
-				                        yr = if p2 > 12 then p2 else p1,
-				                        mo = if p2 > 12 then p1 else p2
-				                    in
-				                        Date.EndOfMonth(#date(2000 + yr, mo, 1)),
-				        type date
-				    ),
+				    SelectedColumns =
+				        Table.SelectColumns(Source,{"task_pred_id", "pred_type", "task_id_key", "pred_task_id_key", "status_code", "predecessor_status_code", "task_type", "predecessor_task_type", "lag", "start", "finish", "predecessor_start", "predecessor_finish", "free_float", "total_float", "filename"}),
+				    #"Inserted Merged Column" = Table.AddColumn(SelectedColumns, "task_pred_id_key", each Text.Combine({[filename], [task_pred_id]}, "."), type text),
 				
-				    Typed = Table.TransformColumnTypes(AddParsedColumns, {
-				        {"refresh_date", type datetime}, {"arls", type datetime}, {"aref", type datetime},
-				        {"start", type datetime}, {"finish", type datetime},
-				        {"predecessor_start", type datetime}, {"predecessor_finish", type datetime},
-				        {"free_float", type number}, {"total_float", type number},
-				        {"time_period_hours_per_day", type number}, {"lag", type number},
-				        {"monthupdate", type date}
-				    })
+				    AddParsedColumns =
+				        Table.ExpandRecordColumn(
+				            Table.AddColumn(
+				                #"Inserted Merged Column",
+				                "Parsed",
+				                each
+				                    let
+				                        FileName =
+				                            if [filename] = null then
+				                                null
+				                            else
+				                                Text.Trim([filename]),
+				
+				                        Prefix =
+				                            if FileName <> null and Text.Contains(FileName, "_") then
+				                                Text.BeforeDelimiter(FileName, "_")
+				                            else
+				                                FileName,
+				
+				                        Parts =
+				                            if Prefix <> null then
+				                                Text.Split(Prefix, "-")
+				                            else
+				                                {},
+				
+				                        ProjectCode =
+				                            if List.Count(Parts) >= 1 then
+				                                Parts{0}
+				                            else
+				                                null,
+				
+				                        CPart =
+				                            if List.Count(Parts) >= 3 then
+				                                Parts{2}
+				                            else
+				                                null,
+				
+				                        UpdateDate =
+				                            if CPart = null or CPart = "" then
+				                                null
+				                            else if Text.StartsWith(CPart, "BL") then
+				                                let
+				                                    DatePart =
+				                                        if FileName <> null and Text.Contains(FileName, "_") then
+				                                            try Text.BeforeDelimiter(Text.AfterDelimiter(FileName, "_"), ".") otherwise null
+				                                        else
+				                                            null
+				                                in
+				                                    try Date.EndOfMonth(Date.From(DateTime.FromText(DatePart))) otherwise null
+				                            else
+				                                let
+				                                    P1 = try Number.FromText(Text.Start(CPart, 2)) otherwise null,
+				                                    P2 = try Number.FromText(Text.End(CPart, 2)) otherwise null,
+				                                    Yr = if P1 = null or P2 = null then null else if P2 > 12 then P2 else P1,
+				                                    Mo = if P1 = null or P2 = null then null else if P2 > 12 then P1 else P2
+				                                in
+				                                    if Yr = null or Mo = null or Mo < 1 or Mo > 12 then
+				                                        null
+				                                    else
+				                                        Date.EndOfMonth(#date(2000 + Yr, Mo, 1))
+				                    in
+				                        [
+				                            ProjectCode = ProjectCode,
+				                            UpdateDate = UpdateDate
+				                        ],
+				                type [
+				                    ProjectCode = nullable text,
+				                    UpdateDate = nullable date
+				                ]
+				            ),
+				            "Parsed",
+				            {"ProjectCode", "UpdateDate"},
+				            {"ProjectCode", "UpdateDate"}
+				        ),
+				    #"Parsed Date" = Table.TransformColumns(AddParsedColumns,{{"start", each Date.From(DateTimeZone.From(_)), type date}, {"finish", each Date.From(DateTimeZone.From(_)), type date}, {"predecessor_start", each Date.From(DateTimeZone.From(_)), type date}, {"predecessor_finish", each Date.From(DateTimeZone.From(_)), type date}}),
+				
+				    Typed =
+				        Table.TransformColumnTypes(
+				            #"Parsed Date",
+				            {
+				                {"lag", type number},
+				                {"free_float", type number},
+				                {"total_float", type number},
+				                {"UpdateDate", type date}
+				            }
+				        ),
+				    #"Removed Columns" = Table.RemoveColumns(Typed,{"task_pred_id", "filename"})
 				in
-				    Typed
+				    #"Removed Columns"
 
 	annotation PBI_NavigationStepName = Navigation
 

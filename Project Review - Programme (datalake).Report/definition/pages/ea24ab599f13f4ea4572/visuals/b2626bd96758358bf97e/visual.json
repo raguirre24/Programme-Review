@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.6.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.8.0/schema.json",
   "name": "b2626bd96758358bf97e",
   "position": {
     "x": 887.5,
@@ -948,8 +948,7 @@
             "Function": 4
           }
         },
-        "type": "Advanced",
-        "howCreated": "User"
+        "type": "Advanced"
       },
       {
         "name": "f3e653de019bce872347",
@@ -1016,7 +1015,49 @@
           }
         },
         "type": "Advanced",
-        "howCreated": "User"
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "0",
+              "Entity": "01 XER_TASK",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "Not": {
+                  "Expression": {
+                    "Comparison": {
+                      "ComparisonKind": 0,
+                      "Left": {
+                        "Aggregation": {
+                          "Expression": {
+                            "Column": {
+                              "Expression": {
+                                "SourceRef": {
+                                  "Source": "0"
+                                }
+                              },
+                              "Property": "Start"
+                            }
+                          },
+                          "Function": 3
+                        }
+                      },
+                      "Right": {
+                        "Literal": {
+                          "Value": "null"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
       },
       {
         "name": "6ba9b9951b0250a92657",
@@ -1100,6 +1141,34 @@
           ]
         },
         "howCreated": "User"
+      },
+      {
+        "name": "48c24e806e332d8c20eb",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "03 XER_PROJWBS"
+              }
+            },
+            "Property": "Level_1"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "d1433bc0c8b04b12801c",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "03 XER_PROJWBS"
+              }
+            },
+            "Property": "Level_5"
+          }
+        },
+        "type": "Categorical"
       }
     ],
     "filterSortOrder": "Custom"

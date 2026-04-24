@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.6.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.8.0/schema.json",
   "name": "bc3556dbcc6daf4a1bd6",
   "position": {
     "x": 694.28571428571433,
@@ -32,7 +32,7 @@
                 }
               },
               "queryRef": "Min(06 XER_PREDECESSOR.PredTaskCodeAndName)",
-              "nativeQueryRef": "Count of PredTaskCodeAndName"
+              "nativeQueryRef": "Count of PredTaskCodeAndName1"
             }
           ]
         }

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.6.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.8.0/schema.json",
   "name": "58fbc09d197fe53515d8",
   "position": {
     "x": 882.5,
@@ -27,7 +27,9 @@
                 }
               },
               "queryRef": "01 XER_TASK.UpdateDate",
-              "nativeQueryRef": "UpdateDate"
+              "nativeQueryRef": "Update",
+              "displayName": "Update",
+              "format": "MMM yyyy"
             },
             {
               "field": {

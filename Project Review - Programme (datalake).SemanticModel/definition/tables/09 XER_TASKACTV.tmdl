@@ -17,22 +17,6 @@ table '09 XER_TASKACTV'
 
 		annotation SummarizationSetBy = Automatic
 
-	column actv_code_type_id
-		dataType: string
-		lineageTag: b71ef1b4-88e5-421d-8101-2b56b483353c
-		summarizeBy: none
-		sourceColumn: actv_code_type_id
-
-		annotation SummarizationSetBy = Automatic
-
-	column proj_id
-		dataType: string
-		lineageTag: 284416f9-ef30-4409-b566-8f4b23fec531
-		summarizeBy: none
-		sourceColumn: proj_id
-
-		annotation SummarizationSetBy = Automatic
-
 	column actv_code_type = related('07 XER_ACTVTYPE'[actv_code_type])
 		lineageTag: a8d9dba3-26d5-4ccd-8b1e-3df9a02291ca
 		summarizeBy: none
@@ -45,70 +29,15 @@ table '09 XER_TASKACTV'
 
 		annotation SummarizationSetBy = Automatic
 
-	column server
-		dataType: string
-		lineageTag: 9d0dfe9b-f87b-4f75-a74a-67e46911bdaf
-		summarizeBy: none
-		sourceColumn: server
-
-		annotation SummarizationSetBy = Automatic
-
-	column database
-		dataType: string
-		lineageTag: de350768-1bdf-4d3a-8d72-0f03fb3ea7d4
-		summarizeBy: none
-		sourceColumn: database
-
-		annotation SummarizationSetBy = Automatic
-
-	column task_id
-		dataType: string
-		lineageTag: 4cebd862-40a9-43e4-9644-4100c0563096
-		summarizeBy: none
-		sourceColumn: task_id
-
-		annotation SummarizationSetBy = Automatic
-
-	column actv_code_id
-		dataType: string
-		lineageTag: 6090ae63-46fe-40f6-9811-e440e0a17141
-		summarizeBy: none
-		sourceColumn: actv_code_id
-
-		annotation SummarizationSetBy = Automatic
-
-	column filename
-		dataType: string
-		lineageTag: df7adc6d-6e01-4147-9961-895c3cc10bec
-		summarizeBy: none
-		sourceColumn: filename
-
-		annotation SummarizationSetBy = Automatic
-
-	column refresh_date
-		dataType: string
-		lineageTag: 1293d54f-6c27-4e89-989a-63588ab9754e
-		summarizeBy: none
-		sourceColumn: refresh_date
-
-		annotation SummarizationSetBy = Automatic
-
-	column monthupdate
-		dataType: string
-		lineageTag: be8c27ee-baad-43e3-828c-4e59343ff1e0
-		summarizeBy: none
-		sourceColumn: monthupdate
-
-		annotation SummarizationSetBy = Automatic
-
 	partition '09 XER_TASKACTV' = m
 		mode: import
 		queryGroup: XER
 		source =
 				let
-				    Source = fnAthenaSource("09_xer_taskactv")
+				    Source = fnAthenaSource("09_xer_taskactv"),
+				    #"Removed Other Columns" = Table.SelectColumns(Source,{"actv_code_id_key", "task_id_key"})
 				in
-				    Source
+				    #"Removed Other Columns"
 
 	annotation PBI_NavigationStepName = Navigation
 

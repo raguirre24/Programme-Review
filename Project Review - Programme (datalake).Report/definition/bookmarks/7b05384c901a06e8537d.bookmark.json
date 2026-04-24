@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.0.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
   "displayName": "Show Relationships",
   "name": "7b05384c901a06e8537d",
   "options": {
@@ -275,7 +275,7 @@
                                         "Source": "1"
                                       }
                                     },
-                                    "Property": "Free_Float"
+                                    "Property": "Free Float"
                                   }
                                 },
                                 "Right": {
@@ -297,7 +297,7 @@
                           "Entity": "06a XER_SUCCESSOR"
                         }
                       },
-                      "Property": "Free_Float"
+                      "Property": "Free Float"
                     }
                   },
                   "howCreated": 0
@@ -407,7 +407,7 @@
                           "Entity": "06a XER_SUCCESSOR"
                         }
                       },
-                      "Property": "Free_Float"
+                      "Property": "Free Float"
                     }
                   }
                 }

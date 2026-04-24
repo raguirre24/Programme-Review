@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.6.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.8.0/schema.json",
   "name": "77a062a0a61423c22251",
   "position": {
     "x": 1250,
@@ -38,11 +38,12 @@
                       "Entity": "06 XER_PREDECESSOR"
                     }
                   },
-                  "Property": "Total Float"
+                  "Property": "total_float"
                 }
               },
-              "queryRef": "Sum(06 XER_PREDECESSOR.Total Float)",
-              "nativeQueryRef": "Total Float"
+              "queryRef": "Sum(06 XER_PREDECESSOR.total_float)",
+              "nativeQueryRef": "Total Float",
+              "displayName": "Total Float"
             },
             {
               "field": {
@@ -227,13 +228,13 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "60.41501408719232D"
+                  "Value": "61.9170579029734D"
                 }
               }
             }
           },
           "selector": {
-            "metadata": "Sum(06 XER_PREDECESSOR.Total Float)"
+            "metadata": "Sum(06 XER_PREDECESSOR.total_float)"
           }
         }
       ],
@@ -247,22 +248,6 @@
                 }
               }
             }
-          }
-        }
-      ],
-      "columnFormatting": [
-        {
-          "properties": {
-            "alignment": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Center'"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "Sum(06 XER_PREDECESSOR.Total Float)"
           }
         }
       ]

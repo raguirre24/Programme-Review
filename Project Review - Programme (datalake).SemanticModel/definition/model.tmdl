@@ -19,16 +19,15 @@ queryGroup Database
 
 	annotation PBI_QueryGroupOrder = 2
 
-annotation PBI_QueryOrder = ["01 XER_TASK","02 XER_PROJECT","03 XER_PROJWBS","05 XER_DATA DATE","06 XER_PREDECESSOR","07 XER_ACTVTYPE","08 XER_ACTVCODE","09 XER_TASKACTV","10 XER_CALENDARS","11_XER_CALENDAR_DETAILED","12_XER_RSRC","13_XER_TASKRSRC","14_XER_UMEASURE","15_XER_RESOURCE_DISTRIBUTION","XER Measures","XER  Counts","XER Metrics","XER S-Curve","Dynamic Titles & Formatting","SharePointSite","Target Update","Current Update","Activity Completion","UserPermission","Project","Resources","WBS Measures","Logos","fnAthenaSource","ProjectFilterList","SelectedProjects","SelectedProgrammeType","AthenaDB","dbo_project","AthenaScopeSql"]
+annotation PBI_QueryOrder = ["01 XER_TASK","02 XER_PROJECT","03 XER_PROJWBS","06 XER_PREDECESSOR","07 XER_ACTVTYPE","08 XER_ACTVCODE","09 XER_TASKACTV","10 XER_CALENDARS","12_XER_RSRC","15_XER_RESOURCE_DISTRIBUTION","XER Measures","XER  Counts","XER Metrics","XER S-Curve","Dynamic Titles & Formatting","SharePointSite","Target Update","Current Update","Activity Completion","UserPermission","Project","Resources","WBS Measures","Logos","fnAthenaSource","ProjectFilterList","SelectedProjects","SelectedProgrammeType","AthenaDB","dbo_project","AthenaScopeSql"]
 
-annotation PBI_ProTooling = ["TMDLView_Desktop","DevMode"]
+annotation PBI_ProTooling = ["TMDLView_Desktop","DevMode","DaxQueryView_Desktop"]
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
 ref table '02 XER_PROJECT'
 ref table '01 XER_TASK'
 ref table '03 XER_PROJWBS'
-ref table '05 XER_DATA DATE'
 ref table '10 XER_CALENDARS'
 ref table 'XER Measures'
 ref table '00 CALENDAR'
@@ -56,20 +55,16 @@ ref table UserPermission
 ref table Project
 ref table Filter_Start_Delay
 ref table Filter_Constraint_Types
-ref table 11_XER_CALENDAR_DETAILED
 ref table 12_XER_RSRC
-ref table 13_XER_TASKRSRC
 ref table 'Resource Calendar'
 ref table Resources
 ref table 'Monthly Resource Distribution Baseline'
-ref table Unique_Resources
 ref table 'WBS Measures'
 ref table '06a XER_SUCCESSOR'
 ref table Project_Dimension
 ref table '04 XER_BASELINE'
 ref table Logos
 ref table 15_XER_RESOURCE_DISTRIBUTION
-ref table 14_XER_UMEASURE
 ref table AthenaScopeSql
 
 ref role 'Project Access'

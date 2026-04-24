@@ -27,11 +27,6 @@ relationship 253e894c-8f38-637b-0eda-dfad95a2e558
 	fromColumn: '01 XER_TASK'.proj_id_key
 	toColumn: '02 XER_PROJECT'.proj_id_key
 
-relationship ed160bf7-7ce2-b609-367e-d8c24df67b17
-	isActive: false
-	fromColumn: '01 XER_TASK'.proj_id_key
-	toColumn: '05 XER_DATA DATE'.proj_id_key
-
 relationship 69b8fb30-5238-1d0a-5740-4d97f4ae4939
 	fromColumn: '08 XER_ACTVCODE'.actv_code_type_id_key
 	toColumn: '07 XER_ACTVTYPE'.actv_code_type_id_key
@@ -56,16 +51,6 @@ relationship 9f5bd59e-5450-6f51-dc29-6529f919ee28
 	fromColumn: '01 XER_TASK'.cstr_type
 	toColumn: Filter_Constraint_Types.ConstraintType
 
-relationship 8630f99a-16ae-b9b5-b3bb-9bb4c08c739d
-	crossFilteringBehavior: bothDirections
-	fromColumn: 13_XER_TASKRSRC.task_id_key
-	toColumn: '01 XER_TASK'.task_id_key
-
-relationship b9d2d8b9-4d18-205a-a802-d1630e05973c
-	crossFilteringBehavior: bothDirections
-	fromColumn: 13_XER_TASKRSRC.rsrc_id_key
-	toColumn: 12_XER_RSRC.rsrc_id_key
-
 relationship b5c62477-cdf8-342b-d75c-33f515404b12
 	fromColumn: '01 XER_TASK'.TaskType_Classified
 	toColumn: Filter_TaskType.TaskType
@@ -77,12 +62,6 @@ relationship faf183d7-9730-f176-229d-30cb70fb9da8
 relationship 348ad1a8-0e68-48ff-16c6-932cffb8c434
 	fromColumn: '01 XER_TASK'.PreviousMonthStartVarianceCategory
 	toColumn: Filter_Start_Delay.PreviousMonthStartVariance
-
-relationship e10f35aa-d247-ac1a-c9ef-00775150a946
-	crossFilteringBehavior: bothDirections
-	toCardinality: many
-	fromColumn: 11_XER_CALENDAR_DETAILED.clndr_id_key
-	toColumn: '01 XER_TASK'.calendar_id_key
 
 relationship 3e7d6192-5b98-528e-77c5-2d5538bcf78c
 	crossFilteringBehavior: bothDirections
@@ -137,10 +116,6 @@ relationship e7388c63-8495-c635-2f44-2b34f125c8d2
 	fromColumn: '01 XER_TASK'.'Baseline Effective_Early_End'
 	toColumn: '00 CALENDAR'.Date
 
-relationship 30ebf835-f2a4-629c-423e-7de8022668c7
-	fromColumn: '06a XER_SUCCESSOR'.task_id_key
-	toColumn: '01 XER_TASK'.task_id_key
-
 relationship 9d71a328-d704-8569-fc59-38fdb8714728
 	joinOnDateBehavior: datePartOnly
 	fromColumn: '01 XER_TASK'.Finish
@@ -179,4 +154,8 @@ relationship e73a8806-c5ce-e209-4731-02775b648430
 relationship b8722003-1c5c-1b4c-b829-55152087201d
 	fromColumn: '01 XER_TASK'.wbs_id_key
 	toColumn: Project_Dimension.wbs_id_key
+
+relationship 30ebf835-f2a4-629c-423e-7de8022668c7
+	fromColumn: '06a XER_SUCCESSOR'.task_id_key
+	toColumn: '01 XER_TASK'.task_id_key
 

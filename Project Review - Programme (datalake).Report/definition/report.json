@@ -40,7 +40,7 @@
           "expanded": {
             "expr": {
               "Literal": {
-                "Value": "false"
+                "Value": "true"
               }
             }
           },
@@ -175,7 +175,6 @@
     "exportDataMode": "AllowSummarized",
     "defaultDrillFilterOtherVisuals": true,
     "useEnhancedTooltips": true,
-    "filterPaneHiddenInEditMode": true,
     "disableFilterPaneSearch": true,
     "useDefaultAggregateDisplayName": true,
     "queryLimitOption": "Custom",

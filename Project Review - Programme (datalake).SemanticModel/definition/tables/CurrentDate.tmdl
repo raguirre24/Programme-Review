@@ -2,7 +2,7 @@ table CurrentDate
 	lineageTag: 25298bd9-45e5-4bed-8d85-5e6fa4f98bd6
 
 	column UpdateDate
-		formatString: MMM yyyy
+		formatString: Long Date
 		lineageTag: c51f8363-0d04-4bd6-85b5-09a6706cb097
 		summarizeBy: none
 		isNameInferred
@@ -11,8 +11,6 @@ table CurrentDate
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
-
-		annotation PBI_FormatHint = {"isCustom":true}
 
 	partition CurrentDate = calculated
 		mode: import
