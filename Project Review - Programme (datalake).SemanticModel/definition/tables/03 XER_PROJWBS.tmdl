@@ -116,34 +116,23 @@ table '03 XER_PROJWBS'
 		queryGroup: XER
 		source =
 				let
-				    Source = fnAthenaSource("03_xer_projwbs"),
-				
-				    SelectedColumns =
-				        Table.SelectColumns(
-				            Source,
-				            {
-				                "wbs_name",
-				                "wbs_id_key",
-				                "parent_wbs_id_key",
-				                "filename"
-				            }
-				        ),
-				
-				    AddProjectCode =
-				        Table.AddColumn(
-				            SelectedColumns,
-				            "ProjectCode",
-				            each
-				                if [filename] <> null and Text.Contains([filename], "-") then
-				                    Text.BeforeDelimiter([filename], "-")
-				                else
-				                    null,
-				            type nullable text
+				    Source =
+				        fnAthenaSource(
+				            "03_xer_projwbs",
+				            Text.Combine(
+				                {
+				                    "t.""wbs_name""",
+				                    "t.""wbs_id_key""",
+				                    "t.""parent_wbs_id_key""",
+				                    "SPLIT_PART(t.""filename"", '-', 1) AS ""ProjectCode"""
+				                },
+				                ", "
+				            )
 				        ),
 				
 				    CleanParentWBS =
 				        Table.TransformColumns(
-				            AddProjectCode,
+				            Source,
 				            {
 				                {
 				                    "parent_wbs_id_key",

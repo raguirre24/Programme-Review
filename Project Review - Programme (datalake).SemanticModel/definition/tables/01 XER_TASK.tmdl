@@ -1241,43 +1241,44 @@ table '01 XER_TASK'
 				        else
 				            try Date.From(value) otherwise null,
 				
-				    SourceRaw = fnAthenaSource("01_xer_task", "t.*, kf.parent_recalc_date"),
-				
-				    Source =
-				        Table.SelectColumns(
-				            SourceRaw,
-				            {
-				                "status_code",
-				                "task_code",
-				                "total_float",
-				                "task_type",
-				                "id_name",
-				                "early_start_date",
-				                "calendar_id_key",
-				                "task_id_key",
-				                "driving_path_flag",
-				                "remainingduration",
-				                "early_end_date",
-				                "monthupdate",
-				                "task_name",
-				                "data_date",
-				                "act_end_date",
-				                "finish",
-				                "proj_id_key",
-				                "wbs_id_key",
-				                "free_float",
-				                "cstr_type",
-				                "start",
-				                "filename",
-				                "late_end_date",
-				                "parent_recalc_date"
-				            }
+				    SourceRaw =
+				        fnAthenaSource(
+				            "01_xer_task",
+				            Text.Combine(
+				                {
+				                    "t.""status_code""",
+				                    "t.""task_code""",
+				                    "t.""total_float""",
+				                    "t.""task_type""",
+				                    "t.""id_name""",
+				                    "t.""early_start_date""",
+				                    "t.""calendar_id_key""",
+				                    "t.""task_id_key""",
+				                    "t.""driving_path_flag""",
+				                    "t.""remainingduration""",
+				                    "t.""early_end_date""",
+				                    "t.""monthupdate""",
+				                    "t.""task_name""",
+				                    "t.""data_date""",
+				                    "t.""act_end_date""",
+				                    "t.""finish""",
+				                    "t.""proj_id_key""",
+				                    "t.""wbs_id_key""",
+				                    "t.""free_float""",
+				                    "t.""cstr_type""",
+				                    "t.""start""",
+				                    "t.""filename""",
+				                    "t.""late_end_date""",
+				                    "kf.""parent_recalc_date"""
+				                },
+				                ", "
+				            )
 				        ),
 				
 				    AddParsedColumns =
 				        Table.ExpandRecordColumn(
 				            Table.AddColumn(
-				                Source,
+				                SourceRaw,
 				                "Parsed",
 				                each fnParseFileName([filename]),
 				                type [

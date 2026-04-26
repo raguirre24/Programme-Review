@@ -22,10 +22,9 @@ table '10 XER_CALENDARS'
 		queryGroup: XER
 		source =
 				let
-				    Source = fnAthenaSource("10_xer_calendar"),
-				    #"Removed Other Columns" = Table.SelectColumns(Source,{"clndr_name", "clndr_id_key"})
+				    Source = fnAthenaSource("10_xer_calendar", "t.""clndr_name"", t.""clndr_id_key""")
 				in
-				    #"Removed Other Columns"
+				    Source
 
 	annotation PBI_NavigationStepName = Navigation
 

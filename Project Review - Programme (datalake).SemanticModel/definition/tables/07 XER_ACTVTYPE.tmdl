@@ -22,10 +22,9 @@ table '07 XER_ACTVTYPE'
 		queryGroup: XER
 		source =
 				let
-				    Source = fnAthenaSource("07_xer_actvtype"),
-				    #"Removed Other Columns" = Table.SelectColumns(Source,{"actv_code_type", "actv_code_type_id_key"})
+				    Source = fnAthenaSource("07_xer_actvtype", "t.""actv_code_type"", t.""actv_code_type_id_key""")
 				in
-				    #"Removed Other Columns"
+				    Source
 
 	annotation PBI_NavigationStepName = Navigation
 

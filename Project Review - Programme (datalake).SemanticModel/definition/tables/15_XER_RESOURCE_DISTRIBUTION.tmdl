@@ -105,11 +105,26 @@ table 15_XER_RESOURCE_DISTRIBUTION
 		queryGroup: XER
 		source =
 				let
-				    Source = fnAthenaSource("15_xer_resource_distribution"),
+				    Source =
+				        fnAthenaSource(
+				            "15_xer_resource_distribution",
+				            Text.Combine(
+				                {
+				                    "t.""task_id_key""",
+				                    "t.""rsrc_id_key""",
+				                    "t.""is_actual""",
+				                    "t.""distribution_month""",
+				                    "t.""rsrc_name""",
+				                    "t.""rsrc_type""",
+				                    "t.""unit""",
+				                    "t.""monthly_quantity""",
+				                    "SPLIT_PART(t.""filename"", '-', 1) AS ""ProjectCode"""
+				                },
+				                ", "
+				            )
+				        ),
 
-				    AddProjectCode = Table.AddColumn(Source, "ProjectCode", each Text.BeforeDelimiter([filename], "-"), type text),
-
-				    Typed = Table.TransformColumnTypes(AddProjectCode, {
+				    Typed = Table.TransformColumnTypes(Source, {
 				        {"distribution_month", type date},
 				        {"monthly_quantity", type number}
 				    }),

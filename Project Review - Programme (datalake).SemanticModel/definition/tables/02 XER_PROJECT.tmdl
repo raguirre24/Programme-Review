@@ -27,20 +27,11 @@ table '02 XER_PROJECT'
 		queryGroup: XER
 		source =
 				let
-				    Source = fnAthenaSource("02_xer_project"),
-				
-				    SelectedColumns =
-				        Table.SelectColumns(
-				            Source,
-				            {
-				                "last_recalc_date",
-				                "proj_id_key"
-				            }
-				        ),
+				    Source = fnAthenaSource("02_xer_project", "t.""last_recalc_date"", t.""proj_id_key"""),
 				
 				    ChangedTypes =
 				        Table.TransformColumns(
-				            SelectedColumns,
+				            Source,
 				            {
 				                {
 				                    "last_recalc_date",

@@ -17,18 +17,31 @@ expression SelectedProjects = "C4068, C5064" meta [IsParameterQuery=true, Type="
 expression ProjectFilterList =
 		let
 		    Raw = Text.Trim(SelectedProjects),
-		    Tokens =
+		    RawTokens =
 		        List.Select(
 		            List.Transform(Text.Split(Raw, ","), each Text.Trim(_)),
 		            each _ <> ""
 		        ),
-		    UpperTokens = List.Transform(Tokens, each Text.Upper(_)),
+		    Tokens = List.Transform(RawTokens, each Text.Upper(_)),
+		    ProjectCodeChars =
+		        List.Combine({
+		            List.Transform({48..57}, each Character.FromNumber(_)),
+		            List.Transform({65..90}, each Character.FromNumber(_)),
+		            {"_"}
+		        }),
+		    InvalidTokens =
+		        List.Select(
+		            Tokens,
+		            each _ <> "ALL" and Text.Length(Text.Remove(_, ProjectCodeChars)) > 0
+		        ),
 		    Result =
 		        if List.Count(Tokens) = 0 then
 		            error "SelectedProjects must contain a comma-separated list of project codes or ALL."
-		        else if List.Count(Tokens) = 1 and UpperTokens{0} = "ALL" then
+		        else if List.Count(InvalidTokens) > 0 then
+		            error "SelectedProjects can contain only project codes using A-Z, 0-9 or underscore, or ALL."
+		        else if List.Count(Tokens) = 1 and Tokens{0} = "ALL" then
 		            null
-		        else if List.Contains(UpperTokens, "ALL") then
+		        else if List.Contains(Tokens, "ALL") then
 		            error "Use ALL by itself, not mixed with project codes."
 		        else
 		            List.Sort(List.Distinct(Tokens))
@@ -169,15 +182,15 @@ expression fnAthenaSource =
 		
 		            SelectClause =
 		                if selectList = null or Text.Trim(selectList) = "" then
-		                    "t.*"
+		                    error "fnAthenaSource requires an explicit SELECT list."
 		                else
-		                    selectList,
+		                    Text.Trim(selectList),
 		
 		            Sql =
 		                AthenaScopeSql &
 		                "SELECT " & SelectClause & " " &
 		                "FROM prod_projectcontrols_p6.""" & SafeTableName & """ t " &
-		                "INNER JOIN kept_filenames kf ON t.filename = kf.filename",
+		                "INNER JOIN kept_filenames kf ON t.""filename"" = kf.""filename""",
 		
 		            Result = Value.NativeQuery(DB, Sql, null)
 		        in
@@ -207,13 +220,14 @@ expression AthenaDB =
 
 expression dbo_project =
 		let
-		    Source = AmazonAthena.Databases("primary_p6_bi_reporting", null, [EnableNativeQuery = true]),
-		    AwsDataCatalog_Database = Source{[Name="AwsDataCatalog",Kind="Database"]}[Data],
-		    prod_projectcontrols_linkedsitereports_Schema1 = AwsDataCatalog_Database{[Name="prod_projectcontrols_linkedsitereports",Kind="Schema"]}[Data],
-		    dbo_project_Table = prod_projectcontrols_linkedsitereports_Schema1{[Name="dbo_project",Kind="Table"]}[Data],
-		    #"Removed Other Columns" = Table.SelectColumns(dbo_project_Table,{"projectno", "projectname", "state"})
+		    Source =
+		        Value.NativeQuery(
+		            AthenaDB,
+		            "SELECT ""projectno"", ""projectname"", ""state"" FROM prod_projectcontrols_linkedsitereports.""dbo_project""",
+		            null
+		        )
 		in
-		    #"Removed Other Columns"
+		    Source
 	lineageTag: a9faa87e-1b47-430e-87e4-151b133169bb
 	queryGroup: Database
 

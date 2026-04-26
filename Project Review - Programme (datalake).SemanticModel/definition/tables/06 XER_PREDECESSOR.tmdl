@@ -375,11 +375,33 @@ table '06 XER_PREDECESSOR'
 		queryGroup: XER
 		source =
 				let
-				    Source = fnAthenaSource("06_xer_predecessor"),
+				    Source =
+				        fnAthenaSource(
+				            "06_xer_predecessor",
+				            Text.Combine(
+				                {
+				                    "t.""task_pred_id""",
+				                    "t.""pred_type""",
+				                    "t.""task_id_key""",
+				                    "t.""pred_task_id_key""",
+				                    "t.""status_code""",
+				                    "t.""predecessor_status_code""",
+				                    "t.""task_type""",
+				                    "t.""predecessor_task_type""",
+				                    "t.""lag""",
+				                    "t.""start""",
+				                    "t.""finish""",
+				                    "t.""predecessor_start""",
+				                    "t.""predecessor_finish""",
+				                    "t.""free_float""",
+				                    "t.""total_float""",
+				                    "t.""filename"""
+				                },
+				                ", "
+				            )
+				        ),
 				
-				    SelectedColumns =
-				        Table.SelectColumns(Source,{"task_pred_id", "pred_type", "task_id_key", "pred_task_id_key", "status_code", "predecessor_status_code", "task_type", "predecessor_task_type", "lag", "start", "finish", "predecessor_start", "predecessor_finish", "free_float", "total_float", "filename"}),
-				    #"Inserted Merged Column" = Table.AddColumn(SelectedColumns, "task_pred_id_key", each Text.Combine({[filename], [task_pred_id]}, "."), type text),
+				    #"Inserted Merged Column" = Table.AddColumn(Source, "task_pred_id_key", each Text.Combine({[filename], [task_pred_id]}, "."), type text),
 				
 				    #"Parsed Date" = Table.TransformColumns(#"Inserted Merged Column",{{"start", each Date.From(DateTimeZone.From(_)), type date}, {"finish", each Date.From(DateTimeZone.From(_)), type date}, {"predecessor_start", each Date.From(DateTimeZone.From(_)), type date}, {"predecessor_finish", each Date.From(DateTimeZone.From(_)), type date}}),
 				

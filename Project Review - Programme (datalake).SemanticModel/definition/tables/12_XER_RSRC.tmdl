@@ -22,11 +22,9 @@ table 12_XER_RSRC
 		queryGroup: XER
 		source =
 				let
-				    Source = fnAthenaSource("12_xer_rsrc"),
-				    #"Added Custom" = Table.AddColumn(Source, "ProjectCode", each Text.BeforeDelimiter([filename], "-"), type text),
-				    #"Removed Other Columns" = Table.SelectColumns(#"Added Custom",{"def_qty_per_hr", "rsrc_id_key"})
+				    Source = fnAthenaSource("12_xer_rsrc", "t.""def_qty_per_hr"", t.""rsrc_id_key""")
 				in
-				    #"Removed Other Columns"
+				    Source
 
 	annotation PBI_NavigationStepName = Navigation
 
