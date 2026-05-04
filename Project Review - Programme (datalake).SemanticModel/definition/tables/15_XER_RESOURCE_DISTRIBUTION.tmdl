@@ -123,13 +123,20 @@ table 15_XER_RESOURCE_DISTRIBUTION
 				                ", "
 				            )
 				        ),
-
 				    Typed = Table.TransformColumnTypes(Source, {
 				        {"distribution_month", type date},
 				        {"monthly_quantity", type number}
 				    }),
-
-				    SelectedColumns = Table.SelectColumns(Typed, {
+				    ReplacedUnits = Table.ReplaceValue(     // ← NEW STEP
+				        Typed,
+				        each [unit],
+				        each if [rsrc_type] = "RT_Labor" and [unit] = "unit/time"
+				             then "hours"
+				             else [unit],
+				        Replacer.ReplaceValue,
+				        {"unit"}
+				    ),
+				    SelectedColumns = Table.SelectColumns(ReplacedUnits, {  // ← updated reference
 				        "task_id_key", "rsrc_id_key", "is_actual", "distribution_month",
 				        "rsrc_name", "rsrc_type",
 				        "unit", "monthly_quantity", "ProjectCode"

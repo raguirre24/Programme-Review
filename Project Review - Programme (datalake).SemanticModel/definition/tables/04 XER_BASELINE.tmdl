@@ -2,7 +2,7 @@ table '04 XER_BASELINE'
 	lineageTag: af4b1256-6095-4e3f-9357-ed2535c6aeb5
 
 	measure 'BL Month Update' =
-
+			
 			CALCULATE(
 			    MIN('04 XER_BASELINE'[First_Project_Month]),
 			    FILTER(

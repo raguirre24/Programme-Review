@@ -183,7 +183,9 @@ table 'XER Metrics'
 			COALESCE(
 			    CALCULATE(
 			        COUNTROWS('01 XER_TASK'),
-			        '01 XER_TASK'[Driven_DataDate] <> "Not Driven"
+			        '01 XER_TASK'[Driven_DataDate] <> "Not Driven",
+			        '01 XER_TASK'[status_code] <> "Complete",
+			        '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }
 			    ),
 			    0
 			)
@@ -193,11 +195,14 @@ table 'XER Metrics'
 
 	measure DataDate% =
 			
-			IF(
-			    ISBLANK([DD Driving]/[Task_Count]),
-			    blank(),
-			    [DD Driving]/[Task_Count]
-			)
+			VAR EligibleTaskCount =
+			    CALCULATE(
+			        COUNTROWS('01 XER_TASK'),
+			        '01 XER_TASK'[status_code] <> "Complete",
+			        '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }
+			    )
+			RETURN
+			    DIVIDE([DD Driving], EligibleTaskCount)
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Visuals
 		lineageTag: 57cf7730-c8f5-4aba-851f-73bf91b44bf9

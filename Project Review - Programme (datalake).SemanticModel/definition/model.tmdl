@@ -65,6 +65,7 @@ ref table Project_Dimension
 ref table '04 XER_BASELINE'
 ref table Logos
 ref table 15_XER_RESOURCE_DISTRIBUTION
+
 ref role 'Project Access'
 ref role 'Project Access 2'
 ref role 'Project Access 3'

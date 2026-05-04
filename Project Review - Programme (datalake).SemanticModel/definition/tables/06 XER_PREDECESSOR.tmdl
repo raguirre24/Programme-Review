@@ -47,12 +47,6 @@ table '06 XER_PREDECESSOR'
 
 		annotation SummarizationSetBy = Automatic
 
-	column predecessor_name = LOOKUPVALUE('01 XER_TASK'[task_name], '01 XER_TASK'[task_id_key], [pred_task_id_key])
-		lineageTag: 83c18887-7ef2-4d4a-bce6-c35fd8389017
-		summarizeBy: none
-
-		annotation SummarizationSetBy = Automatic
-
 	column Successor_Level_2 = ```
 			
 			VAR SuccTaskID = '06 XER_PREDECESSOR'[task_id_key]
@@ -369,6 +363,12 @@ table '06 XER_PREDECESSOR'
 		annotation SummarizationSetBy = Automatic
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column predecessor_name = LOOKUPVALUE('01 XER_TASK'[task_name], '01 XER_TASK'[task_id_key], [pred_task_id_key])
+		lineageTag: 83c18887-7ef2-4d4a-bce6-c35fd8389017
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
 
 	partition '06 XER_PREDECESSOR' = m
 		mode: import

@@ -2,32 +2,19 @@ table 'Monthly Resource Distribution Baseline'
 	lineageTag: fa1cf293-638c-4a26-8dd7-9b7d1bbee83f
 
 	column distribution_month
-		formatString: General Date
-		lineageTag: 91060a6f-a529-4484-a660-a45fc726a5bc
-		summarizeBy: none
+		lineageTag: d0438b2e-0560-468e-a64f-e09f6bd24bc2
 		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[distribution_month]
-
-		annotation SummarizationSetBy = Automatic
+		sourceColumn: [distribution_month]
 
 	column ProjectCode
-		lineageTag: 35f544e4-02c3-41c6-aab9-dd9cf7e29c83
-		summarizeBy: none
+		lineageTag: 6b653616-608d-4155-bc7d-1fac65c713bd
 		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[ProjectCode]
-
-		annotation SummarizationSetBy = Automatic
+		sourceColumn: [ProjectCode]
 
 	column monthly_hours
-		formatString: #,0.00
-		lineageTag: e3f4a5b6-c7d8-9012-3456-789abcdef012
-		summarizeBy: sum
+		lineageTag: 3d0deae2-c097-4fcd-b799-aba906d09e96
 		isNameInferred
-		sourceColumn: 15_XER_RESOURCE_DISTRIBUTION[monthly_hours]
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation PBI_FormatHint = {"isDecimal":true}
+		sourceColumn: [monthly_hours]
 
 	partition 'Monthly Resource Distribution Baseline' = calculated
 		mode: import

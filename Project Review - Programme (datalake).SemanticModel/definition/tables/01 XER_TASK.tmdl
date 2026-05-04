@@ -199,83 +199,188 @@ table '01 XER_TASK'
 
 		annotation SummarizationSetBy = Automatic
 
-	column Driven_DataDate = ```
+	column Driven_DataDate =
 			
-			VAR CurrentDataDate = '01 XER_TASK'[data_date]
-			VAR PreviousDataDate = '01 XER_TASK'[PreviousDataDate]
+			VAR CurrentTaskCode = '01 XER_TASK'[task_code]
+			VAR CurrentProject = '01 XER_TASK'[ProjectName]
+			VAR CurrentUpdateDate = '01 XER_TASK'[UpdateDate]
+			VAR CurrentDataDateRaw = '01 XER_TASK'[data_date]
+			VAR CurrentStatus = '01 XER_TASK'[status_code]
+			VAR CurrentTaskType = '01 XER_TASK'[task_type]
+			VAR CurrentRemainingDuration = '01 XER_TASK'[remaining_duration]
+			VAR IsEligibleTaskType =
+			    CurrentTaskType IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }
 			
-			-- Extract date-only portions
-			VAR CurrentDataDateOnly = DATE(YEAR(CurrentDataDate), MONTH(CurrentDataDate), DAY(CurrentDataDate))
-			VAR TaskStartDateOnly = DATE(YEAR('01 XER_TASK'[Start]), MONTH('01 XER_TASK'[Start]), DAY('01 XER_TASK'[Start]))
-			VAR TaskFinishDateOnly = DATE(YEAR('01 XER_TASK'[Finish]), MONTH('01 XER_TASK'[Finish]), DAY('01 XER_TASK'[Finish]))
-			
-			-- Calculate Date Gaps (Positive = Future, Negative = Past)
-			VAR StartGap = DATEDIFF(CurrentDataDateOnly, TaskStartDateOnly, DAY)
-			VAR FinishGap = DATEDIFF(CurrentDataDateOnly, TaskFinishDateOnly, DAY)
-			
-			VAR UpdatePeriod = 
-			    IF(
-			        NOT(ISBLANK(PreviousDataDate)),
-			        DATEDIFF(PreviousDataDate, CurrentDataDate, DAY),
-			        0
+			VAR PreviousUpdateDate =
+			    CALCULATE(
+			        MAX('01 XER_TASK'[UpdateDate]),
+			        FILTER(
+			            ALL('01 XER_TASK'),
+			            '01 XER_TASK'[task_code] = CurrentTaskCode &&
+			            '01 XER_TASK'[ProjectName] = CurrentProject &&
+			            '01 XER_TASK'[UpdateDate] < CurrentUpdateDate
+			        )
 			    )
 			
-			VAR TaskStartSlippage = 
-			    IF(
-			        NOT(ISBLANK('01 XER_TASK'[Previous Month Start])),
-			        DATEDIFF('01 XER_TASK'[Previous Month Start], '01 XER_TASK'[Start], DAY),
-			        0
+			VAR PreviousRows =
+			    FILTER(
+			        ALL('01 XER_TASK'),
+			        '01 XER_TASK'[task_code] = CurrentTaskCode &&
+			        '01 XER_TASK'[ProjectName] = CurrentProject &&
+			        '01 XER_TASK'[UpdateDate] = PreviousUpdateDate
 			    )
 			
-			VAR CurrentDuration = DATEDIFF('01 XER_TASK'[Start], '01 XER_TASK'[Finish], DAY)
-			VAR PreviousDuration = 
-			    IF(
-			        NOT(ISBLANK('01 XER_TASK'[Previous Month Finish])) && NOT(ISBLANK('01 XER_TASK'[Previous Month Start])),
-			        DATEDIFF('01 XER_TASK'[Previous Month Start], '01 XER_TASK'[Previous Month Finish], DAY),
-			        BLANK()
+			VAR PreviousStatus =
+			    CALCULATE(
+			        SELECTEDVALUE('01 XER_TASK'[status_code]),
+			        PreviousRows
 			    )
+			
+			VAR PreviousDataDateRaw =
+			    MAXX(
+			        PreviousRows,
+			        '01 XER_TASK'[data_date]
+			    )
+			
+			VAR CurrentDataDate =
+			    IF(
+			        NOT(ISBLANK(CurrentDataDateRaw)),
+			        DATE(YEAR(CurrentDataDateRaw), MONTH(CurrentDataDateRaw), DAY(CurrentDataDateRaw))
+			    )
+			VAR PreviousDataDate =
+			    IF(
+			        NOT(ISBLANK(PreviousDataDateRaw)),
+			        DATE(YEAR(PreviousDataDateRaw), MONTH(PreviousDataDateRaw), DAY(PreviousDataDateRaw))
+			    )
+			
+			VAR CurrentEarlyStartRaw = '01 XER_TASK'[early_start_date]
+			VAR CurrentEffectiveStartRaw =
+			    COALESCE(CurrentEarlyStartRaw, '01 XER_TASK'[Start])
+			VAR CurrentEffectiveFinishRaw =
+			    COALESCE('01 XER_TASK'[early_end_date], '01 XER_TASK'[Finish])
+			VAR PreviousEffectiveStartRaw =
+			    MAXX(
+			        PreviousRows,
+			        COALESCE('01 XER_TASK'[early_start_date], '01 XER_TASK'[Start])
+			    )
+			VAR PreviousEffectiveFinishRaw =
+			    MAXX(
+			        PreviousRows,
+			        COALESCE('01 XER_TASK'[early_end_date], '01 XER_TASK'[Finish])
+			    )
+			
+			VAR CurrentEffectiveStart =
+			    IF(
+			        NOT(ISBLANK(CurrentEffectiveStartRaw)),
+			        DATE(YEAR(CurrentEffectiveStartRaw), MONTH(CurrentEffectiveStartRaw), DAY(CurrentEffectiveStartRaw))
+			    )
+			VAR CurrentEffectiveFinish =
+			    IF(
+			        NOT(ISBLANK(CurrentEffectiveFinishRaw)),
+			        DATE(YEAR(CurrentEffectiveFinishRaw), MONTH(CurrentEffectiveFinishRaw), DAY(CurrentEffectiveFinishRaw))
+			    )
+			VAR PreviousEffectiveStart =
+			    IF(
+			        NOT(ISBLANK(PreviousEffectiveStartRaw)),
+			        DATE(YEAR(PreviousEffectiveStartRaw), MONTH(PreviousEffectiveStartRaw), DAY(PreviousEffectiveStartRaw))
+			    )
+			VAR PreviousEffectiveFinish =
+			    IF(
+			        NOT(ISBLANK(PreviousEffectiveFinishRaw)),
+			        DATE(YEAR(PreviousEffectiveFinishRaw), MONTH(PreviousEffectiveFinishRaw), DAY(PreviousEffectiveFinishRaw))
+			    )
+			
+			VAR PreviousRemainingDuration =
+			    MAXX(
+			        PreviousRows,
+			        '01 XER_TASK'[remaining_duration]
+			    )
+			
+			VAR DataDateDelta =
+			    IF(
+			        NOT(ISBLANK(CurrentDataDate)) && NOT(ISBLANK(PreviousDataDate)),
+			        DATEDIFF(PreviousDataDate, CurrentDataDate, DAY)
+			    )
+			VAR StartSlippage =
+			    IF(
+			        NOT(ISBLANK(CurrentEffectiveStart)) && NOT(ISBLANK(PreviousEffectiveStart)),
+			        DATEDIFF(PreviousEffectiveStart, CurrentEffectiveStart, DAY)
+			    )
+			VAR FinishSlippage =
+			    IF(
+			        NOT(ISBLANK(CurrentEffectiveFinish)) && NOT(ISBLANK(PreviousEffectiveFinish)),
+			        DATEDIFF(PreviousEffectiveFinish, CurrentEffectiveFinish, DAY)
+			    )
+			VAR CurrentEffectiveDuration =
+			    IF(
+			        NOT(ISBLANK(CurrentEffectiveStart)) && NOT(ISBLANK(CurrentEffectiveFinish)),
+			        DATEDIFF(CurrentEffectiveStart, CurrentEffectiveFinish, DAY)
+			    )
+			VAR PreviousEffectiveDuration =
+			    IF(
+			        NOT(ISBLANK(PreviousEffectiveStart)) && NOT(ISBLANK(PreviousEffectiveFinish)),
+			        DATEDIFF(PreviousEffectiveStart, PreviousEffectiveFinish, DAY)
+			    )
+			
+			VAR HasPriorSnapshot =
+			    NOT(ISBLANK(PreviousUpdateDate)) &&
+			    NOT(ISBLANK(PreviousDataDate))
+			VAR HasActivityKeys =
+			    NOT(ISBLANK(CurrentTaskCode)) &&
+			    NOT(ISBLANK(CurrentProject))
+			VAR CanEvaluateCurrent =
+			    IsEligibleTaskType &&
+			    HasActivityKeys &&
+			    CurrentStatus <> "Complete" &&
+			    NOT(ISBLANK(CurrentDataDate)) &&
+			    NOT(ISBLANK(CurrentUpdateDate))
+			VAR CanEvaluateMovement =
+			    CanEvaluateCurrent &&
+			    HasPriorSnapshot
+			VAR HasCurrentEarlyStart =
+			    NOT(ISBLANK(CurrentEarlyStartRaw))
 			
 			RETURN
-			SWITCH( TRUE(),
+			    SWITCH(
+			        TRUE(),
+			        NOT(CanEvaluateCurrent), "Not Driven",
 			
-			    -- 1. IN PROGRESS STAGNATION (Behavioral)
-			    -- Highest priority: Identifies work that is "riding" the line because updates stopped.
-			    ('01 XER_TASK'[status_code] = "In Progress"
-			        && UpdatePeriod > 0
-			        && NOT(ISBLANK('01 XER_TASK'[Previous Remaining Working Days]))
-			        && '01 XER_TASK'[remaining_duration] >= ('01 XER_TASK'[Previous Remaining Working Days] - 1) 
-			    ), "Stagnating Progress",
+			        CurrentStatus = "Not Started" &&
+			            CanEvaluateMovement &&
+			            PreviousStatus = "Not Started" &&
+			            DataDateDelta > 0 &&
+			            StartSlippage > 0 &&
+			            ABS(StartSlippage - DataDateDelta) <= 1 &&
+			            NOT(ISBLANK(CurrentEffectiveDuration)) &&
+			            NOT(ISBLANK(PreviousEffectiveDuration)) &&
+			            ABS(CurrentEffectiveDuration - PreviousEffectiveDuration) <= 1,
+			            "Not Started - Slippage Matches Update Period",
 			
-			    -- 2. TRUE SLIPPAGE (Behavioral)
-			    -- Second priority: Identifies unstarted work that shifted exactly with the update cycle.
-			    ('01 XER_TASK'[status_code] = "Not Started"
-			        && UpdatePeriod > 0
-			        && TaskStartSlippage > 0 
-			        && ABS(TaskStartSlippage - UpdatePeriod) <= 1  
-			        && ABS(CurrentDuration - PreviousDuration) <= 1 
-			    ), "Slippage Matches Update Period",
+			        CurrentStatus = "In Progress" &&
+			            CanEvaluateMovement &&
+			            PreviousStatus = "In Progress" &&
+			            DataDateDelta > 0 &&
+			            NOT(ISBLANK(CurrentRemainingDuration)) &&
+			            NOT(ISBLANK(PreviousRemainingDuration)) &&
+			            CurrentRemainingDuration >= PreviousRemainingDuration - 1 &&
+			            FinishSlippage > 0 &&
+			            ABS(FinishSlippage - DataDateDelta) <= 1,
+			            "In Progress - Stagnating Progress",
 			
-			    -- 3. PAST DUE START (Hygiene)
-			    -- Task should have started but hasn't.
-			    ('01 XER_TASK'[status_code] = "Not Started" && TaskStartDateOnly < CurrentDataDateOnly),
-			    "Start Date in Past",
+			        CurrentStatus = "Not Started" &&
+			            NOT(ISBLANK(CurrentEffectiveStart)) &&
+			            CurrentEffectiveStart = CurrentDataDate,
+			            "Not Started - Early Start Sitting on Data Date",
 			
-			    -- 4. OVERDUE FINISH (Hygiene)
-			    -- Task is In Progress but the finish date is in the past.
-			    ('01 XER_TASK'[status_code] = "In Progress" && TaskFinishDateOnly <= CurrentDataDateOnly),
-			    "Finish Date in Past",
+			        CurrentStatus = "In Progress" &&
+			            HasCurrentEarlyStart &&
+			            NOT(ISBLANK(CurrentRemainingDuration)) &&
+			            CurrentRemainingDuration > 0 &&
+			            CurrentEffectiveStart = CurrentDataDate,
+			            "In Progress - Remaining Work Sitting on Data Date",
 			
-			    -- 5. PROXIMITY CHECK (Positional)
-			    -- Generic check: Is the Start or Finish within 0-3 days of the Data Date?
-			    -- This catches tasks validly scheduled 'now' or on the immediate horizon.
-			    (StartGap >= 0 && StartGap <= 3), "Scheduled Start Near Data Date",
-			    
-			    (FinishGap >= 0 && FinishGap <= 3), "Scheduled Finish Near Data Date",
-			    
-			    -- DEFAULT
-			    "Not Driven"
-			)
-			```
+			        "Not Driven"
+			    )
 		lineageTag: 94225685-becc-4744-a625-f9973e146094
 		summarizeBy: none
 
