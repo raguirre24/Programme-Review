@@ -1,0 +1,212 @@
+table dbo_userpermission
+	lineageTag: 9beb5552-0b22-49bf-83ac-76fd1a0f2f24
+
+	column userprincipalname
+		dataType: string
+		lineageTag: ba32c682-5334-4f7f-b117-f60b1ebc1e8d
+		summarizeBy: none
+		sourceColumn: userprincipalname
+
+		annotation SummarizationSetBy = Automatic
+
+	column projectid
+		dataType: int64
+		formatString: 0
+		lineageTag: 9c43374f-ca06-4df0-8ee9-d643b2fe3cc1
+		summarizeBy: sum
+		sourceColumn: projectid
+
+		annotation SummarizationSetBy = Automatic
+
+	column companyid
+		dataType: int64
+		formatString: 0
+		lineageTag: 964c4341-c73a-452c-9e61-c858d9396f34
+		summarizeBy: sum
+		sourceColumn: companyid
+
+		annotation SummarizationSetBy = Automatic
+
+	column donotuse_rolename
+		dataType: string
+		lineageTag: 15809194-745e-49d8-96ad-1fd4be553bef
+		summarizeBy: none
+		sourceColumn: donotuse_rolename
+
+		annotation SummarizationSetBy = Automatic
+
+	column linkedsite_email
+		dataType: string
+		lineageTag: ff792f82-1940-4773-84d2-5be34adbd955
+		summarizeBy: none
+		sourceColumn: linkedsite_email
+
+		annotation SummarizationSetBy = Automatic
+
+	column personid
+		dataType: int64
+		formatString: 0
+		lineageTag: eda14fe9-986d-41bb-910c-22ead68ba9ce
+		summarizeBy: sum
+		sourceColumn: personid
+
+		annotation SummarizationSetBy = Automatic
+
+	column person
+		dataType: string
+		lineageTag: 71f5102e-e00f-43fa-84ef-8daf91285389
+		summarizeBy: none
+		sourceColumn: person
+
+		annotation SummarizationSetBy = Automatic
+
+	column company
+		dataType: string
+		lineageTag: 9b4d5628-c95f-4dbd-8acd-8575ac14f4d3
+		summarizeBy: none
+		sourceColumn: company
+
+		annotation SummarizationSetBy = Automatic
+
+	column project
+		dataType: string
+		lineageTag: a876fcd9-e0f6-41ea-bd01-711f45cd27a2
+		summarizeBy: none
+		sourceColumn: project
+
+		annotation SummarizationSetBy = Automatic
+
+	column donotuse_roleid
+		dataType: int64
+		formatString: 0
+		lineageTag: 8ea1b25a-c39e-4d15-930d-b0a3a9fd0b8b
+		summarizeBy: sum
+		sourceColumn: donotuse_roleid
+
+		annotation SummarizationSetBy = Automatic
+
+	column privilegeid
+		dataType: int64
+		formatString: 0
+		lineageTag: 29e7e71b-8329-4c99-91e4-acaf8545758b
+		summarizeBy: sum
+		sourceColumn: privilegeid
+
+		annotation SummarizationSetBy = Automatic
+
+	column privilegename
+		dataType: string
+		lineageTag: 3903d836-b94a-493f-8fcd-f53b7bddb652
+		summarizeBy: none
+		sourceColumn: privilegename
+
+		annotation SummarizationSetBy = Automatic
+
+	column refresh_date
+		dataType: string
+		lineageTag: 564eb907-17b6-423a-a2b0-471a0d9fdeb2
+		summarizeBy: none
+		sourceColumn: refresh_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column projectname
+		dataType: string
+		lineageTag: d44e6d7d-c6f4-4541-81f6-fa22166b0d12
+		summarizeBy: none
+		sourceColumn: projectname
+
+		annotation SummarizationSetBy = Automatic
+
+	column state
+		dataType: string
+		lineageTag: ac28026b-9eb4-4ff4-9e62-46e95ba2391c
+		summarizeBy: none
+		sourceColumn: state
+
+		annotation SummarizationSetBy = Automatic
+
+	column projectno
+		dataType: string
+		lineageTag: 425bc155-5f92-4010-b1c2-37927798f191
+		summarizeBy: none
+		sourceColumn: projectno
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dbo_userpermission = m
+		mode: import
+		queryGroup: Database
+		source =
+				let
+				    Source =
+				        Value.NativeQuery(
+				            AthenaDB,
+				            "SELECT p.email as linkedsite_email, up.* FROM ""prod_projectcontrols_linkedsitereports"".""dbo_userpermission"" up  LEFT JOIN ""prod_projectcontrols_linkedsitereports"".""dbo_person"" p on p.id = up.personid  where privilegename IN ('ViewCostStatement', 'ViewMyCostStatement')",
+				            null
+				        ),
+				
+				    MergedWithProject =
+				        Table.NestedJoin(
+				            Source,
+				            {"projectid"},
+				            dbo_project,
+				            {"projectid"},
+				            "ProjectDetails",
+				            JoinKind.LeftOuter
+				        ),
+				
+				    ExpandedProject =
+				        Table.ExpandTableColumn(
+				            MergedWithProject,
+				            "ProjectDetails",
+				            {"projectno", "projectname", "state"},
+				            {"projectno", "projectname", "state"}
+				        ),
+				
+				    // Generate the alternate project code for each row
+				    AddAltProjectNo =
+				        Table.AddColumn(
+				            ExpandedProject,
+				            "AltProjectNo",
+				            each
+				                if [projectno] = null or [projectno] = "" then
+				                    null
+				                else if Text.StartsWith([projectno], "C") then
+				                    "J" & Text.Middle([projectno], 1)
+				                else if Text.StartsWith([projectno], "J") then
+				                    "C" & Text.Middle([projectno], 1)
+				                else
+				                    null,
+				            type nullable text
+				        ),
+				
+				    AddCodeList =
+				        Table.AddColumn(
+				            AddAltProjectNo,
+				            "AllProjectCodes",
+				            each
+				                List.RemoveNulls(
+				                    List.Distinct({[projectno], [AltProjectNo]})
+				                ),
+				            type list
+				        ),
+				
+				    ExpandedCodes =
+				        Table.ExpandListColumn(AddCodeList, "AllProjectCodes"),
+				
+				    RenameForRLS =
+				        Table.RenameColumns(
+				            Table.RemoveColumns(ExpandedCodes, {"projectno", "AltProjectNo"}),
+				            {{"AllProjectCodes", "projectno"}}
+				        ),
+				
+				    Deduped =
+				        Table.Distinct(RenameForRLS)
+				in
+				    Deduped
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

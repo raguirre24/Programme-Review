@@ -151,11 +151,11 @@ relationship e73a8806-c5ce-e209-4731-02775b648430
 	fromColumn: '04 XER_BASELINE'.Finish
 	toColumn: '00 CALENDAR'.Date
 
-relationship b8722003-1c5c-1b4c-b829-55152087201d
-	fromColumn: '01 XER_TASK'.wbs_id_key
-	toColumn: Project_Dimension.wbs_id_key
-
 relationship 30ebf835-f2a4-629c-423e-7de8022668c7
 	fromColumn: '06a XER_SUCCESSOR'.task_id_key
 	toColumn: '01 XER_TASK'.task_id_key
+
+relationship b8722003-1c5c-1b4c-b829-55152087201d
+	fromColumn: '01 XER_TASK'.wbs_id_key
+	toColumn: Project_Dimension.wbs_id_key
 

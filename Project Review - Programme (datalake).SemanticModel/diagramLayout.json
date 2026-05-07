@@ -368,19 +368,6 @@
         },
         {
           "location": {
-            "x": 1406.2406011425887,
-            "y": 310.98862109955053
-          },
-          "nodeIndex": "13_XER_TASKRSRC",
-          "nodeLineageTag": "bf1a8f41-7390-4182-9b31-8922ded5cf83",
-          "size": {
-            "height": 300,
-            "width": 234
-          },
-          "zIndex": 0
-        },
-        {
-          "location": {
             "x": 4741.7331786488739,
             "y": 1220.9631600749588
           },
@@ -412,18 +399,6 @@
           "nodeIndex": "Monthly Resource Distribution Baseline",
           "size": {
             "height": 300,
-            "width": 234
-          },
-          "zIndex": 0
-        },
-        {
-          "location": {
-            "x": 5593.7331786488739,
-            "y": 1220.9631600749588
-          },
-          "nodeIndex": "Unique_Resources",
-          "size": {
-            "height": 200,
             "width": 234
           },
           "zIndex": 0
@@ -528,10 +503,10 @@
         },
         {
           "location": {},
-          "nodeIndex": "AthenaScopeSql",
-          "nodeLineageTag": "697373d3-5d41-4354-ad93-6757a27eefee",
+          "nodeIndex": "dbo_userpermission",
+          "nodeLineageTag": "9beb5552-0b22-49bf-83ac-76fd1a0f2f24",
           "size": {
-            "height": 104,
+            "height": 176,
             "width": 234
           },
           "zIndex": 0
@@ -683,19 +658,6 @@
         },
         {
           "location": {
-            "x": 1241.2536086500274,
-            "y": 1523.2213592361563
-          },
-          "nodeIndex": "13_XER_TASKRSRC",
-          "nodeLineageTag": "bf1a8f41-7390-4182-9b31-8922ded5cf83",
-          "size": {
-            "height": 300,
-            "width": 234
-          },
-          "zIndex": 4
-        },
-        {
-          "location": {
             "x": 1833.3324417865674,
             "y": 1493.0447586208261
           },
@@ -782,10 +744,36 @@
             "width": 234
           },
           "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2229.357935620561,
+            "y": 1276.2158858862226
+          },
+          "nodeIndex": "UserPermission",
+          "nodeLineageTag": "16634cc5-2311-4145-a599-5cdf61ee38c3",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2225.8101584255128,
+            "y": 1529.881955332186
+          },
+          "nodeIndex": "dbo_userpermission",
+          "nodeLineageTag": "9beb5552-0b22-49bf-83ac-76fd1a0f2f24",
+          "size": {
+            "height": 236.31221231582367,
+            "width": 234
+          },
+          "zIndex": 0
         }
       ],
       "name": "XER",
-      "zoomValue": 56.373325889555815,
+      "zoomValue": 35.6770362082278,
       "pinKeyFieldsToTop": false,
       "showExtraHeaderInfo": false,
       "hideKeyFieldsWhenCollapsed": false,
@@ -983,19 +971,6 @@
         },
         {
           "location": {
-            "x": 1420.57687716578,
-            "y": 254.04354838272104
-          },
-          "nodeIndex": "Unique_Resources",
-          "nodeLineageTag": "b1122c23-14f0-4799-ad33-0ccd4e144db5",
-          "size": {
-            "height": 200,
-            "width": 234
-          },
-          "zIndex": 4
-        },
-        {
-          "location": {
             "x": 483.2502026505872,
             "y": 179.46573667412355
           },
@@ -1032,19 +1007,6 @@
             "width": 234
           },
           "zIndex": 6
-        },
-        {
-          "location": {
-            "x": 948.23521788107087,
-            "y": 345.56835447295873
-          },
-          "nodeIndex": "13_XER_TASKRSRC",
-          "nodeLineageTag": "bf1a8f41-7390-4182-9b31-8922ded5cf83",
-          "size": {
-            "height": 300,
-            "width": 234
-          },
-          "zIndex": 2
         },
         {
           "location": {

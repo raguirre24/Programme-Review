@@ -6,7 +6,7 @@ expression SharePointSite = "https://acciona365-my.sharepoint.com/personal/ragui
 
 	annotation PBI_ResultType = Text
 
-expression SelectedProjects = "C4068, C5064" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+expression SelectedProjects = "C4068, C5064, C5001" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
 	lineageTag: a1b2c3d4-5e6f-7a8b-9c0d-ef1234567890
 	queryGroup: Database
 
@@ -106,23 +106,6 @@ expression AthenaDB =
 		in
 		    DB
 	lineageTag: cf9cf846-d8d4-4453-a53e-ec5224c354da
-	queryGroup: Database
-
-	annotation PBI_NavigationStepName = Navigation
-
-	annotation PBI_ResultType = Table
-
-expression dbo_project =
-		let
-		    Source =
-		        Value.NativeQuery(
-		            AthenaDB,
-		            "SELECT ""projectno"", ""projectname"", ""state"" FROM prod_projectcontrols_linkedsitereports.""dbo_project""",
-		            null
-		        )
-		in
-		    Source
-	lineageTag: a9faa87e-1b47-430e-87e4-151b133169bb
 	queryGroup: Database
 
 	annotation PBI_NavigationStepName = Navigation

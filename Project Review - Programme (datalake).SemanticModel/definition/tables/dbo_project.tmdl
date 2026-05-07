@@ -1,0 +1,63 @@
+table dbo_project
+	lineageTag: cf8eb271-871b-45ea-bfc4-41338c10dfde
+
+	column projectno
+		dataType: string
+		lineageTag: b6d49f23-bf82-48e7-bcab-7aec8cdb2889
+		summarizeBy: none
+		sourceColumn: projectno
+
+		annotation SummarizationSetBy = Automatic
+
+	column projectid
+		dataType: int64
+		formatString: 0
+		lineageTag: c2ff44ab-9580-4d3f-a4cb-3d581cf622e2
+		summarizeBy: sum
+		sourceColumn: projectid
+
+		annotation SummarizationSetBy = Automatic
+
+	column projectname
+		dataType: string
+		lineageTag: 3bb7b239-564b-47bf-8e95-6c44eaa59471
+		summarizeBy: none
+		sourceColumn: projectname
+
+		annotation SummarizationSetBy = Automatic
+
+	column companyid
+		dataType: int64
+		formatString: 0
+		lineageTag: 7bbf70aa-5753-4b69-8a51-7d48355fbcc3
+		summarizeBy: sum
+		sourceColumn: companyid
+
+		annotation SummarizationSetBy = Automatic
+
+	column state
+		dataType: string
+		lineageTag: 5f7f9c4d-f795-45f2-b3dc-f678f51f718f
+		summarizeBy: none
+		sourceColumn: state
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dbo_project = m
+		mode: import
+		queryGroup: Database
+		source =
+				let
+				    Source =
+				        Value.NativeQuery(
+				            AthenaDB,
+				            "SELECT ""projectno"",""projectid"", ""projectname"", ""companyid"",""state"" FROM prod_projectcontrols_linkedsitereports.""dbo_project""",
+				            null
+				        )
+				in
+				    Source
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

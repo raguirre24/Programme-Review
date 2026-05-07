@@ -1,50 +1,106 @@
 role 'Project Access'
 	modelPermission: read
 
-	tablePermission Project_Dimension = ```
-			VAR CurrentUser = LOWER(USERPRINCIPALNAME())
+	tablePermission Project_Dimension =
+			VAR RawUPN =
+			    LOWER ( USERPRINCIPALNAME() )
 			
-			VAR CurrentUserPermissions = 
-			    FILTER(
-			        'UserPermission',
-			        LOWER('UserPermission'[UserPrincipalName]) = CurrentUser || 
-			        LOWER('UserPermission'[ExternalUserPrincipalName]) = CurrentUser
+			VAR ExtTagPos =
+			    SEARCH ( "#ext#", RawUPN, 1, 0 )
+			
+			VAR RecoveredEmail =
+			    IF (
+			        ExtTagPos > 0,
+			        SUBSTITUTE ( LEFT ( RawUPN, ExtTagPos - 1 ), "_", "@", 1 ),
+			        RawUPN
 			    )
 			
-			VAR HasAllAccess =
-			    COUNTROWS(
-			        FILTER(
+			VAR AtPos =
+			    SEARCH ( "@", RecoveredEmail, 1, 0 )
+			
+			VAR LocalPart =
+			    IF ( AtPos > 0, LEFT ( RecoveredEmail, AtPos - 1 ), "" )
+			
+			VAR DomainPart =
+			    IF ( AtPos > 0, MID ( RecoveredEmail, AtPos, LEN ( RecoveredEmail ) ), "" )
+			
+			VAR EmailNoExt =
+			    IF (
+			        AtPos > 4
+			            && RIGHT ( LocalPart, 4 ) = ".ext",
+			        LEFT ( LocalPart, LEN ( LocalPart ) - 4 ) & DomainPart,
+			        RecoveredEmail
+			    )
+			
+			VAR UserIdentifiers =
+			    { RawUPN, RecoveredEmail, EmailNoExt }
+			
+			VAR AcceptedRoles =
+			    {
+			        "operationsmanager",
+			        "financemanager",
+			        "commercialmanager",
+			        "projectdirector",
+			        "projectcontrolsmanager",
+			        "regionprojectscontrollead"
+			    }
+			
+			VAR CurrentUserPermissions =
+			    FILTER (
+			        ALL ( 'dbo_userpermission' ),
+			        LOWER ( 'dbo_userpermission'[linkedsite_email] ) IN UserIdentifiers
+			            || LOWER ( 'dbo_userpermission'[userprincipalname] ) IN UserIdentifiers
+			    )
+			
+			VAR HasGlobalAccess =
+			    COUNTROWS (
+			        FILTER (
 			            CurrentUserPermissions,
-			            'UserPermission'[All Access] = 1
+			            ISBLANK ( 'dbo_userpermission'[companyid] )
+			                && ISBLANK ( 'dbo_userpermission'[projectid] )
+			                && LOWER ( 'dbo_userpermission'[donotuse_rolename] ) IN AcceptedRoles
 			        )
 			    ) > 0
 			
-			RETURN IF(HasAllAccess, TRUE(),
-			    
-			    VAR AllowedStates = 
-			        SELECTCOLUMNS(
-			            FILTER(
+			VAR HasStateAccess =
+			    LOWER ( 'Project_Dimension'[State] )
+			        IN SELECTCOLUMNS (
+			            FILTER (
 			                CurrentUserPermissions,
-			                'UserPermission'[All Access] = 2
+			                NOT ISBLANK ( 'dbo_userpermission'[state] )
+			                    && ISBLANK ( 'dbo_userpermission'[projectid] )
+			                    && ISBLANK ( 'dbo_userpermission'[companyid] )
 			            ),
-			            "State", 'UserPermission'[State]
+			            "AllowedState", LOWER ( 'dbo_userpermission'[state] )
 			        )
 			
-			    VAR AllowedProjects = 
-			        SELECTCOLUMNS(
-			            FILTER(
+			VAR HasCompanyAccess =
+			    'Project_Dimension'[CompanyId]
+			        IN SELECTCOLUMNS (
+			            FILTER (
 			                CurrentUserPermissions,
-			                'UserPermission'[All Access] = 3
+			                NOT ISBLANK ( 'dbo_userpermission'[companyid] )
+			                    && ISBLANK ( 'dbo_userpermission'[projectid] )
 			            ),
-			            "ProjectCode", 'UserPermission'[ProjectCode]
+			            "AllowedCompanyId", 'dbo_userpermission'[companyid]
 			        )
 			
-			    VAR IsStateMatch = 'Project_Dimension'[State] IN AllowedStates
-			    VAR IsProjectMatch = 'Project_Dimension'[ProjectCode] IN AllowedProjects
+			VAR HasProjectAccess =
+			    'Project_Dimension'[ProjectCode]
+			        IN SELECTCOLUMNS (
+			            FILTER (
+			                CurrentUserPermissions,
+			                NOT ISBLANK ( 'dbo_userpermission'[projectid] )
+			                    && NOT ISBLANK ( 'dbo_userpermission'[projectno] )
+			            ),
+			            "AllowedProjectNo", 'dbo_userpermission'[projectno]
+			        )
 			
-			    RETURN IsStateMatch || IsProjectMatch
-			)
-			```
+			RETURN
+			    HasGlobalAccess
+			        || HasStateAccess
+			        || HasCompanyAccess
+			        || HasProjectAccess
 
 	annotation PBI_Id = d8d20f5b9cdf4286af9ca1b71c029851
 
