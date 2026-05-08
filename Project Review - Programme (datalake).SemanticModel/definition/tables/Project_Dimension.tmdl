@@ -89,7 +89,7 @@ table Project_Dimension
 		mode: import
 		source =
 				
-				ADDCOLUMNS(
+				VAR BaseProjects =
 				    DISTINCT(
 				        SELECTCOLUMNS(
 				            FILTER(
@@ -101,43 +101,94 @@ table Project_Dimension
 				            "wbs_id_key", '01 XER_TASK'[wbs_id_key],
 				            "ProjectCode", '01 XER_TASK'[ProjectCode]
 				        )
-				    ),
-				
-				    "State",
-				        LOOKUPVALUE(
-				            'dbo_project'[state],
-				            'dbo_project'[projectno], [ProjectCode]
-				        ),
-				
-				    "CompanyId",
-				        LOOKUPVALUE(
-				            'dbo_project'[companyid],
-				            'dbo_project'[projectno], [ProjectCode]
-				        ),
-				
-				    "ProjectId",
-				        LOOKUPVALUE(
-				            'dbo_project'[projectid],
-				            'dbo_project'[projectno], [ProjectCode]
-				        ),
-				
-				    "Level_2",
-				        LOOKUPVALUE(
-				            '03 XER_PROJWBS'[Level_2],
-				            '03 XER_PROJWBS'[wbs_id_key], [wbs_id_key]
-				        ),
-				
-				    "Level_3",
-				        LOOKUPVALUE(
-				            '03 XER_PROJWBS'[Level_3],
-				            '03 XER_PROJWBS'[wbs_id_key], [wbs_id_key]
-				        ),
-				
-				    "Level_4",
-				        LOOKUPVALUE(
-				            '03 XER_PROJWBS'[Level_4],
-				            '03 XER_PROJWBS'[wbs_id_key], [wbs_id_key]
-				        )
+				    )
+				VAR WithAltProjectCode =
+				    ADDCOLUMNS(
+				        BaseProjects,
+				        "AltProjectCode",
+				            SWITCH(
+				                TRUE(),
+				                UPPER(LEFT([ProjectCode], 1)) = "C", "J" & MID([ProjectCode], 2, LEN([ProjectCode]) - 1),
+				                UPPER(LEFT([ProjectCode], 1)) = "J", "C" & MID([ProjectCode], 2, LEN([ProjectCode]) - 1),
+				                BLANK()
+				            )
+				    )
+				VAR WithProjectMetadata =
+				    ADDCOLUMNS(
+				        WithAltProjectCode,
+				        "State",
+				            VAR OriginalState =
+				                LOOKUPVALUE(
+				                    'dbo_project'[state],
+				                    'dbo_project'[projectno], [ProjectCode]
+				                )
+				            RETURN
+				                IF(
+				                    NOT ISBLANK(OriginalState),
+				                    OriginalState,
+				                    LOOKUPVALUE(
+				                        'dbo_project'[state],
+				                        'dbo_project'[projectno], [AltProjectCode]
+				                    )
+				                ),
+				        "CompanyId",
+				            VAR OriginalCompanyId =
+				                LOOKUPVALUE(
+				                    'dbo_project'[companyid],
+				                    'dbo_project'[projectno], [ProjectCode]
+				                )
+				            RETURN
+				                IF(
+				                    NOT ISBLANK(OriginalCompanyId),
+				                    OriginalCompanyId,
+				                    LOOKUPVALUE(
+				                        'dbo_project'[companyid],
+				                        'dbo_project'[projectno], [AltProjectCode]
+				                    )
+				                ),
+				        "ProjectId",
+				            VAR OriginalProjectId =
+				                LOOKUPVALUE(
+				                    'dbo_project'[projectid],
+				                    'dbo_project'[projectno], [ProjectCode]
+				                )
+				            RETURN
+				                IF(
+				                    NOT ISBLANK(OriginalProjectId),
+				                    OriginalProjectId,
+				                    LOOKUPVALUE(
+				                        'dbo_project'[projectid],
+				                        'dbo_project'[projectno], [AltProjectCode]
+				                    )
+				                ),
+				        "Level_2",
+				            LOOKUPVALUE(
+				                '03 XER_PROJWBS'[Level_2],
+				                '03 XER_PROJWBS'[wbs_id_key], [wbs_id_key]
+				            ),
+				        "Level_3",
+				            LOOKUPVALUE(
+				                '03 XER_PROJWBS'[Level_3],
+				                '03 XER_PROJWBS'[wbs_id_key], [wbs_id_key]
+				            ),
+				        "Level_4",
+				            LOOKUPVALUE(
+				                '03 XER_PROJWBS'[Level_4],
+				                '03 XER_PROJWBS'[wbs_id_key], [wbs_id_key]
+				            )
+				    )
+				RETURN
+				    SELECTCOLUMNS(
+				        WithProjectMetadata,
+				        "Project", [Project],
+				        "wbs_id_key", [wbs_id_key],
+				        "State", [State],
+				        "Level_2", [Level_2],
+				        "Level_3", [Level_3],
+				        "Level_4", [Level_4],
+				        "ProjectCode", [ProjectCode],
+				        "CompanyId", [CompanyId],
+				        "ProjectId", [ProjectId]
 				)
 
 	annotation PBI_Id = 50f5c4a91ce0444bb70d1e41ee30c977

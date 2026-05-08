@@ -35,6 +35,12 @@ role 'Project Access'
 			VAR UserIdentifiers =
 			    { RawUPN, RecoveredEmail, EmailNoExt }
 			
+			VAR CurrentProjectState =
+			    LOWER ( 'Project_Dimension'[State] )
+			
+			VAR CurrentProjectCompanyId =
+			    'Project_Dimension'[CompanyId]
+			
 			VAR AcceptedRoles =
 			    {
 			        "operationsmanager",
@@ -63,27 +69,30 @@ role 'Project Access'
 			    ) > 0
 			
 			VAR HasStateAccess =
-			    LOWER ( 'Project_Dimension'[State] )
+			    CurrentProjectState
 			        IN SELECTCOLUMNS (
 			            FILTER (
 			                CurrentUserPermissions,
-			                NOT ISBLANK ( 'dbo_userpermission'[state] )
+			                ISBLANK ( 'dbo_userpermission'[companyid] )
 			                    && ISBLANK ( 'dbo_userpermission'[projectid] )
-			                    && ISBLANK ( 'dbo_userpermission'[companyid] )
+			                    && NOT ISBLANK ( 'dbo_userpermission'[person_state] )
 			            ),
-			            "AllowedState", LOWER ( 'dbo_userpermission'[state] )
+			            "AllowedState", LOWER ( 'dbo_userpermission'[person_state] )
 			        )
 			
 			VAR HasCompanyAccess =
-			    'Project_Dimension'[CompanyId]
-			        IN SELECTCOLUMNS (
-			            FILTER (
-			                CurrentUserPermissions,
-			                NOT ISBLANK ( 'dbo_userpermission'[companyid] )
-			                    && ISBLANK ( 'dbo_userpermission'[projectid] )
-			            ),
-			            "AllowedCompanyId", 'dbo_userpermission'[companyid]
+			    COUNTROWS (
+			        FILTER (
+			            CurrentUserPermissions,
+			            NOT ISBLANK ( 'dbo_userpermission'[companyid] )
+			                && ISBLANK ( 'dbo_userpermission'[projectid] )
+			                && 'dbo_userpermission'[companyid] = CurrentProjectCompanyId
+			                && (
+			                    ISBLANK ( 'dbo_userpermission'[person_state] )
+			                        || LOWER ( 'dbo_userpermission'[person_state] ) = CurrentProjectState
+			                )
 			        )
+			    ) > 0
 			
 			VAR HasProjectAccess =
 			    'Project_Dimension'[ProjectCode]

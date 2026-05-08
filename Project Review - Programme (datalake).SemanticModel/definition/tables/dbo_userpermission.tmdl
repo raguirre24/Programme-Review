@@ -134,6 +134,14 @@ table dbo_userpermission
 
 		annotation SummarizationSetBy = Automatic
 
+	column person_state
+		dataType: string
+		lineageTag: 2a2e7b3b-664d-4ed6-a3a9-9d358e3bbdec
+		summarizeBy: none
+		sourceColumn: person_state
+
+		annotation SummarizationSetBy = Automatic
+
 	partition dbo_userpermission = m
 		mode: import
 		queryGroup: Database
@@ -142,7 +150,7 @@ table dbo_userpermission
 				    Source =
 				        Value.NativeQuery(
 				            AthenaDB,
-				            "SELECT p.email as linkedsite_email, up.* FROM ""prod_projectcontrols_linkedsitereports"".""dbo_userpermission"" up  LEFT JOIN ""prod_projectcontrols_linkedsitereports"".""dbo_person"" p on p.id = up.personid  where privilegename IN ('ViewCostStatement', 'ViewMyCostStatement')",
+				            "SELECT p.email AS linkedsite_email, NULLIF(TRIM(p.state), '') AS person_state, up.* FROM ""prod_projectcontrols_linkedsitereports"".""dbo_userpermission"" up LEFT JOIN ""prod_projectcontrols_linkedsitereports"".""dbo_person"" p ON p.id = up.personid WHERE up.privilegename IN ('ViewCostStatement', 'ViewMyCostStatement') AND LOWER(TRIM(p.is_active)) = 'yes'",
 				            null
 				        ),
 				
