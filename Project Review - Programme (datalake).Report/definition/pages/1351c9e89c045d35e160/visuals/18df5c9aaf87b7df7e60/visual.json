@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.8.0/schema.json",
-  "name": "c445f6b821a597c7db03",
+  "name": "18df5c9aaf87b7df7e60",
   "position": {
-    "x": 501.66666666666663,
-    "y": 0,
-    "z": 0,
-    "height": 48.333333333333336,
-    "width": 916.66666666666674,
-    "tabOrder": 1000
+    "x": 809.30462307135451,
+    "y": 81,
+    "z": 15002,
+    "height": 24.418673971980525,
+    "width": 300.0008516557607,
+    "tabOrder": 15002
   },
   "visual": {
     "visualType": "shape",
@@ -78,41 +78,36 @@
         },
         {
           "properties": {
-            "text": {
-              "expr": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Dynamic Titles & Formatting"
-                    }
-                  },
-                  "Property": "SummaryTitle"
-                }
-              }
-            },
             "fontColor": {
               "solid": {
                 "color": {
                   "expr": {
                     "ThemeDataColor": {
-                      "ColorId": 0,
+                      "ColorId": 1,
                       "Percent": 0
                     }
                   }
                 }
               }
             },
-            "fontSize": {
+            "text": {
               "expr": {
                 "Literal": {
-                  "Value": "16D"
+                  "Value": "'Excluding Milestones'"
                 }
               }
             },
-            "fontFamily": {
+            "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "'''Segoe UI Semibold'', wf_segoe-ui_semibold, helvetica, arial, sans-serif'"
+                  "Value": "10D"
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
                 }
               }
             }

@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.8.0/schema.json",
-  "name": "97f3261b4043879a4268",
+  "name": "6ddb9f1cc011d51baf88",
   "position": {
-    "x": 836.66666666666674,
-    "y": 81.666666666666671,
-    "z": 1000,
-    "height": 50,
-    "width": 245,
-    "tabOrder": 0
+    "x": 870,
+    "y": 41.428571428571431,
+    "z": 15003,
+    "height": 45.714285714285715,
+    "width": 180,
+    "tabOrder": 15003
   },
   "visual": {
     "visualType": "slicer",
@@ -176,7 +176,7 @@
             "textSize": {
               "expr": {
                 "Literal": {
-                  "Value": "13D"
+                  "Value": "10D"
                 }
               }
             },
@@ -251,23 +251,5 @@
       "filterChanges": true
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "2861eb897a430e3eae4d",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "CurrentDate"
-              }
-            },
-            "Property": "UpdateDate"
-          }
-        },
-        "type": "Categorical"
-      }
-    ]
   }
 }

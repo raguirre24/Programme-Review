@@ -151,49 +151,30 @@ expression AthenaScopeSql =
 		    Sql =
 		        "WITH " &
 		        "parsed AS (" &
-		            "SELECT proj_short_name, filename, last_recalc_date, " &
+		            "SELECT DISTINCT filename, " &
+		            "TRY_CAST(SUBSTR(CAST(monthupdate AS VARCHAR), 1, 10) AS DATE) AS monthupdate, " &
 		            "REGEXP_REPLACE(filename, '_[0-9]{8}\.xer$', '') AS filename_stem, " &
 		            "SPLIT_PART(filename, '-', 1) AS project_code, " &
 		            "SPLIT_PART(filename, '-', 2) AS programme_type, " &
 		            "SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3) AS tag, " &
 		            "CASE WHEN REGEXP_LIKE(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), '^BL[0-9]+') THEN TRUE ELSE FALSE END AS is_baseline, " &
-		            "CASE WHEN REGEXP_LIKE(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), '^BL[0-9]+') THEN CAST(REGEXP_EXTRACT(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), 'BL([0-9]+)', 1) AS INTEGER) END AS bl_number " &
+		            "CASE WHEN REGEXP_LIKE(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), '^BL[0-9]+') THEN CAST(REGEXP_EXTRACT(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), 'BL([0-9]+)', 1) AS INTEGER) END AS bl_number, " &
+		            "REGEXP_EXTRACT(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), '^BL[0-9]+-([A-Z])$', 1) AS bl_revision " &
 		            "FROM prod_projectcontrols_p6.""02_xer_project"" " &
 		            "WHERE " & ProgrammeTypeFilter & ProjectFilter &
 		        "), " &
-		        "parent_ranked AS (" &
-		            "SELECT filename, proj_short_name, last_recalc_date, " &
-		            "REGEXP_EXTRACT(proj_short_name, 'BL[0-9]+-([A-Z])$', 1) AS bl_revision, " &
-		            "ROW_NUMBER() OVER (" &
-		                "PARTITION BY filename " &
-		                "ORDER BY " &
-		                    "CASE WHEN proj_short_name = filename_stem THEN 0 ELSE 1 END, " &
-		                    "LENGTH(proj_short_name), " &
-		                    "proj_short_name" &
-		            ") AS parent_rank " &
-		            "FROM parsed " &
-		            "WHERE proj_short_name = filename_stem OR proj_short_name LIKE filename_stem || '-%'" &
-		        "), " &
-		        "parent_map AS (" &
-		            "SELECT filename, " &
-		            "last_recalc_date AS parent_recalc_date, " &
-		            "NULLIF(bl_revision, '') AS bl_revision " &
-		            "FROM parent_ranked " &
-		            "WHERE parent_rank = 1" &
-		        "), " &
 		        "file_info AS (" &
-		            "SELECT DISTINCT p.filename, p.project_code, p.programme_type, " &
-		            "p.is_baseline, p.bl_number, " &
-		            "pm.parent_recalc_date, pm.bl_revision " &
-		            "FROM parsed p " &
-		            "LEFT JOIN parent_map pm ON p.filename = pm.filename" &
+		            "SELECT DISTINCT filename, project_code, programme_type, " &
+		            "is_baseline, bl_number, monthupdate, " &
+		            "NULLIF(bl_revision, '') AS bl_revision " &
+		            "FROM parsed " &
 		        "), " &
 		        "ranked_baselines AS (" &
 		            "SELECT *, ROW_NUMBER() OVER (" &
 		                "PARTITION BY project_code, programme_type " &
 		                "ORDER BY bl_number DESC, " &
 		                    "bl_revision DESC NULLS LAST, " &
-		                    "parent_recalc_date DESC NULLS LAST, " &
+		                    "monthupdate DESC NULLS LAST, " &
 		                    "filename DESC" &
 		            ") AS bl_rank " &
 		            "FROM file_info " &
@@ -201,12 +182,12 @@ expression AthenaScopeSql =
 		        "), " &
 		        "latest_baseline AS (" &
 		            "SELECT project_code, programme_type, " &
-		            "parent_recalc_date AS anchor_date, filename AS anchor_filename " &
+		            "monthupdate AS anchor_date, filename AS anchor_filename " &
 		            "FROM ranked_baselines " &
 		            "WHERE bl_rank = 1" &
 		        "), " &
 		        "kept_filenames AS (" &
-		            "SELECT DISTINCT f.filename, f.parent_recalc_date " &
+		            "SELECT DISTINCT f.filename " &
 		            "FROM file_info f " &
 		            "LEFT JOIN latest_baseline lb " &
 		                "ON f.project_code = lb.project_code " &
@@ -214,8 +195,8 @@ expression AthenaScopeSql =
 		            "WHERE " &
 		                "lb.anchor_date IS NULL " &
 		                "OR f.filename = lb.anchor_filename " &
-		                "OR (f.is_baseline = FALSE AND f.parent_recalc_date > lb.anchor_date) " &
-		                "OR f.parent_recalc_date IS NULL" &
+		                "OR (f.is_baseline = FALSE AND f.monthupdate > lb.anchor_date) " &
+		                "OR f.monthupdate IS NULL" &
 		        ") "
 		in
 		    Sql

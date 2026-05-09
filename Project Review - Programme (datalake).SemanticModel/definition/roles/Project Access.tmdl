@@ -75,6 +75,7 @@ role 'Project Access'
 			                CurrentUserPermissions,
 			                ISBLANK ( 'dbo_userpermission'[companyid] )
 			                    && ISBLANK ( 'dbo_userpermission'[projectid] )
+			                    && LOWER ( 'dbo_userpermission'[donotuse_rolename] ) IN AcceptedRoles
 			                    && NOT ISBLANK ( 'dbo_userpermission'[person_state] )
 			            ),
 			            "AllowedState", LOWER ( 'dbo_userpermission'[person_state] )
@@ -86,6 +87,7 @@ role 'Project Access'
 			            CurrentUserPermissions,
 			            NOT ISBLANK ( 'dbo_userpermission'[companyid] )
 			                && ISBLANK ( 'dbo_userpermission'[projectid] )
+			                && LOWER ( 'dbo_userpermission'[donotuse_rolename] ) IN AcceptedRoles
 			                && 'dbo_userpermission'[companyid] = CurrentProjectCompanyId
 			                && (
 			                    ISBLANK ( 'dbo_userpermission'[person_state] )

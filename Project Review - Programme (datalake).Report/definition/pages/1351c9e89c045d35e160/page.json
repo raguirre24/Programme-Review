@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.0.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
   "name": "1351c9e89c045d35e160",
   "displayName": "Summary",
   "displayOption": "FitToPage",
@@ -281,19 +281,9 @@
       "type": "DataFilter"
     },
     {
-      "source": "97f3261b4043879a4268",
-      "target": "5a895a790b0217498ab6",
-      "type": "NoFilter"
-    },
-    {
       "source": "f0d83bea745d929136aa",
       "target": "5a895a790b0217498ab6",
       "type": "DataFilter"
-    },
-    {
-      "source": "97f3261b4043879a4268",
-      "target": "7d73fb0095030dc00414",
-      "type": "NoFilter"
     },
     {
       "source": "f0d83bea745d929136aa",
@@ -314,6 +304,16 @@
       "source": "be200f14d934dae1bec0",
       "target": "5a895a790b0217498ab6",
       "type": "DataFilter"
+    },
+    {
+      "source": "6ddb9f1cc011d51baf88",
+      "target": "7d73fb0095030dc00414",
+      "type": "NoFilter"
+    },
+    {
+      "source": "6ddb9f1cc011d51baf88",
+      "target": "5a895a790b0217498ab6",
+      "type": "NoFilter"
     }
   ]
 }

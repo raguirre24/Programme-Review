@@ -1249,12 +1249,17 @@ table '01 XER_TASK'
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	column monthupdate
-		dataType: string
+		dataType: dateTime
+		formatString: dd/mm/yyyy
 		lineageTag: d0999a4f-5e63-4b8a-9a35-3ff4d279647b
 		summarizeBy: none
 		sourceColumn: monthupdate
 
 		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
 
 	partition '01 XER_TASK' = m
 		mode: import
@@ -1373,8 +1378,7 @@ table '01 XER_TASK'
 				                    "t.""cstr_type""",
 				                    "t.""start""",
 				                    "t.""filename""",
-				                    "t.""late_end_date""",
-				                    "kf.""parent_recalc_date"""
+				                    "t.""late_end_date"""
 				                },
 				                ", "
 				            )
@@ -1398,12 +1402,12 @@ table '01 XER_TASK'
 				            {"ProjectCode", "UpdateDate", "_IsBL", "_ProgType"}
 				        ),
 				
-				    ParentDateAsDate =
+				    MonthUpdateAsDate =
 				        Table.TransformColumns(
 				            AddParsedColumns,
 				            {
 				                {
-				                    "parent_recalc_date",
+				                    "monthupdate",
 				                    each fnToDate(_),
 				                    type nullable date
 				                }
@@ -1414,11 +1418,11 @@ table '01 XER_TASK'
 				        Table.RenameColumns(
 				            Table.RemoveColumns(
 				                Table.AddColumn(
-				                    ParentDateAsDate,
+				                    MonthUpdateAsDate,
 				                    "UpdateDate_Final",
 				                    each
-				                        if [UpdateDate] = null and [parent_recalc_date] <> null then
-				                            Date.EndOfMonth([parent_recalc_date])
+				                        if [UpdateDate] = null and [monthupdate] <> null then
+				                            Date.EndOfMonth([monthupdate])
 				                        else
 				                            [UpdateDate],
 				                    type nullable date
@@ -1504,6 +1508,7 @@ table '01 XER_TASK'
 				                {"start", type datetime},
 				                {"finish", type datetime},
 				                {"data_date", type datetime},
+				                {"monthupdate", type date},
 				                {"total_float", type number},
 				                {"free_float", type number},
 				                {"remainingduration", type number}

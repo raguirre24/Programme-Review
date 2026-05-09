@@ -22,12 +22,25 @@ table '02 XER_PROJECT'
 
 		annotation SummarizationSetBy = Automatic
 
+	column monthupdate
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: 22d4b0fe-826a-4aa7-8d96-bf8d55a6f7f0
+		summarizeBy: none
+		sourceColumn: monthupdate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
 	partition '02 XER_PROJECT' = m
 		mode: import
 		queryGroup: XER
 		source =
 				let
-				    Source = fnAthenaSource("02_xer_project", "t.""last_recalc_date"", t.""proj_id_key"""),
+				    Source = fnAthenaSource("02_xer_project", "t.""last_recalc_date"", t.""monthupdate"", t.""proj_id_key"""),
 				
 				    ChangedTypes =
 				        Table.TransformColumns(
@@ -35,7 +48,12 @@ table '02 XER_PROJECT'
 				            {
 				                {
 				                    "last_recalc_date",
-				                    each try Date.From(DateTime.FromText(Text.From(_))) otherwise null,
+				                    each try Date.From(DateTime.FromText(Text.From(_))) otherwise try Date.From(_) otherwise null,
+				                    type nullable date
+				                },
+				                {
+				                    "monthupdate",
+				                    each try Date.From(DateTime.FromText(Text.From(_))) otherwise try Date.From(_) otherwise null,
 				                    type nullable date
 				                }
 				            }
