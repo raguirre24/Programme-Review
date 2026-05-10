@@ -1588,37 +1588,7 @@ table '01 XER_TASK'
 				        ),
 				
 				    Final =
-				        Table.SelectColumns(
-				            AddProjectName,
-				            {
-				                "status_code",
-				                "task_code",
-				                "total_float",
-				                "task_type",
-				                "ProjectName",
-				                "id_name",
-				                "early_start_date",
-				                "calendar_id_key",
-				                "task_id_key",
-				                "driving_path_flag",
-				                "remaining_duration",
-				                "early_end_date",
-				                "monthupdate",
-				                "task_name",
-				                "data_date",
-				                "act_end_date",
-				                "ProjectCode",
-				                "Finish",
-				                "proj_id_key",
-				                "wbs_id_key",
-				                "UpdateDate",
-				                "free_float",
-				                "cstr_type",
-				                "Start",
-				                "filename",
-				                "late_end_date"
-				            }
-				        )
+				        Table.SelectColumns(AddProjectName,{"status_code", "task_code", "total_float", "task_type", "id_name", "early_start_date", "calendar_id_key", "task_id_key", "driving_path_flag", "remaining_duration", "early_end_date", "monthupdate", "task_name", "data_date", "act_end_date", "Finish", "proj_id_key", "wbs_id_key", "free_float", "cstr_type", "Start", "filename", "late_end_date", "ProjectCode", "UpdateDate", "ProjectName"})
 				in
 				    Final
 

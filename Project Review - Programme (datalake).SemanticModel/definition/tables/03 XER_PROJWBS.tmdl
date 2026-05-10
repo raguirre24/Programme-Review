@@ -105,9 +105,18 @@ table '03 XER_PROJWBS'
 
 		annotation SummarizationSetBy = Automatic
 
-	column ProjectName = LOOKUPVALUE('01 XER_TASK'[ProjectName],'01 XER_TASK'[ProjectCode],'03 XER_PROJWBS'[ProjectCode])
+	column ProjectName = LOOKUPVALUE(Project_Dimension[Project],Project_Dimension[ProjectKey],'03 XER_PROJWBS'[ProjectKey])
 		lineageTag: 3ee2cfee-4d02-411a-9833-4f75fc51028c
 		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProjectKey = UPPER(TRIM('03 XER_PROJWBS'[ProjectCode]))
+		isHidden
+		lineageTag: 30c14428-4703-41f5-9a09-81175d3f4ee9
+		summarizeBy: none
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -124,7 +133,7 @@ table '03 XER_PROJWBS'
 				                    "t.""wbs_name""",
 				                    "t.""wbs_id_key""",
 				                    "t.""parent_wbs_id_key""",
-				                    "SPLIT_PART(t.""filename"", '-', 1) AS ""ProjectCode"""
+				                    "TRIM(UPPER(SPLIT_PART(t.""filename"", '-', 1))) AS ""ProjectCode"""
 				                },
 				                ", "
 				            )
@@ -142,9 +151,21 @@ table '03 XER_PROJWBS'
 				            }
 				        ),
 				
+				    CleanProjectCode =
+				        Table.TransformColumns(
+				            CleanParentWBS,
+				            {
+				                {
+				                    "ProjectCode",
+				                    each if _ = null then null else Text.Upper(Text.Trim(Text.Clean(Text.From(_)))),
+				                    type nullable text
+				                }
+				            }
+				        ),
+				
 				    Final =
 				        Table.SelectColumns(
-				            CleanParentWBS,
+				            CleanProjectCode,
 				            {
 				                "wbs_name",
 				                "wbs_id_key",

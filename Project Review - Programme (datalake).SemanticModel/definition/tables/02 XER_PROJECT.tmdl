@@ -35,12 +35,32 @@ table '02 XER_PROJECT'
 
 		annotation PBI_FormatHint = {"isDateTimeCustom":true}
 
+	column ProjectCode
+		dataType: string
+		lineageTag: 0f593dc1-088a-4d29-89c5-f2d12ec0c6e3
+		summarizeBy: none
+		sourceColumn: ProjectCode
+
+		annotation SummarizationSetBy = Automatic
+
 	partition '02 XER_PROJECT' = m
 		mode: import
 		queryGroup: XER
 		source =
 				let
-				    Source = fnAthenaSource("02_xer_project", "t.""last_recalc_date"", t.""monthupdate"", t.""proj_id_key"""),
+				    Source =
+				        fnAthenaSource(
+				            "02_xer_project",
+				            Text.Combine(
+				                {
+				                    "t.""last_recalc_date""",
+				                    "t.""monthupdate""",
+				                    "t.""proj_id_key""",
+				                    "TRIM(UPPER(SPLIT_PART(t.""filename"", '-', 1))) AS ""ProjectCode"""
+				                },
+				                ", "
+				            )
+				        ),
 				
 				    ChangedTypes =
 				        Table.TransformColumns(
@@ -57,9 +77,21 @@ table '02 XER_PROJECT'
 				                    type nullable date
 				                }
 				            }
+				        ),
+				
+				    CleanProjectCode =
+				        Table.TransformColumns(
+				            ChangedTypes,
+				            {
+				                {
+				                    "ProjectCode",
+				                    each if _ = null then null else Text.Upper(Text.Trim(Text.Clean(Text.From(_)))),
+				                    type nullable text
+				                }
+				            }
 				        )
 				in
-				    ChangedTypes
+				    CleanProjectCode
 
 	annotation PBI_NavigationStepName = Navigation
 

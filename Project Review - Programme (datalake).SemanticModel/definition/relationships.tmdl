@@ -1,5 +1,4 @@
 relationship ed31ad25-fc39-3b95-b2cc-725d09bfecd9
-	crossFilteringBehavior: bothDirections
 	fromColumn: '01 XER_TASK'.wbs_id_key
 	toColumn: '03 XER_PROJWBS'.wbs_id_key
 
@@ -156,6 +155,6 @@ relationship 30ebf835-f2a4-629c-423e-7de8022668c7
 	toColumn: '01 XER_TASK'.task_id_key
 
 relationship b8722003-1c5c-1b4c-b829-55152087201d
-	fromColumn: '01 XER_TASK'.wbs_id_key
-	toColumn: Project_Dimension.wbs_id_key
+	fromColumn: '03 XER_PROJWBS'.ProjectKey
+	toColumn: Project_Dimension.ProjectKey
 

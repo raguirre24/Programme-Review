@@ -3,9 +3,7 @@
   "displayName": "Clear Filters",
   "name": "109523331af7b8688e3a",
   "options": {
-    "targetVisualNames": [
-      "d0f42d6f6db694358c27"
-    ],
+    "targetVisualNames": [],
     "suppressActiveSection": true,
     "suppressDisplay": true
   },
@@ -402,7 +400,7 @@
             "filters": {
               "byExpr": [
                 {
-                  "name": "ce555e6bf2a2ed35a92a",
+                  "name": "7c3cc11160c31c131137",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -417,7 +415,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "6688363b1c5a8a34264a",
+                  "name": "ce9ee6807e9288409f96",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -432,7 +430,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "6775eb2a555d9f22fd70",
+                  "name": "0091d431bd92deec529c",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -447,7 +445,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "d4a12ead17fc02c541b6",
+                  "name": "917d7341404f5b7cc319",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -591,6 +589,44 @@
                 {
                   "name": "64330dffa6131376b98d",
                   "type": "Advanced",
+                  "filter": {
+                    "Version": 2,
+                    "From": [
+                      {
+                        "Name": "p",
+                        "Entity": "Project_Dimension",
+                        "Type": 0
+                      }
+                    ],
+                    "Where": [
+                      {
+                        "Condition": {
+                          "Not": {
+                            "Expression": {
+                              "Comparison": {
+                                "ComparisonKind": 0,
+                                "Left": {
+                                  "Column": {
+                                    "Expression": {
+                                      "SourceRef": {
+                                        "Source": "p"
+                                      }
+                                    },
+                                    "Property": "Project"
+                                  }
+                                },
+                                "Right": {
+                                  "Literal": {
+                                    "Value": "null"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  },
                   "expression": {
                     "Column": {
                       "Expression": {
@@ -637,7 +673,7 @@
             "filters": {
               "byExpr": [
                 {
-                  "name": "c099577aa42c92165422",
+                  "name": "7b2493e525c396174cf8",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -652,7 +688,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "74cf1f8c28c77ac9b962",
+                  "name": "9c8cd34646ee951908a6",
                   "type": "Categorical",
                   "expression": {
                     "Column": {

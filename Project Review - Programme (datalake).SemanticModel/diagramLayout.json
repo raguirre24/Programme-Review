@@ -294,31 +294,6 @@
         },
         {
           "location": {
-            "x": 4173.7331786488739,
-            "y": 1196.9631600749588
-          },
-          "nodeIndex": "UserPermission",
-          "nodeLineageTag": "16634cc5-2311-4145-a599-5cdf61ee38c3",
-          "size": {
-            "height": 248,
-            "width": 234
-          },
-          "zIndex": 0
-        },
-        {
-          "location": {
-            "x": 4457.7331786488739,
-            "y": 1208.9631600749588
-          },
-          "nodeIndex": "Project",
-          "size": {
-            "height": 224,
-            "width": 234
-          },
-          "zIndex": 0
-        },
-        {
-          "location": {
             "x": 1772.8196472120885,
             "y": 2295.0889350771313
           },
@@ -507,6 +482,16 @@
           "nodeLineageTag": "9beb5552-0b22-49bf-83ac-76fd1a0f2f24",
           "size": {
             "height": 176,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {},
+          "nodeIndex": "dbo_project",
+          "nodeLineageTag": "cf8eb271-871b-45ea-bfc4-41338c10dfde",
+          "size": {
+            "height": 200,
             "width": 234
           },
           "zIndex": 0
@@ -741,19 +726,6 @@
           "nodeLineageTag": "7d6cac0e-2a2a-4c92-992b-cae10d4ca417",
           "size": {
             "height": 152,
-            "width": 234
-          },
-          "zIndex": 0
-        },
-        {
-          "location": {
-            "x": 2229.357935620561,
-            "y": 1276.2158858862226
-          },
-          "nodeIndex": "UserPermission",
-          "nodeLineageTag": "16634cc5-2311-4145-a599-5cdf61ee38c3",
-          "size": {
-            "height": 200,
             "width": 234
           },
           "zIndex": 0

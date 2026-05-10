@@ -35,13 +35,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Project_Dimension"
+                      "Entity": "03 XER_PROJWBS"
                     }
                   },
                   "Property": "Level_2"
                 }
               },
-              "queryRef": "Project_Dimension.Level_2",
+              "queryRef": "03 XER_PROJWBS.Level_2",
               "nativeQueryRef": "Level_2",
               "active": true
             },
@@ -50,13 +50,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Project_Dimension"
+                      "Entity": "03 XER_PROJWBS"
                     }
                   },
                   "Property": "Level_3"
                 }
               },
-              "queryRef": "Project_Dimension.Level_3",
+              "queryRef": "03 XER_PROJWBS.Level_3",
               "nativeQueryRef": "Level_3",
               "active": true
             },
@@ -65,13 +65,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Project_Dimension"
+                      "Entity": "03 XER_PROJWBS"
                     }
                   },
                   "Property": "Level_4"
                 }
               },
-              "queryRef": "Project_Dimension.Level_4",
+              "queryRef": "03 XER_PROJWBS.Level_4",
               "nativeQueryRef": "Level_4",
               "active": true
             }
@@ -370,7 +370,7 @@
           },
           {
             "queryRefs": [
-              "Project_Dimension.Level_2"
+              "03 XER_PROJWBS.Level_2"
             ],
             "isCollapsed": true,
             "identityKeys": [
@@ -378,7 +378,7 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Project_Dimension"
+                      "Entity": "03 XER_PROJWBS"
                     }
                   },
                   "Property": "Level_2"
@@ -389,7 +389,7 @@
           },
           {
             "queryRefs": [
-              "Project_Dimension.Level_3"
+              "03 XER_PROJWBS.Level_3"
             ],
             "isCollapsed": true,
             "identityKeys": [
@@ -397,7 +397,7 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Project_Dimension"
+                      "Entity": "03 XER_PROJWBS"
                     }
                   },
                   "Property": "Level_3"
@@ -408,7 +408,7 @@
           },
           {
             "queryRefs": [
-              "Project_Dimension.Level_4"
+              "03 XER_PROJWBS.Level_4"
             ],
             "isCollapsed": true,
             "isPinned": true
@@ -1527,7 +1527,7 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Project_Dimension"
+                "Entity": "03 XER_PROJWBS"
               }
             },
             "Property": "Level_2"
@@ -1541,7 +1541,7 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Project_Dimension"
+                "Entity": "03 XER_PROJWBS"
               }
             },
             "Property": "Level_3"
@@ -1555,7 +1555,7 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Project_Dimension"
+                "Entity": "03 XER_PROJWBS"
               }
             },
             "Property": "Level_4"
