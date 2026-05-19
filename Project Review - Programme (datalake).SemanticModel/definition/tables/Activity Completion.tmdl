@@ -33,7 +33,7 @@ table 'Activity Completion'
 			VAR CurrentProject = SELECTEDVALUE('01 XER_TASK'[ProjectName])
 			RETURN
 			    CALCULATE(
-			        MAX('01 XER_TASK'[data_date]),
+			        MAX('01 XER_TASK'[monthupdate]),
 			        '01 XER_TASK'[UpdateDate] = CurrentMonthValue,
 			        '01 XER_TASK'[ProjectName] = CurrentProject
 			    )
@@ -45,14 +45,14 @@ table 'Activity Completion'
 	measure PreviousDataDate =
 			
 			VAR CurrentProject = SELECTEDVALUE('01 XER_TASK'[ProjectName])
-			VAR CurrentDataDate = MAX('01 XER_TASK'[data_date])
+			VAR CurrentDataDate = MAX('01 XER_TASK'[monthupdate])
 			VAR PreviousDataDate =
 			    CALCULATE(
-			        MAX('01 XER_TASK'[data_date]),
+			        MAX('01 XER_TASK'[monthupdate]),
 			        FILTER(
 			            ALL('01 XER_TASK'),
 			            '01 XER_TASK'[ProjectName] = CurrentProject &&
-			            '01 XER_TASK'[data_date] < CurrentDataDate
+			            '01 XER_TASK'[monthupdate] < CurrentDataDate
 			        )
 			    )
 			RETURN

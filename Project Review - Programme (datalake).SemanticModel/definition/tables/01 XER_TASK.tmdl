@@ -1261,6 +1261,116 @@ table '01 XER_TASK'
 
 		annotation PBI_FormatHint = {"isDateTimeCustom":true}
 
+	column 'Adjusted Baseline Finish' =
+			
+			VAR CurrentTaskCode = '01 XER_TASK'[task_code]
+			VAR CurrentProject = '01 XER_TASK'[ProjectCode]
+			
+			RETURN
+			    MAXX(
+			        FILTER(
+			            ALL('04A XER_ADJ_BASELINE'),
+			            '04A XER_ADJ_BASELINE'[task_code] = CurrentTaskCode &&
+			            '04A XER_ADJ_BASELINE'[ProjectCode] = CurrentProject
+			        ),
+			        '04A XER_ADJ_BASELINE'[Finish]
+			    )
+		formatString: dd/mm/yy
+		lineageTag: 667500ea-0400-481d-8e05-4fdab8fe06ff
+		summarizeBy: none
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column 'Adjusted Baseline Start' =
+			
+			VAR CurrentTaskCode = '01 XER_TASK'[task_code]
+			VAR CurrentProject = '01 XER_TASK'[ProjectCode]
+			
+			RETURN
+			    MAXX(
+			        FILTER(
+			            ALL('04A XER_ADJ_BASELINE'),
+			            '04A XER_ADJ_BASELINE'[task_code] = CurrentTaskCode &&
+			            '04A XER_ADJ_BASELINE'[ProjectCode] = CurrentProject
+			        ),
+			        '04A XER_ADJ_BASELINE'[Start]
+			    )
+		formatString: dd/mm/yy
+		lineageTag: 82f4a2cf-3bce-4a32-b9be-e71c207478aa
+		summarizeBy: none
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column 'Adjusted Baseline Source Month' =
+			VAR CurrentTaskCode = '01 XER_TASK'[task_code]
+			VAR CurrentProject = '01 XER_TASK'[ProjectCode]
+			RETURN
+			    CALCULATE(
+			        MIN('01 XER_TASK'[monthupdate]),
+			        FILTER(
+			            ALL('01 XER_TASK'),
+			            '01 XER_TASK'[task_code] = CurrentTaskCode &&
+			            '01 XER_TASK'[ProjectCode] = CurrentProject
+			        )
+			    )
+		formatString: mmmm yyyy
+		lineageTag: 6788fa41-5b3c-4ac2-8332-e548a76e83cf
+		summarizeBy: none
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column 'Adjusted Baseline Source' =
+			VAR CurrentTaskCode = '01 XER_TASK'[task_code]
+			VAR CurrentProject = '01 XER_TASK'[ProjectCode]
+			VAR SourceMonth =
+			    CALCULATE(
+			        MIN('01 XER_TASK'[monthupdate]),
+			        FILTER(
+			            ALL('01 XER_TASK'),
+			            '01 XER_TASK'[task_code] = CurrentTaskCode &&
+			            '01 XER_TASK'[ProjectCode] = CurrentProject
+			        )
+			    )
+			VAR ProjectFirstMonth =
+			    CALCULATE(
+			        MIN('01 XER_TASK'[monthupdate]),
+			        FILTER(
+			            ALL('01 XER_TASK'),
+			            '01 XER_TASK'[ProjectCode] = CurrentProject
+			        )
+			    )
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        ISBLANK(SourceMonth), BLANK(),
+			        ISBLANK(ProjectFirstMonth), "Unknown",
+			        SourceMonth = ProjectFirstMonth, "Original Baseline",
+			        SourceMonth > ProjectFirstMonth, "Later Update",
+			        "Unknown"
+			    )
+		lineageTag: 3160a9ec-a636-4fee-bd0d-abaff2a36d63
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
 	partition '01 XER_TASK' = m
 		mode: import
 		queryGroup: XER

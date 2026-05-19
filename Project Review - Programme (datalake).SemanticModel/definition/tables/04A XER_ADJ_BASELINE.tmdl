@@ -1,0 +1,87 @@
+table '04A XER_ADJ_BASELINE'
+	lineageTag: 1ebd0730-0102-490a-83ce-645ce596d7d5
+
+	column ProjectCode
+		lineageTag: 1cbec1fd-ca87-4398-b2c3-fc906f07c503
+		summarizeBy: none
+		sourceColumn: 01 XER_TASK[ProjectCode]
+
+		annotation SummarizationSetBy = Automatic
+
+	column task_code
+		lineageTag: de4bc481-d8fc-4605-a323-9d79a5709653
+		summarizeBy: none
+		sourceColumn: 01 XER_TASK[task_code]
+
+		annotation SummarizationSetBy = Automatic
+
+	column First_Added_Month
+		formatString: General Date
+		lineageTag: 01c567d8-5a47-4184-b7a8-ba6f9ff0dfb5
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [First_Added_Month]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Start
+		formatString: General Date
+		lineageTag: 6b1fc2a0-a142-4540-ac8e-adbe331db1b6
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Start]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Finish
+		formatString: General Date
+		lineageTag: 92869a4f-4a22-4fec-9f2a-799fa8898db8
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Finish]
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProjectTaskKey
+		lineageTag: f171ac0c-9b51-475c-a6f5-f535a18d4e96
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [ProjectTaskKey]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition '04A XER_ADJ_BASELINE' = calculated
+		mode: import
+		source =
+				
+				VAR FirstMonths =
+				    GROUPBY(
+				        '01 XER_TASK',
+				        '01 XER_TASK'[ProjectCode],
+				        '01 XER_TASK'[task_code],
+				        "First_Added_Month", MINX(CURRENTGROUP(), '01 XER_TASK'[MonthUpdate])
+				    )
+				RETURN
+				    GENERATE(
+				        FirstMonths,
+				        VAR CurrentProject = '01 XER_TASK'[ProjectCode]
+				        VAR CurrentTask    = '01 XER_TASK'[task_code]
+				        VAR CurrentMonth   = [First_Added_Month]
+				        VAR CurrentKey     = CurrentProject & "_" & CurrentTask
+				        VAR MatchingRows =
+				            FILTER(
+				                '01 XER_TASK',
+				                '01 XER_TASK'[ProjectCode] = CurrentProject &&
+				                '01 XER_TASK'[task_code]   = CurrentTask &&
+				                '01 XER_TASK'[MonthUpdate] = CurrentMonth
+				            )
+				        RETURN
+				            ROW(
+				                "ProjectTaskKey", CurrentKey,
+				                "Start",  MINX(MatchingRows, '01 XER_TASK'[Start]),
+				                "Finish", MAXX(MatchingRows, '01 XER_TASK'[Finish])
+				            )
+				    )
+
+	annotation PBI_Id = db38f58689884371a52be71d91cab803
+

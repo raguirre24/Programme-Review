@@ -3,7 +3,7 @@ role 'Project Access'
 
 	tablePermission Project_Dimension =
 			VAR RawUPN =
-			    LOWER ( USERPRINCIPALNAME() )
+			    LOWER ( USERPRINCIPALNAME () )
 			
 			VAR ExtTagPos =
 			    SEARCH ( "#ext#", RawUPN, 1, 0 )
@@ -68,19 +68,6 @@ role 'Project Access'
 			        )
 			    ) > 0
 			
-			VAR HasStateAccess =
-			    CurrentProjectState
-			        IN SELECTCOLUMNS (
-			            FILTER (
-			                CurrentUserPermissions,
-			                ISBLANK ( 'dbo_userpermission'[companyid] )
-			                    && ISBLANK ( 'dbo_userpermission'[projectid] )
-			                    && LOWER ( 'dbo_userpermission'[donotuse_rolename] ) IN AcceptedRoles
-			                    && NOT ISBLANK ( 'dbo_userpermission'[person_state] )
-			            ),
-			            "AllowedState", LOWER ( 'dbo_userpermission'[person_state] )
-			        )
-			
 			VAR HasCompanyAccess =
 			    COUNTROWS (
 			        FILTER (
@@ -89,10 +76,7 @@ role 'Project Access'
 			                && ISBLANK ( 'dbo_userpermission'[projectid] )
 			                && LOWER ( 'dbo_userpermission'[donotuse_rolename] ) IN AcceptedRoles
 			                && 'dbo_userpermission'[companyid] = CurrentProjectCompanyId
-			                && (
-			                    ISBLANK ( 'dbo_userpermission'[person_state] )
-			                        || LOWER ( 'dbo_userpermission'[person_state] ) = CurrentProjectState
-			                )
+			                && LOWER ( 'dbo_userpermission'[person_state] ) = CurrentProjectState
 			        )
 			    ) > 0
 			
@@ -109,7 +93,6 @@ role 'Project Access'
 			
 			RETURN
 			    HasGlobalAccess
-			        || HasStateAccess
 			        || HasCompanyAccess
 			        || HasProjectAccess
 

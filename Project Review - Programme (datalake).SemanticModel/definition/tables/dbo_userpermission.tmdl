@@ -202,7 +202,7 @@ table dbo_userpermission
 				    Source =
 				        Value.NativeQuery(
 				            AthenaDB,
-				            "SELECT p.email AS linkedsite_email, NULLIF(TRIM(p.state), '') AS person_state, up.* FROM ""prod_projectcontrols_linkedsitereports"".""dbo_userpermission"" up LEFT JOIN ""prod_projectcontrols_linkedsitereports"".""dbo_person"" p ON p.id = up.personid WHERE up.privilegename IN ('ViewCostStatement', 'ViewMyCostStatement') AND LOWER(TRIM(p.is_active)) = 'yes'",
+				            "SELECT p.email AS linkedsite_email, NULLIF(TRIM(p.state), '') AS person_state, up.* FROM ""prod_projectcontrols_linkedsitereports"".""dbo_userpermission"" up LEFT JOIN ""prod_projectcontrols_linkedsitereports"".""dbo_person"" p ON p.id = up.personid WHERE up.privilegename IN ('LinkedOfficeWebLogin') AND LOWER(TRIM(p.is_active)) = 'yes'",
 				            null
 				        ),
 				

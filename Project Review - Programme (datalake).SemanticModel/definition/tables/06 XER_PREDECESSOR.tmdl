@@ -370,6 +370,14 @@ table '06 XER_PREDECESSOR'
 
 		annotation SummarizationSetBy = Automatic
 
+	column ProjectCode
+		dataType: string
+		lineageTag: c44df539-41d7-4101-a575-013fcf83f489
+		summarizeBy: none
+		sourceColumn: ProjectCode
+
+		annotation SummarizationSetBy = Automatic
+
 	partition '06 XER_PREDECESSOR' = m
 		mode: import
 		queryGroup: XER
@@ -395,7 +403,8 @@ table '06 XER_PREDECESSOR'
 				                    "t.""predecessor_finish""",
 				                    "t.""free_float""",
 				                    "t.""total_float""",
-				                    "t.""filename"""
+				                    "t.""filename""",
+				                    "TRIM(UPPER(SPLIT_PART(t.""filename"", '-', 1))) AS ""ProjectCode"""
 				                },
 				                ", "
 				            )

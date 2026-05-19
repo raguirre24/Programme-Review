@@ -18,7 +18,7 @@ table 'XER S-Curve'
 
 	measure Cumulative_Count_Actual_Finish = ```
 			
-			VAR MaxDataDate = MAX('01 XER_TASK'[data_date])
+			VAR MaxDataDate = MAX('01 XER_TASK'[monthupdate])
 			VAR CurrentMonth = MAX('00 CALENDAR'[Date])
 			
 			// Extract year and month components for comparison
@@ -147,7 +147,7 @@ table 'XER S-Curve'
 
 	measure Percentage_Cumulative_Actual_Finish = ```
 			
-			VAR MaxDataDate = MAX('01 XER_TASK'[data_date])
+			VAR MaxDataDate = MAX('01 XER_TASK'[monthupdate])
 			VAR CurrentMonth = MAX('00 CALENDAR'[Date])
 			
 			// Extract year and month components for comparison
