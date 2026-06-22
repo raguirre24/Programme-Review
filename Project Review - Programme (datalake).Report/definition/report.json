@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/report/3.2.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/report/3.3.0/schema.json",
   "themeCollection": {
     "baseTheme": {
       "name": "CY23SU08",
@@ -40,7 +40,7 @@
           "expanded": {
             "expr": {
               "Literal": {
-                "Value": "false"
+                "Value": "true"
               }
             }
           },
@@ -55,10 +55,6 @@
       }
     ]
   },
-  "publicCustomVisuals": [
-    "ChicletSlicer1448559807354",
-    "textFilter25A4896A83E0487089E2B90C9AE57C8A"
-  ],
   "resourcePackages": [
     {
       "name": "RegisteredResources",
@@ -167,6 +163,17 @@
           "type": "CustomVisualMetadata"
         }
       ]
+    },
+    {
+      "name": "timelineOfEvents1E8747A536B74AB586FADD94AE72B347",
+      "type": "CustomVisual",
+      "items": [
+        {
+          "name": "timelineOfEvents1E8747A536B74AB586FADD94AE72B347.pbiviz.json",
+          "path": "timelineOfEvents1E8747A536B74AB586FADD94AE72B347.pbiviz.json",
+          "type": "CustomVisualMetadata"
+        }
+      ]
     }
   ],
   "settings": {
@@ -175,6 +182,7 @@
     "exportDataMode": "AllowSummarized",
     "defaultDrillFilterOtherVisuals": true,
     "useEnhancedTooltips": true,
+    "filterPaneHiddenInEditMode": true,
     "disableFilterPaneSearch": true,
     "useDefaultAggregateDisplayName": true,
     "queryLimitOption": "Custom",

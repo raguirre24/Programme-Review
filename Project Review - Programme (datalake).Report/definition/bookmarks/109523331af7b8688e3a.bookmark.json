@@ -3,7 +3,9 @@
   "displayName": "Clear Filters",
   "name": "109523331af7b8688e3a",
   "options": {
-    "targetVisualNames": [],
+    "targetVisualNames": [
+      "d0f42d6f6db694358c27"
+    ],
     "suppressActiveSection": true,
     "suppressDisplay": true
   },
@@ -323,7 +325,7 @@
                                       [
                                         {
                                           "Literal": {
-                                            "Value": "datetime'2026-04-30T00:00:00'"
+                                            "Value": "datetime'2026-06-30T00:00:00'"
                                           }
                                         }
                                       ]
@@ -400,7 +402,7 @@
             "filters": {
               "byExpr": [
                 {
-                  "name": "7c3cc11160c31c131137",
+                  "name": "5c9affc734b83aa60080",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -415,7 +417,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "ce9ee6807e9288409f96",
+                  "name": "660d5bcb35e46e101ed4",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -430,7 +432,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "0091d431bd92deec529c",
+                  "name": "f04a70bc1b2d2ed20e7b",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -445,7 +447,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "917d7341404f5b7cc319",
+                  "name": "0249fe53dc27a095a5b8",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -673,7 +675,7 @@
             "filters": {
               "byExpr": [
                 {
-                  "name": "7b2493e525c396174cf8",
+                  "name": "277b825ad71028bbb2bd",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -688,7 +690,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "9c8cd34646ee951908a6",
+                  "name": "d9321071bc90a56412d1",
                   "type": "Categorical",
                   "expression": {
                     "Column": {

@@ -19,7 +19,7 @@ queryGroup Database
 
 	annotation PBI_QueryGroupOrder = 2
 
-annotation PBI_QueryOrder = ["01 XER_TASK","02 XER_PROJECT","03 XER_PROJWBS","06 XER_PREDECESSOR","07 XER_ACTVTYPE","08 XER_ACTVCODE","09 XER_TASKACTV","10 XER_CALENDARS","12_XER_RSRC","15_XER_RESOURCE_DISTRIBUTION","XER Measures","XER  Counts","XER Metrics","XER S-Curve","Dynamic Titles & Formatting","SharePointSite","Activity Completion","Resources","WBS Measures","Logos","AthenaScopeSql","fnAthenaSource","ProjectFilterList","SelectedProjects","SelectedProgrammeType","AthenaDB","dbo_project","dbo_userpermission"]
+annotation PBI_QueryOrder = ["01 XER_TASK","02 XER_PROJECT","03 XER_PROJWBS","06 XER_PREDECESSOR","07 XER_ACTVTYPE","08 XER_ACTVCODE","09 XER_TASKACTV","10 XER_CALENDARS","12_XER_RSRC","15_XER_RESOURCE_DISTRIBUTION","XER Measures","XER  Counts","XER Metrics","XER S-Curve","Dynamic Titles & Formatting","SharePointSite","Activity Completion","Resources","WBS Measures","Logos","AthenaScopeSql","fnAthenaSource","ProjectFilterList","SelectedProjects","SelectedProgrammeType","AthenaDB","dbo_project","dbo_userpermission","dbo_project_events"]
 
 annotation PBI_ProTooling = ["TMDLView_Desktop","DevMode","DaxQueryView_Desktop"]
 
@@ -66,6 +66,7 @@ ref table 15_XER_RESOURCE_DISTRIBUTION
 ref table dbo_userpermission
 ref table dbo_project
 ref table '04A XER_ADJ_BASELINE'
+ref table dbo_project_events
 
 ref role 'Project Access'
 

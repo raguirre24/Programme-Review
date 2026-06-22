@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.6.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
   "name": "6e49a460604369390e81",
   "position": {
     "x": 6.0827222059254913,
@@ -158,7 +158,8 @@
               },
               "queryRef": "Min(01 XER_TASK.Baseline Start)",
               "nativeQueryRef": "Baseline Start",
-              "displayName": "Baseline Start"
+              "displayName": "Baseline Start",
+              "format": "dd/MM/yyyy"
             },
             {
               "field": {
@@ -178,7 +179,8 @@
               },
               "queryRef": "Min(01 XER_TASK.Baseline Finish)",
               "nativeQueryRef": "Baseline Finish",
-              "displayName": "Baseline Finish"
+              "displayName": "Baseline Finish",
+              "format": "dd/MM/yyyy"
             },
             {
               "field": {
@@ -198,7 +200,8 @@
               },
               "queryRef": "Min(01 XER_TASK.Previous Month Start)",
               "nativeQueryRef": "Previous Period Start",
-              "displayName": "Previous Period Start"
+              "displayName": "Previous Period Start",
+              "format": "dd/MM/yyyy"
             },
             {
               "field": {
@@ -218,7 +221,8 @@
               },
               "queryRef": "Min(01 XER_TASK.Previous Month Finish)",
               "nativeQueryRef": "Previous Period Finish",
-              "displayName": "Previous Period Finish"
+              "displayName": "Previous Period Finish",
+              "format": "dd/MM/yyyy"
             },
             {
               "field": {
@@ -1247,7 +1251,7 @@
             "autoSizeColumnWidth": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
                 }
               }
             },
@@ -1485,5 +1489,263 @@
     },
     "drillFilterOtherVisuals": true
   },
-  "parentGroupName": "5d39ae0c29e4e310905e"
+  "parentGroupName": "5d39ae0c29e4e310905e",
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "93b6bec0f1a3c028ae54",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "03 XER_PROJWBS"
+              }
+            },
+            "Property": "Level_2"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "46534e796f444dfdc01d",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "03 XER_PROJWBS"
+              }
+            },
+            "Property": "Level_3"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "74baf9001c300e2af0bf",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "03 XER_PROJWBS"
+              }
+            },
+            "Property": "Level_4"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "6ad8abffa7ebe6a9821a",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "01 XER_TASK"
+              }
+            },
+            "Property": "task_code"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "fdf926695b6cb334627a",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Measures"
+              }
+            },
+            "Property": "ShowTaskName"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "65c83bda0fe044edce48",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Measures"
+              }
+            },
+            "Property": "ShowTaskType"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "ea6a91f011563c894620",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Measures"
+              }
+            },
+            "Property": "ShowDuration"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "1199895aa84bb541a446",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Measures"
+              }
+            },
+            "Property": "ShowFloat"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "e2b9caa706924763e32d",
+        "field": {
+          "Aggregation": {
+            "Expression": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "01 XER_TASK"
+                  }
+                },
+                "Property": "Baseline Start"
+              }
+            },
+            "Function": 3
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "b196f890ed5c0a9797cb",
+        "field": {
+          "Aggregation": {
+            "Expression": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "01 XER_TASK"
+                  }
+                },
+                "Property": "Baseline Finish"
+              }
+            },
+            "Function": 4
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "74f398c93f8e0ed99f73",
+        "field": {
+          "Aggregation": {
+            "Expression": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "01 XER_TASK"
+                  }
+                },
+                "Property": "Previous Month Start"
+              }
+            },
+            "Function": 3
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "4e1c95cdd4f9beddcf0d",
+        "field": {
+          "Aggregation": {
+            "Expression": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "01 XER_TASK"
+                  }
+                },
+                "Property": "Previous Month Finish"
+              }
+            },
+            "Function": 4
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "6f2ce4f893c05efdbaf0",
+        "field": {
+          "Aggregation": {
+            "Expression": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "01 XER_TASK"
+                  }
+                },
+                "Property": "Start"
+              }
+            },
+            "Function": 3
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "011f47dfeb8b51f89fdd",
+        "field": {
+          "Aggregation": {
+            "Expression": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "01 XER_TASK"
+                  }
+                },
+                "Property": "Finish"
+              }
+            },
+            "Function": 4
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "389c849772065e321cb9",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Measures"
+              }
+            },
+            "Property": "ShowVarianceBL"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "9559f4152bbe430dd647",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Measures"
+              }
+            },
+            "Property": "ShowVariance"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
+  }
 }

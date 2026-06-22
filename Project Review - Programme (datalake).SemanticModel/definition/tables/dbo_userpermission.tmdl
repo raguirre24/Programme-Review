@@ -194,6 +194,23 @@ table dbo_userpermission
 
 		annotation SummarizationSetBy = Automatic
 
+	column region_id
+		dataType: int64
+		formatString: 0
+		lineageTag: a7179db0-0d74-4958-9a80-5c614a71488c
+		summarizeBy: sum
+		sourceColumn: region_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column region
+		dataType: string
+		lineageTag: 49f0229c-5c81-4ea4-9a77-a858389d911a
+		summarizeBy: none
+		sourceColumn: region
+
+		annotation SummarizationSetBy = Automatic
+
 	partition dbo_userpermission = m
 		mode: import
 		queryGroup: Database
@@ -202,7 +219,7 @@ table dbo_userpermission
 				    Source =
 				        Value.NativeQuery(
 				            AthenaDB,
-				            "SELECT p.email AS linkedsite_email, NULLIF(TRIM(p.state), '') AS person_state, up.* FROM ""prod_projectcontrols_linkedsitereports"".""dbo_userpermission"" up LEFT JOIN ""prod_projectcontrols_linkedsitereports"".""dbo_person"" p ON p.id = up.personid WHERE up.privilegename IN ('LinkedOfficeWebLogin') AND LOWER(TRIM(p.is_active)) = 'yes'",
+				            "SELECT p.email AS linkedsite_email, NULLIF(TRIM(p.state), '') AS person_state, up.* FROM ""prod_projectcontrols_linkedsitereports"".""dbo_userpermission"" up LEFT JOIN ""prod_projectcontrols_linkedsitereports"".""dbo_person"" p ON p.id = up.personid WHERE up.privilegename IN ('ViewPowerBIProgrammeDashboards') AND LOWER(TRIM(p.is_active)) = 'yes'",
 				            null
 				        ),
 				

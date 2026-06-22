@@ -1,0 +1,182 @@
+table dbo_project_events
+	lineageTag: bdadf15a-6705-4859-949b-353d8115ef5b
+
+	column eventname
+		dataType: string
+		lineageTag: ea3b15e5-33ed-4451-a1af-c838bc24900b
+		summarizeBy: none
+		sourceColumn: eventname
+
+		annotation SummarizationSetBy = Automatic
+
+	column eventtype
+		dataType: string
+		lineageTag: 3980c06a-956a-4923-a3dd-a5741033a1fb
+		summarizeBy: none
+		sourceColumn: eventtype
+
+		annotation SummarizationSetBy = Automatic
+
+	column eventdate
+		dataType: dateTime
+		formatString: mmmm yyyy
+		lineageTag: 4038aec2-133d-41e0-83d6-c685d74edaf4
+		summarizeBy: none
+		sourceColumn: eventdate
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column locationname
+		dataType: string
+		lineageTag: 422b7be3-0621-42bf-b4a8-bde0c967ecfe
+		summarizeBy: none
+		sourceColumn: locationname
+
+		annotation SummarizationSetBy = Automatic
+
+	column description
+		dataType: string
+		lineageTag: 00266bfd-f349-4ed4-b76d-cbf96c04330e
+		summarizeBy: none
+		sourceColumn: description
+
+		annotation SummarizationSetBy = Automatic
+
+	column eventstatus
+		dataType: string
+		lineageTag: fa50c81f-d190-424a-9f1d-03983291606f
+		summarizeBy: none
+		sourceColumn: eventstatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column eventcategory
+		dataType: string
+		lineageTag: efefeb31-033a-4178-b4c6-708ae9a4b589
+		summarizeBy: none
+		sourceColumn: eventcategory
+
+		annotation SummarizationSetBy = Automatic
+
+	column impact
+		dataType: string
+		lineageTag: fea161cb-9723-4ac2-afc4-0f54298c6676
+		summarizeBy: none
+		sourceColumn: impact
+
+		annotation SummarizationSetBy = Automatic
+
+	column impactedagreements
+		dataType: string
+		lineageTag: 9c4a0e4e-7862-43c2-8c20-7581a933c6be
+		summarizeBy: none
+		sourceColumn: impactedagreements
+
+		annotation SummarizationSetBy = Automatic
+
+	column cost
+		dataType: double
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 93880978-b2a7-4519-80fd-6ace047e042e
+		summarizeBy: sum
+		sourceColumn: cost
+
+		annotation SummarizationSetBy = Automatic
+
+	column projectno
+		dataType: string
+		lineageTag: c053fe24-7162-4d9a-a603-e611a9aacc4a
+		summarizeBy: none
+		sourceColumn: projectno
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dbo_project_events = m
+		mode: import
+		queryGroup: Database
+		source =
+				let
+				    Source =
+				        Value.NativeQuery(
+				            AthenaDB,
+				            "SELECT ""projectid"", ""eventname"", ""eventtype"",""eventdate"",""locationname"",""description"",""eventstatus"",""eventcategory"",""impact"",""impactedagreements"",""cost"" FROM prod_projectcontrols_linkedsite.""project_events_capture""",
+				            null
+				        ),
+				
+				    // 1. Merge with your existing dbo_project table
+				    MergedWithProject =
+				        Table.NestedJoin(
+				            Source,
+				            {"projectid"},
+				            dbo_project,
+				            {"projectid"},
+				            "ProjectDetails",
+				            JoinKind.LeftOuter
+				        ),
+				
+				    // 2. Expand only the projectno column
+				    ExpandedProject =
+				        Table.ExpandTableColumn(
+				            MergedWithProject,
+				            "ProjectDetails",
+				            {"projectno"},
+				            {"projectno"}
+				        ),
+				
+				    // 3. Generate the alternate project code for each row
+				    AddAltProjectNo =
+				        Table.AddColumn(
+				            ExpandedProject,
+				            "AltProjectNo",
+				            each
+				                if [projectno] = null or [projectno] = "" then
+				                    null
+				                else if Text.StartsWith([projectno], "C") then
+				                    "J" & Text.Middle([projectno], 1)
+				                else if Text.StartsWith([projectno], "J") then
+				                    "C" & Text.Middle([projectno], 1)
+				                else
+				                    null,
+				            type nullable text
+				        ),
+				
+				    // 4. Group the codes into a list and remove nulls/duplicates
+				    AddCodeList =
+				        Table.AddColumn(
+				            AddAltProjectNo,
+				            "AllProjectCodes",
+				            each
+				                List.RemoveNulls(
+				                    List.Distinct({[projectno], [AltProjectNo]})
+				                ),
+				            type list
+				        ),
+				
+				    // 5. Expand the list column to duplicate the rows for both codes
+				    ExpandedCodes =
+				        Table.ExpandListColumn(AddCodeList, "AllProjectCodes"),
+				
+				    // 6. Clean up temporary columns and rename the final code column back to 'projectno'
+				    RenameForRLS =
+				        Table.RenameColumns(
+				            Table.RemoveColumns(ExpandedCodes, {"projectno", "AltProjectNo"}),
+				            {{"AllProjectCodes", "projectno"}}
+				        ),
+				
+				    // 7. Remove any identical duplicate rows that may have been created
+				    Deduped =
+				        Table.Distinct(RenameForRLS),
+				    #"Removed Other Columns" = Table.SelectColumns(Deduped,{"eventname", "eventtype", "eventdate", "locationname", "description", "eventstatus", "eventcategory", "impact", "impactedagreements", "cost", "projectno"})
+				in
+				    #"Removed Other Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

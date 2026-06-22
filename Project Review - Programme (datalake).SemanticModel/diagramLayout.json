@@ -504,6 +504,16 @@
             "width": 234
           },
           "zIndex": 0
+        },
+        {
+          "location": {},
+          "nodeIndex": "dbo_project_events",
+          "nodeLineageTag": "bdadf15a-6705-4859-949b-353d8115ef5b",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
         }
       ],
       "name": "All tables",
@@ -517,7 +527,7 @@
       "ordinal": 1,
       "scrollPosition": {
         "x": 0,
-        "y": 0
+        "y": 616.53716079217327
       },
       "nodes": [
         {
@@ -754,7 +764,7 @@
         }
       ],
       "name": "XER",
-      "zoomValue": 35.6770362082278,
+      "zoomValue": 50.280829723497725,
       "pinKeyFieldsToTop": false,
       "showExtraHeaderInfo": false,
       "hideKeyFieldsWhenCollapsed": false,
@@ -1037,8 +1047,49 @@
       "showExtraHeaderInfo": false,
       "hideKeyFieldsWhenCollapsed": false,
       "tablesLocked": false
+    },
+    {
+      "ordinal": 5,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 336,
+            "y": 139
+          },
+          "nodeIndex": "Project_Dimension",
+          "nodeLineageTag": "b6b57912-cd01-4aa2-a5f1-73da79d32e2a",
+          "size": {
+            "height": 248,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 776,
+            "y": 353
+          },
+          "nodeIndex": "dbo_project_events",
+          "nodeLineageTag": "bdadf15a-6705-4859-949b-353d8115ef5b",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "Events",
+      "zoomValue": 100,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
     }
   ],
-  "selectedDiagram": "XER",
+  "selectedDiagram": "Events",
   "defaultDiagram": "All tables"
 }

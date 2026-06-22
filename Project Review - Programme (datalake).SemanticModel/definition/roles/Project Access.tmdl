@@ -38,19 +38,6 @@ role 'Project Access'
 			VAR CurrentProjectState =
 			    LOWER ( 'Project_Dimension'[State] )
 			
-			VAR CurrentProjectCompanyId =
-			    'Project_Dimension'[CompanyId]
-			
-			VAR AcceptedRoles =
-			    {
-			        "operationsmanager",
-			        "financemanager",
-			        "commercialmanager",
-			        "projectdirector",
-			        "projectcontrolsmanager",
-			        "regionprojectscontrollead"
-			    }
-			
 			VAR CurrentUserPermissions =
 			    FILTER (
 			        ALL ( 'dbo_userpermission' ),
@@ -58,25 +45,24 @@ role 'Project Access'
 			            || LOWER ( 'dbo_userpermission'[userprincipalname] ) IN UserIdentifiers
 			    )
 			
-			VAR HasGlobalAccess =
+			VAR HasAllAccess =
 			    COUNTROWS (
 			        FILTER (
 			            CurrentUserPermissions,
-			            ISBLANK ( 'dbo_userpermission'[companyid] )
-			                && ISBLANK ( 'dbo_userpermission'[projectid] )
-			                && LOWER ( 'dbo_userpermission'[donotuse_rolename] ) IN AcceptedRoles
+			            ISBLANK ( 'dbo_userpermission'[projectid] )
+			                && ( ISBLANK ( 'dbo_userpermission'[region] ) || 'dbo_userpermission'[region] = "" )
+			                && ISBLANK ( 'dbo_userpermission'[companyid] )
 			        )
 			    ) > 0
 			
-			VAR HasCompanyAccess =
+			VAR HasStateAccess =
 			    COUNTROWS (
 			        FILTER (
 			            CurrentUserPermissions,
-			            NOT ISBLANK ( 'dbo_userpermission'[companyid] )
-			                && ISBLANK ( 'dbo_userpermission'[projectid] )
-			                && LOWER ( 'dbo_userpermission'[donotuse_rolename] ) IN AcceptedRoles
-			                && 'dbo_userpermission'[companyid] = CurrentProjectCompanyId
-			                && LOWER ( 'dbo_userpermission'[person_state] ) = CurrentProjectState
+			            ISBLANK ( 'dbo_userpermission'[projectid] )
+			                && NOT ISBLANK ( 'dbo_userpermission'[region] )
+			                && 'dbo_userpermission'[region] <> ""
+			                && LOWER ( 'dbo_userpermission'[region] ) = CurrentProjectState
 			        )
 			    ) > 0
 			
@@ -92,8 +78,8 @@ role 'Project Access'
 			        )
 			
 			RETURN
-			    HasGlobalAccess
-			        || HasCompanyAccess
+			    HasAllAccess
+			        || HasStateAccess
 			        || HasProjectAccess
 
 	annotation PBI_Id = d8d20f5b9cdf4286af9ca1b71c029851

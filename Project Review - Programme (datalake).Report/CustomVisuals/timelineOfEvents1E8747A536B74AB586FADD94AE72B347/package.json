@@ -1,0 +1,29 @@
+{
+  "version": "1.0.0.0",
+  "author": {
+    "name": "Antigravity",
+    "email": "antigravity@google.com"
+  },
+  "resources": [
+    {
+      "resourceId": "rId0",
+      "sourceType": 5,
+      "file": "resources/timelineOfEvents1E8747A536B74AB586FADD94AE72B347.pbiviz.json"
+    }
+  ],
+  "visual": {
+    "guid": "timelineOfEvents1E8747A536B74AB586FADD94AE72B347",
+    "name": "timelineOfEvents",
+    "displayName": "Timeline of Events",
+    "version": "1.0.0.0",
+    "description": "Rich, interactive row-based event timeline custom visual with grouping, cost, status and impact insights.",
+    "supportUrl": "https://github.com/google-deepmind",
+    "gitHubUrl": "",
+    "visualClassName": "Visual"
+  },
+  "metadata": {
+    "pbivizjson": {
+      "resourceId": "rId0"
+    }
+  }
+}

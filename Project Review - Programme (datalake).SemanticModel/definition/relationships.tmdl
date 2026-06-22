@@ -103,18 +103,6 @@ relationship b2dc3e84-0253-c109-c1ca-0f3761e502cb
 	fromColumn: '01 XER_TASK'.Effective_Early_End
 	toColumn: '00 CALENDAR'.Date
 
-relationship 3d728281-1cbe-669e-fbd7-f3049ac65545
-	isActive: false
-	joinOnDateBehavior: datePartOnly
-	fromColumn: '01 XER_TASK'.'Baseline Effective_Late_End'
-	toColumn: '00 CALENDAR'.Date
-
-relationship e7388c63-8495-c635-2f44-2b34f125c8d2
-	isActive: false
-	joinOnDateBehavior: datePartOnly
-	fromColumn: '01 XER_TASK'.'Baseline Effective_Early_End'
-	toColumn: '00 CALENDAR'.Date
-
 relationship 9d71a328-d704-8569-fc59-38fdb8714728
 	joinOnDateBehavior: datePartOnly
 	fromColumn: '01 XER_TASK'.Finish
@@ -157,4 +145,20 @@ relationship 30ebf835-f2a4-629c-423e-7de8022668c7
 relationship b8722003-1c5c-1b4c-b829-55152087201d
 	fromColumn: '03 XER_PROJWBS'.ProjectKey
 	toColumn: Project_Dimension.ProjectKey
+
+relationship 3d728281-1cbe-669e-fbd7-f3049ac65545
+	isActive: false
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '01 XER_TASK'.'Baseline Effective_Late_End'
+	toColumn: '00 CALENDAR'.Date
+
+relationship e7388c63-8495-c635-2f44-2b34f125c8d2
+	isActive: false
+	joinOnDateBehavior: datePartOnly
+	fromColumn: '01 XER_TASK'.'Baseline Effective_Early_End'
+	toColumn: '00 CALENDAR'.Date
+
+relationship c8403b07-27fb-5eee-7cf8-0730bf1f6a5b
+	fromColumn: dbo_project_events.projectno
+	toColumn: Project_Dimension.ProjectCode
 

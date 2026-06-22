@@ -1,0 +1,594 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "name": "7fdc1813939cf499517e",
+  "position": {
+    "x": 0,
+    "y": 82.120481927710841,
+    "z": 17001,
+    "height": 998.16867469879514,
+    "width": 1785.8313253012047,
+    "tabOrder": 17001
+  },
+  "visual": {
+    "visualType": "timelineOfEvents1E8747A536B74AB586FADD94AE72B347",
+    "query": {
+      "queryState": {
+        "cost": {
+          "projections": [
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "dbo_project_events"
+                        }
+                      },
+                      "Property": "cost"
+                    }
+                  },
+                  "Function": 0
+                }
+              },
+              "queryRef": "Sum(dbo_project_events.cost)",
+              "nativeQueryRef": "Sum of cost"
+            }
+          ]
+        },
+        "eventdate": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dbo_project_events"
+                    }
+                  },
+                  "Property": "eventdate"
+                }
+              },
+              "queryRef": "dbo_project_events.eventdate",
+              "nativeQueryRef": "eventdate"
+            }
+          ]
+        },
+        "eventname": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dbo_project_events"
+                    }
+                  },
+                  "Property": "eventname"
+                }
+              },
+              "queryRef": "dbo_project_events.eventname",
+              "nativeQueryRef": "eventname"
+            }
+          ]
+        },
+        "eventtype": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dbo_project_events"
+                    }
+                  },
+                  "Property": "eventtype"
+                }
+              },
+              "queryRef": "dbo_project_events.eventtype",
+              "nativeQueryRef": "eventtype"
+            }
+          ]
+        },
+        "description": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dbo_project_events"
+                    }
+                  },
+                  "Property": "description"
+                }
+              },
+              "queryRef": "dbo_project_events.description",
+              "nativeQueryRef": "description"
+            }
+          ]
+        },
+        "eventstatus": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dbo_project_events"
+                    }
+                  },
+                  "Property": "eventstatus"
+                }
+              },
+              "queryRef": "dbo_project_events.eventstatus",
+              "nativeQueryRef": "eventstatus"
+            }
+          ]
+        },
+        "eventcategory": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dbo_project_events"
+                    }
+                  },
+                  "Property": "eventcategory"
+                }
+              },
+              "queryRef": "dbo_project_events.eventcategory",
+              "nativeQueryRef": "eventcategory"
+            }
+          ]
+        },
+        "impact": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dbo_project_events"
+                    }
+                  },
+                  "Property": "impact"
+                }
+              },
+              "queryRef": "dbo_project_events.impact",
+              "nativeQueryRef": "impact"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "dbo_project_events"
+                  }
+                },
+                "Property": "eventdate"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "objects": {
+      "rowsLabels": [
+        {
+          "properties": {
+            "labelPanelWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "740L"
+                }
+              }
+            },
+            "showDescriptionColumn": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "showRowNumbers": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "textWrapping": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "impactColumnWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "102L"
+                }
+              }
+            },
+            "statusColumnWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "110L"
+                }
+              }
+            },
+            "eventNameColumnWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "328L"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "headerSettings": [
+        {
+          "properties": {
+            "showNextEvent": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "showEventCount": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "showHighImpact": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "performance": [
+        {
+          "properties": {
+            "maxEvents": {
+              "expr": {
+                "Literal": {
+                  "Value": "5000L"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "impactEncoding": [
+        {
+          "properties": {
+            "showLegend": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "costFormatting": [
+        {
+          "properties": {
+            "displayUnits": {
+              "expr": {
+                "Literal": {
+                  "Value": "1D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "markers": [
+        {
+          "properties": {
+            "defaultSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "20L"
+                }
+              }
+            },
+            "showLabels": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "labelContent": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Description'"
+                }
+              }
+            },
+            "showGlow": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "maxSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "20L"
+                }
+              }
+            },
+            "showMarkers": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "border": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "defaultShape": {
+              "expr": {
+                "Literal": {
+                  "Value": "'circle'"
+                }
+              }
+            },
+            "minSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "20L"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "categoryGrouping": [
+        {
+          "properties": {
+            "groupByCat": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "showHeaders": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "referenceLayers": [
+        {
+          "properties": {
+            "showToday": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "todayLabel": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "legend": [
+        {
+          "properties": {
+            "showImpact": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "timelineAxis": [
+        {
+          "properties": {
+            "dateFormat": {
+              "expr": {
+                "Literal": {
+                  "Value": "'dd-mmm-yy'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "7cbeaa1472454eddb6da",
+        "field": {
+          "Aggregation": {
+            "Expression": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "dbo_project_events"
+                  }
+                },
+                "Property": "cost"
+              }
+            },
+            "Function": 0
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "7c5349a75997bcbead6d",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dbo_project_events"
+              }
+            },
+            "Property": "eventdate"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "a8d253b9a2cddd10ba09",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dbo_project_events"
+              }
+            },
+            "Property": "eventname"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "8d69727f3ee9ccfff4c0",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dbo_project_events"
+              }
+            },
+            "Property": "eventtype"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "491c362b34c0c18ce32e",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dbo_project_events"
+              }
+            },
+            "Property": "description"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "b9b1420a0599de760ab3",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dbo_project_events"
+              }
+            },
+            "Property": "eventstatus"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "7bfe1506f3645ffa5b8d",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dbo_project_events"
+              }
+            },
+            "Property": "eventcategory"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "503706016d7208c20d58",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dbo_project_events"
+              }
+            },
+            "Property": "impact"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
+  }
+}

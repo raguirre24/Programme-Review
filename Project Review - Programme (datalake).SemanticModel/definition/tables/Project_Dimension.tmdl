@@ -38,7 +38,7 @@ table Project_Dimension
 	column CompanyId
 		formatString: 0
 		lineageTag: f974fd61-5cb6-491d-99c2-c0cffcb14675
-		summarizeBy: none
+		summarizeBy: count
 		isNameInferred
 		sourceColumn: [CompanyId]
 
@@ -47,7 +47,7 @@ table Project_Dimension
 	column ProjectId
 		formatString: 0
 		lineageTag: ea353b97-1a97-4a4b-97a9-0017737f893d
-		summarizeBy: none
+		summarizeBy: count
 		isNameInferred
 		sourceColumn: [ProjectId]
 
