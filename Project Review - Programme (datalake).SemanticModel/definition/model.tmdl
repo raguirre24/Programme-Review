@@ -65,7 +65,6 @@ ref table Logos
 ref table 15_XER_RESOURCE_DISTRIBUTION
 ref table dbo_userpermission
 ref table dbo_project
-ref table '04A XER_ADJ_BASELINE'
 ref table dbo_project_events
 
 ref role 'Project Access'

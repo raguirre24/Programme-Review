@@ -103,6 +103,38 @@ table 'Dynamic Titles & Formatting'
 			```
 		lineageTag: e0828f98-750d-41e7-ad5c-b1f4cd33f32d
 
+	measure 'Datalake Symbol' = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' width='64' height='64'><path d='M 4,48 Q 16,44 28,48 T 52,48 T 60,48 L 60,60 L 4,60 Z' fill='%23e1f5fe' /><path d='M 0,52 Q 12,49 24,52 T 48,52 T 64,52 L 64,60 L 0,60 Z' fill='%230288d1' /><path d='M 18,15 L 18,22 C 18,26 46,26 46,22 L 46,15 Z' fill='%23b3e5fc' stroke='%2301579b' stroke-width='2' /><ellipse cx='32' cy='15' rx='14' ry='5' fill='%23e1f5fe' stroke='%2301579b' stroke-width='2' /><path d='M 18,26 L 18,33 C 18,37 46,37 46,33 L 46,26 Z' fill='%2381d4fa' stroke='%2301579b' stroke-width='2' /><ellipse cx='32' cy='26' rx='14' ry='5' fill='%23b3e5fc' stroke='%2301579b' stroke-width='2' /><path d='M 18,37 L 18,44 C 18,48 46,48 46,44 L 46,37 Z' fill='%234fc3f7' stroke='%2301579b' stroke-width='2' /><ellipse cx='32' cy='37' rx='14' ry='5' fill='%2381d4fa' stroke='%2301579b' stroke-width='2' /></svg>"
+		lineageTag: b35a74ef-bc11-4f33-8a03-6e7bfa56a2ad
+
+	measure 'Datalake Refresh Note' = ```
+			
+			VAR RawText = MAX('dbo_userpermission'[refresh_date])
+			VAR DatePart = IFERROR(DATEVALUE(LEFT(RawText, 10)), DATE(2026, 6, 25))
+			VAR TimePart = IFERROR(TIMEVALUE(MID(RawText, 12, 8)), TIME(12, 0, 0))
+			VAR UtcDateTime = DatePart + TimePart
+			VAR Yr = YEAR(UtcDateTime)
+			VAR Oct1 = DATE(Yr, 10, 1)
+			VAR OctSunday = Oct1 + MOD(8 - WEEKDAY(Oct1, 2), 7)
+			VAR Apr1 = DATE(Yr, 4, 1)
+			VAR AprSunday = Apr1 + MOD(8 - WEEKDAY(Apr1, 2), 7)
+			VAR MonthNum = MONTH(UtcDateTime)
+			VAR OffsetHours = 
+			    IF(
+			        MonthNum > 10 || MonthNum < 4 || (MonthNum = 10 && UtcDateTime >= OctSunday) || (MonthNum = 4 && UtcDateTime < AprSunday),
+			        11,
+			        10
+			    )
+			VAR LocalTime = UtcDateTime + (OffsetHours / 24)
+			VAR TzSuffix = IF(OffsetHours = 11, "AEDT", "AEST")
+			RETURN
+			    IF(
+			        ISBLANK(RawText),
+			        "Last Refreshed: N/A",
+			        "Last Refreshed: " & FORMAT(LocalTime, "dd/mm/yyyy hh:mm:ss AM/PM") & " " & TzSuffix
+			    )
+			```
+		lineageTag: a1b2c3d4-5e6f-7a8b-9c0d-ef123456789a
+
 	partition 'Dynamic Titles & Formatting' = m
 		mode: import
 		source =

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.10.0/schema.json",
   "name": "450bd19bbd4dd1642b07",
   "position": {
     "x": 3.9901477832512313,
@@ -173,7 +173,8 @@
               },
               "queryRef": "Min(01 XER_TASK.Baseline Start)",
               "nativeQueryRef": "Baseline Start",
-              "displayName": "Baseline Start"
+              "displayName": "Baseline Start",
+              "format": "dd/MM/yyyy"
             },
             {
               "field": {
@@ -193,7 +194,8 @@
               },
               "queryRef": "Min(01 XER_TASK.Baseline Finish)",
               "nativeQueryRef": "Baseline Finish",
-              "displayName": "Baseline Finish"
+              "displayName": "Baseline Finish",
+              "format": "dd/MM/yyyy"
             },
             {
               "field": {
@@ -213,7 +215,8 @@
               },
               "queryRef": "Min(01 XER_TASK.Previous Month Start)",
               "nativeQueryRef": "Previous Month Start",
-              "displayName": "Previous Month Start"
+              "displayName": "Previous Month Start",
+              "format": "dd/MM/yyyy"
             },
             {
               "field": {
@@ -233,7 +236,8 @@
               },
               "queryRef": "Min(01 XER_TASK.Previous Month Finish)",
               "nativeQueryRef": "Latest Previous Month Finish",
-              "displayName": "Previous Month Finish"
+              "displayName": "Previous Month Finish",
+              "format": "dd/MM/yyyy"
             },
             {
               "field": {
