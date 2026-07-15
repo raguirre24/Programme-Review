@@ -32,8 +32,35 @@ role 'Project Access'
 			        RecoveredEmail
 			    )
 			
+			VAR RecoveredDomainSwap =
+			    IF (
+			        RIGHT ( RecoveredEmail, 15 ) = "@acciona.com.au",
+			        LEFT ( RecoveredEmail, LEN ( RecoveredEmail ) - 15 )
+			            & "@acciona.com",
+			        IF (
+			            RIGHT ( RecoveredEmail, 12 ) = "@acciona.com",
+			            LEFT ( RecoveredEmail, LEN ( RecoveredEmail ) - 12 )
+			                & "@acciona.com.au"
+			        )
+			    )
+			
+			VAR EmailNoExtDomainSwap =
+			    IF (
+			        RIGHT ( EmailNoExt, 15 ) = "@acciona.com.au",
+			        LEFT ( EmailNoExt, LEN ( EmailNoExt ) - 15 )
+			            & "@acciona.com",
+			        IF (
+			            RIGHT ( EmailNoExt, 12 ) = "@acciona.com",
+			            LEFT ( EmailNoExt, LEN ( EmailNoExt ) - 12 )
+			                & "@acciona.com.au"
+			        )
+			    )
+			
 			VAR UserIdentifiers =
-			    { RawUPN, RecoveredEmail, EmailNoExt }
+			    FILTER (
+			        { RawUPN, RecoveredEmail, EmailNoExt, RecoveredDomainSwap, EmailNoExtDomainSwap },
+			        NOT ISBLANK ( [Value] ) && [Value] <> ""
+			    )
 			
 			VAR CurrentProjectState =
 			    LOWER ( 'Project_Dimension'[State] )

@@ -66,20 +66,20 @@ table Project_Dimension
 
 	partition Project_Dimension = calculated
 		mode: import
-		source =
+		source = ```
 				
 				VAR BaseProjects =
 				    DISTINCT(
 				        SELECTCOLUMNS(
 				            FILTER(
 				                ALL('02 XER_PROJECT'),
-					VAR ProjectKey = UPPER(TRIM('02 XER_PROJECT'[ProjectCode]))
+				                VAR ProjectKey = UPPER(TRIM('02 XER_PROJECT'[ProjectCode]))
 				                RETURN
 				                    ProjectKey <> BLANK()
 				                        && ProjectKey <> ""
 				            ),
-					"ProjectKey", UPPER(TRIM('02 XER_PROJECT'[ProjectCode])),
-					"ProjectCode", UPPER(TRIM('02 XER_PROJECT'[ProjectCode]))
+				    "ProjectKey", UPPER(TRIM('02 XER_PROJECT'[ProjectCode])),
+				    "ProjectCode", UPPER(TRIM('02 XER_PROJECT'[ProjectCode]))
 				        )
 				    )
 				VAR WithProjectCodeVariants =
@@ -159,18 +159,32 @@ table Project_Dimension
 				                        'dbo_project'[projectid],
 				                        'dbo_project'[projectno], [SecurityAltProjectCode]
 				                    )
-				            )
+				            ),
+				        // --- NEW LOGIC ADDED HERE ---
+				        "FinalProjectCode",
+				            VAR PreferredProject =
+				                LOOKUPVALUE(
+				                    'dbo_project'[projectname],
+				                    'dbo_project'[projectno], [DisplayProjectCode]
+				                )
+				            RETURN
+				                IF(
+				                    NOT ISBLANK(PreferredProject), 
+				                    [DisplayProjectCode], // If we found J metadata, use the J code
+				                    [ProjectCode]         // Otherwise, keep the original code
+				                )
 				    )
 				RETURN
 				    SELECTCOLUMNS(
 				        WithProjectMetadata,
 				        "Project", [Project],
 				        "State", [State],
-				        "ProjectKey", [ProjectKey],
-				        "ProjectCode", [ProjectCode],
+				        "ProjectKey", [ProjectKey], 
+				        "ProjectCode", [FinalProjectCode], // <-- NOW OUTPUTTING THE WINNING CODE
 				        "CompanyId", [CompanyId],
 				        "ProjectId", [ProjectId]
 				)
+				```
 
 	annotation PBI_Id = 50f5c4a91ce0444bb70d1e41ee30c977
 
