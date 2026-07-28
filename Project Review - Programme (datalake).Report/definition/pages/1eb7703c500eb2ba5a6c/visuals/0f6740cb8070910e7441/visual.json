@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
   "name": "0f6740cb8070910e7441",
   "position": {
     "x": 887.5,
@@ -1361,48 +1361,6 @@
           ]
         },
         "howCreated": "User"
-      },
-      {
-        "name": "08a29eaf0a011bb401e8",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "03 XER_PROJWBS"
-              }
-            },
-            "Property": "Level_1"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "3e0c9103b341e7a6c0c1",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "03 XER_PROJWBS"
-              }
-            },
-            "Property": "Level_5"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "f6f906425803e628de90",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Measures"
-              }
-            },
-            "Property": "ShowTaskType"
-          }
-        },
-        "type": "Advanced"
       }
     ],
     "filterSortOrder": "Custom"

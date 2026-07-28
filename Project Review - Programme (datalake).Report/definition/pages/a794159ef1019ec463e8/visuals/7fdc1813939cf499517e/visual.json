@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
   "name": "7fdc1813939cf499517e",
   "position": {
     "x": 0,
     "y": 82.120481927710841,
-    "z": 17001,
+    "z": 6000,
     "height": 998.16867469879514,
     "width": 1785.8313253012047,
-    "tabOrder": 17001
+    "tabOrder": 6000
   },
   "visual": {
     "visualType": "timelineOfEvents1E8747A536B74AB586FADD94AE72B347",
@@ -389,6 +389,13 @@
                   "Value": "true"
                 }
               }
+            },
+            "persistedCollapseState": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{\"version\":1,\"categories\":[\"Commercial\",\"Commercial, Community\",\"Commercial, Community, HR\",\"Commercial, Community, Safety\",\"Commercial, Design\",\"Commercial, Environmental\",\"Commercial, Environmental, Safety\",\"Commercial, HR\",\"Commercial, Quality\",\"Commercial, Safety\",\"Commercial, Safety, Community\",\"Commercial, Safety, Environmental\",\"Commercial, Safety, Quality, Environmental, Community, HR\",\"Community\",\"Community, Commercial\",\"Community, Environmental\",\"Community, Safety, Commercial\",\"Design\",\"Design, Commercial\",\"Environmental\",\"Environmental, Commercial\",\"Environmental, Commercial, Safety\",\"Environmental, Safety, Commercial\",\"Environmental, Safety, Commercial, Community\",\"Environmental, Safety, Commercial, Community, Quality, HR\",\"HR\",\"Quality\",\"Quality, Commercial\",\"Safety\",\"Safety, Commercial\",\"Safety, Commercial, Environmental\",\"Safety, Community\",\"Safety, Environmental, Commercial\",\"Safety, HR, Commercial\",\"Safety, Quality\",\"Uncategorised\"],\"collapsed\":[\"Commercial\",\"Commercial, Community\",\"Commercial, Community, HR\",\"Commercial, Community, Safety\",\"Commercial, Design\",\"Commercial, Environmental\",\"Commercial, Environmental, Safety\",\"Commercial, HR\",\"Commercial, Quality\",\"Commercial, Safety\",\"Commercial, Safety, Community\",\"Commercial, Safety, Environmental\",\"Commercial, Safety, Quality, Environmental, Community, HR\",\"Community\",\"Community, Commercial\",\"Community, Environmental\",\"Community, Safety, Commercial\",\"Design\",\"Design, Commercial\",\"Environmental\",\"Environmental, Commercial\",\"Environmental, Commercial, Safety\",\"Environmental, Safety, Commercial\",\"Environmental, Safety, Commercial, Community\",\"Environmental, Safety, Commercial, Community, Quality, HR\",\"HR\",\"Quality\",\"Quality, Commercial\",\"Safety\",\"Safety, Commercial\",\"Safety, Commercial, Environmental\",\"Safety, Community\",\"Safety, Environmental, Commercial\",\"Safety, HR, Commercial\",\"Safety, Quality\",\"Uncategorised\"]}'"
+                }
+              }
             }
           }
         }
@@ -469,126 +476,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "7cbeaa1472454eddb6da",
-        "field": {
-          "Aggregation": {
-            "Expression": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "dbo_project_events"
-                  }
-                },
-                "Property": "cost"
-              }
-            },
-            "Function": 0
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "7c5349a75997bcbead6d",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dbo_project_events"
-              }
-            },
-            "Property": "eventdate"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "a8d253b9a2cddd10ba09",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dbo_project_events"
-              }
-            },
-            "Property": "eventname"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "8d69727f3ee9ccfff4c0",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dbo_project_events"
-              }
-            },
-            "Property": "eventtype"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "491c362b34c0c18ce32e",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dbo_project_events"
-              }
-            },
-            "Property": "description"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "b9b1420a0599de760ab3",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dbo_project_events"
-              }
-            },
-            "Property": "eventstatus"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "7bfe1506f3645ffa5b8d",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dbo_project_events"
-              }
-            },
-            "Property": "eventcategory"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "503706016d7208c20d58",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dbo_project_events"
-              }
-            },
-            "Property": "impact"
-          }
-        },
-        "type": "Categorical"
-      }
-    ]
   }
 }

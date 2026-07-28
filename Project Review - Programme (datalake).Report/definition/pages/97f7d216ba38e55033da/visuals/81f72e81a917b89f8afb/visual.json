@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
   "name": "81f72e81a917b89f8afb",
   "position": {
     "x": 887.36497127048312,
@@ -1210,34 +1210,6 @@
           ]
         },
         "howCreated": "User"
-      },
-      {
-        "name": "8ac4188824a7b60d39e8",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "03 XER_PROJWBS"
-              }
-            },
-            "Property": "Level_1"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "a29d1581b16aa0ccb094",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "03 XER_PROJWBS"
-              }
-            },
-            "Property": "Level_5"
-          }
-        },
-        "type": "Categorical"
       }
     ],
     "filterSortOrder": "Custom"

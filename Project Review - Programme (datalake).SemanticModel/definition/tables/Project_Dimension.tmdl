@@ -113,8 +113,13 @@ table Project_Dimension
 				                    'dbo_project'[projectname],
 				                    'dbo_project'[projectno], [DisplayProjectCode]
 				                )
+				            VAR AltProject =
+				                LOOKUPVALUE(
+				                    'dbo_project'[projectname],
+				                    'dbo_project'[projectno], [SecurityAltProjectCode]
+				                )
 				            RETURN
-				                COALESCE(PreferredProject, OriginalProject, [ProjectCode]),
+				                COALESCE(PreferredProject, OriginalProject, AltProject, [ProjectCode] & " (Project name not found)"),
 				        "State",
 				            VAR OriginalState =
 				                LOOKUPVALUE(

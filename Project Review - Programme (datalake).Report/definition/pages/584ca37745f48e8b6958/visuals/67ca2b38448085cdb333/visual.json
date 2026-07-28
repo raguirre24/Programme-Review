@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
   "name": "67ca2b38448085cdb333",
   "position": {
     "x": 902.5,
@@ -1230,72 +1230,6 @@
           ]
         },
         "howCreated": "User"
-      },
-      {
-        "name": "a68c06c636e1f74b10ad",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Measures"
-              }
-            },
-            "Property": "ShowDuration"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "5b14276aab7043a43cb6",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Measures"
-              }
-            },
-            "Property": "ShowFloat"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "585f0493e391c686a641",
-        "field": {
-          "Aggregation": {
-            "Expression": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "01 XER_TASK"
-                  }
-                },
-                "Property": "Previous Month Start"
-              }
-            },
-            "Function": 3
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "c59dc7943d4b3e7efefa",
-        "field": {
-          "Aggregation": {
-            "Expression": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "01 XER_TASK"
-                  }
-                },
-                "Property": "Start"
-              }
-            },
-            "Function": 3
-          }
-        },
-        "type": "Advanced"
       }
     ],
     "filterSortOrder": "Custom"

@@ -16,6 +16,21 @@ table 'Monthly Resource Distribution Baseline'
 		isNameInferred
 		sourceColumn: [monthly_hours]
 
+	column task_code
+		lineageTag: 7a82914c-1d54-4a29-873b-592b1a03f421
+		isNameInferred
+		sourceColumn: [task_code]
+
+	column rsrc_name
+		lineageTag: b6591024-5d18-4e89-a212-38b9c104e743
+		isNameInferred
+		sourceColumn: [rsrc_name]
+
+	column rsrc_type
+		lineageTag: 914028fa-7104-4c8d-bf9e-a89e47201b22
+		isNameInferred
+		sourceColumn: [rsrc_type]
+
 	partition 'Monthly Resource Distribution Baseline' = calculated
 		mode: import
 		source =
@@ -27,6 +42,9 @@ table 'Monthly Resource Distribution Baseline'
 				    ),
 				    "distribution_month", '15_XER_RESOURCE_DISTRIBUTION'[distribution_month],
 				    "ProjectCode", '15_XER_RESOURCE_DISTRIBUTION'[ProjectCode],
+				    "task_code", RELATED('01 XER_TASK'[task_code]),
+				    "rsrc_name", '15_XER_RESOURCE_DISTRIBUTION'[rsrc_name],
+				    "rsrc_type", '15_XER_RESOURCE_DISTRIBUTION'[rsrc_type],
 				    "monthly_hours", '15_XER_RESOURCE_DISTRIBUTION'[monthly_hours]
 				)
 

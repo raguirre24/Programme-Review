@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.6.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
   "name": "5d39ae0c29e4e310905e",
   "position": {
     "x": 1.976327188074166,
@@ -7,7 +7,7 @@
     "z": 21000,
     "height": 995.04836132134255,
     "width": 1786.2927544734528,
-    "tabOrder": 25000
+    "tabOrder": 26000
   },
   "visualGroup": {
     "displayName": "Variance",
