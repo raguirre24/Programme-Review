@@ -1,0 +1,48 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "Open Project Menu - Missing Successor",
+  "name": "aae4df89fc5cb53b08d6",
+  "options": {
+    "targetVisualNames": [
+      "2cf95684e9b9a5feb608",
+      "61eccc2b6d01da751b22",
+      "4d530ff65af74f8ef28d",
+      "84e6e7cf9fb0e9e66d2b"
+    ],
+    "suppressData": true
+  },
+  "explorationState": {
+    "version": "1.0",
+    "activeSection": "4f15f55676d2add4e922",
+    "sections": {
+      "4f15f55676d2add4e922": {
+        "visualContainers": {
+          "2cf95684e9b9a5feb608": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {}
+            }
+          },
+          "61eccc2b6d01da751b22": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {}
+            }
+          },
+          "4d530ff65af74f8ef28d": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {}
+            }
+          },
+          "84e6e7cf9fb0e9e66d2b": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "objects": {}
+            }
+          }
+        }
+      }
+    }
+  }
+}

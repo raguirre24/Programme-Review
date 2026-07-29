@@ -1,0 +1,48 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "Open Project Menu - Constraint Analysis",
+  "name": "4310153686a4d92c6613",
+  "options": {
+    "targetVisualNames": [
+      "420aa1a75540e80ca0e8",
+      "a08cadf59fb91cea1e57",
+      "66ad99319683c3868a64",
+      "164ff63e7b0a2c83d882"
+    ],
+    "suppressData": true
+  },
+  "explorationState": {
+    "version": "1.0",
+    "activeSection": "1eb7703c500eb2ba5a6c",
+    "sections": {
+      "1eb7703c500eb2ba5a6c": {
+        "visualContainers": {
+          "420aa1a75540e80ca0e8": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {}
+            }
+          },
+          "a08cadf59fb91cea1e57": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {}
+            }
+          },
+          "66ad99319683c3868a64": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {}
+            }
+          },
+          "164ff63e7b0a2c83d882": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "objects": {}
+            }
+          }
+        }
+      }
+    }
+  }
+}

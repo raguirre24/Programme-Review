@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.6.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
   "name": "4258f3894d8f59a8c838",
   "position": {
     "x": 3.4815707628128774,
@@ -103,7 +103,8 @@
               },
               "queryRef": "06 XER_PREDECESSOR.predecessor_start",
               "nativeQueryRef": "Start",
-              "displayName": "Start"
+              "displayName": "Start",
+              "format": "dd/MM/yyyy"
             },
             {
               "field": {
@@ -118,7 +119,8 @@
               },
               "queryRef": "06 XER_PREDECESSOR.predecessor_finish",
               "nativeQueryRef": "Finish",
-              "displayName": "Finish"
+              "displayName": "Finish",
+              "format": "dd/MM/yyyy"
             }
           ]
         }
@@ -161,7 +163,7 @@
             "autoSizeColumnWidth": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
                 }
               }
             }

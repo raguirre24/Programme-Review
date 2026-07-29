@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "Close Project Menu - Driven by Data Date",
+  "name": "cb27d954c331d701683a",
+  "options": {
+    "targetVisualNames": [
+      "1c8f196ad28a43eaa741",
+      "3482121b459913fbd86e",
+      "88c136eb0d5fb4c953ec",
+      "2e79a21b460314a09acd"
+    ],
+    "suppressData": true
+  },
+  "explorationState": {
+    "version": "1.0",
+    "activeSection": "db92ae49184b6932662e",
+    "sections": {
+      "db92ae49184b6932662e": {
+        "visualContainers": {
+          "1c8f196ad28a43eaa741": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "3482121b459913fbd86e": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "88c136eb0d5fb4c953ec": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "2e79a21b460314a09acd": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

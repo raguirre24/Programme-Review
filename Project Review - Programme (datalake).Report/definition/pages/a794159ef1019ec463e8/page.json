@@ -33,5 +33,12 @@
       }
     ]
   },
-  "visibility": "HiddenInViewMode"
+  "visibility": "HiddenInViewMode",
+  "visualInteractions": [
+    {
+      "source": "07888c86f4c3c3fdbf49",
+      "target": "3825ff4788483f770bf8",
+      "type": "NoFilter"
+    }
+  ]
 }

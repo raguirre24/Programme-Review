@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.6.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
   "name": "5da707f9b0d8db0d2b6e",
   "position": {
     "x": 12.5,
     "y": 145,
-    "z": 9000,
+    "z": 6000,
     "height": 462.5,
     "width": 869,
-    "tabOrder": 9000
+    "tabOrder": 6000
   },
   "visual": {
     "visualType": "lineChart",
@@ -28,7 +28,8 @@
               },
               "queryRef": "01 XER_TASK.UpdateDate",
               "nativeQueryRef": "UpdateDate",
-              "active": true
+              "active": true,
+              "format": "MMM yy"
             }
           ]
         },
@@ -270,6 +271,13 @@
               "expr": {
                 "Literal": {
                   "Value": "10D"
+                }
+              }
+            },
+            "showAxisTitle": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

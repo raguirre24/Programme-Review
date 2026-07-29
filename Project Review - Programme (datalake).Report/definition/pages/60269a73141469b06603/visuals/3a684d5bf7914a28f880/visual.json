@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.6.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
   "name": "3a684d5bf7914a28f880",
   "position": {
     "x": 905,
     "y": 390,
-    "z": 14000,
+    "z": 13000,
     "height": 620,
     "width": 870,
-    "tabOrder": 14000
+    "tabOrder": 13000
   },
   "visual": {
     "visualType": "lineChart",
@@ -170,6 +170,13 @@
                     }
                   },
                   "Property": "Min of Min Early End Dates"
+                }
+              }
+            },
+            "showAxisTitle": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

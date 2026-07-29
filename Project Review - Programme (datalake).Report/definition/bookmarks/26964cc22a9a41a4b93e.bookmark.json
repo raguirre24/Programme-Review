@@ -1,0 +1,48 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "Open Project Menu - LinkedSite Events",
+  "name": "26964cc22a9a41a4b93e",
+  "options": {
+    "targetVisualNames": [
+      "7b423029a05ec9087495",
+      "3825ff4788483f770bf8",
+      "07888c86f4c3c3fdbf49",
+      "df23f1b0f2066e921e1a"
+    ],
+    "suppressData": true
+  },
+  "explorationState": {
+    "version": "1.0",
+    "activeSection": "a794159ef1019ec463e8",
+    "sections": {
+      "a794159ef1019ec463e8": {
+        "visualContainers": {
+          "7b423029a05ec9087495": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {}
+            }
+          },
+          "3825ff4788483f770bf8": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {}
+            }
+          },
+          "07888c86f4c3c3fdbf49": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {}
+            }
+          },
+          "df23f1b0f2066e921e1a": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "objects": {}
+            }
+          }
+        }
+      }
+    }
+  }
+}

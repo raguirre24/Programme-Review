@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.0.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
   "name": "eb4b0a43085cad901574",
   "displayName": "Cross-WBS Analysis",
   "displayOption": "FitToPage",
@@ -94,16 +94,6 @@
   "visibility": "HiddenInViewMode",
   "visualInteractions": [
     {
-      "source": "e25b45079bea165e8486",
-      "target": "3bb53bfb2c3a5fca3b9e",
-      "type": "DataFilter"
-    },
-    {
-      "source": "20a217eb520400e1b9b8",
-      "target": "3bb53bfb2c3a5fca3b9e",
-      "type": "NoFilter"
-    },
-    {
       "source": "7ad5b8e76591c9b749e7",
       "target": "47ceb5d7d41a2b89bf05",
       "type": "DataFilter"
@@ -132,11 +122,6 @@
       "source": "c055a0c255a725e96736",
       "target": "673df8690a32f9fdfeff",
       "type": "DataFilter"
-    },
-    {
-      "source": "c055a0c255a725e96736",
-      "target": "2843f0468eca2e5ba21b",
-      "type": "NoFilter"
     },
     {
       "source": "c055a0c255a725e96736",
@@ -251,6 +236,11 @@
     {
       "source": "c055a0c255a725e96736",
       "target": "77166234f588ee948bbb",
+      "type": "NoFilter"
+    },
+    {
+      "source": "a080ddcc97529e047055",
+      "target": "b5b9e58ac61e23e6960f",
       "type": "NoFilter"
     }
   ]

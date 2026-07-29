@@ -4,10 +4,10 @@
   "position": {
     "x": 0,
     "y": 82.120481927710841,
-    "z": 6000,
+    "z": 3000,
     "height": 998.16867469879514,
     "width": 1785.8313253012047,
-    "tabOrder": 6000
+    "tabOrder": 3000
   },
   "visual": {
     "visualType": "timelineOfEvents1E8747A536B74AB586FADD94AE72B347",
@@ -393,7 +393,7 @@
             "persistedCollapseState": {
               "expr": {
                 "Literal": {
-                  "Value": "'{\"version\":1,\"categories\":[\"Commercial\",\"Commercial, Community\",\"Commercial, Community, HR\",\"Commercial, Community, Safety\",\"Commercial, Design\",\"Commercial, Environmental\",\"Commercial, Environmental, Safety\",\"Commercial, HR\",\"Commercial, Quality\",\"Commercial, Safety\",\"Commercial, Safety, Community\",\"Commercial, Safety, Environmental\",\"Commercial, Safety, Quality, Environmental, Community, HR\",\"Community\",\"Community, Commercial\",\"Community, Environmental\",\"Community, Safety, Commercial\",\"Design\",\"Design, Commercial\",\"Environmental\",\"Environmental, Commercial\",\"Environmental, Commercial, Safety\",\"Environmental, Safety, Commercial\",\"Environmental, Safety, Commercial, Community\",\"Environmental, Safety, Commercial, Community, Quality, HR\",\"HR\",\"Quality\",\"Quality, Commercial\",\"Safety\",\"Safety, Commercial\",\"Safety, Commercial, Environmental\",\"Safety, Community\",\"Safety, Environmental, Commercial\",\"Safety, HR, Commercial\",\"Safety, Quality\",\"Uncategorised\"],\"collapsed\":[\"Commercial\",\"Commercial, Community\",\"Commercial, Community, HR\",\"Commercial, Community, Safety\",\"Commercial, Design\",\"Commercial, Environmental\",\"Commercial, Environmental, Safety\",\"Commercial, HR\",\"Commercial, Quality\",\"Commercial, Safety\",\"Commercial, Safety, Community\",\"Commercial, Safety, Environmental\",\"Commercial, Safety, Quality, Environmental, Community, HR\",\"Community\",\"Community, Commercial\",\"Community, Environmental\",\"Community, Safety, Commercial\",\"Design\",\"Design, Commercial\",\"Environmental\",\"Environmental, Commercial\",\"Environmental, Commercial, Safety\",\"Environmental, Safety, Commercial\",\"Environmental, Safety, Commercial, Community\",\"Environmental, Safety, Commercial, Community, Quality, HR\",\"HR\",\"Quality\",\"Quality, Commercial\",\"Safety\",\"Safety, Commercial\",\"Safety, Commercial, Environmental\",\"Safety, Community\",\"Safety, Environmental, Commercial\",\"Safety, HR, Commercial\",\"Safety, Quality\",\"Uncategorised\"]}'"
+                  "Value": "'{\"version\":1,\"categories\":[\"Commercial\",\"Commercial, Design\",\"Commercial, Environmental\",\"Commercial, Quality\",\"Commercial, Safety\",\"Commercial, Safety, Community\",\"Design\",\"Design, Commercial\",\"Design, Quality, Commercial\",\"Quality\",\"Quality, Commercial\",\"Safety\",\"Safety, Commercial\",\"Safety, Quality\",\"Uncategorised\"],\"collapsed\":[\"Commercial\",\"Commercial, Design\",\"Commercial, Environmental\",\"Commercial, Quality\",\"Commercial, Safety\",\"Commercial, Safety, Community\",\"Design\",\"Design, Commercial\",\"Design, Quality, Commercial\",\"Quality\",\"Quality, Commercial\",\"Safety\",\"Safety, Commercial\",\"Safety, Quality\",\"Uncategorised\"]}'"
                 }
               }
             }

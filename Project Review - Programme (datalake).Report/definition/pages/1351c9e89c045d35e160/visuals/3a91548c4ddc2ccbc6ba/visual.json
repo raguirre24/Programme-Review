@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
   "name": "3a91548c4ddc2ccbc6ba",
   "position": {
-    "x": 174.28571428571431,
-    "y": 48.571428571428577,
-    "z": 1000,
-    "height": 351.42857142857144,
-    "width": 431.42857142857144,
-    "tabOrder": 1000
+    "x": 886.28078817733967,
+    "y": 120.32019704433537,
+    "z": 94000,
+    "height": 360,
+    "width": 880,
+    "tabOrder": 94000
   },
   "visual": {
     "visualType": "advancedSlicerVisual",
@@ -129,7 +129,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "10D"
+                  "Value": "13D"
                 }
               }
             },
@@ -207,13 +207,31 @@
                 }
               }
             },
+            "width": {
+              "expr": {
+                "Literal": {
+                  "Value": "7D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "id": "default"
+          }
+        },
+        {
+          "properties": {
             "color": {
               "solid": {
                 "color": {
                   "expr": {
-                    "ThemeDataColor": {
-                      "ColorId": 1,
-                      "Percent": 0
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Project_Dimension"
+                        }
+                      },
+                      "Property": "Project Has Data"
                     }
                   }
                 }
@@ -221,7 +239,15 @@
             }
           },
           "selector": {
-            "id": "default"
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 1
+                }
+              }
+            ],
+            "id": "default",
+            "hierarchyMatching": 1
           }
         }
       ]
@@ -247,40 +273,6 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "padding": [
-        {
-          "properties": {
-            "top": {
-              "expr": {
-                "Literal": {
-                  "Value": "1D"
-                }
-              }
-            },
-            "bottom": {
-              "expr": {
-                "Literal": {
-                  "Value": "1D"
-                }
-              }
-            },
-            "right": {
-              "expr": {
-                "Literal": {
-                  "Value": "1D"
-                }
-              }
-            },
-            "left": {
-              "expr": {
-                "Literal": {
-                  "Value": "1D"
                 }
               }
             }
@@ -322,23 +314,51 @@
           "Where": [
             {
               "Condition": {
-                "Not": {
-                  "Expression": {
-                    "Comparison": {
-                      "ComparisonKind": 0,
-                      "Left": {
-                        "Column": {
-                          "Expression": {
-                            "SourceRef": {
-                              "Source": "p"
+                "And": {
+                  "Left": {
+                    "Not": {
+                      "Expression": {
+                        "Comparison": {
+                          "ComparisonKind": 0,
+                          "Left": {
+                            "Column": {
+                              "Expression": {
+                                "SourceRef": {
+                                  "Source": "p"
+                                }
+                              },
+                              "Property": "Project"
                             }
                           },
-                          "Property": "Project"
+                          "Right": {
+                            "Literal": {
+                              "Value": "null"
+                            }
+                          }
                         }
-                      },
-                      "Right": {
-                        "Literal": {
-                          "Value": "null"
+                      }
+                    }
+                  },
+                  "Right": {
+                    "Not": {
+                      "Expression": {
+                        "Comparison": {
+                          "ComparisonKind": 0,
+                          "Left": {
+                            "Column": {
+                              "Expression": {
+                                "SourceRef": {
+                                  "Source": "p"
+                                }
+                              },
+                              "Property": "Project"
+                            }
+                          },
+                          "Right": {
+                            "Literal": {
+                              "Value": "'--'"
+                            }
+                          }
                         }
                       }
                     }

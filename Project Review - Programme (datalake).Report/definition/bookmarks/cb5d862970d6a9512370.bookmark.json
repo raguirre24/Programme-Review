@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "Close Project Menu - Sched. Metrics",
+  "name": "cb5d862970d6a9512370",
+  "options": {
+    "targetVisualNames": [
+      "9003403baa60d58e5d3b",
+      "d778f258649d6153fd4c",
+      "39bf0f694c30cb5529b0",
+      "e417356479b02aac4464"
+    ],
+    "suppressData": true
+  },
+  "explorationState": {
+    "version": "1.0",
+    "activeSection": "327b48a7fbd37ce0a51c",
+    "sections": {
+      "327b48a7fbd37ce0a51c": {
+        "visualContainers": {
+          "9003403baa60d58e5d3b": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "d778f258649d6153fd4c": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "39bf0f694c30cb5529b0": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "e417356479b02aac4464": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

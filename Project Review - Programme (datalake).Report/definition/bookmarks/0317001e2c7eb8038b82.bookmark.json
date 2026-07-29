@@ -1,0 +1,48 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "Open Project Menu - Programme",
+  "name": "0317001e2c7eb8038b82",
+  "options": {
+    "targetVisualNames": [
+      "93830d99485684facd9e",
+      "e0f72f806623530a071e",
+      "ef4cb267530e2d6ab185",
+      "8ba2c330dc3cf686c85c"
+    ],
+    "suppressData": true
+  },
+  "explorationState": {
+    "version": "1.0",
+    "activeSection": "90b784e28b9f50741b0b",
+    "sections": {
+      "90b784e28b9f50741b0b": {
+        "visualContainers": {
+          "93830d99485684facd9e": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {}
+            }
+          },
+          "e0f72f806623530a071e": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {}
+            }
+          },
+          "ef4cb267530e2d6ab185": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {}
+            }
+          },
+          "8ba2c330dc3cf686c85c": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "objects": {}
+            }
+          }
+        }
+      }
+    }
+  }
+}

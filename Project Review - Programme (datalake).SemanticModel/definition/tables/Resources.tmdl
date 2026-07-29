@@ -101,10 +101,27 @@ table Resources
 			
 			VAR CurrentMonthValue = MAX('Resource Calendar'[Month])
 			
-			VAR ActiveProjects = VALUES('15_XER_RESOURCE_DISTRIBUTION'[ProjectCode])
-			VAR ActiveTaskCodes = SUMMARIZE('01 XER_TASK', '01 XER_TASK'[ProjectCode], '01 XER_TASK'[task_code])
-			VAR ActiveRsrcNames = VALUES('15_XER_RESOURCE_DISTRIBUTION'[rsrc_name])
-			VAR ActiveRsrcTypes = VALUES('15_XER_RESOURCE_DISTRIBUTION'[rsrc_type])
+			-- Capture the selected project, task and resource scope without the monthly update filter
+			VAR ActiveProjects =
+			    CALCULATETABLE(
+			        VALUES('15_XER_RESOURCE_DISTRIBUTION'[ProjectCode]),
+			        REMOVEFILTERS(CurrentDate)
+			    )
+			VAR ActiveTaskCodes =
+			    CALCULATETABLE(
+			        SUMMARIZE('01 XER_TASK', '01 XER_TASK'[ProjectCode], '01 XER_TASK'[task_code]),
+			        REMOVEFILTERS(CurrentDate)
+			    )
+			VAR ActiveRsrcNames =
+			    CALCULATETABLE(
+			        VALUES('15_XER_RESOURCE_DISTRIBUTION'[rsrc_name]),
+			        REMOVEFILTERS(CurrentDate)
+			    )
+			VAR ActiveRsrcTypes =
+			    CALCULATETABLE(
+			        VALUES('15_XER_RESOURCE_DISTRIBUTION'[rsrc_type]),
+			        REMOVEFILTERS(CurrentDate)
+			    )
 			
 			-- Find the last month with baseline data
 			VAR LastMonthWithBaselineData = 
@@ -124,7 +141,8 @@ table Resources
 			        MAX('15_XER_RESOURCE_DISTRIBUTION'[distribution_month]),
 			        ALL('Resource Calendar'),
 			        ALL('15_XER_RESOURCE_DISTRIBUTION'[distribution_month]),
-			        TREATAS(ActiveProjects, '15_XER_RESOURCE_DISTRIBUTION'[ProjectCode])
+			        TREATAS(ActiveProjects, '15_XER_RESOURCE_DISTRIBUTION'[ProjectCode]),
+			        REMOVEFILTERS(CurrentDate)
 			    )
 			
 			-- Use the later of the two dates
@@ -161,9 +179,22 @@ table Resources
 
 	measure 'Total Baseline Quantity' =
 			
-			VAR ActiveTaskCodes = SUMMARIZE('01 XER_TASK', '01 XER_TASK'[ProjectCode], '01 XER_TASK'[task_code])
-			VAR ActiveRsrcNames = VALUES('15_XER_RESOURCE_DISTRIBUTION'[rsrc_name])
-			VAR ActiveRsrcTypes = VALUES('15_XER_RESOURCE_DISTRIBUTION'[rsrc_type])
+			-- Capture the selected task and resource scope without the monthly update filter
+			VAR ActiveTaskCodes =
+			    CALCULATETABLE(
+			        SUMMARIZE('01 XER_TASK', '01 XER_TASK'[ProjectCode], '01 XER_TASK'[task_code]),
+			        REMOVEFILTERS(CurrentDate)
+			    )
+			VAR ActiveRsrcNames =
+			    CALCULATETABLE(
+			        VALUES('15_XER_RESOURCE_DISTRIBUTION'[rsrc_name]),
+			        REMOVEFILTERS(CurrentDate)
+			    )
+			VAR ActiveRsrcTypes =
+			    CALCULATETABLE(
+			        VALUES('15_XER_RESOURCE_DISTRIBUTION'[rsrc_type]),
+			        REMOVEFILTERS(CurrentDate)
+			    )
 			
 			RETURN
 			    CALCULATE (

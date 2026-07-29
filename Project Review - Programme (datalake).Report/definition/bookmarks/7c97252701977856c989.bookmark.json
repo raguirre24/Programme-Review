@@ -1974,12 +1974,6 @@
               "objects": {}
             }
           },
-          "789f2c9fad2ebf10d578": {
-            "singleVisual": {
-              "visualType": "pageNavigator",
-              "objects": {}
-            }
-          },
           "7bd7de7fe6e025b5d387": {
             "filters": {
               "byExpr": [
@@ -2454,7 +2448,10 @@
           "93830d99485684facd9e": {
             "singleVisual": {
               "visualType": "shape",
-              "objects": {}
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
             }
           },
           "94c3d990b39a785535ce": {
@@ -2739,12 +2736,6 @@
                   }
                 ]
               }
-            }
-          },
-          "a02aadf2a16d12b7031d": {
-            "singleVisual": {
-              "visualType": "pageNavigator",
-              "objects": {}
             }
           },
           "a1a7438c410b77910b59": {
@@ -3466,89 +3457,9 @@
             }
           },
           "ef4cb267530e2d6ab185": {
-            "filters": {
-              "byExpr": [
-                {
-                  "name": "f0185bcea4a3bcb3a8be",
-                  "type": "Advanced",
-                  "filter": {
-                    "Version": 2,
-                    "From": [
-                      {
-                        "Name": "p",
-                        "Entity": "Project_Dimension",
-                        "Type": 0
-                      }
-                    ],
-                    "Where": [
-                      {
-                        "Condition": {
-                          "Not": {
-                            "Expression": {
-                              "Comparison": {
-                                "ComparisonKind": 0,
-                                "Left": {
-                                  "Column": {
-                                    "Expression": {
-                                      "SourceRef": {
-                                        "Source": "p"
-                                      }
-                                    },
-                                    "Property": "Project"
-                                  }
-                                },
-                                "Right": {
-                                  "Literal": {
-                                    "Value": "null"
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
-                    ]
-                  },
-                  "expression": {
-                    "Column": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "Project_Dimension"
-                        }
-                      },
-                      "Property": "Project"
-                    }
-                  },
-                  "howCreated": 0
-                }
-              ]
-            },
             "singleVisual": {
               "visualType": "advancedSlicerVisual",
-              "objects": {
-                "merge": {
-                  "selection": [
-                    {
-                      "properties": {
-                        "strictSingleSelect": {
-                          "expr": {
-                            "Literal": {
-                              "Value": "false"
-                            }
-                          }
-                        },
-                        "restrictToLeafNodes": {
-                          "expr": {
-                            "Literal": {
-                              "Value": "false"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  ]
-                }
-              },
+              "objects": {},
               "display": {
                 "mode": "hidden"
               }
@@ -3990,6 +3901,24 @@
                   }
                 }
               ]
+            }
+          },
+          "e0f72f806623530a071e": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "8ba2c330dc3cf686c85c": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
             }
           }
         },

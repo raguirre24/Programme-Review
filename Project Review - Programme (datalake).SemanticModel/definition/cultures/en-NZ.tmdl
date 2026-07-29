@@ -1705,27 +1705,7 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "WBS Level 2": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
-			        },
-			        {
 			          "Activity ID": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
-			        },
-			        {
-			          "WBS": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -3159,16 +3139,6 @@ cultureInfo en-NZ
 			            },
 			            "Weight": 0.9
 			          }
-			        },
-			        {
-			          "Critical Activities": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -3205,16 +3175,6 @@ cultureInfo en-NZ
 			        },
 			        {
 			          "Near Critical": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
-			        },
-			        {
-			          "Near Critical Activities": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -5336,16 +5296,6 @@ cultureInfo en-NZ
 			        },
 			        {
 			          "Total": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
-			        },
-			        {
-			          "Remaining Activities": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -8895,16 +8845,6 @@ cultureInfo en-NZ
 			            },
 			            "Weight": 0.9
 			          }
-			        },
-			        {
-			          "Early Finish": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -9031,16 +8971,6 @@ cultureInfo en-NZ
 			        },
 			        {
 			          "Current Late Finish": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
-			        },
-			        {
-			          "Late Finish": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -21737,16 +21667,6 @@ cultureInfo en-NZ
 			          "finish variance": {
 			            "State": "Generated",
 			            "Weight": 0.75
-			          }
-			        },
-			        {
-			          "Variance": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ]

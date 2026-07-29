@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "Close Project Menu - Cross-WBS Analysis",
+  "name": "577b6b2c226d54c39e00",
+  "options": {
+    "targetVisualNames": [
+      "f7d730a81623609efa7f",
+      "b5b9e58ac61e23e6960f",
+      "a080ddcc97529e047055",
+      "0b8551c19458f13c9d1f"
+    ],
+    "suppressData": true
+  },
+  "explorationState": {
+    "version": "1.0",
+    "activeSection": "eb4b0a43085cad901574",
+    "sections": {
+      "eb4b0a43085cad901574": {
+        "visualContainers": {
+          "f7d730a81623609efa7f": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "b5b9e58ac61e23e6960f": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "a080ddcc97529e047055": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "0b8551c19458f13c9d1f": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

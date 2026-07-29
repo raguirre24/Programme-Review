@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "Close Project Menu - Float Analysis",
+  "name": "70b568f01f42cfebb6b7",
+  "options": {
+    "targetVisualNames": [
+      "eaf7e2cc480bee8a5d49",
+      "519501f73536aa481135",
+      "fba8bc780d88aab07dd2",
+      "0ba2331cc30004d87ab1"
+    ],
+    "suppressData": true
+  },
+  "explorationState": {
+    "version": "1.0",
+    "activeSection": "ea24ab599f13f4ea4572",
+    "sections": {
+      "ea24ab599f13f4ea4572": {
+        "visualContainers": {
+          "eaf7e2cc480bee8a5d49": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "519501f73536aa481135": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "fba8bc780d88aab07dd2": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "0ba2331cc30004d87ab1": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

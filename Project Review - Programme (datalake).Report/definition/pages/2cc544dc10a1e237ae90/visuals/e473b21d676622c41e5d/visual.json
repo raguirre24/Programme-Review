@@ -348,23 +348,51 @@
           "Where": [
             {
               "Condition": {
-                "Not": {
-                  "Expression": {
-                    "Comparison": {
-                      "ComparisonKind": 0,
-                      "Left": {
-                        "Column": {
-                          "Expression": {
-                            "SourceRef": {
-                              "Source": "p"
+                "And": {
+                  "Left": {
+                    "Not": {
+                      "Expression": {
+                        "Comparison": {
+                          "ComparisonKind": 0,
+                          "Left": {
+                            "Column": {
+                              "Expression": {
+                                "SourceRef": {
+                                  "Source": "p"
+                                }
+                              },
+                              "Property": "Project"
                             }
                           },
-                          "Property": "Project"
+                          "Right": {
+                            "Literal": {
+                              "Value": "null"
+                            }
+                          }
                         }
-                      },
-                      "Right": {
-                        "Literal": {
-                          "Value": "null"
+                      }
+                    }
+                  },
+                  "Right": {
+                    "Not": {
+                      "Expression": {
+                        "Comparison": {
+                          "ComparisonKind": 0,
+                          "Left": {
+                            "Column": {
+                              "Expression": {
+                                "SourceRef": {
+                                  "Source": "p"
+                                }
+                              },
+                              "Property": "Project"
+                            }
+                          },
+                          "Right": {
+                            "Literal": {
+                              "Value": "'--'"
+                            }
+                          }
                         }
                       }
                     }

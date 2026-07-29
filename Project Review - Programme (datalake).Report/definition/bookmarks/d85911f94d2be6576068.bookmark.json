@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "Close Project Menu - Missing Predecessor",
+  "name": "d85911f94d2be6576068",
+  "options": {
+    "targetVisualNames": [
+      "a9e3621d9dcec4e76e32",
+      "5128d0c07d8381cb3013",
+      "58467cd9e6f73b94e426",
+      "f113008408b3c15170d9"
+    ],
+    "suppressData": true
+  },
+  "explorationState": {
+    "version": "1.0",
+    "activeSection": "061f748900951ae92ba9",
+    "sections": {
+      "061f748900951ae92ba9": {
+        "visualContainers": {
+          "a9e3621d9dcec4e76e32": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "5128d0c07d8381cb3013": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "58467cd9e6f73b94e426": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "f113008408b3c15170d9": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

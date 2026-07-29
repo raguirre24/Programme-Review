@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "Close Project Menu - Activity Completion Progress",
+  "name": "c0cbdf107072d1aa9c58",
+  "options": {
+    "targetVisualNames": [
+      "911ce61bd36b9e766de8",
+      "4be5a607758f7dd44a48",
+      "779fbcd804ee942584c0",
+      "b5f57fbb4bb3b6465687"
+    ],
+    "suppressData": true
+  },
+  "explorationState": {
+    "version": "1.0",
+    "activeSection": "60269a73141469b06603",
+    "sections": {
+      "60269a73141469b06603": {
+        "visualContainers": {
+          "911ce61bd36b9e766de8": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "4be5a607758f7dd44a48": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "779fbcd804ee942584c0": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "b5f57fbb4bb3b6465687": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

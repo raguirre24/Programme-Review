@@ -126,5 +126,12 @@
     ]
   },
   "visibility": "HiddenInViewMode",
-  "type": "Drillthrough"
+  "type": "Drillthrough",
+  "visualInteractions": [
+    {
+      "source": "88c136eb0d5fb4c953ec",
+      "target": "3482121b459913fbd86e",
+      "type": "NoFilter"
+    }
+  ]
 }

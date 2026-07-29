@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "Close Project Menu - LinkedSite Events",
+  "name": "612ea8d6304c201d6dea",
+  "options": {
+    "targetVisualNames": [
+      "7b423029a05ec9087495",
+      "3825ff4788483f770bf8",
+      "07888c86f4c3c3fdbf49",
+      "df23f1b0f2066e921e1a"
+    ],
+    "suppressData": true
+  },
+  "explorationState": {
+    "version": "1.0",
+    "activeSection": "a794159ef1019ec463e8",
+    "sections": {
+      "a794159ef1019ec463e8": {
+        "visualContainers": {
+          "7b423029a05ec9087495": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "3825ff4788483f770bf8": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "07888c86f4c3c3fdbf49": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "df23f1b0f2066e921e1a": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

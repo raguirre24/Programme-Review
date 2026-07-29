@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "Close Project Menu - Duration Analysis",
+  "name": "f756559112979fc8347b",
+  "options": {
+    "targetVisualNames": [
+      "83b38c1e119966c6335e",
+      "7aca20987b0fd3683fe1",
+      "e7d3b3d0780c4c963302",
+      "84df330226c0a23e50f4"
+    ],
+    "suppressData": true
+  },
+  "explorationState": {
+    "version": "1.0",
+    "activeSection": "97f7d216ba38e55033da",
+    "sections": {
+      "97f7d216ba38e55033da": {
+        "visualContainers": {
+          "83b38c1e119966c6335e": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "7aca20987b0fd3683fe1": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "e7d3b3d0780c4c963302": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "84df330226c0a23e50f4": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

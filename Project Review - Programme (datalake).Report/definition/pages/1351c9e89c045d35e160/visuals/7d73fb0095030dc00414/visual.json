@@ -4,10 +4,10 @@
   "position": {
     "x": 596.05639676044484,
     "y": 587.53098188751187,
-    "z": 12000,
+    "z": 10000,
     "height": 477.71210676835079,
     "width": 587.53098188751187,
-    "tabOrder": 12000
+    "tabOrder": 10000
   },
   "visual": {
     "visualType": "stackedAreaChart",

@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "Close Project Menu - Schedule Adherence Scorecard",
+  "name": "309d79863eece02435eb",
+  "options": {
+    "targetVisualNames": [
+      "d4cfbbae03a346fd26c8",
+      "f44524754c3dbf4319a3",
+      "6a6c3b8d4eeecc0a83a3",
+      "4012a7016af92e987485"
+    ],
+    "suppressData": true
+  },
+  "explorationState": {
+    "version": "1.0",
+    "activeSection": "584ca37745f48e8b6958",
+    "sections": {
+      "584ca37745f48e8b6958": {
+        "visualContainers": {
+          "d4cfbbae03a346fd26c8": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "f44524754c3dbf4319a3": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "6a6c3b8d4eeecc0a83a3": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "4012a7016af92e987485": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

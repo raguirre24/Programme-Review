@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "Close Project Menu - Summary",
+  "name": "ee89dfac45f8e8775b22",
+  "options": {
+    "targetVisualNames": [
+      "1b0199ca6ac8d14eab79",
+      "be200f14d934dae1bec0",
+      "3a91548c4ddc2ccbc6ba",
+      "908b7eab1f23dc85a87c"
+    ],
+    "suppressData": true
+  },
+  "explorationState": {
+    "version": "1.0",
+    "activeSection": "1351c9e89c045d35e160",
+    "sections": {
+      "1351c9e89c045d35e160": {
+        "visualContainers": {
+          "1b0199ca6ac8d14eab79": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "be200f14d934dae1bec0": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "3a91548c4ddc2ccbc6ba": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "908b7eab1f23dc85a87c": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
