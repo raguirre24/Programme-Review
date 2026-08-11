@@ -27,9 +27,9 @@
                 }
               },
               "queryRef": "03 XER_PROJWBS.Level_2",
-              "nativeQueryRef": "Activity ID",
+              "nativeQueryRef": "Level_2",
               "active": true,
-              "displayName": "Activity ID"
+              "displayName": "Level_2"
             },
             {
               "field": {

@@ -4,7 +4,7 @@
   "position": {
     "x": 5.4429482636428066,
     "y": 163.2884479092842,
-    "z": 5000,
+    "z": 4000,
     "height": 376.92416725726434,
     "width": 1768.9581856839122,
     "tabOrder": 4000
@@ -58,7 +58,7 @@
               },
               "queryRef": "03 XER_PROJWBS.Level_3",
               "nativeQueryRef": "Level_3",
-              "active": true
+              "active": false
             },
             {
               "field": {
@@ -73,7 +73,7 @@
               },
               "queryRef": "03 XER_PROJWBS.Level_4",
               "nativeQueryRef": "Level_4",
-              "active": true
+              "active": false
             }
           ],
           "showAll": true
@@ -330,16 +330,55 @@
         "sort": [
           {
             "field": {
-              "Measure": {
+              "Column": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "XER S-Curve"
+                    "Entity": "Project_Dimension"
                   }
                 },
-                "Property": "Percentage_Baseline_Finish"
+                "Property": "Project"
               }
             },
-            "direction": "Descending"
+            "direction": "Ascending"
+          },
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "03 XER_PROJWBS"
+                  }
+                },
+                "Property": "Level_2"
+              }
+            },
+            "direction": "Ascending"
+          },
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "03 XER_PROJWBS"
+                  }
+                },
+                "Property": "Level_3"
+              }
+            },
+            "direction": "Ascending"
+          },
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "03 XER_PROJWBS"
+                  }
+                },
+                "Property": "Level_4"
+              }
+            },
+            "direction": "Ascending"
           }
         ]
       }
@@ -411,6 +450,18 @@
               "03 XER_PROJWBS.Level_4"
             ],
             "isCollapsed": true,
+            "identityKeys": [
+              {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "03 XER_PROJWBS"
+                    }
+                  },
+                  "Property": "Level_4"
+                }
+              }
+            ],
             "isPinned": true
           }
         ],
@@ -420,7 +471,7 @@
               "identityValues": [
                 {
                   "Literal": {
-                    "Value": "null"
+                    "Value": "'MALABAR SYSTEM INVESTMENT PROGRAM'"
                   }
                 }
               ],
@@ -429,40 +480,7 @@
                   "identityValues": [
                     {
                       "Literal": {
-                        "Value": "null"
-                      }
-                    }
-                  ],
-                  "isToggled": true,
-                  "children": [
-                    {
-                      "identityValues": [
-                        {
-                          "Literal": {
-                            "Value": "null"
-                          }
-                        }
-                      ],
-                      "isToggled": true
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "identityValues": [
-                {
-                  "Literal": {
-                    "Value": "'MALABAR (Internal Payroll / ACA Expense Claims Use ONLY)'"
-                  }
-                }
-              ],
-              "children": [
-                {
-                  "identityValues": [
-                    {
-                      "Literal": {
-                        "Value": "'Vendor Data/Shop drawings/Review'"
+                        "Value": "'LIVERPOOL WRRF'"
                       }
                     }
                   ],
@@ -471,11 +489,23 @@
                       "identityValues": [
                         {
                           "Literal": {
-                            "Value": "'Workshops'"
+                            "Value": "'Procurement'"
                           }
                         }
                       ],
-                      "isToggled": true
+                      "isToggled": true,
+                      "children": [
+                        {
+                          "identityValues": [
+                            {
+                              "Literal": {
+                                "Value": "'Materials & Equipment'"
+                              }
+                            }
+                          ],
+                          "isToggled": true
+                        }
+                      ]
                     }
                   ]
                 },
@@ -483,7 +513,7 @@
                   "identityValues": [
                     {
                       "Literal": {
-                        "Value": "'C5064'"
+                        "Value": "'LIVERPOOL WRRF'"
                       }
                     }
                   ],
@@ -492,11 +522,22 @@
                       "identityValues": [
                         {
                           "Literal": {
-                            "Value": "'C5064'"
+                            "Value": "'Procurement'"
                           }
                         }
                       ],
-                      "isToggled": true
+                      "children": [
+                        {
+                          "identityValues": [
+                            {
+                              "Literal": {
+                                "Value": "'Materials & Equipment'"
+                              }
+                            }
+                          ],
+                          "isToggled": true
+                        }
+                      ]
                     }
                   ]
                 }
@@ -1572,6 +1613,263 @@
             }
           ]
         }
+      },
+      {
+        "name": "e86a32c514ca502ddb10",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "03 XER_PROJWBS"
+              }
+            },
+            "Property": "Level_2"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "36db50801648a0abe79a",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "03 XER_PROJWBS"
+              }
+            },
+            "Property": "Level_3"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "8d2a3a9653a6e0e611c0",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "03 XER_PROJWBS"
+              }
+            },
+            "Property": "Level_4"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "7807ba40d602a4e06cc9",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "Count_Remaining_Tasks"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "7bd121e872dc937b6e0b",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER S-Curve"
+              }
+            },
+            "Property": "Percentage_Actual_Finish"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "4f6ebfc1ea331d3a07e2",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER S-Curve"
+              }
+            },
+            "Property": "Percentage_Baseline_Finish"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "cf4efc8765b4b4a80e12",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "Count_Critical_Tasks"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "dd58b2d0442cd39c29e9",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "Count_NearCritical_Tasks"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "fe1bca832001da8021b8",
+        "field": {
+          "Aggregation": {
+            "Expression": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "01 XER_TASK"
+                  }
+                },
+                "Property": "free_float"
+              }
+            },
+            "Function": 1
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "b121d17fc70807e3b0d1",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "PreviousMonth_FinishVariance_Ahead_TT_Task"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "e5c7b2dc0d02ca101207",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "PreviousMonth_FinishVariance_<1_Month_TT_Task"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "eb78383bb36308c300cd",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "PreviousMonth_FinishVariance_<3_Month_TT_Task"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "21be70010baed13ee685",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "PreviousMonth_FinishVariance_<6_Month_TT_Task"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "afc1abd4558c68516a95",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "PreviousMonth_FinishVariance_>6_Month_TT_Task"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "a019479f70ad79091e0c",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Activity Completion"
+              }
+            },
+            "Property": "Activities Planned Previous Date"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "e4d8dc11cc15916d65ce",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Activity Completion"
+              }
+            },
+            "Property": "Activities Achieved Previous Date"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "8eecac72de900d5050ba",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Activity Completion"
+              }
+            },
+            "Property": "Completion Score Previous Date"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "fb8c7880609402b54d0c",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Activity Completion"
+              }
+            },
+            "Property": "Average_Finish_Variance_PNC"
+          }
+        },
+        "type": "Advanced"
       }
     ]
   }

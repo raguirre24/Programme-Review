@@ -4,10 +4,10 @@
   "position": {
     "x": 1.976327188074166,
     "y": 84.241917861045053,
-    "z": 20000,
+    "z": 17000,
     "height": 995.04836132134255,
     "width": 1786.2927544734528,
-    "tabOrder": 26000
+    "tabOrder": 22000
   },
   "visualGroup": {
     "displayName": "Variance",

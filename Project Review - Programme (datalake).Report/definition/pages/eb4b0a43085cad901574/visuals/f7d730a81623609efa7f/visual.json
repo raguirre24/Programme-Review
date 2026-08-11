@@ -4,10 +4,10 @@
   "position": {
     "x": 866.28078817733967,
     "y": 0.32019704433495466,
-    "z": 92000,
+    "z": 19000,
     "height": 500,
     "width": 920,
-    "tabOrder": 92000
+    "tabOrder": 19000
   },
   "visual": {
     "visualType": "shape",
@@ -174,7 +174,6 @@
         }
       ]
     },
-    "drillFilterOtherVisuals": true,
     "visualContainerObjects": {
       "background": [
         {
@@ -238,8 +237,9 @@
           }
         }
       ]
-    }
+    },
+    "drillFilterOtherVisuals": true
   },
-  "howCreated": "InsertVisualButton",
-  "isHidden": true
+  "isHidden": true,
+  "howCreated": "InsertVisualButton"
 }

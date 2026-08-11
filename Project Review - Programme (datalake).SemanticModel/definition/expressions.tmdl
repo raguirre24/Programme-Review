@@ -6,7 +6,7 @@ expression SharePointSite = "https://acciona365-my.sharepoint.com/personal/ragui
 
 	annotation PBI_ResultType = Text
 
-expression SelectedProjects = "C4068, C5064, C5001, C4007" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+expression SelectedProjects = "C5064, C5001, C4007, C4017" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
 	lineageTag: a1b2c3d4-5e6f-7a8b-9c0d-ef1234567890
 	queryGroup: Database
 

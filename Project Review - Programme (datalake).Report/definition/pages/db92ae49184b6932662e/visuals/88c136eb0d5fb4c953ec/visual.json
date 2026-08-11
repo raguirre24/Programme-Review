@@ -287,7 +287,6 @@
     },
     "drillFilterOtherVisuals": true
   },
-  "isHidden": true,
   "filterConfig": {
     "filters": [
       {
@@ -371,5 +370,6 @@
         }
       }
     ]
-  }
+  },
+  "isHidden": true
 }

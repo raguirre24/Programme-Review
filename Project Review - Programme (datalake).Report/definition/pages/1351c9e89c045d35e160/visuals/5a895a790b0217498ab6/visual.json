@@ -4,7 +4,7 @@
   "position": {
     "x": 1187.1528316524436,
     "y": 587,
-    "z": 9000,
+    "z": 7000,
     "height": 477,
     "width": 587,
     "tabOrder": 9000
@@ -308,6 +308,34 @@
         },
         "type": "Advanced",
         "howCreated": "User"
+      },
+      {
+        "name": "8140700fc84a79561199",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "CurrentDate"
+              }
+            },
+            "Property": "UpdateDate"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "99175244719012ed3eae",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Activity Completion"
+              }
+            },
+            "Property": "Completion Score Previous Date"
+          }
+        },
+        "type": "Advanced"
       }
     ]
   }

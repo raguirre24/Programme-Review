@@ -4,7 +4,7 @@
   "position": {
     "x": 870,
     "y": 41.428571428571431,
-    "z": 13000,
+    "z": 11000,
     "height": 45.714285714285715,
     "width": 180,
     "tabOrder": 13000
@@ -124,7 +124,7 @@
                           [
                             {
                               "Literal": {
-                                "Value": "datetime'2026-06-30T00:00:00'"
+                                "Value": "datetime'2026-07-31T00:00:00'"
                               }
                             }
                           ]
@@ -251,5 +251,23 @@
       "filterChanges": true
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "4e045928b050e8d0b210",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "CurrentDate"
+              }
+            },
+            "Property": "UpdateDate"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
   }
 }

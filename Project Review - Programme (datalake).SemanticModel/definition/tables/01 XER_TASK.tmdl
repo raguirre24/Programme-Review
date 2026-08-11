@@ -61,13 +61,13 @@ table '01 XER_TASK'
 
 		annotation SummarizationSetBy = Automatic
 
-	column CriticalStatus = ```
+	column CriticalStatus =
 			
 			VAR TaskStatus = TRIM(UPPER('01 XER_TASK'[status_code]))
 			VAR FloatValue = '01 XER_TASK'[total_float]
 			RETURN
 			    IF(
-			        TaskStatus <> "COMPLETE",
+			        TaskStatus <> "COMPLETE" && NOT ISBLANK(FloatValue),
 			        SWITCH(
 			            TRUE(),
 			            FloatValue <= 0, "Critical",
@@ -76,8 +76,6 @@ table '01 XER_TASK'
 			        ),
 			        BLANK()
 			    )
-			
-			```
 		lineageTag: d8c504df-6a4d-49ad-9b83-1c8b123677b6
 		summarizeBy: none
 
@@ -167,19 +165,25 @@ table '01 XER_TASK'
 
 	column 'Float Category' = ```
 			
-			IF(
-			    '01 XER_TASK'[status_code] = "Complete",
-			    "Complete",
-			    SWITCH(
-			        TRUE(),
-			        '01 XER_TASK'[total_float] < 0, " Float < 0",
-			        '01 XER_TASK'[total_float] >= 0 && '01 XER_TASK'[total_float] <= 10, "0 ≤ Float ≤ 10",
-			        '01 XER_TASK'[total_float] > 10 && '01 XER_TASK'[total_float] <= 30, "10 < Float ≤ 30",
-			        '01 XER_TASK'[total_float] > 30 && '01 XER_TASK'[total_float] <= 50, "30 < Float ≤ 50",
-			        '01 XER_TASK'[total_float] > 50, "50 < Float",
-			        "Other Incomplete"
+			VAR TaskStatus = TRIM(UPPER('01 XER_TASK'[status_code]))
+			VAR FloatValue = '01 XER_TASK'[total_float]
+			RETURN
+			    IF(
+			        TaskStatus = "COMPLETE",
+			        "Complete",
+			        IF(
+			            NOT ISBLANK(FloatValue),
+			            SWITCH(
+			                TRUE(),
+			                FloatValue < 0, " Float < 0",
+			                FloatValue <= 10, "0 ≤ Float ≤ 10",
+			                FloatValue <= 30, "10 < Float ≤ 30",
+			                FloatValue <= 50, "30 < Float ≤ 50",
+			                "50 < Float"
+			            ),
+			            BLANK()
+			        )
 			    )
-			)
 			
 			```
 		lineageTag: a888ea7c-93cc-413b-a691-f95b0875b92e
@@ -481,7 +485,7 @@ table '01 XER_TASK'
 
 	column UpdateDate
 		dataType: dateTime
-		formatString: Long Date
+		formatString: dd/mm/yyyy
 		lineageTag: 99377e12-b3cb-4484-8650-e3e81f5b3f1c
 		summarizeBy: none
 		sourceColumn: UpdateDate
@@ -489,6 +493,8 @@ table '01 XER_TASK'
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
 
 	column ProjectCode
 		dataType: string
@@ -722,6 +728,54 @@ table '01 XER_TASK'
 
 		annotation SummarizationSetBy = Automatic
 
+	column 'Is Unscheduled' = IF ( ISBLANK ( '01 XER_TASK'[early_end_date] ) && ISBLANK ( '01 XER_TASK'[act_end_date] ), TRUE (), FALSE () )
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 9b19a389-b2bc-406f-b5f5-1ef0eed43a54
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsExcludedFromDataLake =
+			COUNTROWS(
+			    FILTER(
+			        RELATEDTABLE('09 XER_TASKACTV'),
+			        TRIM('09 XER_TASKACTV'[actv_code_type]) = "GBL-Exclude From Data Lake Reporting"
+			        && TRIM('09 XER_TASKACTV'[actv_code_name]) = "Yes"
+			    )
+			) > 0
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 7a25da16-8ffd-44e4-ab23-e6dcb52211f7
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Variance_Finish_Adjusted_BL
+		dataType: int64
+		formatString: 0
+		lineageTag: 7e93f412-32a1-4890-a521-889312c1409f
+		summarizeBy: sum
+		sourceColumn: Variance_Finish_Adjusted_BL
+
+		annotation SummarizationSetBy = Automatic
+
+	column AdjBaselineFinishVarianceCategory = ```
+			
+			    SWITCH(
+			        TRUE(),
+			        '01 XER_TASK'[Variance_Finish_Adjusted_BL] = 0, "   No Variance",
+			        '01 XER_TASK'[Variance_Finish_Adjusted_BL] > 0 && '01 XER_TASK'[Variance_Finish_Adjusted_BL] < 21, " <1 Month",
+			        '01 XER_TASK'[Variance_Finish_Adjusted_BL] >= 21 && '01 XER_TASK'[Variance_Finish_Adjusted_BL] < 63, " 1-3 Months",
+			        '01 XER_TASK'[Variance_Finish_Adjusted_BL] >= 63 && '01 XER_TASK'[Variance_Finish_Adjusted_BL] < 126, " 3-6 Months",
+			        '01 XER_TASK'[Variance_Finish_Adjusted_BL] >= 126, ">6 Months",
+			        '01 XER_TASK'[Variance_Finish_Adjusted_BL] < 0, "  Ahead",
+			        BLANK()
+			    )
+			```
+		lineageTag: 14f94652-7f76-4212-93ba-756c89e4eff0
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
 	partition '01 XER_TASK' = m
 		mode: import
 		queryGroup: XER
@@ -865,25 +919,29 @@ table '01 XER_TASK'
 				                    "SELECT *,",
 				                    "CAST(previous_task_finish AS DATE) AS finish_var_start_date, CAST(finish AS DATE) AS finish_var_end_date,",
 				                    "CAST(previous_task_start AS DATE) AS start_var_start_date, CAST(start AS DATE) AS start_var_end_date,",
-				                    "CAST(baseline_finish AS DATE) AS baseline_var_start_date, CAST(finish AS DATE) AS baseline_var_end_date",
+				                    "CAST(baseline_finish AS DATE) AS baseline_var_start_date, CAST(finish AS DATE) AS baseline_var_end_date,",
+				                    "CAST(adjusted_baseline_finish AS DATE) AS adj_baseline_var_start_date, CAST(finish AS DATE) AS adj_baseline_var_end_date",
 				                    "FROM task_joined",
 				                    "), network_bounds AS (",
 				                    "SELECT *,",
 				                    "LEAST(finish_var_start_date, finish_var_end_date) AS finish_var_min_date, GREATEST(finish_var_start_date, finish_var_end_date) AS finish_var_max_date,",
 				                    "LEAST(start_var_start_date, start_var_end_date) AS start_var_min_date, GREATEST(start_var_start_date, start_var_end_date) AS start_var_max_date,",
-				                    "LEAST(baseline_var_start_date, baseline_var_end_date) AS baseline_var_min_date, GREATEST(baseline_var_start_date, baseline_var_end_date) AS baseline_var_max_date",
+				                    "LEAST(baseline_var_start_date, baseline_var_end_date) AS baseline_var_min_date, GREATEST(baseline_var_start_date, baseline_var_end_date) AS baseline_var_max_date,",
+				                    "LEAST(adj_baseline_var_start_date, adj_baseline_var_end_date) AS adj_baseline_var_min_date, GREATEST(adj_baseline_var_start_date, adj_baseline_var_end_date) AS adj_baseline_var_max_date",
 				                    "FROM network_inputs",
 				                    "), network_parts AS (",
 				                    "SELECT *,",
 				                    "CASE WHEN finish_var_start_date IS NULL OR finish_var_end_date IS NULL THEN NULL ELSE date_diff('day', finish_var_min_date, finish_var_max_date) END AS finish_var_days,",
 				                    "CASE WHEN start_var_start_date IS NULL OR start_var_end_date IS NULL THEN NULL ELSE date_diff('day', start_var_min_date, start_var_max_date) END AS start_var_days,",
-				                    "CASE WHEN baseline_var_start_date IS NULL OR baseline_var_end_date IS NULL THEN NULL ELSE date_diff('day', baseline_var_min_date, baseline_var_max_date) END AS baseline_var_days",
+				                    "CASE WHEN baseline_var_start_date IS NULL OR baseline_var_end_date IS NULL THEN NULL ELSE date_diff('day', baseline_var_min_date, baseline_var_max_date) END AS baseline_var_days,",
+				                    "CASE WHEN adj_baseline_var_start_date IS NULL OR adj_baseline_var_end_date IS NULL THEN NULL ELSE date_diff('day', adj_baseline_var_min_date, adj_baseline_var_max_date) END AS adj_baseline_var_days",
 				                    "FROM network_bounds",
 				                    "), network_calcs AS (",
 				                    "SELECT *,",
 				                    "CAST(FLOOR(finish_var_days / 7.0) AS INTEGER) AS finish_var_full_weeks, CAST(MOD(finish_var_days, 7) AS INTEGER) AS finish_var_remainder, day_of_week(finish_var_min_date) AS finish_var_dow,",
 				                    "CAST(FLOOR(start_var_days / 7.0) AS INTEGER) AS start_var_full_weeks, CAST(MOD(start_var_days, 7) AS INTEGER) AS start_var_remainder, day_of_week(start_var_min_date) AS start_var_dow,",
-				                    "CAST(FLOOR(baseline_var_days / 7.0) AS INTEGER) AS baseline_var_full_weeks, CAST(MOD(baseline_var_days, 7) AS INTEGER) AS baseline_var_remainder, day_of_week(baseline_var_min_date) AS baseline_var_dow",
+				                    "CAST(FLOOR(baseline_var_days / 7.0) AS INTEGER) AS baseline_var_full_weeks, CAST(MOD(baseline_var_days, 7) AS INTEGER) AS baseline_var_remainder, day_of_week(baseline_var_min_date) AS baseline_var_dow,",
+				                    "CAST(FLOOR(adj_baseline_var_days / 7.0) AS INTEGER) AS adj_baseline_var_full_weeks, CAST(MOD(adj_baseline_var_days, 7) AS INTEGER) AS adj_baseline_var_remainder, day_of_week(adj_baseline_var_min_date) AS adj_baseline_var_dow",
 				                    "FROM network_parts",
 				                    ")",
 				                    "SELECT status_code, task_code, total_float, task_type, id_name, early_start_date, calendar_id_key, task_id_key, driving_path_flag, remainingduration,",
@@ -892,6 +950,7 @@ table '01 XER_TASK'
 				                    "CASE WHEN finish_var_start_date IS NULL OR finish_var_end_date IS NULL THEN 0 WHEN finish_var_start_date = finish_var_end_date THEN 0 ELSE (CASE WHEN finish_var_end_date >= finish_var_start_date THEN 1 ELSE -1 END) * (finish_var_full_weeks * 5 + GREATEST(0, LEAST(finish_var_remainder, 6 - finish_var_dow)) + GREATEST(0, finish_var_remainder - (8 - finish_var_dow))) END AS ""Finish_Variance_Previous_Month"",",
 				                    "CASE WHEN NOT (task_type IN ('TT_Task', 'TT_Rsrc', 'TT_Mile', 'TT_FinMile') AND task_code IS NOT NULL AND project_group_key IS NOT NULL AND COALESCE(status_code, '') <> 'Complete' AND data_date IS NOT NULL AND update_date IS NOT NULL) THEN 'Not Driven' WHEN status_code = 'Not Started' AND previous_task_update_date IS NOT NULL AND previous_task_data_date IS NOT NULL AND previous_task_status = 'Not Started' AND date_diff('day', CAST(previous_task_data_date AS DATE), CAST(data_date AS DATE)) > 0 AND date_diff('day', CAST(previous_task_effective_start AS DATE), CAST(COALESCE(early_start_date, start) AS DATE)) > 0 AND ABS(date_diff('day', CAST(previous_task_effective_start AS DATE), CAST(COALESCE(early_start_date, start) AS DATE)) - date_diff('day', CAST(previous_task_data_date AS DATE), CAST(data_date AS DATE))) <= 1 AND COALESCE(early_start_date, start) IS NOT NULL AND COALESCE(early_end_date, finish) IS NOT NULL AND previous_task_effective_start IS NOT NULL AND previous_task_effective_finish IS NOT NULL AND ABS(date_diff('day', CAST(COALESCE(early_start_date, start) AS DATE), CAST(COALESCE(early_end_date, finish) AS DATE)) - date_diff('day', CAST(previous_task_effective_start AS DATE), CAST(previous_task_effective_finish AS DATE))) <= 1 THEN 'Not Started - Slippage Matches Update Period' WHEN status_code = 'In Progress' AND previous_task_update_date IS NOT NULL AND previous_task_data_date IS NOT NULL AND previous_task_status = 'In Progress' AND date_diff('day', CAST(previous_task_data_date AS DATE), CAST(data_date AS DATE)) > 0 AND remainingduration IS NOT NULL AND previous_task_remainingduration IS NOT NULL AND remainingduration >= previous_task_remainingduration - 1 AND date_diff('day', CAST(previous_task_effective_finish AS DATE), CAST(COALESCE(early_end_date, finish) AS DATE)) > 0 AND ABS(date_diff('day', CAST(previous_task_effective_finish AS DATE), CAST(COALESCE(early_end_date, finish) AS DATE)) - date_diff('day', CAST(previous_task_data_date AS DATE), CAST(data_date AS DATE))) <= 1 THEN 'In Progress - Stagnating Progress' WHEN status_code = 'Not Started' AND COALESCE(early_start_date, start) IS NOT NULL AND CAST(COALESCE(early_start_date, start) AS DATE) = CAST(data_date AS DATE) THEN 'Not Started - Early Start Sitting on Data Date' WHEN status_code = 'In Progress' AND early_start_date IS NOT NULL AND remainingduration IS NOT NULL AND remainingduration > 0 AND CAST(COALESCE(early_start_date, start) AS DATE) = CAST(data_date AS DATE) THEN 'In Progress - Remaining Work Sitting on Data Date' ELSE 'Not Driven' END AS ""Driven_DataDate"",",
 				                    "CASE WHEN baseline_var_start_date IS NULL OR baseline_var_end_date IS NULL THEN NULL WHEN baseline_var_start_date = baseline_var_end_date THEN 0 ELSE (CASE WHEN baseline_var_end_date >= baseline_var_start_date THEN 1 ELSE -1 END) * (baseline_var_full_weeks * 5 + GREATEST(0, LEAST(baseline_var_remainder, 6 - baseline_var_dow)) + GREATEST(0, baseline_var_remainder - (8 - baseline_var_dow))) END AS ""Variance_Finish_BL"",",
+				                    "CASE WHEN adj_baseline_var_start_date IS NULL OR adj_baseline_var_end_date IS NULL THEN NULL WHEN adj_baseline_var_start_date = adj_baseline_var_end_date THEN 0 ELSE (CASE WHEN adj_baseline_var_end_date >= adj_baseline_var_start_date THEN 1 ELSE -1 END) * (adj_baseline_var_full_weeks * 5 + GREATEST(0, LEAST(adj_baseline_var_remainder, 6 - adj_baseline_var_dow)) + GREATEST(0, adj_baseline_var_remainder - (8 - adj_baseline_var_dow))) END AS ""Variance_Finish_Adjusted_BL"",",
 				                    "baseline_finish AS ""Baseline Finish"", baseline_start AS ""Baseline Start"", COALESCE(previous_task_start, start) AS ""Previous Month Start"", COALESCE(previous_task_finish, finish) AS ""Previous Month Finish"",",
 				                    "CASE WHEN previous_project_update_date IS NOT NULL AND project_previous_task_finish > project_previous_task_data_date AND project_previous_task_finish <= data_date AND COALESCE(status_code, '') <> 'Complete' THEN 1 ELSE 0 END AS ""Planned Not Completed Last Period"",",
 				                    "CASE WHEN start_var_start_date IS NULL OR start_var_end_date IS NULL THEN 0 WHEN start_var_start_date = start_var_end_date THEN 0 ELSE (CASE WHEN start_var_end_date >= start_var_start_date THEN 1 ELSE -1 END) * (start_var_full_weeks * 5 + GREATEST(0, LEAST(start_var_remainder, 6 - start_var_dow)) + GREATEST(0, start_var_remainder - (8 - start_var_dow))) END AS ""Start_Variance_Previous_Month"",",
@@ -927,6 +986,7 @@ table '01 XER_TASK'
 				                {"remainingduration", type number},
 				                {"Finish_Variance_Previous_Month", Int64.Type},
 				                {"Variance_Finish_BL", Int64.Type},
+				                {"Variance_Finish_Adjusted_BL", Int64.Type},
 				                {"Baseline Finish", type date},
 				                {"Baseline Start", type date},
 				                {"Previous Month Start", type date},
@@ -964,7 +1024,7 @@ table '01 XER_TASK'
 				                "task_id_key", "driving_path_flag", "remaining_duration", "early_end_date", "monthupdate", "task_name", 
 				                "data_date", "act_end_date", "Finish", "proj_id_key", "wbs_id_key", "free_float", "cstr_type", "Start", 
 				                "filename", "late_end_date", "ProjectCode", "UpdateDate", "ProjectName", "Finish_Variance_Previous_Month", 
-				                "Driven_DataDate", "Variance_Finish_BL", "Baseline Finish", "Baseline Start", "Previous Month Start", 
+				                "Driven_DataDate", "Variance_Finish_BL", "Variance_Finish_Adjusted_BL", "Baseline Finish", "Baseline Start", "Previous Month Start", 
 				                "Previous Month Finish", "Planned Not Completed Last Period", "Start_Variance_Previous_Month", 
 				                "PreviousDataDate", "Previous Remaining Working Days", "Planned Last Period", "Completed Last Period", 
 				                "Completed of Planned Last Period", "Baseline Effective_Early_End", "Baseline Effective_Late_End", 
@@ -977,5 +1037,5 @@ table '01 XER_TASK'
 
 	annotation PBI_NavigationStepName = Navigation
 
-	annotation PBI_ResultType = Table
+	annotation PBI_ResultType = Exception
 

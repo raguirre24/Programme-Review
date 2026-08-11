@@ -39,23 +39,51 @@
                     "Where": [
                       {
                         "Condition": {
-                          "Not": {
-                            "Expression": {
-                              "Comparison": {
-                                "ComparisonKind": 0,
-                                "Left": {
-                                  "Column": {
-                                    "Expression": {
-                                      "SourceRef": {
-                                        "Source": "p"
+                          "And": {
+                            "Left": {
+                              "Not": {
+                                "Expression": {
+                                  "Comparison": {
+                                    "ComparisonKind": 0,
+                                    "Left": {
+                                      "Column": {
+                                        "Expression": {
+                                          "SourceRef": {
+                                            "Source": "p"
+                                          }
+                                        },
+                                        "Property": "State"
                                       }
                                     },
-                                    "Property": "State"
+                                    "Right": {
+                                      "Literal": {
+                                        "Value": "null"
+                                      }
+                                    }
                                   }
-                                },
-                                "Right": {
-                                  "Literal": {
-                                    "Value": "null"
+                                }
+                              }
+                            },
+                            "Right": {
+                              "Not": {
+                                "Expression": {
+                                  "Comparison": {
+                                    "ComparisonKind": 0,
+                                    "Left": {
+                                      "Column": {
+                                        "Expression": {
+                                          "SourceRef": {
+                                            "Source": "p"
+                                          }
+                                        },
+                                        "Property": "State"
+                                      }
+                                    },
+                                    "Right": {
+                                      "Literal": {
+                                        "Value": "'--'"
+                                      }
+                                    }
                                   }
                                 }
                               }
@@ -250,6 +278,18 @@
               "objects": {}
             }
           },
+          "a0f7c2b3d4e5f6a7b8c9": {
+            "singleVisual": {
+              "visualType": "image",
+              "objects": {}
+            }
+          },
+          "b0f7c2b3d4e5f6a7b8c9": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {}
+            }
+          },
           "b31dc3d512c9206e91d0": {
             "singleVisual": {
               "visualType": "shape",
@@ -272,7 +312,7 @@
             "filters": {
               "byExpr": [
                 {
-                  "name": "68ed62bc3da0246f71e6",
+                  "name": "2ec8cf00ad053b0c0243",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -325,7 +365,7 @@
                                       [
                                         {
                                           "Literal": {
-                                            "Value": "datetime'2026-06-30T00:00:00'"
+                                            "Value": "datetime'2026-07-31T00:00:00'"
                                           }
                                         }
                                       ]
@@ -402,7 +442,7 @@
             "filters": {
               "byExpr": [
                 {
-                  "name": "5c9affc734b83aa60080",
+                  "name": "5a076e1b495e629d8358",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -417,7 +457,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "660d5bcb35e46e101ed4",
+                  "name": "c1c8ffb4be76770e0bd5",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -432,7 +472,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "f04a70bc1b2d2ed20e7b",
+                  "name": "099a64b1edbc753874cc",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -447,7 +487,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "0249fe53dc27a095a5b8",
+                  "name": "102f727eb0ad8328d851",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -603,23 +643,51 @@
                     "Where": [
                       {
                         "Condition": {
-                          "Not": {
-                            "Expression": {
-                              "Comparison": {
-                                "ComparisonKind": 0,
-                                "Left": {
-                                  "Column": {
-                                    "Expression": {
-                                      "SourceRef": {
-                                        "Source": "p"
+                          "And": {
+                            "Left": {
+                              "Not": {
+                                "Expression": {
+                                  "Comparison": {
+                                    "ComparisonKind": 0,
+                                    "Left": {
+                                      "Column": {
+                                        "Expression": {
+                                          "SourceRef": {
+                                            "Source": "p"
+                                          }
+                                        },
+                                        "Property": "Project"
                                       }
                                     },
-                                    "Property": "Project"
+                                    "Right": {
+                                      "Literal": {
+                                        "Value": "null"
+                                      }
+                                    }
                                   }
-                                },
-                                "Right": {
-                                  "Literal": {
-                                    "Value": "null"
+                                }
+                              }
+                            },
+                            "Right": {
+                              "Not": {
+                                "Expression": {
+                                  "Comparison": {
+                                    "ComparisonKind": 0,
+                                    "Left": {
+                                      "Column": {
+                                        "Expression": {
+                                          "SourceRef": {
+                                            "Source": "p"
+                                          }
+                                        },
+                                        "Property": "Project"
+                                      }
+                                    },
+                                    "Right": {
+                                      "Literal": {
+                                        "Value": "'--'"
+                                      }
+                                    }
                                   }
                                 }
                               }
@@ -675,7 +743,7 @@
             "filters": {
               "byExpr": [
                 {
-                  "name": "277b825ad71028bbb2bd",
+                  "name": "2f667349b231ee052570",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -690,7 +758,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "d9321071bc90a56412d1",
+                  "name": "1a7773a8414855033203",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -767,7 +835,7 @@
               "expanded": {
                 "expr": {
                   "Literal": {
-                    "Value": "true"
+                    "Value": "false"
                   }
                 }
               },

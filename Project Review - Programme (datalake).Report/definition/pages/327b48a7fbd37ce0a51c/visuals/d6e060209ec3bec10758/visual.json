@@ -7,7 +7,7 @@
     "z": 34000,
     "height": 50,
     "width": 442.85714285714289,
-    "tabOrder": 34000
+    "tabOrder": 32000
   },
   "visual": {
     "visualType": "slicer",
@@ -306,5 +306,24 @@
       "filterChanges": true
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "9772131160054a44e59a",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "03 XER_PROJWBS"
+              }
+            },
+            "Property": "Has_Unscheduled_Task_In_Path"
+          }
+        },
+        "type": "Categorical",
+        "howCreated": "User"
+      }
+    ]
   }
 }

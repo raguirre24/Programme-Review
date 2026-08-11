@@ -15,7 +15,15 @@ table '03 XER_PROJWBS'
 
 		annotation SummarizationSetBy = Automatic
 
-	column Level_1 = '03 XER_PROJWBS'[ProjectCode]
+	column Level_1 =
+			
+			VAR WBS1_Name = LOOKUPVALUE(
+			    '03 XER_PROJWBS'[wbs_name],
+			    '03 XER_PROJWBS'[wbs_id_key],
+			    PATHITEM('03 XER_PROJWBS'[Path], 1)
+			)
+			RETURN
+			  WBS1_Name
 		lineageTag: 20447cf6-1c34-4bde-999c-ac027f78a9b7
 		summarizeBy: none
 
@@ -117,6 +125,22 @@ table '03 XER_PROJWBS'
 		summarizeBy: none
 
 		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Level_6 = ```
+			
+			VAR WBS4_Name = LOOKUPVALUE(
+			    '03 XER_PROJWBS'[wbs_name],
+			    '03 XER_PROJWBS'[wbs_id_key],
+			    PATHITEM('03 XER_PROJWBS'[Path], 6)
+			)
+			RETURN
+			    COALESCE(WBS4_Name, '03 XER_PROJWBS'[Level_5])
+			
+			```
+		lineageTag: 02c268a5-7839-486e-80d8-27388792a66e
+		summarizeBy: none
 
 		annotation SummarizationSetBy = Automatic
 

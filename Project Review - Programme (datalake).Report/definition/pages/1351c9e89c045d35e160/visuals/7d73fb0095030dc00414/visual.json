@@ -3,8 +3,8 @@
   "name": "7d73fb0095030dc00414",
   "position": {
     "x": 596.05639676044484,
-    "y": 587.53098188751187,
-    "z": 10000,
+    "y": 587,
+    "z": 8000,
     "height": 477.71210676835079,
     "width": 587.53098188751187,
     "tabOrder": 10000
@@ -586,6 +586,104 @@
         },
         "type": "Advanced",
         "howCreated": "User"
+      },
+      {
+        "name": "22cd32e06553ba5a053a",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "CurrentDate"
+              }
+            },
+            "Property": "UpdateDate"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "582e63624ad54061b0de",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "PreviousMonth_FinishVariance_Ahead_TT_Task (-1)"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "9b415f35d14a110d44ca",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "PreviousMonth_FinishVariance_Ahead_TT_Task"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "3e5c033d1b310aa06529",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "PreviousMonth_FinishVariance_<1_Month_TT_Task"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "c53dd14b15ab15115439",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "PreviousMonth_FinishVariance_<3_Month_TT_Task"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "9ea11dcb4ee0175b5187",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "PreviousMonth_FinishVariance_<6_Month_TT_Task"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "da827d01ed6b6229488b",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER  Counts"
+              }
+            },
+            "Property": "PreviousMonth_FinishVariance_>6_Month_TT_Task"
+          }
+        },
+        "type": "Advanced"
       }
     ]
   }

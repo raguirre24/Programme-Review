@@ -20,6 +20,121 @@
       "type": "RegisteredResources"
     }
   },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "20f6fe27ae5c561674b6",
+        "ordinal": 0,
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "01 XER_TASK"
+              }
+            },
+            "Property": "Is Unscheduled"
+          }
+        },
+        "type": "Categorical",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "0",
+              "Entity": "01 XER_TASK",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "In": {
+                  "Expressions": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "0"
+                          }
+                        },
+                        "Property": "Is Unscheduled"
+                      }
+                    }
+                  ],
+                  "Values": [
+                    [
+                      {
+                        "Literal": {
+                          "Value": "false"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "howCreated": "User"
+      },
+      {
+        "name": "adf145333090dd095a53",
+        "ordinal": 1,
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "01 XER_TASK"
+              }
+            },
+            "Property": "IsExcludedFromDataLake"
+          }
+        },
+        "type": "Categorical",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "0",
+              "Entity": "01 XER_TASK",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "In": {
+                  "Expressions": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "0"
+                          }
+                        },
+                        "Property": "IsExcludedFromDataLake"
+                      }
+                    }
+                  ],
+                  "Values": [
+                    [
+                      {
+                        "Literal": {
+                          "Value": "false"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "howCreated": "User"
+      }
+    ],
+    "filterSortOrder": "Custom"
+  },
   "objects": {
     "section": [
       {
@@ -79,23 +194,23 @@
       ]
     },
     {
-      "name": "LongestPathVisual",
-      "type": "CustomVisual",
-      "items": [
-        {
-          "name": "LongestPathVisual.pbiviz.json",
-          "path": "LongestPathVisual.pbiviz.json",
-          "type": "CustomVisualMetadata"
-        }
-      ]
-    },
-    {
       "name": "timelineOfEvents1E8747A536B74AB586FADD94AE72B347",
       "type": "CustomVisual",
       "items": [
         {
           "name": "timelineOfEvents1E8747A536B74AB586FADD94AE72B347.pbiviz.json",
           "path": "timelineOfEvents1E8747A536B74AB586FADD94AE72B347.pbiviz.json",
+          "type": "CustomVisualMetadata"
+        }
+      ]
+    },
+    {
+      "name": "LongestPathVisual",
+      "type": "CustomVisual",
+      "items": [
+        {
+          "name": "LongestPathVisual.pbiviz.json",
+          "path": "LongestPathVisual.pbiviz.json",
           "type": "CustomVisualMetadata"
         }
       ]

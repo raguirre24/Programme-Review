@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.6.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
   "name": "df7cac4b5b3f696b209c",
   "position": {
     "x": 425.35384615384612,
@@ -343,6 +343,25 @@
       "filterChanges": true
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "9772131160054a44e59a",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "03 XER_PROJWBS"
+              }
+            },
+            "Property": "Has_Unscheduled_Task_In_Path"
+          }
+        },
+        "type": "Categorical",
+        "howCreated": "User"
+      }
+    ]
   },
   "isHidden": true
 }

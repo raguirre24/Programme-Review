@@ -1,4 +1,5 @@
 relationship ed31ad25-fc39-3b95-b2cc-725d09bfecd9
+	crossFilteringBehavior: bothDirections
 	fromColumn: '01 XER_TASK'.wbs_id_key
 	toColumn: '03 XER_PROJWBS'.wbs_id_key
 

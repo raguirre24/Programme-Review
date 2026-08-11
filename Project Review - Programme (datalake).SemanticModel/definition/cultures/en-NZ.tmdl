@@ -187,6 +187,12 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
+			          "type": {
+			            "State": "Generated",
+			            "Weight": 0.97
+			          }
+			        },
+			        {
 			          "task category": {
 			            "Type": "Noun",
 			            "State": "Suggested",
@@ -227,6 +233,36 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
+			          "genre": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.736
+			          }
+			        },
+			        {
+			          "manner": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.736
+			          }
+			        },
+			        {
+			          "variety": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.736
+			          }
+			        },
+			        {
 			          "task brand": {
 			            "Type": "Noun",
 			            "State": "Suggested",
@@ -248,36 +284,6 @@ cultureInfo en-NZ
 			        },
 			        {
 			          "task kind": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.727
-			          }
-			        },
-			        {
-			          "task style": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.727
-			          }
-			        },
-			        {
-			          "task form": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.727
-			          }
-			        },
-			        {
-			          "task grouping": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
@@ -443,6 +449,16 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.75
+			          }
+			        },
+			        {
+			          "task key": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.727
 			          }
 			        },
 			        {
@@ -2042,6 +2058,12 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
+			          "category": {
+			            "State": "Generated",
+			            "Weight": 0.97
+			          }
+			        },
+			        {
 			          "status classification": {
 			            "Type": "Noun",
 			            "State": "Suggested",
@@ -2049,6 +2071,16 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.75
+			          }
+			        },
+			        {
+			          "classification": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.736
 			          }
 			        },
 			        {
@@ -2102,43 +2134,33 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "category category": {
+			          "class": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
 			              "Agent": "Thesaurus"
 			            },
-			            "Weight": 0.6
+			            "Weight": 0.714
 			          }
 			        },
 			        {
-			          "importance category": {
+			          "grouping": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
 			              "Agent": "Thesaurus"
 			            },
-			            "Weight": 0.6
+			            "Weight": 0.714
 			          }
 			        },
 			        {
-			          "prestige category": {
+			          "kind": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
 			              "Agent": "Thesaurus"
 			            },
-			            "Weight": 0.6
-			          }
-			        },
-			        {
-			          "prominence category": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.6
+			            "Weight": 0.714
 			          }
 			        }
 			      ]
@@ -2660,6 +2682,12 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
+			          "category": {
+			            "State": "Generated",
+			            "Weight": 0.97
+			          }
+			        },
+			        {
 			          "date category": {
 			            "State": "Generated",
 			            "Weight": 0.97
@@ -2736,6 +2764,16 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
+			          "classification": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.736
+			          }
+			        },
+			        {
 			          "date class": {
 			            "Type": "Noun",
 			            "State": "Suggested",
@@ -2747,16 +2785,6 @@ cultureInfo en-NZ
 			        },
 			        {
 			          "date group": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.727
-			          }
-			        },
-			        {
-			          "date type": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
@@ -2902,6 +2930,12 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
+			          "category": {
+			            "State": "Generated",
+			            "Weight": 0.97
+			          }
+			        },
+			        {
 			          "date category": {
 			            "State": "Generated",
 			            "Weight": 0.97
@@ -2978,6 +3012,16 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
+			          "classification": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.736
+			          }
+			        },
+			        {
 			          "date class": {
 			            "Type": "Noun",
 			            "State": "Suggested",
@@ -2989,16 +3033,6 @@ cultureInfo en-NZ
 			        },
 			        {
 			          "date group": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.727
-			          }
-			        },
-			        {
-			          "date type": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
@@ -5588,6 +5622,12 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
+			          "category": {
+			            "State": "Generated",
+			            "Weight": 0.97
+			          }
+			        },
+			        {
 			          "float classification": {
 			            "Type": "Noun",
 			            "State": "Suggested",
@@ -5595,6 +5635,16 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.75
+			          }
+			        },
+			        {
+			          "classification": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.736
 			          }
 			        },
 			        {
@@ -5645,6 +5695,36 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.727
+			          }
+			        },
+			        {
+			          "class": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.714
+			          }
+			        },
+			        {
+			          "grouping": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.714
+			          }
+			        },
+			        {
+			          "kind": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.714
 			          }
 			        }
 			      ]
@@ -6061,6 +6141,12 @@ cultureInfo en-NZ
 			            "Type": "Noun",
 			            "State": "Generated",
 			            "Weight": 0.99
+			          }
+			        },
+			        {
+			          "type": {
+			            "State": "Generated",
+			            "Weight": 0.97
 			          }
 			        },
 			        {
@@ -7708,6 +7794,12 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
+			          "category": {
+			            "State": "Generated",
+			            "Weight": 0.97
+			          }
+			        },
+			        {
 			          "variance category": {
 			            "State": "Generated",
 			            "Weight": 0.97
@@ -7845,6 +7937,12 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
+			          "category": {
+			            "State": "Generated",
+			            "Weight": 0.97
+			          }
+			        },
+			        {
 			          "remaining duration classification": {
 			            "Type": "Noun",
 			            "State": "Suggested",
@@ -7902,6 +8000,46 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.739
+			          }
+			        },
+			        {
+			          "classification": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.736
+			          }
+			        },
+			        {
+			          "class": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.714
+			          }
+			        },
+			        {
+			          "grouping": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.714
+			          }
+			        },
+			        {
+			          "kind": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.714
 			          }
 			        }
 			      ]
@@ -10629,6 +10767,12 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
+			          "category": {
+			            "State": "Generated",
+			            "Weight": 0.97
+			          }
+			        },
+			        {
 			          "float classification": {
 			            "Type": "Noun",
 			            "State": "Suggested",
@@ -10636,6 +10780,16 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.75
+			          }
+			        },
+			        {
+			          "classification": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.736
 			          }
 			        },
 			        {
@@ -10686,6 +10840,36 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.727
+			          }
+			        },
+			        {
+			          "class": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.714
+			          }
+			        },
+			        {
+			          "grouping": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.714
+			          }
+			        },
+			        {
+			          "kind": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.714
 			          }
 			        }
 			      ]
@@ -10830,6 +11014,12 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
+			          "category": {
+			            "State": "Generated",
+			            "Weight": 0.97
+			          }
+			        },
+			        {
 			          "duration classification": {
 			            "Type": "Noun",
 			            "State": "Suggested",
@@ -10837,6 +11027,16 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.75
+			          }
+			        },
+			        {
+			          "classification": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.736
 			          }
 			        },
 			        {
@@ -10887,6 +11087,36 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.727
+			          }
+			        },
+			        {
+			          "class": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.714
+			          }
+			        },
+			        {
+			          "grouping": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.714
+			          }
+			        },
+			        {
+			          "kind": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.714
 			          }
 			        }
 			      ]
@@ -13713,6 +13943,12 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
+			          "type": {
+			            "State": "Generated",
+			            "Weight": 0.97
+			          }
+			        },
+			        {
 			          "filter task category": {
 			            "Type": "Noun",
 			            "State": "Suggested",
@@ -13836,6 +14072,12 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
+			          "type": {
+			            "State": "Generated",
+			            "Weight": 0.97
+			          }
+			        },
+			        {
 			          "task category": {
 			            "Type": "Noun",
 			            "State": "Suggested",
@@ -13876,6 +14118,36 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
+			          "genre": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.736
+			          }
+			        },
+			        {
+			          "manner": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.736
+			          }
+			        },
+			        {
+			          "variety": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.736
+			          }
+			        },
+			        {
 			          "task brand": {
 			            "Type": "Noun",
 			            "State": "Suggested",
@@ -13897,36 +14169,6 @@ cultureInfo en-NZ
 			        },
 			        {
 			          "task kind": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.727
-			          }
-			        },
-			        {
-			          "task style": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.727
-			          }
-			        },
-			        {
-			          "task form": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.727
-			          }
-			        },
-			        {
-			          "task grouping": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
@@ -13966,6 +14208,16 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.75
+			          }
+			        },
+			        {
+			          "task key": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.727
 			          }
 			        }
 			      ]
@@ -14371,6 +14623,12 @@ cultureInfo en-NZ
 			            "Type": "Noun",
 			            "State": "Generated",
 			            "Weight": 0.99
+			          }
+			        },
+			        {
+			          "category": {
+			            "State": "Generated",
+			            "Weight": 0.97
 			          }
 			        },
 			        {
@@ -16478,6 +16736,12 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
+			          "type": {
+			            "State": "Generated",
+			            "Weight": 0.97
+			          }
+			        },
+			        {
 			          "filter constraint category": {
 			            "Type": "Noun",
 			            "State": "Suggested",
@@ -16714,6 +16978,12 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
+			          "type": {
+			            "State": "Generated",
+			            "Weight": 0.97
+			          }
+			        },
+			        {
 			          "constraint category": {
 			            "Type": "Noun",
 			            "State": "Suggested",
@@ -16754,6 +17024,36 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
+			          "genre": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.736
+			          }
+			        },
+			        {
+			          "manner": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.736
+			          }
+			        },
+			        {
+			          "variety": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.736
+			          }
+			        },
+			        {
 			          "constraint brand": {
 			            "Type": "Noun",
 			            "State": "Suggested",
@@ -16775,36 +17075,6 @@ cultureInfo en-NZ
 			        },
 			        {
 			          "constraint kind": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.727
-			          }
-			        },
-			        {
-			          "constraint style": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.727
-			          }
-			        },
-			        {
-			          "constraint form": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.727
-			          }
-			        },
-			        {
-			          "constraint grouping": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
@@ -21020,6 +21290,12 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
+			          "type": {
+			            "State": "Generated",
+			            "Weight": 0.97
+			          }
+			        },
+			        {
 			          "link category": {
 			            "Type": "Noun",
 			            "State": "Suggested",
@@ -21060,6 +21336,36 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
+			          "genre": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.736
+			          }
+			        },
+			        {
+			          "manner": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.736
+			          }
+			        },
+			        {
+			          "variety": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.736
+			          }
+			        },
+			        {
 			          "link brand": {
 			            "Type": "Noun",
 			            "State": "Suggested",
@@ -21081,36 +21387,6 @@ cultureInfo en-NZ
 			        },
 			        {
 			          "link kind": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.727
-			          }
-			        },
-			        {
-			          "link style": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.727
-			          }
-			        },
-			        {
-			          "link form": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.727
-			          }
-			        },
-			        {
-			          "link grouping": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
@@ -25231,6 +25507,16 @@ cultureInfo en-NZ
 			            },
 			            "Weight": 0.75
 			          }
+			        },
+			        {
+			          "task key": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.727
+			          }
 			        }
 			      ]
 			    },
@@ -27472,6 +27758,12 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
+			          "type": {
+			            "State": "Generated",
+			            "Weight": 0.97
+			          }
+			        },
+			        {
 			          "predecessor task category": {
 			            "Type": "Noun",
 			            "State": "Suggested",
@@ -27595,6 +27887,12 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
+			          "type": {
+			            "State": "Generated",
+			            "Weight": 0.97
+			          }
+			        },
+			        {
 			          "task category": {
 			            "Type": "Noun",
 			            "State": "Suggested",
@@ -27635,6 +27933,36 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
+			          "genre": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.736
+			          }
+			        },
+			        {
+			          "manner": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.736
+			          }
+			        },
+			        {
+			          "variety": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.736
+			          }
+			        },
+			        {
 			          "task brand": {
 			            "Type": "Noun",
 			            "State": "Suggested",
@@ -27656,36 +27984,6 @@ cultureInfo en-NZ
 			        },
 			        {
 			          "task kind": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.727
-			          }
-			        },
-			        {
-			          "task style": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.727
-			          }
-			        },
-			        {
-			          "task form": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.727
-			          }
-			        },
-			        {
-			          "task grouping": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
@@ -32182,17 +32480,17 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "main": {
+			          "task key": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
 			              "Agent": "Thesaurus"
 			            },
-			            "Weight": 0.476
+			            "Weight": 0.582
 			          }
 			        },
 			        {
-			          "basic": {
+			          "main": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
@@ -32669,17 +32967,17 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "main": {
+			          "task key": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
 			              "Agent": "Thesaurus"
 			            },
-			            "Weight": 0.476
+			            "Weight": 0.582
 			          }
 			        },
 			        {
-			          "basic": {
+			          "main": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
@@ -33783,128 +34081,73 @@ cultureInfo en-NZ
 			        }
 			      ]
 			    },
-			    "entity_04a_xer_adj_baseline": {
+			    "monthly_resource_distribution_baseline.rsrc_name": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "04A XER_ADJ_BASELINE"
+			          "ConceptualEntity": "Monthly Resource Distribution Baseline",
+			          "ConceptualProperty": "rsrc_name"
 			        }
 			      },
 			      "State": "Generated",
 			      "Terms": [
 			        {
-			          "04a xer_adj_baseline": {
-			            "State": "Generated"
-			          }
-			        }
-			      ]
-			    },
-			    "entity_04a_xer_adj_baseline.project_code": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "04A XER_ADJ_BASELINE",
-			          "ConceptualProperty": "ProjectCode"
-			        }
-			      },
-			      "State": "Generated",
-			      "Terms": [
-			        {
-			          "project code": {
+			          "rsrc name": {
 			            "State": "Generated"
 			          }
 			        },
 			        {
-			          "ProjectCode": {
+			          "rsrc_name": {
 			            "Type": "Noun",
 			            "State": "Generated",
 			            "Weight": 0.99
 			          }
 			        },
 			        {
-			          "assignment code": {
+			          "rsrc nickname": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
 			              "Agent": "Thesaurus"
 			            },
-			            "Weight": 0.6
+			            "Weight": 0.727
 			          }
 			        },
 			        {
-			          "development code": {
+			          "rsrc title": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
 			              "Agent": "Thesaurus"
 			            },
-			            "Weight": 0.6
+			            "Weight": 0.727
 			          }
 			        },
 			        {
-			          "blueprint code": {
+			          "rsrc label": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
 			              "Agent": "Thesaurus"
 			            },
-			            "Weight": 0.582
+			            "Weight": 0.727
 			          }
 			        },
 			        {
-			          "design code": {
+			          "rsrc tag": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
 			              "Agent": "Thesaurus"
 			            },
-			            "Weight": 0.582
-			          }
-			        },
-			        {
-			          "estimate code": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.582
-			          }
-			        },
-			        {
-			          "forecast code": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.582
-			          }
-			        },
-			        {
-			          "initiative code": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.582
-			          }
-			        },
-			        {
-			          "plan code": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.582
+			            "Weight": 0.727
 			          }
 			        }
 			      ]
 			    },
-			    "entity_04a_xer_adj_baseline.task_code": {
+			    "monthly_resource_distribution_baseline.task_code": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "04A XER_ADJ_BASELINE",
+			          "ConceptualEntity": "Monthly Resource Distribution Baseline",
 			          "ConceptualProperty": "task_code"
 			        }
 			      },
@@ -33931,416 +34174,385 @@ cultureInfo en-NZ
 			            },
 			            "Weight": 0.75
 			          }
-			        }
-			      ]
-			    },
-			    "entity_04a_xer_adj_baseline.first_added_month": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "04A XER_ADJ_BASELINE",
-			          "ConceptualProperty": "First_Added_Month"
-			        }
-			      },
-			      "State": "Generated",
-			      "Terms": [
-			        {
-			          "first added month": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "First_Added_Month": {
-			            "Type": "Noun",
-			            "State": "Generated",
-			            "Weight": 0.99
-			          }
-			        },
-			        {
-			          "date": {
-			            "State": "Generated",
-			            "Weight": 0.7
-			          }
-			        },
-			        {
-			          "first added mth": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.762
-			          }
-			        }
-			      ],
-			      "SemanticType": "Time"
-			    },
-			    "entity_04a_xer_adj_baseline.start": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "04A XER_ADJ_BASELINE",
-			          "ConceptualProperty": "Start"
-			        }
-			      },
-			      "State": "Generated",
-			      "Terms": [
-			        {
-			          "start": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "date": {
-			            "State": "Generated",
-			            "Weight": 0.7
-			          }
-			        },
-			        {
-			          "twitch": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.476
-			          }
-			        },
-			        {
-			          "jump": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.476
-			          }
-			        },
-			        {
-			          "jerk": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.476
-			          }
-			        },
-			        {
-			          "flinch": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.476
-			          }
-			        },
-			        {
-			          "jolt": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.476
-			          }
-			        },
-			        {
-			          "shock": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.452
-			          }
-			        },
-			        {
-			          "fright": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.452
-			          }
-			        },
-			        {
-			          "surprise": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.452
-			          }
-			        },
-			        {
-			          "turn": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.452
-			          }
-			        }
-			      ],
-			      "SemanticType": "Time"
-			    },
-			    "entity_04a_xer_adj_baseline.finish": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "04A XER_ADJ_BASELINE",
-			          "ConceptualProperty": "Finish"
-			        }
-			      },
-			      "State": "Generated",
-			      "Terms": [
-			        {
-			          "finish": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "date": {
-			            "State": "Generated",
-			            "Weight": 0.7
-			          }
-			        },
-			        {
-			          "appearance": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.491
-			          }
-			        },
-			        {
-			          "surface": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.476
-			          }
-			        },
-			        {
-			          "texture": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.476
-			          }
-			        },
-			        {
-			          "quality": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.476
-			          }
-			        },
-			        {
-			          "varnish": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.476
-			          }
-			        },
-			        {
-			          "gloss": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.476
-			          }
-			        },
-			        {
-			          "gilt": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.476
-			          }
-			        },
-			        {
-			          "polish": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.476
-			          }
-			        },
-			        {
-			          "conclusion": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.466
-			          }
-			        },
-			        {
-			          "cessation": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.466
-			          }
-			        }
-			      ],
-			      "SemanticType": "Time"
-			    },
-			    "entity_04a_xer_adj_baseline.project_task_key": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "04A XER_ADJ_BASELINE",
-			          "ConceptualProperty": "ProjectTaskKey"
-			        }
-			      },
-			      "State": "Generated",
-			      "Terms": [
-			        {
-			          "project task key": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "ProjectTaskKey": {
-			            "Type": "Noun",
-			            "State": "Generated",
-			            "Weight": 0.99
-			          }
-			        },
-			        {
-			          "key": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
 			        },
 			        {
 			          "task key": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "assignment task key": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
 			              "Agent": "Thesaurus"
 			            },
-			            "Weight": 0.609
+			            "Weight": 0.727
+			          }
+			        }
+			      ]
+			    },
+			    "dynamic_titles__formatting.datalake_refresh_note": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Dynamic Titles & Formatting",
+			          "ConceptualProperty": "Datalake Refresh Note"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "datalake refresh note": {
+			            "State": "Generated"
 			          }
 			        },
 			        {
-			          "development task key": {
+			          "datalake refresh memo": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
 			              "Agent": "Thesaurus"
 			            },
-			            "Weight": 0.609
+			            "Weight": 0.508
 			          }
 			        },
 			        {
-			          "blueprint task key": {
+			          "datalake refresh memorandum": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
 			              "Agent": "Thesaurus"
 			            },
-			            "Weight": 0.591
+			            "Weight": 0.508
 			          }
 			        },
 			        {
-			          "design task key": {
+			          "datalake refresh reminder": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
 			              "Agent": "Thesaurus"
 			            },
-			            "Weight": 0.591
+			            "Weight": 0.508
 			          }
 			        },
 			        {
-			          "estimate task key": {
+			          "datalake refresh letter": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
 			              "Agent": "Thesaurus"
 			            },
-			            "Weight": 0.591
+			            "Weight": 0.492
 			          }
 			        },
 			        {
-			          "forecast task key": {
+			          "datalake refresh message": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
 			              "Agent": "Thesaurus"
 			            },
-			            "Weight": 0.591
+			            "Weight": 0.492
 			          }
 			        },
 			        {
-			          "initiative task key": {
+			          "datalake refresh communication": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
 			              "Agent": "Thesaurus"
 			            },
-			            "Weight": 0.591
+			            "Weight": 0.492
 			          }
 			        },
 			        {
-			          "plan task key": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.591
-			          }
-			        },
-			        {
-			          "task task key": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.591
-			          }
-			        },
-			        {
-			          "project task solution": {
+			          "datalake refresh annotation": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.482
+			          }
+			        },
+			        {
+			          "datalake refresh addendum": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.482
+			          }
+			        },
+			        {
+			          "datalake refresh commentary": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.482
+			          }
+			        },
+			        {
+			          "datalake refresh footnote": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.468
+			          }
+			        }
+			      ]
+			    },
+			    "dynamic_titles__formatting.datalake_symbol": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Dynamic Titles & Formatting",
+			          "ConceptualProperty": "Datalake Symbol"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "datalake symbol": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "datalake representation": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.5
+			          }
+			        },
+			        {
+			          "datalake icon": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.5
+			          }
+			        },
+			        {
+			          "datalake pictogram": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.5
+			          }
+			        },
+			        {
+			          "datalake sign": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.485
+			          }
+			        },
+			        {
+			          "datalake character": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.485
+			          }
+			        },
+			        {
+			          "datalake figure": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.485
+			          }
+			        },
+			        {
+			          "datalake mark": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.485
+			          }
+			        },
+			        {
+			          "datalake emblem": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.475
+			          }
+			        },
+			        {
+			          "datalake indication": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.475
+			          }
+			        },
+			        {
+			          "datalake logo": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.475
+			          }
+			        }
+			      ]
+			    },
+			    "entity_01_xer_task.is_excluded_from_data_lake": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "01 XER_TASK",
+			          "ConceptualProperty": "IsExcludedFromDataLake"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "is excluded from data lake": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "IsExcludedFromDataLake": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        },
+			        {
+			          "is excluded from information lake": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.624
+			          }
+			        },
+			        {
+			          "is excluded from fact lake": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.624
+			          }
+			        },
+			        {
+			          "is excluded from info lake": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.624
+			          }
+			        },
+			        {
+			          "is excluded from statistic lake": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.624
+			          }
+			        },
+			        {
+			          "is excluded from document lake": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.605
+			          }
+			        },
+			        {
+			          "is excluded from figure lake": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.605
+			          }
+			        },
+			        {
+			          "is excluded from record lake": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.605
+			          }
+			        }
+			      ]
+			    },
+			    "entity_06_xer_predecessor.F_float": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "06 XER_PREDECESSOR",
+			          "ConceptualProperty": "FFloat"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "F float": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "FFloat": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        },
+			        {
+			          "float": {
+			            "State": "Generated",
+			            "Weight": 0.97
+			          }
+			        }
+			      ]
+			    },
+			    "entity_01_xer_task.is_unscheduled": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "01 XER_TASK",
+			          "ConceptualProperty": "Is Unscheduled"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "is unscheduled": {
+			            "State": "Generated"
 			          }
 			        }
 			      ]
@@ -34902,6 +35114,699 @@ cultureInfo en-NZ
 			          }
 			        }
 			      ]
+			    },
+			    "monthly_resource_distribution_baseline.rsrc_type": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Monthly Resource Distribution Baseline",
+			          "ConceptualProperty": "rsrc_type"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "rsrc type": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "rsrc_type": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        },
+			        {
+			          "rsrc category": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.75
+			          }
+			        },
+			        {
+			          "rsrc genre": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.75
+			          }
+			        },
+			        {
+			          "rsrc manner": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.75
+			          }
+			        },
+			        {
+			          "rsrc variety": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.75
+			          }
+			        },
+			        {
+			          "rsrc brand": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.727
+			          }
+			        },
+			        {
+			          "rsrc class": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.727
+			          }
+			        },
+			        {
+			          "rsrc kind": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.727
+			          }
+			        },
+			        {
+			          "rsrc style": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.727
+			          }
+			        },
+			        {
+			          "rsrc form": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.727
+			          }
+			        },
+			        {
+			          "rsrc grouping": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.727
+			          }
+			        }
+			      ]
+			    },
+			    "dbo_userpermission.region_id": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "dbo_userpermission",
+			          "ConceptualProperty": "region_id"
+			        }
+			      },
+			      "State": "Generated",
+			      "Visibility": {
+			        "Value": "Hidden"
+			      },
+			      "Terms": [
+			        {
+			          "region id": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "region_id": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        },
+			        {
+			          "region": {
+			            "State": "Generated",
+			            "Weight": 0.97
+			          }
+			        },
+			        {
+			          "location": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.818
+			          }
+			        },
+			        {
+			          "region identification": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.75
+			          }
+			        },
+			        {
+			          "region identity": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.75
+			          }
+			        },
+			        {
+			          "region identifier": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.75
+			          }
+			        },
+			        {
+			          "province": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.736
+			          }
+			        },
+			        {
+			          "region credential": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.727
+			          }
+			        },
+			        {
+			          "area": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.714
+			          }
+			        },
+			        {
+			          "district": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.714
+			          }
+			        },
+			        {
+			          "section": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.714
+			          }
+			        },
+			        {
+			          "zone": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.714
+			          }
+			        }
+			      ]
+			    },
+			    "dbo_userpermission.region": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "dbo_userpermission",
+			          "ConceptualProperty": "region"
+			        }
+			      },
+			      "State": "Generated",
+			      "Visibility": {
+			        "Value": "Hidden"
+			      },
+			      "Terms": [
+			        {
+			          "region": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "location": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.818
+			          }
+			        },
+			        {
+			          "province": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.736
+			          }
+			        },
+			        {
+			          "area": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.714
+			          }
+			        },
+			        {
+			          "district": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.714
+			          }
+			        },
+			        {
+			          "section": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.714
+			          }
+			        },
+			        {
+			          "zone": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.714
+			          }
+			        },
+			        {
+			          "continent": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.714
+			          }
+			        }
+			      ]
+			    },
+			    "entity_01_xer_task.variance_finish_adjusted_BL": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "01 XER_TASK",
+			          "ConceptualProperty": "Variance_Finish_Adjusted_BL"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "variance finish adjusted BL": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "Variance_Finish_Adjusted_BL": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        }
+			      ]
+			    },
+			    "entity_01_xer_task.adj_baseline_finish_variance_category": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "01 XER_TASK",
+			          "ConceptualProperty": "AdjBaselineFinishVarianceCategory"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "adj baseline finish variance category": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "AdjBaselineFinishVarianceCategory": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        },
+			        {
+			          "adj baseline finish variance classification": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.78
+			          }
+			        },
+			        {
+			          "adj baseline finish variance class": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.757
+			          }
+			        },
+			        {
+			          "adj baseline finish variance group": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.757
+			          }
+			        },
+			        {
+			          "adj baseline finish variance type": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.757
+			          }
+			        },
+			        {
+			          "adj baseline finish variance grouping": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.757
+			          }
+			        },
+			        {
+			          "adj baseline finish variance kind": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.757
+			          }
+			        }
+			      ]
+			    },
+			    "entity_03_xer_projwb.level_6": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "03 XER_PROJWBS",
+			          "ConceptualProperty": "Level_6"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "level 6": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "Level_6": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        },
+			        {
+			          "quantity 6": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.6
+			          }
+			        },
+			        {
+			          "threshold 6": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.6
+			          }
+			        },
+			        {
+			          "amount 6": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.582
+			          }
+			        },
+			        {
+			          "grade 6": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.582
+			          }
+			        },
+			        {
+			          "point 6": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.582
+			          }
+			        },
+			        {
+			          "rank 6": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.582
+			          }
+			        },
+			        {
+			          "tier 6": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.582
+			          }
+			        }
+			      ]
+			    },
+			    "XER_measure.show_variance_adjusted_BL": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "ShowVarianceAdjustedBL"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "show variance adjusted BL": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "ShowVarianceAdjustedBL": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        }
+			      ]
+			    },
+			    "XER__count.Baseline_FinishVariance_1_Month_TT_Task": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Baseline_FinishVariance_<1_Month_TT_Task"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Baseline_FinishVariance_<1_Month_TT_Task": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "<1 Month": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "XER__count.Baseline_FinishVariance_3_Month_TT_Task": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Baseline_FinishVariance_<3_Month_TT_Task"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Baseline_FinishVariance_<3_Month_TT_Task": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "1-3 Months": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "XER__count.Baseline_FinishVariance_6_Month_TT_Task": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Baseline_FinishVariance_<6_Month_TT_Task"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Baseline_FinishVariance_<6_Month_TT_Task": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "3-6 Months": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "XER__count.Baseline_FinishVariance_6_Month_TT_Task1": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Baseline_FinishVariance_>6_Month_TT_Task"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Baseline_FinishVariance_>6_Month_TT_Task": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          ">6 Months": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "XER__count.baseline_finish_variance_all_other": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Baseline_FinishVariance_All_Other"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "baseline finish variance all other": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "Baseline_FinishVariance_All_Other": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        }
+			      ]
 			    }
 			  },
 			  "Relationships": {
@@ -35065,6 +35970,11 @@ cultureInfo en-NZ
 			              }
 			            },
 			            {
+			              "category": {
+			                "State": "Generated"
+			              }
+			            },
+			            {
 			              "variance category": {
 			                "State": "Generated"
 			              }
@@ -35129,6 +36039,11 @@ cultureInfo en-NZ
 			          "Nouns": [
 			            {
 			              "previous month finish variance category": {
+			                "State": "Generated"
+			              }
+			            },
+			            {
+			              "category": {
 			                "State": "Generated"
 			              }
 			            },
@@ -35346,6 +36261,11 @@ cultureInfo en-NZ
 			              }
 			            },
 			            {
+			              "category": {
+			                "State": "Generated"
+			              }
+			            },
+			            {
 			              "date category": {
 			                "State": "Generated"
 			              }
@@ -35400,6 +36320,11 @@ cultureInfo en-NZ
 			          "Nouns": [
 			            {
 			              "finish date category": {
+			                "State": "Generated"
+			              }
+			            },
+			            {
+			              "category": {
 			                "State": "Generated"
 			              }
 			            },
@@ -35552,6 +36477,11 @@ cultureInfo en-NZ
 			              "float category": {
 			                "State": "Generated"
 			              }
+			            },
+			            {
+			              "category": {
+			                "State": "Generated"
+			              }
 			            }
 			          ]
 			        }
@@ -35603,6 +36533,11 @@ cultureInfo en-NZ
 			          "Nouns": [
 			            {
 			              "remaining duration category": {
+			                "State": "Generated"
+			              }
+			            },
+			            {
+			              "category": {
 			                "State": "Generated"
 			              }
 			            }
@@ -35727,6 +36662,336 @@ cultureInfo en-NZ
 			          "State": "Generated",
 			          "Weight": 0.99,
 			          "ID": "Phrasing03_xer_projwbs_have_01_xer_tasks"
+			        }
+			      ]
+			    },
+			    "entity_01_xer_task_has_XER__count_baseline_finish_variance_all_other": {
+			      "Binding": {
+			        "ConceptualEntity": "01 XER_TASK"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "entity_01_xer_task": {
+			          "Target": {
+			            "Entity": "entity_01_xer_task"
+			          }
+			        },
+			        "XER__count.baseline_finish_variance_all_other": {
+			          "Target": {
+			            "Entity": "XER__count.baseline_finish_variance_all_other"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "entity_01_xer_task"
+			            },
+			            "Object": {
+			              "Role": "XER__count.baseline_finish_variance_all_other"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "Phrasing01_xer_tasks_have_baseline_finish_variance_all_other"
+			        }
+			      ]
+			    },
+			    "entity_01_xer_task_has_XER__count_Baseline_FinishVariance_6_Month_TT_Task1": {
+			      "Binding": {
+			        "ConceptualEntity": "01 XER_TASK"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "entity_01_xer_task": {
+			          "Target": {
+			            "Entity": "entity_01_xer_task"
+			          }
+			        },
+			        "XER__count.Baseline_FinishVariance_6_Month_TT_Task1": {
+			          "Target": {
+			            "Entity": "XER__count.Baseline_FinishVariance_6_Month_TT_Task1"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "entity_01_xer_task"
+			            },
+			            "Object": {
+			              "Role": "XER__count.Baseline_FinishVariance_6_Month_TT_Task1"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "Phrasing01_xer_tasks_have_Baseline_FinishVariance_6_Month_TT_Task"
+			        }
+			      ]
+			    },
+			    "entity_01_xer_task_has_XER__count_Baseline_FinishVariance_6_Month_TT_Task": {
+			      "Binding": {
+			        "ConceptualEntity": "01 XER_TASK"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "entity_01_xer_task": {
+			          "Target": {
+			            "Entity": "entity_01_xer_task"
+			          }
+			        },
+			        "XER__count.Baseline_FinishVariance_6_Month_TT_Task": {
+			          "Target": {
+			            "Entity": "XER__count.Baseline_FinishVariance_6_Month_TT_Task"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "entity_01_xer_task"
+			            },
+			            "Object": {
+			              "Role": "XER__count.Baseline_FinishVariance_6_Month_TT_Task"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "Phrasing01_xer_tasks_have_Baseline_FinishVariance_6_Month_TT_Task1"
+			        }
+			      ]
+			    },
+			    "entity_01_xer_task_has_XER__count_Baseline_FinishVariance_3_Month_TT_Task": {
+			      "Binding": {
+			        "ConceptualEntity": "01 XER_TASK"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "entity_01_xer_task": {
+			          "Target": {
+			            "Entity": "entity_01_xer_task"
+			          }
+			        },
+			        "XER__count.Baseline_FinishVariance_3_Month_TT_Task": {
+			          "Target": {
+			            "Entity": "XER__count.Baseline_FinishVariance_3_Month_TT_Task"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "entity_01_xer_task"
+			            },
+			            "Object": {
+			              "Role": "XER__count.Baseline_FinishVariance_3_Month_TT_Task"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "Phrasing01_xer_tasks_have_Baseline_FinishVariance_3_Month_TT_Task"
+			        }
+			      ]
+			    },
+			    "entity_01_xer_task_has_XER__count_Baseline_FinishVariance_1_Month_TT_Task": {
+			      "Binding": {
+			        "ConceptualEntity": "01 XER_TASK"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "entity_01_xer_task": {
+			          "Target": {
+			            "Entity": "entity_01_xer_task"
+			          }
+			        },
+			        "XER__count.Baseline_FinishVariance_1_Month_TT_Task": {
+			          "Target": {
+			            "Entity": "XER__count.Baseline_FinishVariance_1_Month_TT_Task"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "entity_01_xer_task"
+			            },
+			            "Object": {
+			              "Role": "XER__count.Baseline_FinishVariance_1_Month_TT_Task"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "Phrasing01_xer_tasks_have_Baseline_FinishVariance_1_Month_TT_Task"
+			        }
+			      ]
+			    },
+			    "entity_01_xer_task_has_XER_measure_show_variance_adjusted_BL": {
+			      "Binding": {
+			        "ConceptualEntity": "01 XER_TASK"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "entity_01_xer_task": {
+			          "Target": {
+			            "Entity": "entity_01_xer_task"
+			          }
+			        },
+			        "XER_measure.show_variance_adjusted_BL": {
+			          "Target": {
+			            "Entity": "XER_measure.show_variance_adjusted_BL"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "entity_01_xer_task"
+			            },
+			            "Object": {
+			              "Role": "XER_measure.show_variance_adjusted_BL"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "Phrasing01_xer_tasks_have_show_variance_adjusted_BL"
+			        }
+			      ]
+			    },
+			    "entity_03_xer_projwb_has_level_6": {
+			      "Binding": {
+			        "ConceptualEntity": "03 XER_PROJWBS"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "entity_03_xer_projwb": {
+			          "Target": {
+			            "Entity": "entity_03_xer_projwb"
+			          }
+			        },
+			        "entity_03_xer_projwb.level_6": {
+			          "Target": {
+			            "Entity": "entity_03_xer_projwb.level_6"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "entity_03_xer_projwb"
+			            },
+			            "Object": {
+			              "Role": "entity_03_xer_projwb.level_6"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "Phrasing03_xer_projwbs_have_level_6"
+			        }
+			      ]
+			    },
+			    "entity_01_xer_task_has_adj_baseline_finish_variance_category": {
+			      "Binding": {
+			        "ConceptualEntity": "01 XER_TASK"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "entity_01_xer_task": {
+			          "Target": {
+			            "Entity": "entity_01_xer_task"
+			          }
+			        },
+			        "entity_01_xer_task.adj_baseline_finish_variance_category": {
+			          "Target": {
+			            "Entity": "entity_01_xer_task.adj_baseline_finish_variance_category"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "entity_01_xer_task"
+			            },
+			            "Object": {
+			              "Role": "entity_01_xer_task.adj_baseline_finish_variance_category"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "Phrasing01_xer_tasks_have_adj_baseline_finish_variance_categories"
+			        }
+			      ]
+			    },
+			    "entity_01_xer_task_has_variance_finish_adjusted_BL": {
+			      "Binding": {
+			        "ConceptualEntity": "01 XER_TASK"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "entity_01_xer_task": {
+			          "Target": {
+			            "Entity": "entity_01_xer_task"
+			          }
+			        },
+			        "entity_01_xer_task.variance_finish_adjusted_BL": {
+			          "Target": {
+			            "Entity": "entity_01_xer_task.variance_finish_adjusted_BL"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "entity_01_xer_task"
+			            },
+			            "Object": {
+			              "Role": "entity_01_xer_task.variance_finish_adjusted_BL"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "Phrasing01_xer_tasks_have_variance_finish_adjusted_BL"
+			        }
+			      ]
+			    },
+			    "monthly_resource_distribution_baseline_has_rsrc_type": {
+			      "Binding": {
+			        "ConceptualEntity": "Monthly Resource Distribution Baseline"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "monthly_resource_distribution_baseline": {
+			          "Target": {
+			            "Entity": "monthly_resource_distribution_baseline"
+			          }
+			        },
+			        "monthly_resource_distribution_baseline.rsrc_type": {
+			          "Target": {
+			            "Entity": "monthly_resource_distribution_baseline.rsrc_type"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "monthly_resource_distribution_baseline"
+			            },
+			            "Object": {
+			              "Role": "monthly_resource_distribution_baseline.rsrc_type"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "monthly_resource_distribution_baselines_have_rsrc_types"
 			        }
 			      ]
 			    },
@@ -36087,20 +37352,20 @@ cultureInfo en-NZ
 			        }
 			      ]
 			    },
-			    "entity_04a_xer_adj_baseline_has_project_task_key": {
+			    "entity_01_xer_task_has_is_unscheduled": {
 			      "Binding": {
-			        "ConceptualEntity": "04A XER_ADJ_BASELINE"
+			        "ConceptualEntity": "01 XER_TASK"
 			      },
 			      "State": "Generated",
 			      "Roles": {
-			        "entity_04a_xer_adj_baseline": {
+			        "entity_01_xer_task": {
 			          "Target": {
-			            "Entity": "entity_04a_xer_adj_baseline"
+			            "Entity": "entity_01_xer_task"
 			          }
 			        },
-			        "entity_04a_xer_adj_baseline.project_task_key": {
+			        "entity_01_xer_task.is_unscheduled": {
 			          "Target": {
-			            "Entity": "entity_04a_xer_adj_baseline.project_task_key"
+			            "Entity": "entity_01_xer_task.is_unscheduled"
 			          }
 			        }
 			      },
@@ -36108,32 +37373,32 @@ cultureInfo en-NZ
 			        {
 			          "Attribute": {
 			            "Subject": {
-			              "Role": "entity_04a_xer_adj_baseline"
+			              "Role": "entity_01_xer_task"
 			            },
 			            "Object": {
-			              "Role": "entity_04a_xer_adj_baseline.project_task_key"
+			              "Role": "entity_01_xer_task.is_unscheduled"
 			            }
 			          },
 			          "State": "Generated",
 			          "Weight": 0.99,
-			          "ID": "Phrasing04a_xer_adj_baselines_have_project_task_keys"
+			          "ID": "Phrasing01_xer_tasks_have_is_unscheduled"
 			        }
 			      ]
 			    },
-			    "entity_04a_xer_adj_baseline_has_finish": {
+			    "entity_06_xer_predecessor_has_F_float": {
 			      "Binding": {
-			        "ConceptualEntity": "04A XER_ADJ_BASELINE"
+			        "ConceptualEntity": "06 XER_PREDECESSOR"
 			      },
 			      "State": "Generated",
 			      "Roles": {
-			        "entity_04a_xer_adj_baseline": {
+			        "entity_06_xer_predecessor": {
 			          "Target": {
-			            "Entity": "entity_04a_xer_adj_baseline"
+			            "Entity": "entity_06_xer_predecessor"
 			          }
 			        },
-			        "entity_04a_xer_adj_baseline.finish": {
+			        "entity_06_xer_predecessor.F_float": {
 			          "Target": {
-			            "Entity": "entity_04a_xer_adj_baseline.finish"
+			            "Entity": "entity_06_xer_predecessor.F_float"
 			          }
 			        }
 			      },
@@ -36141,32 +37406,32 @@ cultureInfo en-NZ
 			        {
 			          "Attribute": {
 			            "Subject": {
-			              "Role": "entity_04a_xer_adj_baseline"
+			              "Role": "entity_06_xer_predecessor"
 			            },
 			            "Object": {
-			              "Role": "entity_04a_xer_adj_baseline.finish"
+			              "Role": "entity_06_xer_predecessor.F_float"
 			            }
 			          },
 			          "State": "Generated",
 			          "Weight": 0.99,
-			          "ID": "Phrasing04a_xer_adj_baselines_have_finishes"
+			          "ID": "Phrasing06_xer_predecessors_have_F_floats"
 			        }
 			      ]
 			    },
-			    "entity_04a_xer_adj_baseline_has_start": {
+			    "entity_01_xer_task_has_is_excluded_from_data_lake": {
 			      "Binding": {
-			        "ConceptualEntity": "04A XER_ADJ_BASELINE"
+			        "ConceptualEntity": "01 XER_TASK"
 			      },
 			      "State": "Generated",
 			      "Roles": {
-			        "entity_04a_xer_adj_baseline": {
+			        "entity_01_xer_task": {
 			          "Target": {
-			            "Entity": "entity_04a_xer_adj_baseline"
+			            "Entity": "entity_01_xer_task"
 			          }
 			        },
-			        "entity_04a_xer_adj_baseline.start": {
+			        "entity_01_xer_task.is_excluded_from_data_lake": {
 			          "Target": {
-			            "Entity": "entity_04a_xer_adj_baseline.start"
+			            "Entity": "entity_01_xer_task.is_excluded_from_data_lake"
 			          }
 			        }
 			      },
@@ -36174,32 +37439,32 @@ cultureInfo en-NZ
 			        {
 			          "Attribute": {
 			            "Subject": {
-			              "Role": "entity_04a_xer_adj_baseline"
+			              "Role": "entity_01_xer_task"
 			            },
 			            "Object": {
-			              "Role": "entity_04a_xer_adj_baseline.start"
+			              "Role": "entity_01_xer_task.is_excluded_from_data_lake"
 			            }
 			          },
 			          "State": "Generated",
 			          "Weight": 0.99,
-			          "ID": "Phrasing04a_xer_adj_baselines_have_starts"
+			          "ID": "Phrasing01_xer_tasks_have_is_excluded_from_data_lake"
 			        }
 			      ]
 			    },
-			    "entity_04a_xer_adj_baseline_has_first_added_month": {
+			    "dynamic_titles__formatting_has_datalake_symbol": {
 			      "Binding": {
-			        "ConceptualEntity": "04A XER_ADJ_BASELINE"
+			        "ConceptualEntity": "Dynamic Titles & Formatting"
 			      },
 			      "State": "Generated",
 			      "Roles": {
-			        "entity_04a_xer_adj_baseline": {
+			        "dynamic_titles__formatting": {
 			          "Target": {
-			            "Entity": "entity_04a_xer_adj_baseline"
+			            "Entity": "dynamic_titles__formatting"
 			          }
 			        },
-			        "entity_04a_xer_adj_baseline.first_added_month": {
+			        "dynamic_titles__formatting.datalake_symbol": {
 			          "Target": {
-			            "Entity": "entity_04a_xer_adj_baseline.first_added_month"
+			            "Entity": "dynamic_titles__formatting.datalake_symbol"
 			          }
 			        }
 			      },
@@ -36207,32 +37472,50 @@ cultureInfo en-NZ
 			        {
 			          "Attribute": {
 			            "Subject": {
-			              "Role": "entity_04a_xer_adj_baseline"
+			              "Role": "dynamic_titles__formatting"
 			            },
 			            "Object": {
-			              "Role": "entity_04a_xer_adj_baseline.first_added_month"
+			              "Role": "dynamic_titles__formatting.datalake_symbol"
 			            }
 			          },
 			          "State": "Generated",
 			          "Weight": 0.99,
-			          "ID": "Phrasing04a_xer_adj_baselines_have_first_added_months"
+			          "ID": "dynamic_titles__formatting_have_datalake_symbol"
 			        }
 			      ]
 			    },
-			    "entity_04a_xer_adj_baseline_has_task_code": {
+			    "dbo_userpermission_has_dynamic_titles__formatting_datalake_refresh_note": {
 			      "Binding": {
-			        "ConceptualEntity": "04A XER_ADJ_BASELINE"
+			        "ConceptualEntity": "dbo_userpermission"
 			      },
 			      "State": "Generated",
 			      "Roles": {
-			        "entity_04a_xer_adj_baseline": {
+			        "dbo_userpermission": {
 			          "Target": {
-			            "Entity": "entity_04a_xer_adj_baseline"
+			            "Entity": "dbo_userpermission"
 			          }
 			        },
-			        "entity_04a_xer_adj_baseline.task_code": {
+			        "dynamic_titles__formatting.datalake_refresh_note": {
 			          "Target": {
-			            "Entity": "entity_04a_xer_adj_baseline.task_code"
+			            "Entity": "dynamic_titles__formatting.datalake_refresh_note"
+			          }
+			        }
+			      }
+			    },
+			    "monthly_resource_distribution_baseline_has_task_code": {
+			      "Binding": {
+			        "ConceptualEntity": "Monthly Resource Distribution Baseline"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "monthly_resource_distribution_baseline": {
+			          "Target": {
+			            "Entity": "monthly_resource_distribution_baseline"
+			          }
+			        },
+			        "monthly_resource_distribution_baseline.task_code": {
+			          "Target": {
+			            "Entity": "monthly_resource_distribution_baseline.task_code"
 			          }
 			        }
 			      },
@@ -36240,32 +37523,32 @@ cultureInfo en-NZ
 			        {
 			          "Attribute": {
 			            "Subject": {
-			              "Role": "entity_04a_xer_adj_baseline"
+			              "Role": "monthly_resource_distribution_baseline"
 			            },
 			            "Object": {
-			              "Role": "entity_04a_xer_adj_baseline.task_code"
+			              "Role": "monthly_resource_distribution_baseline.task_code"
 			            }
 			          },
 			          "State": "Generated",
 			          "Weight": 0.99,
-			          "ID": "Phrasing04a_xer_adj_baselines_have_task_codes"
+			          "ID": "monthly_resource_distribution_baselines_have_task_codes"
 			        }
 			      ]
 			    },
-			    "entity_04a_xer_adj_baseline_has_project_code": {
+			    "monthly_resource_distribution_baseline_has_rsrc_name": {
 			      "Binding": {
-			        "ConceptualEntity": "04A XER_ADJ_BASELINE"
+			        "ConceptualEntity": "Monthly Resource Distribution Baseline"
 			      },
 			      "State": "Generated",
 			      "Roles": {
-			        "entity_04a_xer_adj_baseline": {
+			        "monthly_resource_distribution_baseline": {
 			          "Target": {
-			            "Entity": "entity_04a_xer_adj_baseline"
+			            "Entity": "monthly_resource_distribution_baseline"
 			          }
 			        },
-			        "entity_04a_xer_adj_baseline.project_code": {
+			        "monthly_resource_distribution_baseline.rsrc_name": {
 			          "Target": {
-			            "Entity": "entity_04a_xer_adj_baseline.project_code"
+			            "Entity": "monthly_resource_distribution_baseline.rsrc_name"
 			          }
 			        }
 			      },
@@ -36273,15 +37556,15 @@ cultureInfo en-NZ
 			        {
 			          "Attribute": {
 			            "Subject": {
-			              "Role": "entity_04a_xer_adj_baseline"
+			              "Role": "monthly_resource_distribution_baseline"
 			            },
 			            "Object": {
-			              "Role": "entity_04a_xer_adj_baseline.project_code"
+			              "Role": "monthly_resource_distribution_baseline.rsrc_name"
 			            }
 			          },
 			          "State": "Generated",
 			          "Weight": 0.99,
-			          "ID": "Phrasing04a_xer_adj_baselines_have_project_codes"
+			          "ID": "monthly_resource_distribution_baselines_have_rsrc_names"
 			        }
 			      ]
 			    },
@@ -46998,48 +48281,6 @@ cultureInfo en-NZ
 			        }
 			      ]
 			    },
-			    "entity_04a_xer_adj_baseline_is_added_on_first_added_month": {
-			      "Binding": {
-			        "ConceptualEntity": "04A XER_ADJ_BASELINE"
-			      },
-			      "State": "Generated",
-			      "Roles": {
-			        "entity_04a_xer_adj_baseline": {
-			          "Target": {
-			            "Entity": "entity_04a_xer_adj_baseline"
-			          }
-			        },
-			        "entity_04a_xer_adj_baseline.first_added_month": {
-			          "Target": {
-			            "Entity": "entity_04a_xer_adj_baseline.first_added_month"
-			          }
-			        }
-			      },
-			      "SemanticSlots": {
-			        "When": {
-			          "Role": "entity_04a_xer_adj_baseline.first_added_month"
-			        }
-			      },
-			      "Phrasings": [
-			        {
-			          "Verb": {
-			            "Verbs": [
-			              {
-			                "add": {
-			                  "State": "Generated"
-			                }
-			              }
-			            ],
-			            "Object": {
-			              "Role": "entity_04a_xer_adj_baseline"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.9,
-			          "ID": "Phrasing04a_xer_adj_baselines_are_added_on_first_added_months"
-			        }
-			      ]
-			    },
 			    "entity_01_xer_task_is_adjusted_on_adjusted_baseline_source_month": {
 			      "Binding": {
 			        "ConceptualEntity": "01 XER_TASK"
@@ -47588,6 +48829,56 @@ cultureInfo en-NZ
 			          "State": "Generated",
 			          "Weight": 0.9,
 			          "ID": "Phrasing00_calendars_are_Calendared_on_months"
+			        }
+			      ]
+			    },
+			    "entity_01_xer_task_is_unscheduled": {
+			      "Binding": {
+			        "ConceptualEntity": "01 XER_TASK"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "entity_01_xer_task": {
+			          "Target": {
+			            "Entity": "entity_01_xer_task"
+			          }
+			        },
+			        "entity_01_xer_task.is_unscheduled": {
+			          "Target": {
+			            "Entity": "entity_01_xer_task.is_unscheduled"
+			          }
+			        }
+			      },
+			      "Conditions": [
+			        {
+			          "Target": {
+			            "Role": "entity_01_xer_task.is_unscheduled"
+			          },
+			          "Operator": "Equals",
+			          "Value": {
+			            "Boolean": [
+			              true
+			            ]
+			          }
+			        }
+			      ],
+			      "Phrasings": [
+			        {
+			          "Adjective": {
+			            "Subject": {
+			              "Role": "entity_01_xer_task"
+			            },
+			            "Adjectives": [
+			              {
+			                "unscheduled": {
+			                  "State": "Generated"
+			                }
+			              }
+			            ]
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "some_01_xer_tasks_are_unscheduled_01_xer_tasks"
 			        }
 			      ]
 			    },

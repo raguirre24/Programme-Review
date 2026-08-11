@@ -229,6 +229,16 @@ table 'XER Measures'
 			)
 		lineageTag: 8f33bfca-85e0-436a-9eb3-90a800f64948
 
+	measure ShowVarianceAdjustedBL =
+			
+			IF(
+			    ISINSCOPE('01 XER_TASK'[task_code]),
+			    SELECTEDVALUE('01 XER_TASK'[Variance_Finish_Adjusted_BL]),
+			    BLANK()
+			)
+		formatString: 0
+		lineageTag: e4281729-1a94-4d8a-9a11-8274a1209b55
+
 	partition 'XER Measures' = m
 		mode: import
 		source =

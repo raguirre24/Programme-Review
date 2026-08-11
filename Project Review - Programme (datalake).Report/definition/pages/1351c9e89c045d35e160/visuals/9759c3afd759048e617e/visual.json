@@ -3,8 +3,8 @@
   "name": "9759c3afd759048e617e",
   "position": {
     "x": 5.490943755958055,
-    "y": 587.53098188751187,
-    "z": 8000,
+    "y": 587,
+    "z": 6000,
     "height": 477.71210676835079,
     "width": 587,
     "tabOrder": 8000
@@ -856,5 +856,65 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "f42ca999081a0c0be436",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "00 CALENDAR"
+              }
+            },
+            "Property": "Month"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "35116368964030a3865d",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER S-Curve"
+              }
+            },
+            "Property": "Percentage_Cumulative_Actual_Finish"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "a386852cecab0c4680db",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER S-Curve"
+              }
+            },
+            "Property": "Percentage_Cumulative_Early"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "d5abeb207bbbec50b070",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER S-Curve"
+              }
+            },
+            "Property": "Percentage_Cumulative_BL_Early"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

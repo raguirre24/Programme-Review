@@ -498,15 +498,6 @@
         },
         {
           "location": {},
-          "nodeIndex": "04A XER_ADJ_BASELINE",
-          "size": {
-            "height": 200,
-            "width": 234
-          },
-          "zIndex": 0
-        },
-        {
-          "location": {},
           "nodeIndex": "dbo_project_events",
           "nodeLineageTag": "bdadf15a-6705-4859-949b-353d8115ef5b",
           "size": {
@@ -527,7 +518,7 @@
       "ordinal": 1,
       "scrollPosition": {
         "x": 0,
-        "y": 616.53716079217327
+        "y": 467.37494447148617
       },
       "nodes": [
         {
@@ -1090,6 +1081,6 @@
       "tablesLocked": false
     }
   ],
-  "selectedDiagram": "Events",
+  "selectedDiagram": "XER",
   "defaultDiagram": "All tables"
 }

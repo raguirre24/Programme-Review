@@ -378,6 +378,14 @@ table '06 XER_PREDECESSOR'
 
 		annotation SummarizationSetBy = Automatic
 
+	column FFloat = LOOKUPVALUE('01 XER_TASK'[free_float],'01 XER_TASK'[Task_ID_key],[pred_task_id_key])
+		lineageTag: 45499f3d-478f-4f2d-9ca1-75108dad8eb5
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
 	partition '06 XER_PREDECESSOR' = m
 		mode: import
 		queryGroup: XER
