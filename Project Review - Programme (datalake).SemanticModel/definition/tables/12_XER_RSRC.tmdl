@@ -22,9 +22,12 @@ table 12_XER_RSRC
 		queryGroup: XER
 		source =
 				let
-				    Source = fnAthenaSource("12_xer_rsrc", "t.""def_qty_per_hr"", t.""rsrc_id_key""")
+				    Source = fnAthenaSource("12_xer_rsrc", "t.""def_qty_per_hr"", t.""rsrc_id_key"""),
+				    AthenaFinal = Table.SelectColumns(Source, Record.Field(XerCsvTableContracts, "12_XER_RSRC")[Columns]),
+				    Combined = if XerCsvRouting[IsActive] then Table.Combine({AthenaFinal, fnXerCsvLoadTable("12_XER_RSRC")}) else AthenaFinal,
+				    Final = Table.SelectColumns(Combined, Record.Field(XerCsvTableContracts, "12_XER_RSRC")[Columns])
 				in
-				    Source
+				    Final
 
 	annotation PBI_NavigationStepName = Navigation
 

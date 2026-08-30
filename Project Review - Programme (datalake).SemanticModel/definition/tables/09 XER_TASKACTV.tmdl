@@ -34,9 +34,12 @@ table '09 XER_TASKACTV'
 		queryGroup: XER
 		source =
 				let
-				    Source = fnAthenaSource("09_xer_taskactv", "t.""actv_code_id_key"", t.""task_id_key""")
+				    Source = fnAthenaSource("09_xer_taskactv", "t.""actv_code_id_key"", t.""task_id_key"""),
+				    AthenaFinal = Table.SelectColumns(Source, Record.Field(XerCsvTableContracts, "09_XER_TASKACTV")[Columns]),
+				    Combined = if XerCsvRouting[IsActive] then Table.Combine({AthenaFinal, fnXerCsvLoadTable("09_XER_TASKACTV")}) else AthenaFinal,
+				    Final = Table.SelectColumns(Combined, Record.Field(XerCsvTableContracts, "09_XER_TASKACTV")[Columns])
 				in
-				    Source
+				    Final
 
 	annotation PBI_NavigationStepName = Navigation
 

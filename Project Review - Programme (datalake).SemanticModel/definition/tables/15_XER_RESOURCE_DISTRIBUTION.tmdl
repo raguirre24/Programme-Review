@@ -136,13 +136,16 @@ table 15_XER_RESOURCE_DISTRIBUTION
 				        Replacer.ReplaceValue,
 				        {"unit"}
 				    ),
-				    SelectedColumns = Table.SelectColumns(ReplacedUnits, {  // ← updated reference
+				    SelectedColumns = Table.SelectColumns(ReplacedUnits, {
 				        "task_id_key", "rsrc_id_key", "is_actual", "distribution_month",
 				        "rsrc_name", "rsrc_type",
 				        "unit", "monthly_quantity", "ProjectCode"
-				    })
+				    }),
+				    AthenaFinal = Table.SelectColumns(SelectedColumns, Record.Field(XerCsvTableContracts, "15_XER_RESOURCE_DISTRIBUTION")[Columns]),
+				    Combined = if XerCsvRouting[IsActive] then Table.Combine({AthenaFinal, fnXerCsvLoadTable("15_XER_RESOURCE_DISTRIBUTION")}) else AthenaFinal,
+				    Final = Table.SelectColumns(Combined, Record.Field(XerCsvTableContracts, "15_XER_RESOURCE_DISTRIBUTION")[Columns])
 				in
-				    SelectedColumns
+				    Final
 
 	annotation PBI_Id = 67b96e3bda7547809e01d736027b8fa7
 

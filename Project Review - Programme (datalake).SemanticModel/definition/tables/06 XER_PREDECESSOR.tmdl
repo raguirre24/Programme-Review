@@ -431,9 +431,12 @@ table '06 XER_PREDECESSOR'
 				                {"total_float", type number}
 				            }
 				        ),
-				    #"Removed Columns" = Table.RemoveColumns(Typed,{"task_pred_id", "filename"})
+				    #"Removed Columns" = Table.RemoveColumns(Typed,{"task_pred_id", "filename"}),
+				    AthenaFinal = Table.SelectColumns(#"Removed Columns", Record.Field(XerCsvTableContracts, "06_XER_PREDECESSOR")[Columns]),
+				    Combined = if XerCsvRouting[IsActive] then Table.Combine({AthenaFinal, fnXerCsvLoadTable("06_XER_PREDECESSOR")}) else AthenaFinal,
+				    Final = Table.SelectColumns(Combined, Record.Field(XerCsvTableContracts, "06_XER_PREDECESSOR")[Columns])
 				in
-				    #"Removed Columns"
+				    Final
 
 	annotation PBI_NavigationStepName = Navigation
 

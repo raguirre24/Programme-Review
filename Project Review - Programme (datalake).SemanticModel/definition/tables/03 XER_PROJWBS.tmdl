@@ -187,7 +187,7 @@ table '03 XER_PROJWBS'
 				            }
 				        ),
 				
-				    Final =
+				    AthenaFinal =
 				        Table.SelectColumns(
 				            CleanProjectCode,
 				            {
@@ -196,7 +196,10 @@ table '03 XER_PROJWBS'
 				                "parent_wbs_id_key",
 				                "ProjectCode"
 				            }
-				        )
+				        ),
+
+				    Combined = if XerCsvRouting[IsActive] then Table.Combine({AthenaFinal, fnXerCsvLoadTable("03_XER_PROJWBS")}) else AthenaFinal,
+				    Final = Table.SelectColumns(Combined, Record.Field(XerCsvTableContracts, "03_XER_PROJWBS")[Columns])
 				in
 				    Final
 

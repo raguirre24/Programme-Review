@@ -1016,7 +1016,7 @@ table '01 XER_TASK'
 				            }
 				        ),
 				
-				    Final = 
+				    AthenaFinal =
 				        Table.SelectColumns(
 				            Renamed,
 				            {
@@ -1030,7 +1030,40 @@ table '01 XER_TASK'
 				                "Completed of Planned Last Period", "Baseline Effective_Early_End", "Baseline Effective_Late_End", 
 				                "Adjusted Baseline Finish", "Adjusted Baseline Start", "Adjusted Baseline Source Month", "Adjusted Baseline Source"
 				            }
-				        )
+				        ),
+
+				    OwnershipDigitChars = List.Transform({48..57}, each Character.FromNumber(_)),
+				    OwnershipIdentity = (value as any) as text =>
+				        let
+				            Normalised = Text.Upper(Text.Trim(Text.From(value))),
+				            Suffix = if Text.Length(Normalised) > 1 then Text.Range(Normalised, 1) else "",
+				            HasNumericAlias =
+				                List.Contains({"C", "J"}, Text.Start(Normalised, 1)) and
+				                Text.Length(Suffix) > 0 and
+				                Text.Length(Text.Remove(Suffix, OwnershipDigitChars)) = 0
+				        in
+				            if HasNumericAlias then Suffix else Normalised,
+				    AthenaProjectIdentities =
+				        List.Distinct(
+				            List.Transform(
+				                List.RemoveNulls(Table.Column(AthenaFinal, "ProjectCode")),
+				                each OwnershipIdentity(_)
+				            )
+				        ),
+				    CsvProjectIdentities = List.Distinct(List.Transform(XerCsvRouting[ProjectCodes], each OwnershipIdentity(_))),
+				    OwnershipOverlap = List.Intersect({AthenaProjectIdentities, CsvProjectIdentities}),
+				    AthenaOwnershipChecked =
+				        if XerCsvRouting[IsActive] and List.Count(OwnershipOverlap) > 0 then
+				            error Error.Record(
+				                "XerCsvOwnership",
+				                "A routed project is present in both the Athena and CSV task branches.",
+				                [ProjectIdentities = Text.Combine(OwnershipOverlap, ", ")]
+				            )
+				        else
+				            AthenaFinal,
+
+				    Combined = if XerCsvRouting[IsActive] then Table.Combine({AthenaOwnershipChecked, fnXerCsvLoadTable("01_XER_TASK")}) else AthenaFinal,
+				    Final = Table.SelectColumns(Combined, Record.Field(XerCsvTableContracts, "01_XER_TASK")[Columns])
 				in
 				    Final
 				```

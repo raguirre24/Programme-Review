@@ -22,9 +22,12 @@ table '10 XER_CALENDARS'
 		queryGroup: XER
 		source =
 				let
-				    Source = fnAthenaSource("10_xer_calendar", "t.""clndr_name"", t.""clndr_id_key""")
+				    Source = fnAthenaSource("10_xer_calendar", "t.""clndr_name"", t.""clndr_id_key"""),
+				    AthenaFinal = Table.SelectColumns(Source, Record.Field(XerCsvTableContracts, "10_XER_CALENDAR")[Columns]),
+				    Combined = if XerCsvRouting[IsActive] then Table.Combine({AthenaFinal, fnXerCsvLoadTable("10_XER_CALENDAR")}) else AthenaFinal,
+				    Final = Table.SelectColumns(Combined, Record.Field(XerCsvTableContracts, "10_XER_CALENDAR")[Columns])
 				in
-				    Source
+				    Final
 
 	annotation PBI_NavigationStepName = Navigation
 

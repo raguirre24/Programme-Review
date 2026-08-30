@@ -89,9 +89,13 @@ table '02 XER_PROJECT'
 				                    type nullable text
 				                }
 				            }
-				        )
+				        ),
+
+				    AthenaFinal = Table.SelectColumns(CleanProjectCode, Record.Field(XerCsvTableContracts, "02_XER_PROJECT")[Columns]),
+				    Combined = if XerCsvRouting[IsActive] then Table.Combine({AthenaFinal, fnXerCsvLoadTable("02_XER_PROJECT")}) else AthenaFinal,
+				    Final = Table.SelectColumns(Combined, Record.Field(XerCsvTableContracts, "02_XER_PROJECT")[Columns])
 				in
-				    CleanProjectCode
+				    Final
 
 	annotation PBI_NavigationStepName = Navigation
 
