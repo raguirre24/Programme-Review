@@ -43,6 +43,15 @@ table '02 XER_PROJECT'
 
 		annotation SummarizationSetBy = Automatic
 
+	column IsCsvSource
+		dataType: boolean
+		isHidden
+		lineageTag: 081af41a-ad34-4f15-af06-509fea171137
+		summarizeBy: none
+		sourceColumn: IsCsvSource
+
+		annotation SummarizationSetBy = Automatic
+
 	partition '02 XER_PROJECT' = m
 		mode: import
 		queryGroup: XER
@@ -91,9 +100,12 @@ table '02 XER_PROJECT'
 				            }
 				        ),
 				
-				    AthenaFinal = Table.SelectColumns(CleanProjectCode, Record.Field(XerCsvTableContracts, "02_XER_PROJECT")[Columns]),
-				    Combined = if XerCsvRouting[IsActive] then Table.Combine({AthenaFinal, fnXerCsvLoadTable("02_XER_PROJECT")}) else AthenaFinal,
-				    Final = Table.SelectColumns(Combined, Record.Field(XerCsvTableContracts, "02_XER_PROJECT")[Columns])
+				    ContractColumns = Record.Field(XerCsvTableContracts, "02_XER_PROJECT")[Columns],
+				    ModelColumns = List.Combine({ContractColumns, {"IsCsvSource"}}),
+				    AthenaFinal = Table.SelectColumns(CleanProjectCode, ContractColumns),
+				    AthenaBranch = if XerCsvRouting[HasAthenaProjects] then Table.AddColumn(AthenaFinal, "IsCsvSource", each false, type logical) else Table.AddColumn(fnXerCsvEmptyTable("02_XER_PROJECT"), "IsCsvSource", each false, type logical),
+				    Combined = if XerCsvRouting[IsActive] then Table.Combine({AthenaBranch, fnXerCsvLoadTable("02_XER_PROJECT")}) else AthenaBranch,
+				    Final = Table.SelectColumns(Combined, ModelColumns)
 				in
 				    Final
 

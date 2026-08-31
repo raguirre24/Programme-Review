@@ -100,6 +100,15 @@ table 15_XER_RESOURCE_DISTRIBUTION
 
 		annotation PBI_FormatHint = {"isDecimal":true}
 
+	column IsCsvSource
+		dataType: boolean
+		isHidden
+		lineageTag: 638a26bb-3f92-4be6-b33d-1fd7cb8c73ac
+		summarizeBy: none
+		sourceColumn: IsCsvSource
+
+		annotation SummarizationSetBy = Automatic
+
 	partition 15_XER_RESOURCE_DISTRIBUTION = m
 		mode: import
 		queryGroup: XER
@@ -141,9 +150,12 @@ table 15_XER_RESOURCE_DISTRIBUTION
 				        "rsrc_name", "rsrc_type",
 				        "unit", "monthly_quantity", "ProjectCode"
 				    }),
-				    AthenaFinal = Table.SelectColumns(SelectedColumns, Record.Field(XerCsvTableContracts, "15_XER_RESOURCE_DISTRIBUTION")[Columns]),
-				    Combined = if XerCsvRouting[IsActive] then Table.Combine({AthenaFinal, fnXerCsvLoadTable("15_XER_RESOURCE_DISTRIBUTION")}) else AthenaFinal,
-				    Final = Table.SelectColumns(Combined, Record.Field(XerCsvTableContracts, "15_XER_RESOURCE_DISTRIBUTION")[Columns])
+				    ContractColumns = Record.Field(XerCsvTableContracts, "15_XER_RESOURCE_DISTRIBUTION")[Columns],
+				    ModelColumns = List.Combine({ContractColumns, {"IsCsvSource"}}),
+				    AthenaFinal = Table.SelectColumns(SelectedColumns, ContractColumns),
+				    AthenaBranch = if XerCsvRouting[HasAthenaProjects] then Table.AddColumn(AthenaFinal, "IsCsvSource", each false, type logical) else Table.AddColumn(fnXerCsvEmptyTable("15_XER_RESOURCE_DISTRIBUTION"), "IsCsvSource", each false, type logical),
+				    Combined = if XerCsvRouting[IsActive] then Table.Combine({AthenaBranch, fnXerCsvLoadTable("15_XER_RESOURCE_DISTRIBUTION")}) else AthenaBranch,
+				    Final = Table.SelectColumns(Combined, ModelColumns)
 				in
 				    Final
 

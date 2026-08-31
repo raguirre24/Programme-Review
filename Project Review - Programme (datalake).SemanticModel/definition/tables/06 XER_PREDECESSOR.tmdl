@@ -337,14 +337,6 @@ table '06 XER_PREDECESSOR'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	column task_pred_id_key
-		dataType: string
-		lineageTag: 2ab7e73e-18fa-44cf-8829-a5c520d1547e
-		summarizeBy: none
-		sourceColumn: task_pred_id_key
-
-		annotation SummarizationSetBy = Automatic
-
 	column PredTaskCodeAndName =
 			
 			VAR _taskCode = LOOKUPVALUE('01 XER_TASK'[task_code],'01 XER_TASK'[task_id_key],'06 XER_PREDECESSOR'[pred_task_id_key])
@@ -386,6 +378,15 @@ table '06 XER_PREDECESSOR'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
+	column IsCsvSource
+		dataType: boolean
+		isHidden
+		lineageTag: c466fcd7-2c5d-4710-8d36-9ac5d5612afd
+		summarizeBy: none
+		sourceColumn: IsCsvSource
+
+		annotation SummarizationSetBy = Automatic
+
 	partition '06 XER_PREDECESSOR' = m
 		mode: import
 		queryGroup: XER
@@ -396,7 +397,6 @@ table '06 XER_PREDECESSOR'
 				            "06_xer_predecessor",
 				            Text.Combine(
 				                {
-				                    "t.""task_pred_id""",
 				                    "t.""pred_type""",
 				                    "t.""task_id_key""",
 				                    "t.""pred_task_id_key""",
@@ -411,16 +411,13 @@ table '06 XER_PREDECESSOR'
 				                    "t.""predecessor_finish""",
 				                    "t.""free_float""",
 				                    "t.""total_float""",
-				                    "t.""filename""",
 				                    "TRIM(UPPER(SPLIT_PART(t.""filename"", '-', 1))) AS ""ProjectCode"""
 				                },
 				                ", "
 				            )
 				        ),
 				
-				    #"Inserted Merged Column" = Table.AddColumn(Source, "task_pred_id_key", each Text.Combine({[filename], [task_pred_id]}, "."), type text),
-				
-				    #"Parsed Date" = Table.TransformColumns(#"Inserted Merged Column",{{"start", each Date.From(DateTimeZone.From(_)), type date}, {"finish", each Date.From(DateTimeZone.From(_)), type date}, {"predecessor_start", each Date.From(DateTimeZone.From(_)), type date}, {"predecessor_finish", each Date.From(DateTimeZone.From(_)), type date}}),
+				    #"Parsed Date" = Table.TransformColumns(Source,{{"start", each Date.From(DateTimeZone.From(_)), type date}, {"finish", each Date.From(DateTimeZone.From(_)), type date}, {"predecessor_start", each Date.From(DateTimeZone.From(_)), type date}, {"predecessor_finish", each Date.From(DateTimeZone.From(_)), type date}}),
 				
 				    Typed =
 				        Table.TransformColumnTypes(
@@ -431,10 +428,13 @@ table '06 XER_PREDECESSOR'
 				                {"total_float", type number}
 				            }
 				        ),
-				    #"Removed Columns" = Table.RemoveColumns(Typed,{"task_pred_id", "filename"}),
-				    AthenaFinal = Table.SelectColumns(#"Removed Columns", Record.Field(XerCsvTableContracts, "06_XER_PREDECESSOR")[Columns]),
-				    Combined = if XerCsvRouting[IsActive] then Table.Combine({AthenaFinal, fnXerCsvLoadTable("06_XER_PREDECESSOR")}) else AthenaFinal,
-				    Final = Table.SelectColumns(Combined, Record.Field(XerCsvTableContracts, "06_XER_PREDECESSOR")[Columns])
+				    Contract = Record.Field(XerCsvTableContracts, "06_XER_PREDECESSOR"),
+				    ContractModelColumns = Record.FieldOrDefault(Contract, "ModelColumns", Contract[Columns]),
+				    ModelColumns = List.Combine({ContractModelColumns, {"IsCsvSource"}}),
+				    AthenaFinal = Table.SelectColumns(Typed, ContractModelColumns),
+				    AthenaBranch = if XerCsvRouting[HasAthenaProjects] then Table.AddColumn(AthenaFinal, "IsCsvSource", each false, type logical) else Table.AddColumn(Table.SelectColumns(fnXerCsvEmptyTable("06_XER_PREDECESSOR"), ContractModelColumns), "IsCsvSource", each false, type logical),
+				    Combined = if XerCsvRouting[IsActive] then Table.Combine({AthenaBranch, fnXerCsvLoadTable("06_XER_PREDECESSOR")}) else AthenaBranch,
+				    Final = Table.SelectColumns(Combined, ModelColumns)
 				in
 				    Final
 

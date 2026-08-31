@@ -29,15 +29,27 @@ table '09 XER_TASKACTV'
 
 		annotation SummarizationSetBy = Automatic
 
+	column IsCsvSource
+		dataType: boolean
+		isHidden
+		lineageTag: 6b84e805-bcbc-4ce9-8a7d-20a8827685eb
+		summarizeBy: none
+		sourceColumn: IsCsvSource
+
+		annotation SummarizationSetBy = Automatic
+
 	partition '09 XER_TASKACTV' = m
 		mode: import
 		queryGroup: XER
 		source =
 				let
 				    Source = fnAthenaSource("09_xer_taskactv", "t.""actv_code_id_key"", t.""task_id_key"""),
-				    AthenaFinal = Table.SelectColumns(Source, Record.Field(XerCsvTableContracts, "09_XER_TASKACTV")[Columns]),
-				    Combined = if XerCsvRouting[IsActive] then Table.Combine({AthenaFinal, fnXerCsvLoadTable("09_XER_TASKACTV")}) else AthenaFinal,
-				    Final = Table.SelectColumns(Combined, Record.Field(XerCsvTableContracts, "09_XER_TASKACTV")[Columns])
+				    ContractColumns = Record.Field(XerCsvTableContracts, "09_XER_TASKACTV")[Columns],
+				    ModelColumns = List.Combine({ContractColumns, {"IsCsvSource"}}),
+				    AthenaFinal = Table.SelectColumns(Source, ContractColumns),
+				    AthenaBranch = if XerCsvRouting[HasAthenaProjects] then Table.AddColumn(AthenaFinal, "IsCsvSource", each false, type logical) else Table.AddColumn(fnXerCsvEmptyTable("09_XER_TASKACTV"), "IsCsvSource", each false, type logical),
+				    Combined = if XerCsvRouting[IsActive] then Table.Combine({AthenaBranch, fnXerCsvLoadTable("09_XER_TASKACTV")}) else AthenaBranch,
+				    Final = Table.SelectColumns(Combined, ModelColumns)
 				in
 				    Final
 

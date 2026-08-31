@@ -75,33 +75,21 @@ table '06a XER_SUCCESSOR'
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Free Float' =
-			
-			LOOKUPVALUE(
-			    '06 XER_PREDECESSOR'[free_float],
-			    '06 XER_PREDECESSOR'[task_pred_id_key], '06a XER_SUCCESSOR'[task_pred_id_key]
-			)
+	column 'Free Float'
 		lineageTag: d1e2f3a4-5678-4bbb-cccc-222222222222
 		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Free Float]
 
 		annotation SummarizationSetBy = Automatic
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	column task_pred_id_key
-		lineageTag: 35a02c5e-9ad6-40b8-ad62-1d8e681fc1e8
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: [task_pred_id_key]
-
-		annotation SummarizationSetBy = Automatic
 
 	partition '06a XER_SUCCESSOR' = calculated
 		mode: import
 		source =
 				SELECTCOLUMNS(
 				    '06 XER_PREDECESSOR',
-				    "task_pred_id_key", '06 XER_PREDECESSOR'[task_pred_id_key],
 				    "task_id_key", '06 XER_PREDECESSOR'[pred_task_id_key],
 				    "succ_type", '06 XER_PREDECESSOR'[pred_type],
 				    "succ_task_type", '06 XER_PREDECESSOR'[task_type],
@@ -109,7 +97,8 @@ table '06a XER_SUCCESSOR'
 				    "successor_task_code", '06 XER_PREDECESSOR'[task_code],
 				    "successor_name", LOOKUPVALUE('01 XER_TASK'[task_name],'01 XER_TASK'[Task_ID_key],'06 XER_PREDECESSOR'[task_id_key]),
 				    "successor_start", '06 XER_PREDECESSOR'[start],
-				    "successor_finish", '06 XER_PREDECESSOR'[finish]
+				    "successor_finish", '06 XER_PREDECESSOR'[finish],
+				    "Free Float", '06 XER_PREDECESSOR'[free_float]
 				)
 
 	annotation PBI_Id = b4fa624d95e9439fb486dd6786cd0082

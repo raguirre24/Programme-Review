@@ -219,32 +219,14 @@ table dbo_userpermission
 				    Source =
 				        Value.NativeQuery(
 				            AthenaDB,
-				            "SELECT p.email AS linkedsite_email, NULLIF(TRIM(p.state), '') AS person_state, up.* FROM ""prod_projectcontrols_linkedsitereports"".""dbo_userpermission"" up LEFT JOIN ""prod_projectcontrols_linkedsitereports"".""dbo_person"" p ON p.id = up.personid WHERE up.privilegename IN ('ViewPowerBIProgrammeDashboards')",
+				            "SELECT p.email AS linkedsite_email, NULLIF(TRIM(p.state), '') AS person_state, up.*, pr.projectno, pr.projectname, pr.state FROM ""prod_projectcontrols_linkedsitereports"".""dbo_userpermission"" up LEFT JOIN ""prod_projectcontrols_linkedsitereports"".""dbo_person"" p ON p.id = up.personid LEFT JOIN ""prod_projectcontrols_linkedsitereports"".""dbo_project"" pr ON pr.projectid = up.projectid WHERE up.privilegename IN ('ViewPowerBIProgrammeDashboards')",
 				            null
-				        ),
-				
-				    MergedWithProject =
-				        Table.NestedJoin(
-				            Source,
-				            {"projectid"},
-				            dbo_project,
-				            {"projectid"},
-				            "ProjectDetails",
-				            JoinKind.LeftOuter
-				        ),
-				
-				    ExpandedProject =
-				        Table.ExpandTableColumn(
-				            MergedWithProject,
-				            "ProjectDetails",
-				            {"projectno", "projectname", "state"},
-				            {"projectno", "projectname", "state"}
 				        ),
 				
 				    // Generate the alternate project code for each row
 				    AddAltProjectNo =
 				        Table.AddColumn(
-				            ExpandedProject,
+				            Source,
 				            "AltProjectNo",
 				            each
 				                if [projectno] = null or [projectno] = "" then

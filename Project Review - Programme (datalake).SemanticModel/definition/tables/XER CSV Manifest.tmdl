@@ -1,0 +1,176 @@
+table 'XER CSV Manifest'
+	isHidden
+	lineageTag: 2323da7a-ddf5-4014-854e-c88b25c20d84
+
+	column schema_version
+		dataType: string
+		lineageTag: 33a41ad3-17ae-4286-b310-299b1914f5f4
+		summarizeBy: none
+		sourceColumn: schema_version
+
+		annotation SummarizationSetBy = Automatic
+
+	column bundle_id
+		dataType: string
+		lineageTag: c759f147-f3e1-4b5e-8bbb-3580628a8c7b
+		summarizeBy: none
+		sourceColumn: bundle_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column bundle_status
+		dataType: string
+		lineageTag: cb9bd01a-9dcb-4802-91f0-6a98abda0afd
+		summarizeBy: none
+		sourceColumn: bundle_status
+
+		annotation SummarizationSetBy = Automatic
+
+	column parser_version
+		dataType: string
+		lineageTag: 347f7e28-2f78-4fd1-97c8-94ac174c52cd
+		summarizeBy: none
+		sourceColumn: parser_version
+
+		annotation SummarizationSetBy = Automatic
+
+	column project_code
+		dataType: string
+		lineageTag: 7f2ce1c3-3e05-49e8-9a2e-bf41e7bcd25e
+		summarizeBy: none
+		sourceColumn: project_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column project_name
+		dataType: string
+		lineageTag: fc0ebb69-04dd-49b8-b40d-57d9655b62fc
+		summarizeBy: none
+		sourceColumn: project_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column programme_type
+		dataType: string
+		lineageTag: 719965fc-2e91-40b9-bb94-41d30b980037
+		summarizeBy: none
+		sourceColumn: programme_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column original_xer_filename
+		dataType: string
+		lineageTag: 802758f0-dee7-4013-8217-d8b8f4f39993
+		summarizeBy: none
+		sourceColumn: original_xer_filename
+
+		annotation SummarizationSetBy = Automatic
+
+	column canonical_xer_filename
+		dataType: string
+		lineageTag: c39c85cc-ffd3-4843-b8a6-80ec3d7233f8
+		summarizeBy: none
+		sourceColumn: canonical_xer_filename
+
+		annotation SummarizationSetBy = Automatic
+
+	column snapshot_kind
+		dataType: string
+		lineageTag: 7d7824d8-6a9e-4256-8311-f38e8fa89ff9
+		summarizeBy: none
+		sourceColumn: snapshot_kind
+
+		annotation SummarizationSetBy = Automatic
+
+	column snapshot_tag
+		dataType: string
+		lineageTag: 003ca397-7d07-44dd-bc1b-b5adc57a23a9
+		summarizeBy: none
+		sourceColumn: snapshot_tag
+
+		annotation SummarizationSetBy = Automatic
+
+	column monthupdate
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: ca7ecc62-9ed8-4427-8052-9baaf1193408
+		summarizeBy: none
+		sourceColumn: monthupdate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column update_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 1a0b849b-1c07-4d33-80cc-745d53bb2c96
+		summarizeBy: none
+		sourceColumn: update_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column data_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 3cd05e74-719d-440f-a113-57825f82f731
+		summarizeBy: none
+		sourceColumn: data_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column source_sha256
+		dataType: string
+		lineageTag: 01c8edd5-a312-49ff-b359-6593519030b6
+		summarizeBy: none
+		sourceColumn: source_sha256
+
+		annotation SummarizationSetBy = Automatic
+
+	column table_name
+		dataType: string
+		lineageTag: 9fedf18e-548d-4ff0-9ede-841a8b49649a
+		summarizeBy: none
+		sourceColumn: table_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column row_count
+		dataType: int64
+		formatString: 0
+		lineageTag: cbdc1880-76ea-41c7-ab27-6dadcb965b5b
+		summarizeBy: sum
+		sourceColumn: row_count
+
+		annotation SummarizationSetBy = Automatic
+
+	column csv_sha256
+		dataType: string
+		lineageTag: a90c4be6-c0c9-4510-ad3c-7811f424fb8a
+		summarizeBy: none
+		sourceColumn: csv_sha256
+
+		annotation SummarizationSetBy = Automatic
+
+	column exported_at_utc
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: b20a5712-7c07-4321-8c16-eb94834566b1
+		summarizeBy: none
+		sourceColumn: exported_at_utc
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'XER CSV Manifest' = m
+		mode: import
+		queryGroup: XER
+		source = XerCsvSelectedManifest
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

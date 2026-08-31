@@ -1,0 +1,115 @@
+table 'XER CSV Refresh Audit'
+	isHidden
+	lineageTag: b7bad02f-f82c-47a1-a399-1c683556a3ed
+
+	column Check
+		lineageTag: 0004241c-e036-4a9c-9db9-2e0211a1bfe1
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Check]
+
+		annotation SummarizationSetBy = Automatic
+
+	column ExpectedRows
+		formatString: 0
+		lineageTag: 7effb692-d5c4-4b4d-b87b-615dab63529a
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [ExpectedRows]
+
+		annotation SummarizationSetBy = Automatic
+
+	column ActualRows
+		formatString: 0
+		lineageTag: 8c9f170e-e187-484a-af03-2455d391b579
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [ActualRows]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Status
+		lineageTag: 1813af8a-c0b7-4004-b82e-f676eab34138
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Status]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'XER CSV Refresh Audit' = calculated
+		mode: import
+		source = ```
+				VAR RowCounts =
+				    UNION (
+				        ROW ( "Check", "01_XER_TASK", "ExpectedRows", COALESCE ( CALCULATE ( SUM ( 'XER CSV Manifest'[row_count] ), 'XER CSV Manifest'[table_name] = "01_XER_TASK" ), 0 ), "ActualRows", COUNTROWS ( FILTER ( '01 XER_TASK', '01 XER_TASK'[IsCsvSource] = TRUE () ) ) ),
+				        ROW ( "Check", "02_XER_PROJECT", "ExpectedRows", COALESCE ( CALCULATE ( SUM ( 'XER CSV Manifest'[row_count] ), 'XER CSV Manifest'[table_name] = "02_XER_PROJECT" ), 0 ), "ActualRows", COUNTROWS ( FILTER ( '02 XER_PROJECT', '02 XER_PROJECT'[IsCsvSource] = TRUE () ) ) ),
+				        ROW ( "Check", "03_XER_PROJWBS", "ExpectedRows", COALESCE ( CALCULATE ( SUM ( 'XER CSV Manifest'[row_count] ), 'XER CSV Manifest'[table_name] = "03_XER_PROJWBS" ), 0 ), "ActualRows", COUNTROWS ( FILTER ( '03 XER_PROJWBS', '03 XER_PROJWBS'[IsCsvSource] = TRUE () ) ) ),
+				        ROW ( "Check", "06_XER_PREDECESSOR", "ExpectedRows", COALESCE ( CALCULATE ( SUM ( 'XER CSV Manifest'[row_count] ), 'XER CSV Manifest'[table_name] = "06_XER_PREDECESSOR" ), 0 ), "ActualRows", COUNTROWS ( FILTER ( '06 XER_PREDECESSOR', '06 XER_PREDECESSOR'[IsCsvSource] = TRUE () ) ) ),
+				        ROW ( "Check", "07_XER_ACTVTYPE", "ExpectedRows", COALESCE ( CALCULATE ( SUM ( 'XER CSV Manifest'[row_count] ), 'XER CSV Manifest'[table_name] = "07_XER_ACTVTYPE" ), 0 ), "ActualRows", COUNTROWS ( FILTER ( '07 XER_ACTVTYPE', '07 XER_ACTVTYPE'[IsCsvSource] = TRUE () ) ) ),
+				        ROW ( "Check", "08_XER_ACTVCODE", "ExpectedRows", COALESCE ( CALCULATE ( SUM ( 'XER CSV Manifest'[row_count] ), 'XER CSV Manifest'[table_name] = "08_XER_ACTVCODE" ), 0 ), "ActualRows", COUNTROWS ( FILTER ( '08 XER_ACTVCODE', '08 XER_ACTVCODE'[IsCsvSource] = TRUE () ) ) ),
+				        ROW ( "Check", "09_XER_TASKACTV", "ExpectedRows", COALESCE ( CALCULATE ( SUM ( 'XER CSV Manifest'[row_count] ), 'XER CSV Manifest'[table_name] = "09_XER_TASKACTV" ), 0 ), "ActualRows", COUNTROWS ( FILTER ( '09 XER_TASKACTV', '09 XER_TASKACTV'[IsCsvSource] = TRUE () ) ) ),
+				        ROW ( "Check", "10_XER_CALENDAR", "ExpectedRows", COALESCE ( CALCULATE ( SUM ( 'XER CSV Manifest'[row_count] ), 'XER CSV Manifest'[table_name] = "10_XER_CALENDAR" ), 0 ), "ActualRows", COUNTROWS ( FILTER ( '10 XER_CALENDARS', '10 XER_CALENDARS'[IsCsvSource] = TRUE () ) ) ),
+				        ROW ( "Check", "12_XER_RSRC", "ExpectedRows", COALESCE ( CALCULATE ( SUM ( 'XER CSV Manifest'[row_count] ), 'XER CSV Manifest'[table_name] = "12_XER_RSRC" ), 0 ), "ActualRows", COUNTROWS ( FILTER ( '12_XER_RSRC', '12_XER_RSRC'[IsCsvSource] = TRUE () ) ) ),
+				        ROW ( "Check", "15_XER_RESOURCE_DISTRIBUTION", "ExpectedRows", COALESCE ( CALCULATE ( SUM ( 'XER CSV Manifest'[row_count] ), 'XER CSV Manifest'[table_name] = "15_XER_RESOURCE_DISTRIBUTION" ), 0 ), "ActualRows", COUNTROWS ( FILTER ( '15_XER_RESOURCE_DISTRIBUTION', '15_XER_RESOURCE_DISTRIBUTION'[IsCsvSource] = TRUE () ) ) )
+				    )
+				VAR ManifestProjects =
+				    DISTINCT (
+				        SELECTCOLUMNS (
+				            'XER CSV Manifest',
+				            "ProjectIdentity",
+				                VAR Code = UPPER ( TRIM ( 'XER CSV Manifest'[project_code] ) )
+				                VAR Suffix = IF ( LEN ( Code ) > 1, MID ( Code, 2, LEN ( Code ) - 1 ), "" )
+				                VAR NumericSuffix = IFERROR ( VALUE ( Suffix ), BLANK () )
+				                RETURN IF ( LEFT ( Code, 1 ) IN { "C", "J" } && LEN ( Suffix ) > 0 && NOT ISBLANK ( NumericSuffix ), Suffix, Code )
+				        )
+				    )
+				VAR AthenaProjects =
+				    DISTINCT (
+				        SELECTCOLUMNS (
+				            FILTER ( '01 XER_TASK', '01 XER_TASK'[IsCsvSource] = FALSE () && NOT ISBLANK ( '01 XER_TASK'[ProjectCode] ) ),
+				            "ProjectIdentity",
+				                VAR Code = UPPER ( TRIM ( '01 XER_TASK'[ProjectCode] ) )
+				                VAR Suffix = IF ( LEN ( Code ) > 1, MID ( Code, 2, LEN ( Code ) - 1 ), "" )
+				                VAR NumericSuffix = IFERROR ( VALUE ( Suffix ), BLANK () )
+				                RETURN IF ( LEFT ( Code, 1 ) IN { "C", "J" } && LEN ( Suffix ) > 0 && NOT ISBLANK ( NumericSuffix ), Suffix, Code )
+				        )
+				    )
+				VAR GovernedProjects =
+				    DISTINCT (
+				        SELECTCOLUMNS (
+				            FILTER ( dbo_project, NOT ISBLANK ( dbo_project[projectno] ) ),
+				            "ProjectIdentity",
+				                VAR Code = UPPER ( TRIM ( dbo_project[projectno] ) )
+				                VAR Suffix = IF ( LEN ( Code ) > 1, MID ( Code, 2, LEN ( Code ) - 1 ), "" )
+				                VAR NumericSuffix = IFERROR ( VALUE ( Suffix ), BLANK () )
+				                RETURN IF ( LEFT ( Code, 1 ) IN { "C", "J" } && LEN ( Suffix ) > 0 && NOT ISBLANK ( NumericSuffix ), Suffix, Code )
+				        )
+				    )
+				VAR PermissionProjects =
+				    DISTINCT (
+				        SELECTCOLUMNS (
+				            FILTER ( dbo_userpermission, NOT ISBLANK ( dbo_userpermission[projectno] ) ),
+				            "ProjectIdentity",
+				                VAR Code = UPPER ( TRIM ( dbo_userpermission[projectno] ) )
+				                VAR Suffix = IF ( LEN ( Code ) > 1, MID ( Code, 2, LEN ( Code ) - 1 ), "" )
+				                VAR NumericSuffix = IFERROR ( VALUE ( Suffix ), BLANK () )
+				                RETURN IF ( LEFT ( Code, 1 ) IN { "C", "J" } && LEN ( Suffix ) > 0 && NOT ISBLANK ( NumericSuffix ), Suffix, Code )
+				        )
+				    )
+				VAR RowMismatches = FILTER ( RowCounts, [ExpectedRows] <> [ActualRows] )
+				VAR OwnershipOverlap = INTERSECT ( ManifestProjects, AthenaProjects )
+				VAR MissingGovernedProjects = EXCEPT ( ManifestProjects, GovernedProjects )
+				VAR MissingPermissionProjects = EXCEPT ( ManifestProjects, PermissionProjects )
+				// Power BI Service requires each ERROR message argument to be a literal constant.
+				VAR AuditStatus =
+				    SWITCH (
+				        TRUE (),
+				        COUNTROWS ( RowMismatches ) > 0, ERROR ( "XER CSV manifest/model row-count mismatch. Compare manifest row_count with CSV rows for the ten imported XER tables." ),
+				        COUNTROWS ( OwnershipOverlap ) > 0, ERROR ( "XER CSV ownership overlap: routed project identity is also present in the Athena task branch." ),
+				        COUNTROWS ( MissingGovernedProjects ) > 0, ERROR ( "XER CSV governance failure: routed project is absent from dbo_project." ),
+				        COUNTROWS ( MissingPermissionProjects ) > 0, ERROR ( "XER CSV governance failure: routed project has no dbo_userpermission entry." ),
+				        "PASS"
+				    )
+				RETURN
+				    ADDCOLUMNS ( RowCounts, "Status", AuditStatus )
+				```
