@@ -1031,7 +1031,7 @@ table '01 XER_TASK'
 				                "Adjusted Baseline Finish", "Adjusted Baseline Start", "Adjusted Baseline Source Month", "Adjusted Baseline Source"
 				            }
 				        ),
-
+				
 				    OwnershipDigitChars = List.Transform({48..57}, each Character.FromNumber(_)),
 				    OwnershipIdentity = (value as any) as text =>
 				        let
@@ -1061,7 +1061,7 @@ table '01 XER_TASK'
 				            )
 				        else
 				            AthenaFinal,
-
+				
 				    Combined = if XerCsvRouting[IsActive] then Table.Combine({AthenaOwnershipChecked, fnXerCsvLoadTable("01_XER_TASK")}) else AthenaFinal,
 				    Final = Table.SelectColumns(Combined, Record.Field(XerCsvTableContracts, "01_XER_TASK")[Columns])
 				in

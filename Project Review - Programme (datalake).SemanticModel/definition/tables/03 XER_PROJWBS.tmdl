@@ -128,17 +128,17 @@ table '03 XER_PROJWBS'
 
 		annotation SummarizationSetBy = Automatic
 
-	column Level_6 = ```
+	column 'Parent WBS Status' =
 			
-			VAR WBS4_Name = LOOKUPVALUE(
-			    '03 XER_PROJWBS'[wbs_name],
-			    '03 XER_PROJWBS'[wbs_id_key],
-			    PATHITEM('03 XER_PROJWBS'[Path], 6)
-			)
+			VAR CurrentParentKey = '03 XER_PROJWBS'[parent_wbs_id_key]
+			VAR ParentExists = CurrentParentKey IN ALL('03 XER_PROJWBS'[wbs_id_key])
 			RETURN
-			    COALESCE(WBS4_Name, '03 XER_PROJWBS'[Level_5])
-			
-			```
+			    SWITCH(
+			        TRUE(),
+			        ISBLANK(CurrentParentKey), "Root / Blank Parent",
+			        NOT ParentExists, "Parent Not in WBS",
+			        "Valid Parent"
+			    )
 		lineageTag: 02c268a5-7839-486e-80d8-27388792a66e
 		summarizeBy: none
 
@@ -169,7 +169,13 @@ table '03 XER_PROJWBS'
 				            {
 				                {
 				                    "parent_wbs_id_key",
-				                    each if _ = "" then null else _,
+				                    each
+				                        if _ = null then
+				                            null
+				                        else if Text.Trim(Text.From(_)) = "" then
+				                            null
+				                        else
+				                            _,
 				                    type nullable text
 				                }
 				            }
@@ -181,7 +187,17 @@ table '03 XER_PROJWBS'
 				            {
 				                {
 				                    "ProjectCode",
-				                    each if _ = null then null else Text.Upper(Text.Trim(Text.Clean(Text.From(_)))),
+				                    each
+				                        if _ = null then
+				                            null
+				                        else
+				                            Text.Upper(
+				                                Text.Trim(
+				                                    Text.Clean(
+				                                        Text.From(_)
+				                                    )
+				                                )
+				                            ),
 				                    type nullable text
 				                }
 				            }
@@ -197,9 +213,44 @@ table '03 XER_PROJWBS'
 				                "ProjectCode"
 				            }
 				        ),
-
-				    Combined = if XerCsvRouting[IsActive] then Table.Combine({AthenaFinal, fnXerCsvLoadTable("03_XER_PROJWBS")}) else AthenaFinal,
-				    Final = Table.SelectColumns(Combined, Record.Field(XerCsvTableContracts, "03_XER_PROJWBS")[Columns])
+				
+				    Combined =
+				        if XerCsvRouting[IsActive] then
+				            Table.Combine(
+				                {
+				                    AthenaFinal,
+				                    fnXerCsvLoadTable("03_XER_PROJWBS")
+				                }
+				            )
+				        else
+				            AthenaFinal,
+				
+				    CleanCombinedParentWBS =
+				        Table.TransformColumns(
+				            Combined,
+				            {
+				                {
+				                    "parent_wbs_id_key",
+				                    each
+				                        if _ = null then
+				                            null
+				                        else if Text.Trim(Text.From(_)) = "" then
+				                            null
+				                        else
+				                            _,
+				                    type nullable text
+				                }
+				            }
+				        ),
+				
+				    Final =
+				        Table.SelectColumns(
+				            CleanCombinedParentWBS,
+				            Record.Field(
+				                XerCsvTableContracts,
+				                "03_XER_PROJWBS"
+				            )[Columns]
+				        )
 				in
 				    Final
 

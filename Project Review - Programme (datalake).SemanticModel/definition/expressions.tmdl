@@ -1,4 +1,4 @@
-expression SharePointSite = "https://acciona365-my.sharepoint.com/personal/raguirre_acciona_com" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+expression SharePointSite = "https://accionaau-my.sharepoint.com/personal/ricardo_aguirre_acciona_co_nz" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
 	lineageTag: 09b6a8fa-9d33-48c4-8d3d-c04c0a74d825
 	queryGroup: 'SharePoint Folder'
 
@@ -6,7 +6,218 @@ expression SharePointSite = "https://acciona365-my.sharepoint.com/personal/ragui
 
 	annotation PBI_ResultType = Text
 
-expression XerCsvEnabled = false meta [IsParameterQuery=true, Type="Logical", IsParameterQueryRequired=true]
+expression SelectedProjects = "C6036, C5064, C4017" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: a1b2c3d4-5e6f-7a8b-9c0d-ef1234567890
+	queryGroup: Database
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
+
+expression ProjectFilterList =
+		let
+		    Raw = Text.Trim(SelectedProjects),
+		    RawTokens =
+		        List.Select(
+		            List.Transform(Text.Split(Raw, ","), each Text.Trim(_)),
+		            each _ <> ""
+		        ),
+		    Tokens = List.Transform(RawTokens, each Text.Upper(_)),
+		    ProjectCodeChars =
+		        List.Combine({
+		            List.Transform({48..57}, each Character.FromNumber(_)),
+		            List.Transform({65..90}, each Character.FromNumber(_)),
+		            {"_"}
+		        }),
+		    InvalidTokens =
+		        List.Select(
+		            Tokens,
+		            each _ <> "ALL" and Text.Length(Text.Remove(_, ProjectCodeChars)) > 0
+		        ),
+		    Result =
+		        if List.Count(Tokens) = 0 then
+		            error "SelectedProjects must contain a comma-separated list of project codes or ALL."
+		        else if List.Count(InvalidTokens) > 0 then
+		            error "SelectedProjects can contain only project codes using A-Z, 0-9 or underscore, or ALL."
+		        else if List.Count(Tokens) = 1 and Tokens{0} = "ALL" then
+		            null
+		        else if List.Contains(Tokens, "ALL") then
+		            error "Use ALL by itself, not mixed with project codes."
+		        else
+		            List.Sort(List.Distinct(Tokens))
+		in
+		    Result
+	lineageTag: b2c3d4e5-6f7a-8b9c-0d1e-f23456789012
+	queryGroup: Database
+
+	annotation PBI_ResultType = List
+
+	annotation PBI_NavigationStepName = Navigation
+
+expression fnAthenaSource =
+		let
+		    fn = (tableName as text, optional selectList as nullable text) as table =>
+		        let
+		            DB = AthenaDB,
+		
+		            AllowedChars =
+		                List.Combine({
+		                    List.Transform({48..57}, each Character.FromNumber(_)),
+		                    List.Transform({65..90}, each Character.FromNumber(_)),
+		                    List.Transform({97..122}, each Character.FromNumber(_)),
+		                    {"_"}
+		                }),
+		
+		            SafeTableName =
+		                if Text.Length(tableName) > 0 and Text.Length(Text.Remove(tableName, AllowedChars)) = 0 then
+		                    tableName
+		                else
+		                    error "Invalid table name.",
+		
+		            SelectClause =
+		                if selectList = null or Text.Trim(selectList) = "" then
+		                    error "fnAthenaSource requires an explicit SELECT list."
+		                else
+		                    Text.Trim(selectList),
+		
+		            Sql =
+		                AthenaScopeSql &
+		                "SELECT " & SelectClause & " " &
+		                "FROM prod_projectcontrols_p6.""" & SafeTableName & """ t " &
+		                "INNER JOIN kept_filenames kf ON t.""filename"" = kf.""filename""",
+		
+		            Result = Value.NativeQuery(DB, Sql, null)
+		        in
+		            Result
+		in
+		    fn
+	lineageTag: 6869b75f-be7a-43ff-a8eb-4ab5b098f358
+	queryGroup: Database
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Function
+
+expression AthenaDB =
+		// Query Name: AthenaDB
+		let
+		    Source = AmazonAthena.Databases(AthenaDsn, null, [EnableNativeQuery = true]),
+		    DB = Source{[Name="AwsDataCatalog",Kind="Database"]}[Data]
+		in
+		    DB
+	lineageTag: cf9cf846-d8d4-4453-a53e-ec5224c354da
+	queryGroup: Database
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression SelectedProgrammeType = "C" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: d4e5f6a7-8b9c-0d1e-2f3a-456789012345
+	queryGroup: Database
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
+
+expression AthenaScopeSql =
+		let
+		    ProgTypeRaw = Text.Upper(Text.Trim(SelectedProgrammeType)),
+		    ProgType =
+		        if List.Contains({"C", "T", "ALL"}, ProgTypeRaw) then
+		            ProgTypeRaw
+		        else
+		            error "SelectedProgrammeType must be C, T, or ALL.",
+		
+		    FilterList = ProjectFilterList,
+		
+		    QuoteText = (value as text) as text =>
+		        "'" & Text.Replace(value, "'", "''") & "'",
+		
+		    ProgrammeTypeFilter =
+		        if ProgType = "ALL" then
+		            "SPLIT_PART(filename, '-', 2) IN ('C', 'T')"
+		        else
+		            "SPLIT_PART(filename, '-', 2) = " & QuoteText(ProgType),
+		
+		    ProjectFilter =
+		        if FilterList = null then
+		            ""
+		        else
+		            " AND SPLIT_PART(filename, '-', 1) IN (" &
+		            Text.Combine(List.Transform(FilterList, each QuoteText(_)), ", ") &
+		            ")",
+		
+		    CsvExcludedProjectCodes = XerCsvRouting[AthenaExcludedProjectCodes],
+		
+		    CsvProjectExclusion =
+		        if List.Count(CsvExcludedProjectCodes) = 0 then
+		            ""
+		        else
+		            " AND TRIM(UPPER(SPLIT_PART(filename, '-', 1))) NOT IN (" &
+		            Text.Combine(List.Transform(CsvExcludedProjectCodes, each QuoteText(_)), ", ") &
+		            ")",
+		
+		    Sql =
+		        "WITH " &
+		        "parsed AS (" &
+		            "SELECT DISTINCT filename, " &
+		            "TRY_CAST(SUBSTR(CAST(monthupdate AS VARCHAR), 1, 10) AS DATE) AS monthupdate, " &
+		            "REGEXP_REPLACE(filename, '_[0-9]{8}\.xer$', '') AS filename_stem, " &
+		            "SPLIT_PART(filename, '-', 1) AS project_code, " &
+		            "SPLIT_PART(filename, '-', 2) AS programme_type, " &
+		            "SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3) AS tag, " &
+		            "CASE WHEN REGEXP_LIKE(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), '^BL[0-9]+') THEN TRUE ELSE FALSE END AS is_baseline, " &
+		            "CASE WHEN REGEXP_LIKE(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), '^BL[0-9]+') THEN CAST(REGEXP_EXTRACT(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), 'BL([0-9]+)', 1) AS INTEGER) END AS bl_number, " &
+		            "REGEXP_EXTRACT(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), '^BL[0-9]+-([A-Z])$', 1) AS bl_revision " &
+		            "FROM prod_projectcontrols_p6.""02_xer_project"" " &
+		            "WHERE " & ProgrammeTypeFilter & ProjectFilter & CsvProjectExclusion &
+		        "), " &
+		        "file_info AS (" &
+		            "SELECT DISTINCT filename, project_code, programme_type, " &
+		            "is_baseline, bl_number, monthupdate, " &
+		            "NULLIF(bl_revision, '') AS bl_revision " &
+		            "FROM parsed " &
+		        "), " &
+		        "ranked_baselines AS (" &
+		            "SELECT *, ROW_NUMBER() OVER (" &
+		                "PARTITION BY project_code, programme_type " &
+		                "ORDER BY bl_number DESC, " &
+		                    "bl_revision DESC NULLS LAST, " &
+		                    "monthupdate DESC NULLS LAST, " &
+		                    "filename DESC" &
+		            ") AS bl_rank " &
+		            "FROM file_info " &
+		            "WHERE is_baseline = TRUE" &
+		        "), " &
+		        "latest_baseline AS (" &
+		            "SELECT project_code, programme_type, " &
+		            "monthupdate AS anchor_date, filename AS anchor_filename " &
+		            "FROM ranked_baselines " &
+		            "WHERE bl_rank = 1" &
+		        "), " &
+		        "kept_filenames AS (" &
+		            "SELECT DISTINCT f.filename " &
+		            "FROM file_info f " &
+		            "LEFT JOIN latest_baseline lb " &
+		                "ON f.project_code = lb.project_code " &
+		                "AND f.programme_type = lb.programme_type " &
+		            "WHERE " &
+		                "lb.anchor_date IS NULL " &
+		                "OR f.filename = lb.anchor_filename " &
+		                "OR (f.is_baseline = FALSE AND f.monthupdate > lb.anchor_date) " &
+		                "OR f.monthupdate IS NULL" &
+		        ") "
+		in
+		    Sql
+	lineageTag: 697373d3-5d41-4354-ad93-6757a27eefee
+	queryGroup: Database
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
+
+expression XerCsvEnabled = true meta [IsParameterQuery=true, Type="Logical", IsParameterQueryRequired=true]
 	lineageTag: 1553888a-a615-4930-b8a4-9c6d618fcfd8
 	queryGroup: XER
 
@@ -14,16 +225,8 @@ expression XerCsvEnabled = false meta [IsParameterQuery=true, Type="Logical", Is
 
 	annotation PBI_ResultType = Logical
 
-expression XerCsvProjectCodes = "" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+expression XerCsvProjectCodes = "C6036" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
 	lineageTag: af3f4c0a-0ad6-40ef-ac87-568eb549a5ff
-	queryGroup: XER
-
-	annotation PBI_NavigationStepName = Navigation
-
-	annotation PBI_ResultType = Text
-
-expression XerCsvSiteUrl = "" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
-	lineageTag: fa768e3a-cd9b-44e3-af20-a58d5f3ee619
 	queryGroup: XER
 
 	annotation PBI_NavigationStepName = Navigation
@@ -224,6 +427,7 @@ expression XerCsvTableContracts =
 		        DateColumns = {}, LogicalColumns = {}, IntegerColumns = {}, NumberColumns = {},
 		        RequiredColumns = {"wbs_name", "wbs_id_key", "ProjectCode"},
 		        NamespaceColumns = {"wbs_id_key", "parent_wbs_id_key"},
+		        BlankToNullColumns = {"parent_wbs_id_key"},
 		        UniqueKeys = {{"wbs_id_key"}},
 		        SourceKeyColumn = "wbs_id_key",
 		        ProjectColumn = "ProjectCode"
@@ -427,6 +631,7 @@ expression fnXerCsvReadBundle =
 		let
 		    fn = (bundleName as text, folder as table) as nullable record =>
 		        let
+		            SupportedSchemaVersion = "2.0",
 		            ExpectedManifestColumns = {
 		                "schema_version", "bundle_id", "bundle_status", "parser_version", "project_code", "project_name",
 		                "programme_type", "original_xer_filename", "canonical_xer_filename", "snapshot_kind", "snapshot_tag",
@@ -450,7 +655,7 @@ expression fnXerCsvReadBundle =
 		                        ExpectedSignature = Text.Combine(ExpectedManifestColumns, "|"),
 		                        HeaderChecked =
 		                            if HeaderSignature <> ExpectedSignature then
-		                                error Error.Record("XerCsvManifest", "Manifest headers or header order do not match schema version 1.0.", [BundleId = bundleName, ActualHeaders = HeaderSignature])
+		                                error Error.Record("XerCsvManifest", "Manifest headers or header order do not match schema version " & SupportedSchemaVersion & ".", [BundleId = bundleName, ActualHeaders = HeaderSignature])
 		                            else
 		                                Promoted,
 		                        StrictTokens = fnXerCsvValidateRawTokens(HeaderChecked, {"monthupdate", "update_date", "data_date"}, {}, {"row_count"}, {}, bundleName & "/XER_CSV_MANIFEST.csv"),
@@ -603,8 +808,8 @@ expression fnXerCsvReadBundle =
 		                        null
 		                    else if Table.RowCount(ChildFolders) > 0 or List.Count(MissingFiles) > 0 or List.Count(UnexpectedFiles) > 0 or List.Count(DuplicateFiles) > 0 then
 		                        error Error.Record("XerCsvBundle", "A completed bundle must contain exactly the ten contract CSV files and XER_CSV_MANIFEST.csv, with no duplicate files or child folders.", [BundleId = bundleName, MissingFiles = Text.Combine(MissingFiles, ", "), UnexpectedFiles = Text.Combine(UnexpectedFiles, ", ")])
-		                    else if List.Count(SchemaVersions) <> 1 or SchemaVersions{0} <> "1.0" then
-		                        error Error.Record("XerCsvManifest", "Unsupported schema_version; Programme Review requires 1.0.", [BundleId = bundleName])
+		                    else if List.Count(SchemaVersions) <> 1 or SchemaVersions{0} <> SupportedSchemaVersion then
+		                        error Error.Record("XerCsvManifest", "Unsupported schema_version; Programme Review requires " & SupportedSchemaVersion & ". Regenerate the bundle with the current XER-to-CSV release and archive the legacy bundle.", [BundleId = bundleName, ActualSchemaVersions = Text.Combine(SchemaVersions, ", ")])
 		                    else if List.Count(BundleIds) <> 1 or BundleIds{0} <> bundleName or not BundleNameValid then
 		                        error Error.Record("XerCsvManifest", "bundle_id must match the folder and use <PROJECT>_<C|T>_<yyyyMMddTHHmmssZ>_<hash8>.", [BundleId = bundleName])
 		                    else if ProjectCode = null or ProgrammeType = null or not List.Contains({"C", "T"}, ProgrammeType) then
@@ -614,7 +819,7 @@ expression fnXerCsvReadBundle =
 		                    else if not TextMetadataValid or not SnapshotKindsValid or not SnapshotIdentityValid or not DatesValid or not RowCountsValid or not HashesValid or not CsvHashesConsistent or not BundleExportedAtValid or not CanonicalNamesValid then
 		                        error Error.Record("XerCsvManifest", "Manifest metadata is incomplete or invalid.", [BundleId = bundleName])
 		                    else
-		                        [BundleId = bundleName, ProjectCode = ProjectCode, ProgrammeType = ProgrammeType, ExportedAtUtc = ExportedAtUtc, Manifest = ParsedManifest, Files = FileRows]
+		                        [BundleId = bundleName, SchemaVersion = SupportedSchemaVersion, ProjectCode = ProjectCode, ProgrammeType = ProgrammeType, ExportedAtUtc = ExportedAtUtc, Manifest = ParsedManifest, Files = FileRows]
 		            in
 		                Validated
 		in
@@ -633,16 +838,15 @@ expression XerCsvSelectedBundles =
 		    {}
 		else
 		    let
-		        CsvSiteOverride = Text.Trim(XerCsvSiteUrl),
-		        SiteUrl = if CsvSiteOverride = "" then Text.Trim(SharePointSite) else CsvSiteOverride,
+		        SiteUrl = Text.Trim(SharePointSite),
 		        Library = Text.Trim(XerCsvLibrary),
 		        RootFolder = Text.Trim(XerCsvRootFolder),
 		        ConfigChecked =
 		            if SiteUrl = "" or Library = "" or RootFolder = "" then
-		                error Error.Record("XerCsvConfiguration", "SharePointSite (or the optional XerCsvSiteUrl override), XerCsvLibrary and XerCsvRootFolder are required when CSV routing is active.", [])
+		                error Error.Record("XerCsvConfiguration", "SharePointSite, XerCsvLibrary and XerCsvRootFolder are required when CSV routing is active.", [])
 		            else
 		                true,
-		        Site = if ConfigChecked then SharePoint.Contents(SiteUrl, [ApiVersion = 15]) else error "Invalid CSV configuration.",
+		        Site = if ConfigChecked then SharePoint.Contents(SharePointSite, [ApiVersion = 15]) else error "Invalid CSV configuration.",
 		        ActiveRoot = fnXerCsvNavigate(Site, Library & "/" & RootFolder),
 		        RequiredProgrammes = if XerCsvRouting[ProgrammeType] = "ALL" then {"C", "T"} else {XerCsvRouting[ProgrammeType]},
 		        ProjectFolders = Table.SelectRows(ActiveRoot, each Value.Is([Content], type table)),
@@ -732,13 +936,14 @@ expression fnXerCsvReadBundleTable =
 		    fn = (bundle as record, tableName as text) as table =>
 		        let
 		            Contract = if Record.HasFields(XerCsvTableContracts, tableName) then Record.Field(XerCsvTableContracts, tableName) else error Error.Record("XerCsvContract", "Unknown Programme Review CSV table.", [TableName = tableName]),
+		            KeyPrefix = (canonicalName as text) as text => "CSV::" & bundle[BundleId] & "::" & canonicalName & "::",
 		            FileMatches = Table.SelectRows(bundle[Files], each [Name] = Contract[FileName]),
 		            FileBinary = if Table.RowCount(FileMatches) = 1 then Binary.Buffer(FileMatches{0}[Content]) else error Error.Record("XerCsvBundle", "Expected exactly one contract CSV file.", [BundleId = bundle[BundleId], FileName = Contract[FileName]]),
 		            ManifestRows = Table.SelectRows(bundle[Manifest], each [table_name] = tableName),
 		            Raw = Csv.Document(FileBinary, [Delimiter = ",", Columns = List.Count(Contract[Columns]), Encoding = 65001, QuoteStyle = QuoteStyle.Csv, ExtraValues = ExtraValues.Error]),
 		            Promoted = Table.PromoteHeaders(Raw, [PromoteAllScalars = true]),
 		            ActualHeaders = Table.ColumnNames(Promoted),
-		            HeaderChecked = if Text.Combine(ActualHeaders, "|") = Text.Combine(Contract[Columns], "|") then Promoted else error Error.Record("XerCsvSchema", "CSV headers or header order do not match schema version 1.0.", [BundleId = bundle[BundleId], FileName = Contract[FileName], ActualHeaders = Text.Combine(ActualHeaders, ", ")]),
+		            HeaderChecked = if Text.Combine(ActualHeaders, "|") = Text.Combine(Contract[Columns], "|") then Promoted else error Error.Record("XerCsvSchema", "CSV headers or header order do not match schema version " & bundle[SchemaVersion] & ".", [BundleId = bundle[BundleId], FileName = Contract[FileName], ActualHeaders = Text.Combine(ActualHeaders, ", ")]),
 		            StrictTokens = fnXerCsvValidateRawTokens(HeaderChecked, Contract[DateColumns], Contract[LogicalColumns], Contract[IntegerColumns], Contract[NumberColumns], bundle[BundleId] & "/" & Contract[FileName]),
 		            Typed = Table.TransformColumnTypes(StrictTokens, Contract[Types], "en-NZ"),
 		            ProjectNormalised = Typed,
@@ -748,7 +953,7 @@ expression fnXerCsvReadBundleTable =
 		                    (columnName) => Table.RowCount(Table.SelectRows(ProjectNormalised, each let value = Record.Field(_, columnName) in value = null or Text.Trim(Text.From(value)) = "")) > 0
 		                ),
 		            CanonicalNames = List.Distinct(Table.Column(bundle[Manifest], "canonical_xer_filename")),
-		            AllowedKeyPrefixes = List.Transform(CanonicalNames, each "CSV|" & bundle[BundleId] & "|" & _ & "."),
+		            AllowedKeyPrefixes = List.Transform(CanonicalNames, each KeyPrefix(_)),
 		            InvalidNamespaceColumns =
 		                List.Select(
 		                    Contract[NamespaceColumns],
@@ -786,7 +991,7 @@ expression fnXerCsvReadBundleTable =
 		                    (manifestRow) =>
 		                        let
 		                            canonicalName = manifestRow[canonical_xer_filename],
-		                            prefix = "CSV|" & bundle[BundleId] & "|" & canonicalName & ".",
+		                            prefix = KeyPrefix(canonicalName),
 		                            sourceRows =
 		                                if Contract[SourceKeyColumn] = null then
 		                                    Table.RowCount(Table.SelectRows(ProjectNormalised, each [filename] = canonicalName))
@@ -819,7 +1024,7 @@ expression fnXerCsvReadBundleTable =
 		                        Table.SelectRows(
 		                            ProjectNormalised,
 		                            each
-		                                let expectedPrefix = "CSV|" & bundle[BundleId] & "|" & [filename] & "."
+		                                let expectedPrefix = KeyPrefix([filename])
 		                                in not List.AllTrue(List.Transform(Contract[NamespaceColumns], (columnName) => let value = Record.Field(_, columnName) in value <> null and Text.StartsWith(Text.From(value), expectedPrefix)))
 		                        )
 		                    ),
@@ -833,7 +1038,7 @@ expression fnXerCsvReadBundleTable =
 		                            each
 		                                let
 		                                    key = [proj_id_key],
-		                                    matchingSources = Table.SelectRows(bundle[Manifest], (manifestRow) => manifestRow[table_name] = "02_XER_PROJECT" and Text.StartsWith(key, "CSV|" & bundle[BundleId] & "|" & manifestRow[canonical_xer_filename] & ".")),
+		                                    matchingSources = Table.SelectRows(bundle[Manifest], (manifestRow) => manifestRow[table_name] = "02_XER_PROJECT" and Text.StartsWith(key, KeyPrefix(manifestRow[canonical_xer_filename]))),
 		                                    source = if Table.RowCount(matchingSources) = 1 then matchingSources{0} else null
 		                                in
 		                                    source = null or [ProjectCode] <> source[project_code] or [monthupdate] <> source[monthupdate] or [last_recalc_date] <> source[data_date]
@@ -1016,211 +1221,8 @@ expression fnXerCsvLoadTable =
 
 	annotation PBI_ResultType = Function
 
-expression SelectedProjects = "C5064, C5001, C4007, C4017" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
-	lineageTag: a1b2c3d4-5e6f-7a8b-9c0d-ef1234567890
-	queryGroup: Database
-
-	annotation PBI_NavigationStepName = Navigation
-
-	annotation PBI_ResultType = Text
-
-expression ProjectFilterList =
-		let
-		    Raw = Text.Trim(SelectedProjects),
-		    RawTokens =
-		        List.Select(
-		            List.Transform(Text.Split(Raw, ","), each Text.Trim(_)),
-		            each _ <> ""
-		        ),
-		    Tokens = List.Transform(RawTokens, each Text.Upper(_)),
-		    ProjectCodeChars =
-		        List.Combine({
-		            List.Transform({48..57}, each Character.FromNumber(_)),
-		            List.Transform({65..90}, each Character.FromNumber(_)),
-		            {"_"}
-		        }),
-		    InvalidTokens =
-		        List.Select(
-		            Tokens,
-		            each _ <> "ALL" and Text.Length(Text.Remove(_, ProjectCodeChars)) > 0
-		        ),
-		    Result =
-		        if List.Count(Tokens) = 0 then
-		            error "SelectedProjects must contain a comma-separated list of project codes or ALL."
-		        else if List.Count(InvalidTokens) > 0 then
-		            error "SelectedProjects can contain only project codes using A-Z, 0-9 or underscore, or ALL."
-		        else if List.Count(Tokens) = 1 and Tokens{0} = "ALL" then
-		            null
-		        else if List.Contains(Tokens, "ALL") then
-		            error "Use ALL by itself, not mixed with project codes."
-		        else
-		            List.Sort(List.Distinct(Tokens))
-		in
-		    Result
-	lineageTag: b2c3d4e5-6f7a-8b9c-0d1e-f23456789012
-	queryGroup: Database
-
-	annotation PBI_ResultType = List
-
-	annotation PBI_NavigationStepName = Navigation
-
-expression fnAthenaSource =
-		let
-		    fn = (tableName as text, optional selectList as nullable text) as table =>
-		        let
-		            DB = AthenaDB,
-		
-		            AllowedChars =
-		                List.Combine({
-		                    List.Transform({48..57}, each Character.FromNumber(_)),
-		                    List.Transform({65..90}, each Character.FromNumber(_)),
-		                    List.Transform({97..122}, each Character.FromNumber(_)),
-		                    {"_"}
-		                }),
-		
-		            SafeTableName =
-		                if Text.Length(tableName) > 0 and Text.Length(Text.Remove(tableName, AllowedChars)) = 0 then
-		                    tableName
-		                else
-		                    error "Invalid table name.",
-		
-		            SelectClause =
-		                if selectList = null or Text.Trim(selectList) = "" then
-		                    error "fnAthenaSource requires an explicit SELECT list."
-		                else
-		                    Text.Trim(selectList),
-		
-		            Sql =
-		                AthenaScopeSql &
-		                "SELECT " & SelectClause & " " &
-		                "FROM prod_projectcontrols_p6.""" & SafeTableName & """ t " &
-		                "INNER JOIN kept_filenames kf ON t.""filename"" = kf.""filename""",
-		
-		            Result = Value.NativeQuery(DB, Sql, null)
-		        in
-		            Result
-		in
-		    fn
-	lineageTag: 6869b75f-be7a-43ff-a8eb-4ab5b098f358
-	queryGroup: Database
-
-	annotation PBI_NavigationStepName = Navigation
-
-	annotation PBI_ResultType = Function
-
-expression AthenaDB =
-		// Query Name: AthenaDB
-		let
-		    Source = AmazonAthena.Databases("primary_p6_bi_reporting", null, [EnableNativeQuery = true]),
-		    DB = Source{[Name="AwsDataCatalog",Kind="Database"]}[Data]
-		in
-		    DB
-	lineageTag: cf9cf846-d8d4-4453-a53e-ec5224c354da
-	queryGroup: Database
-
-	annotation PBI_NavigationStepName = Navigation
-
-	annotation PBI_ResultType = Table
-
-expression SelectedProgrammeType = "C" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
-	lineageTag: d4e5f6a7-8b9c-0d1e-2f3a-456789012345
-	queryGroup: Database
-
-	annotation PBI_NavigationStepName = Navigation
-
-	annotation PBI_ResultType = Text
-
-expression AthenaScopeSql =
-		let
-		    ProgTypeRaw = Text.Upper(Text.Trim(SelectedProgrammeType)),
-		    ProgType =
-		        if List.Contains({"C", "T", "ALL"}, ProgTypeRaw) then
-		            ProgTypeRaw
-		        else
-		            error "SelectedProgrammeType must be C, T, or ALL.",
-		
-		    FilterList = ProjectFilterList,
-		
-		    QuoteText = (value as text) as text =>
-		        "'" & Text.Replace(value, "'", "''") & "'",
-		
-		    ProgrammeTypeFilter =
-		        if ProgType = "ALL" then
-		            "SPLIT_PART(filename, '-', 2) IN ('C', 'T')"
-		        else
-		            "SPLIT_PART(filename, '-', 2) = " & QuoteText(ProgType),
-		
-		    ProjectFilter =
-		        if FilterList = null then
-		            ""
-		        else
-		            " AND SPLIT_PART(filename, '-', 1) IN (" &
-		            Text.Combine(List.Transform(FilterList, each QuoteText(_)), ", ") &
-		            ")",
-
-		    CsvExcludedProjectCodes = XerCsvRouting[AthenaExcludedProjectCodes],
-
-		    CsvProjectExclusion =
-		        if List.Count(CsvExcludedProjectCodes) = 0 then
-		            ""
-		        else
-		            " AND TRIM(UPPER(SPLIT_PART(filename, '-', 1))) NOT IN (" &
-		            Text.Combine(List.Transform(CsvExcludedProjectCodes, each QuoteText(_)), ", ") &
-		            ")",
-		
-		    Sql =
-		        "WITH " &
-		        "parsed AS (" &
-		            "SELECT DISTINCT filename, " &
-		            "TRY_CAST(SUBSTR(CAST(monthupdate AS VARCHAR), 1, 10) AS DATE) AS monthupdate, " &
-		            "REGEXP_REPLACE(filename, '_[0-9]{8}\.xer$', '') AS filename_stem, " &
-		            "SPLIT_PART(filename, '-', 1) AS project_code, " &
-		            "SPLIT_PART(filename, '-', 2) AS programme_type, " &
-		            "SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3) AS tag, " &
-		            "CASE WHEN REGEXP_LIKE(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), '^BL[0-9]+') THEN TRUE ELSE FALSE END AS is_baseline, " &
-		            "CASE WHEN REGEXP_LIKE(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), '^BL[0-9]+') THEN CAST(REGEXP_EXTRACT(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), 'BL([0-9]+)', 1) AS INTEGER) END AS bl_number, " &
-		            "REGEXP_EXTRACT(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), '^BL[0-9]+-([A-Z])$', 1) AS bl_revision " &
-		            "FROM prod_projectcontrols_p6.""02_xer_project"" " &
-		            "WHERE " & ProgrammeTypeFilter & ProjectFilter & CsvProjectExclusion &
-		        "), " &
-		        "file_info AS (" &
-		            "SELECT DISTINCT filename, project_code, programme_type, " &
-		            "is_baseline, bl_number, monthupdate, " &
-		            "NULLIF(bl_revision, '') AS bl_revision " &
-		            "FROM parsed " &
-		        "), " &
-		        "ranked_baselines AS (" &
-		            "SELECT *, ROW_NUMBER() OVER (" &
-		                "PARTITION BY project_code, programme_type " &
-		                "ORDER BY bl_number DESC, " &
-		                    "bl_revision DESC NULLS LAST, " &
-		                    "monthupdate DESC NULLS LAST, " &
-		                    "filename DESC" &
-		            ") AS bl_rank " &
-		            "FROM file_info " &
-		            "WHERE is_baseline = TRUE" &
-		        "), " &
-		        "latest_baseline AS (" &
-		            "SELECT project_code, programme_type, " &
-		            "monthupdate AS anchor_date, filename AS anchor_filename " &
-		            "FROM ranked_baselines " &
-		            "WHERE bl_rank = 1" &
-		        "), " &
-		        "kept_filenames AS (" &
-		            "SELECT DISTINCT f.filename " &
-		            "FROM file_info f " &
-		            "LEFT JOIN latest_baseline lb " &
-		                "ON f.project_code = lb.project_code " &
-		                "AND f.programme_type = lb.programme_type " &
-		            "WHERE " &
-		                "lb.anchor_date IS NULL " &
-		                "OR f.filename = lb.anchor_filename " &
-		                "OR (f.is_baseline = FALSE AND f.monthupdate > lb.anchor_date) " &
-		                "OR f.monthupdate IS NULL" &
-		        ") "
-		in
-		    Sql
-	lineageTag: 697373d3-5d41-4354-ad93-6757a27eefee
+expression AthenaDsn = "primary_p6_bi_reporting" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: fbc3fcb4-7d97-4253-991e-27159468908d
 	queryGroup: Database
 
 	annotation PBI_NavigationStepName = Navigation

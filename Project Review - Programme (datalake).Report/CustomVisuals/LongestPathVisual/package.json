@@ -1,5 +1,5 @@
 {
-  "version": "2.0.1.0",
+  "version": "3.0.0.0",
   "author": {
     "name": "Ricardo Aguirre",
     "email": "ricardoaguirregarcia@gmail.com"
@@ -15,7 +15,7 @@
     "guid": "LongestPathVisual",
     "name": "LongestPathVisual",
     "displayName": "Longest Path Visual",
-    "version": "2.0.1.0",
+    "version": "3.0.0.0",
     "description": "Critical Path Method Gantt chart. © 2026 Ricardo Aguirre. All rights reserved. Licensed use only — see LICENSE.md in distribution. Contact ricardoaguirregarcia@gmail.com for licensing.",
     "supportUrl": "mailto:ricardoaguirregarcia@gmail.com",
     "gitHubUrl": "",

@@ -6,7 +6,7 @@ This guide explains how to make a complete project history available to Programm
 
 Before enabling CSV loading, confirm the following:
 
-- You may use the same SharePoint/OneDrive site already held in `SharePointSite`. Leave `XerCsvSiteUrl` blank to reuse it automatically.
+- `SharePointSite` contains the SharePoint/OneDrive site-root URL used by both the report's external assets and CSV loader. It is required and cannot be a local Windows or synchronised OneDrive path.
 - A team site remains preferable for long-term shared ownership, but it is not required by the loader. If you use the existing personal OneDrive site, refresh depends on that account retaining access and remaining active.
 - The account used by Power BI Desktop and Power BI Service can read the document library and every folder beneath the configured CSV root.
 - Prefer a durable organisational or service account for Power BI Service refresh. Do not rely on an account that may leave the project or lose access.
@@ -20,18 +20,18 @@ The existing `SharePointSite` currently uses a personal SharePoint/OneDrive site
 https://<tenant>.sharepoint.com/sites/<team-site>
 ```
 
-Do not use any of these as `XerCsvSiteUrl`:
+Do not use any of these as `SharePointSite`:
 
 - a URL containing `/Shared Documents/` or `/Forms/AllItems.aspx`;
 - a link copied from the Share button;
 - the URL of an individual CSV file or bundle folder.
 
-When reusing the current site, keep the site-root URL already stored in `SharePointSite`; do not replace it with a copied folder or sharing-link URL.
+Keep the site-root URL in `SharePointSite`; do not replace it with a copied folder or sharing-link URL.
 
 ## 2. Create the SharePoint folders
 
 1. Open the SharePoint/OneDrive site stored in `SharePointSite`.
-2. Open its **Documents** library. If you later override the site, open the library whose exact connector name is stored in `XerCsvLibrary`.
+2. Open the library whose exact connector name is stored in `XerCsvLibrary` (`Documents` for the current site).
 3. Open the existing `P6` folder. Create it if it does not already exist.
 4. Open `P6` and create `XER CSV`.
 5. Open `XER CSV` and create two folders: `Active` and `Archive`.
@@ -163,8 +163,9 @@ Configure the parameters in this order and set `XerCsvEnabled` last:
 
 | Parameter | Example | Purpose |
 |---|---|---|
-| `XerCsvSiteUrl` | Leave blank | Blank reuses `SharePointSite`; enter a site-root URL only when deliberately overriding it |
-| `XerCsvLibrary` | `Documents` | Exact library name on the existing site; use `Shared Documents` only if that is the name returned for another site |
+| `AthenaDsn` | `primary_p6_bi_reporting` | Amazon Athena DSN used by every Athena query |
+| `SharePointSite` | `https://<tenant>.sharepoint.com/sites/<team-site>` | Required site-root URL used by both external assets and CSV loading |
+| `XerCsvLibrary` | `Documents` | Exact library name returned by `SharePoint.Contents`; use `Shared Documents` only when that is the selected site's connector name |
 | `XerCsvRootFolder` | `P6/XER CSV/Active` | Path below the library; no site URL |
 | `XerCsvProjectCodes` | `C5001, C5002` | Comma-separated project folders owned by CSV |
 | `SelectedProjects` | `C5001, C5002, C5003` | Overall report scope; must include every CSV-owned project |
@@ -174,8 +175,8 @@ Configure the parameters in this order and set `XerCsvEnabled` last:
 Important rules:
 
 - `XerCsvProjectCodes` is an explicit allow-list. A project folder that exists in SharePoint but is not listed remains unused.
-- When `XerCsvSiteUrl` is blank, the CSV loader automatically uses the existing `SharePointSite` value. This is the recommended setting when you want both queries to use the same site and credential scope.
-- `XerCsvLibrary` is still separate because different sites expose their document library as `Documents` or `Shared Documents`. The current report's existing site uses `Documents`.
+- `AthenaDsn` and `SharePointSite` are the only source-location parameters. Do not hard-code another Athena DSN or SharePoint site in a query.
+- Both SharePoint queries use `SharePointSite`, giving them one site and credential scope. `XerCsvLibrary` remains separate because sites can expose their document library as `Documents` or `Shared Documents`.
 - Project codes can contain only `A-Z`, `0-9` and `_`. Spaces and punctuation are not valid routing tokens.
 - Do not enter both the C and J alias for the same numeric project, such as both `C5001` and `J5001`. The loader excludes both Athena aliases when either one is routed.
 - The code in `XerCsvProjectCodes`, the SharePoint parent folder and manifest `project_code` must be identical. The parent folder must use the exact uppercase code. C/J equivalence applies only to selected-project scope, governance and Athena exclusion; it does not make `Active/C5001` interchangeable with `Active/J5001`.
@@ -188,7 +189,7 @@ Important rules:
 ## 5. Configure Desktop credentials and privacy
 
 1. In Power BI Desktop, select **File > Options and settings > Data source settings**.
-2. Select the SharePoint site used by the CSV loader. When `XerCsvSiteUrl` is blank, this is the existing `SharePointSite` source.
+2. Select the SharePoint source matching `SharePointSite`.
 3. Select **Edit Permissions** and sign in with **Organizational account**.
 4. Set the SharePoint privacy level to **Organizational**.
 5. Select the existing Athena source and confirm it also uses the approved organisational credentials and **Organizational** privacy level.
@@ -199,27 +200,59 @@ Do not select **Ignore privacy levels** as a production fix. Microsoft explains 
 
 After refresh, verify source ownership:
 
-- every `task_id_key` for a CSV-owned project starts with `CSV|`;
-- no `task_id_key` for an Athena-owned project starts with `CSV|`;
+- every `task_id_key` for a CSV-owned project starts with `CSV::`;
+- no `task_id_key` for an Athena-owned project starts with `CSV::`;
 - every configured project has its baseline and expected updates;
 - project, WBS, predecessor, activity-code, calendar and resource visuals return data without relationship errors.
 
 Because ownership is whole-project, an Athena copy of update `2608` is intentionally ignored when that project is listed in `XerCsvProjectCodes`. The selected CSV bundle owns the complete project history.
 
-## 6. Configure Power BI Service
+## 6. Publish and configure Power BI Service
 
-1. Publish to a test workspace before changing the production report.
-2. Open the semantic model in the workspace and open **Settings**.
-3. Confirm the semantic-model owner is the durable account intended to maintain refresh credentials. Take over the model only if authorised and necessary.
-4. Under **Gateway and cloud connections**, retain or map the report's existing Athena connection and gateway path.
-5. Under **Data source credentials** or the corresponding SharePoint cloud connection, sign in to the team SharePoint site with OAuth/Organizational account credentials.
-6. Confirm the published parameter values, especially `XerCsvSiteUrl`, `XerCsvProjectCodes` and `XerCsvEnabled`.
-7. Run an on-demand refresh and review **Refresh history** before enabling or changing the schedule.
-8. After a successful on-demand refresh, configure the refresh frequency, time zone and failure notifications.
+### Open and publish the normal PBIP
 
-SharePoint Online is a cloud source and ordinarily does not need an on-premises gateway when Power BI Service can connect to it directly. Keep the existing Athena connection path unchanged. If the semantic model combines a gateway-backed Athena source with the SharePoint cloud source, the Power BI or gateway administrator may need to approve the cloud connection mapping for that gateway cluster.
+Use `Project Review - Programme (datalake).pbip` in the repository root for all normal editing, refreshing and publishing. Its previous local Service bindings have been cleared, so no deployment copy or preparation script is required.
 
-Microsoft documents the current Service sections and refresh process in [Configure scheduled refresh](https://learn.microsoft.com/en-us/power-bi/connect-data/refresh-scheduled-refresh) and [Data refresh in Power BI](https://learn.microsoft.com/en-us/power-bi/connect-data/refresh-data).
+Open the normal PBIP, complete and save a full Desktop refresh, then select **Publish**. After the first successful publication, Desktop may recreate ignored `.pbi/localSettings.json` files in this same project. That is expected: continue using the same normal PBIP for later edits and publications to the same destination. Never commit local bindings, `cache.abf`, credentials or PBIX files.
+
+Microsoft documents direct Desktop publication of PBIP projects in [Power BI Desktop projects](https://learn.microsoft.com/en-us/power-bi/developer/projects/projects-overview).
+
+### Create new workspace items
+
+1. Open the normal root `.pbip`, refresh and save it.
+2. Select **Publish** and choose the authorised destination workspace.
+3. Confirm the destination does not already contain a same-name report or semantic model. An unbound clean copy creates new items.
+4. Continue using the same normal root `.pbip` for future updates to these items.
+
+### Replace existing same-name items safely
+
+1. Confirm the destination contains exactly one report and one semantic model with the PBIP display names. Resolve duplicate same-name models before continuing.
+2. Record the current report and semantic-model IDs, report URL and sharing links, direct access, Build permissions, RLS memberships, app inclusion and audiences, refresh schedule, gateway mapping, endorsement and sensitivity labels.
+3. Open the normal root `.pbip`, complete and save a full refresh, and publish to that same workspace.
+4. Continue only when Desktop explicitly offers to **Replace** the existing report and semantic model. Cancel if it proposes creating another item or does not identify the expected pair.
+5. Review the impact analysis, retain the existing sensitivity label when prompted, and accept **Replace**. Never delete, recreate or manually rename the existing Service items.
+6. Verify that both item IDs and the existing report URL are unchanged, shared links still open, direct and Build access and RLS memberships remain present, and the app still references the report.
+7. Update the app only after verification, retaining its audiences and permissions. Test with a normal app consumer account as well as the publisher.
+8. Keep using the same normal root `.pbip` for subsequent publications to this destination; Desktop's regenerated local binding remains ignored by Git.
+
+The publisher needs permission to replace both items. Publication can also be blocked by duplicate same-name models or the tenant setting **Block republish and disable package refresh**. See [Publish troubleshooting](https://learn.microsoft.com/en-us/power-bi/create-reports/desktop-troubleshoot-publish) and [Upload or republish from Power BI Desktop](https://learn.microsoft.com/en-us/power-bi/create-reports/desktop-upload-desktop-files).
+
+### Configure connections and refresh
+
+1. Open the published semantic model's **Settings** and confirm all eight parameters: `AthenaDsn`, `SharePointSite`, `SelectedProjects`, `SelectedProgrammeType`, `XerCsvEnabled`, `XerCsvProjectCodes`, `XerCsvLibrary` and `XerCsvRootFolder`.
+2. Confirm the semantic-model owner is the durable account intended to maintain refresh credentials. Take over only when authorised and necessary.
+3. Under **Gateway and cloud connections**, map the Athena DSN and, when required by the combined mashup, the SharePoint cloud connection through the approved gateway cluster.
+4. Under **Data source credentials** or its connection entry, authenticate `SharePointSite` with OAuth/Organizational account credentials. Revalidate both sources after publication because changed source definitions can require new credentials.
+5. Set Athena and SharePoint privacy to **Organizational**, run an on-demand refresh and review **Refresh history**.
+6. After that refresh succeeds, confirm scheduled refresh remains enabled with the intended frequency, time zone and failure notifications.
+
+SharePoint Online ordinarily does not need an on-premises gateway when the Service can connect directly. If Athena is gateway-backed and the model combines it with SharePoint, the Power BI or gateway administrator may need to approve the cloud connection mapping through that cluster.
+
+Microsoft documents the Service settings in [Configure scheduled refresh](https://learn.microsoft.com/en-us/power-bi/connect-data/refresh-scheduled-refresh) and [Data refresh in Power BI](https://learn.microsoft.com/en-us/power-bi/connect-data/refresh-data).
+
+### Optional PBIX fallback
+
+If direct PBIP publication is unavailable, open the normal root PBIP and use **Save As** to create a PBIX. Do not edit its archive or commit it. Upload it to the selected workspace and apply the same new-item or explicit same-name **Replace** safeguards above.
 
 ## 7. Replace, archive or roll back a bundle
 
@@ -252,7 +285,7 @@ Set `XerCsvEnabled = false` and refresh. This disables all CSV routing and retur
 | `A completed bundle manifest does not match its parent` | A bundle was uploaded beneath the wrong project folder | Move it to the project folder matching manifest `project_code` |
 | `The SharePoint project folder must use the exact uppercase project code` | The folder differs in case or spelling from `XerCsvProjectCodes` | Rename the parent folder to the exact uppercase configured code and keep manifest `project_code` identical |
 | `No completed active CSV bundle exists` | Manifest missing, wrong programme type, or no complete bundle for a required C/T pair | Complete the upload and add the manifest last; check `SelectedProgrammeType` |
-| `Unsupported schema_version` | Bundle came from an incompatible parser profile | Regenerate using the supported Programme Review profile |
+| `Unsupported schema_version` | Bundle is not schema version `2.0` | Regenerate it with XER-to-CSV `2.6.0` or later, archive every legacy manifest-bearing folder under `Active`, and publish the new manifest last |
 | `Manifest headers or header order do not match` | Manifest was manually edited or created by another process | Regenerate the bundle; do not edit contract files manually |
 | `CSV headers or header order do not match` | Wrong export profile or renamed columns | Regenerate using Programme Review Bundle |
 | `Do not configure both C and J aliases` | Both aliases are present in `XerCsvProjectCodes` | Keep only the folder/manifest project code |
@@ -260,9 +293,12 @@ Set `XerCsvEnabled = false` and refresh. This disables all CSV routing and retur
 | `CSV routing is blocked ... absent from governed dbo_project` | Governed project metadata is missing | Have the data owner add or correct the project record before activation |
 | `CSV routing is blocked ... no governed dbo_userpermission` | No project-specific governed permission exists | Have the security/data owner add the permission record; never use the manifest to bypass RLS |
 | `Access denied`, `401` or `403` | Account lacks SharePoint access or OAuth credentials expired | Confirm site/library permission and re-enter Organizational credentials |
-| Folder or library cannot be found | The resolved site URL, `XerCsvLibrary` or `XerCsvRootFolder` is wrong | When reusing the existing site, leave `XerCsvSiteUrl` blank and use `Documents`; otherwise use the override site root, exact library name and path below the library |
+| Folder or library cannot be found | `SharePointSite`, `XerCsvLibrary` or `XerCsvRootFolder` is wrong | Use the site-root URL, exact connector library name and path below that library |
 | `Formula.Firewall` or privacy error | Athena and SharePoint privacy levels differ or are unset | Set both approved sources to `Organizational` in Desktop and Service |
 | Desktop succeeds but Service fails | Service credentials, ownership, parameters or gateway mapping differ | Review semantic-model settings, cloud/gateway connections and Refresh history |
+| Direct PBIP publication loops or targets an old item | The normal project contains a stale local Service binding | Close Desktop and clear the report and semantic-model `.pbi/localSettings.json` files once, then reopen the normal PBIP |
+| Desktop does not offer the expected same-name replacement | Destination names do not match, duplicates exist, permissions are insufficient, or republishing is blocked by tenant policy | Cancel publication; confirm exactly one same-name report/model pair, access and tenant settings before retrying |
+| A required parameter is missing after publication | An older package was published | Open the current normal PBIP, confirm all eight parameters, refresh, save and publish again |
 | New bundle is not selected | Manifest not uploaded, bundle status incomplete, or `exported_at_utc` is older | Validate the manifest and selected programme type; do not rename the bundle |
 | A newer valid bundle exists but refresh still fails | An older manifest-bearing bundle beneath `Active/<PROJECT_CODE>` is invalid | Move the invalid bundle to `Archive/<PROJECT_CODE>`; leave only validated completed bundles and manifest-free upload staging folders in `Active` |
 | Refresh shows no SharePoint request | CSV mode is disabled or project list blank | Set the site parameters and project list, then enable `XerCsvEnabled` |
@@ -271,20 +307,23 @@ Do not solve validation failures by removing manifest rows, changing hashes, ren
 
 ## 9. Go-live checklist
 
-- [ ] The resolved SharePoint site and exact `XerCsvLibrary` name are confirmed (`Documents` for the existing `SharePointSite`).
+- [ ] `AthenaDsn`, `SharePointSite` and the exact `XerCsvLibrary` name are confirmed (`Documents` for the existing site).
 - [ ] `P6/XER CSV/Active` and `P6/XER CSV/Archive` created.
 - [ ] Every manual project has its own matching folder under both roots.
 - [ ] Bundle contains exactly ten table CSVs and one manifest.
 - [ ] Table CSVs uploaded first and manifest uploaded last.
 - [ ] `project_code`, bundle ID and programme type match their folder locations.
 - [ ] Project exists in `dbo_project` and has governed `dbo_userpermission` data.
-- [ ] Desktop parameters checked and `XerCsvEnabled` enabled last.
+- [ ] All eight Desktop parameters checked and `XerCsvEnabled` enabled last.
 - [ ] Athena and SharePoint privacy levels set to `Organizational`.
 - [ ] Desktop full refresh succeeds.
-- [ ] CSV-owned projects contain only `CSV|` relationship keys.
-- [ ] Athena-owned projects contain no `CSV|` relationship keys.
+- [ ] CSV-owned projects contain only `CSV::` relationship keys and no vertical pipes.
+- [ ] Athena-owned projects contain no `CSV::` relationship keys.
 - [ ] Baseline, previous update, logic, WBS, codes, calendars and resources checked.
 - [ ] RLS tested with **View as** and a real low-privilege account.
+- [ ] The normal root PBIP opens, refreshes and saves successfully.
+- [ ] The destination has no duplicate same-name report or semantic model.
+- [ ] For replacement, report/model IDs, links, access, Build permissions, RLS and app audiences were recorded and remain unchanged after publication.
 - [ ] Service owner, credentials, gateway/cloud mappings and parameters checked.
 - [ ] On-demand Service refresh succeeds before scheduled refresh is enabled.
 - [ ] Bundle replacement and rollback tested in the test workspace.

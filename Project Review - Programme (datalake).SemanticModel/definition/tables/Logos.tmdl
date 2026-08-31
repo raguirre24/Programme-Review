@@ -38,7 +38,7 @@ table Logos
 		mode: import
 		source =
 				let
-				    Source = SharePoint.Contents(#"SharePointSite", [ApiVersion = 15]),
+				    Source = SharePoint.Contents(SharePointSite, [ApiVersion = 15]),
 				    #"Documents" = Source{[Name="Documents"]}[Content],
 				    #"P6" = #"Documents"{[Name="P6"]}[Content],
 				    #"Programme" = #"P6"{[Name="Programme"]}[Content],

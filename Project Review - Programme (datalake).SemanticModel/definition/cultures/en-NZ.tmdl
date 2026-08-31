@@ -35569,7 +35569,7 @@ cultureInfo en-NZ
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "03 XER_PROJWBS",
-			          "ConceptualProperty": "Level_6"
+			          "ConceptualProperty": "Parent WBS Status"
 			        }
 			      },
 			      "State": "Generated",
