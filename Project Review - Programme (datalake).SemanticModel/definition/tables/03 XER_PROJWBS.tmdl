@@ -128,28 +128,28 @@ table '03 XER_PROJWBS'
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Parent WBS Status' =
-			
-			VAR CurrentParentKey = '03 XER_PROJWBS'[parent_wbs_id_key]
-			VAR ParentExists = CurrentParentKey IN ALL('03 XER_PROJWBS'[wbs_id_key])
-			RETURN
-			    SWITCH(
-			        TRUE(),
-			        ISBLANK(CurrentParentKey), "Root / Blank Parent",
-			        NOT ParentExists, "Parent Not in WBS",
-			        "Valid Parent"
-			    )
-		lineageTag: 02c268a5-7839-486e-80d8-27388792a66e
-		summarizeBy: none
-
-		annotation SummarizationSetBy = Automatic
-
 	column IsCsvSource
 		dataType: boolean
 		isHidden
 		lineageTag: 24a81322-e497-4908-91c5-8155909eba6c
 		summarizeBy: none
 		sourceColumn: IsCsvSource
+
+		annotation SummarizationSetBy = Automatic
+
+	column Level_6 = ```
+			
+			VAR WBS4_Name = LOOKUPVALUE(
+			    '03 XER_PROJWBS'[wbs_name],
+			    '03 XER_PROJWBS'[wbs_id_key],
+			    PATHITEM('03 XER_PROJWBS'[Path], 6)
+			)
+			RETURN
+			    COALESCE(WBS4_Name, '03 XER_PROJWBS'[Level_5])
+			
+			```
+		lineageTag: 4c8abec1-c403-4130-9749-a941eb968b11
+		summarizeBy: none
 
 		annotation SummarizationSetBy = Automatic
 
@@ -228,7 +228,7 @@ table '03 XER_PROJWBS'
 				            Table.AddColumn(AthenaFinal, "IsCsvSource", each false, type logical)
 				        else
 				            Table.AddColumn(fnXerCsvEmptyTable("03_XER_PROJWBS"), "IsCsvSource", each false, type logical),
-
+				
 				    Combined =
 				        if XerCsvRouting[IsActive] then
 				            Table.Combine(

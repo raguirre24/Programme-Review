@@ -505,6 +505,26 @@
             "width": 234
           },
           "zIndex": 0
+        },
+        {
+          "location": {},
+          "nodeIndex": "XER CSV Manifest",
+          "nodeLineageTag": "2323da7a-ddf5-4014-854e-c88b25c20d84",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {},
+          "nodeIndex": "XER CSV Refresh Audit",
+          "nodeLineageTag": "b7bad02f-f82c-47a1-a399-1c683556a3ed",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 0
         }
       ],
       "name": "All tables",
@@ -518,7 +538,7 @@
       "ordinal": 1,
       "scrollPosition": {
         "x": 0,
-        "y": 467.37494447148617
+        "y": 468.0378775394235
       },
       "nodes": [
         {

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
   "name": "6e49a460604369390e81",
   "position": {
     "x": 6.0827222059254913,
@@ -27,9 +27,9 @@
                 }
               },
               "queryRef": "03 XER_PROJWBS.Level_2",
-              "nativeQueryRef": "Level_2",
+              "nativeQueryRef": "WBS",
               "active": true,
-              "displayName": "Level_2"
+              "displayName": "WBS"
             },
             {
               "field": {
@@ -59,6 +59,36 @@
               },
               "queryRef": "03 XER_PROJWBS.Level_4",
               "nativeQueryRef": "Level_4",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "03 XER_PROJWBS"
+                    }
+                  },
+                  "Property": "Level_5"
+                }
+              },
+              "queryRef": "03 XER_PROJWBS.Level_5",
+              "nativeQueryRef": "Level_5",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "03 XER_PROJWBS"
+                    }
+                  },
+                  "Property": "Level_6"
+                }
+              },
+              "queryRef": "03 XER_PROJWBS.Level_6",
+              "nativeQueryRef": "Level_6",
               "active": true
             },
             {
@@ -315,7 +345,7 @@
                 "Function": 4
               }
             },
-            "direction": "Descending"
+            "direction": "Ascending"
           }
         ]
       }
@@ -377,6 +407,30 @@
                   "Property": "Level_4"
                 }
               }
+            ],
+            "isPinned": true
+          },
+          {
+            "queryRefs": [
+              "03 XER_PROJWBS.Level_5"
+            ],
+            "identityKeys": [
+              {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "03 XER_PROJWBS"
+                    }
+                  },
+                  "Property": "Level_5"
+                }
+              }
+            ],
+            "isPinned": true
+          },
+          {
+            "queryRefs": [
+              "03 XER_PROJWBS.Level_6"
             ],
             "isPinned": true
           },

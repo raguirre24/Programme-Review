@@ -98,9 +98,9 @@ flowchart TD
     D -->|1. Upload first| F[SharePoint Active / PROJECT_CODE / bundle_id]
     E -->|2. Upload last into the same folder| F
     F --> G[Power BI selects the newest contract-valid bundle_id]
-    G --> H[Hidden XER CSV Manifest validates the selected manifest once]
-    H --> J[Each imported table streams only its corresponding CSV]
-    J --> K[Hidden XER CSV Refresh Audit reconciles rows ownership and governance]
+    G --> H[Each importing query validates its selected bundle and small manifest]
+    H --> J[Each table streams its CSV and blocks a row-count mismatch]
+    J --> K[Hidden audit diagnoses row counts and blocks ownership or governance failures]
     A -. Optional audit copy .-> I[Separate governed XER archive outside XerCsvRootFolder]
 ```
 
@@ -162,9 +162,9 @@ Before activation, open the manifest and verify:
 - `bundle_id` matches the bundle folder exactly;
 - every source XER has one manifest row for each of the ten table names.
 
-The parser's successful publication validation is authoritative for SHA-256 hashes, duplicate keys and full cross-table referential integrity. The report independently validates the selected import envelope, tokens, types and row counts; it does not redownload all ten tables through `01 XER_TASK` to repeat parser validation.
+The parser's successful publication validation is authoritative for SHA-256 hashes, duplicate keys and full cross-table referential integrity. The report independently validates each selected import envelope, tokens and types. During each table load it sums manifest `row_count` across all source snapshots, counts the corresponding CSV data rows after header validation, and blocks a mismatch before type and key conversion. It does not redownload all ten tables through `01 XER_TASK` to repeat parser validation.
 
-The loader ignores manifest-free staging folders, orders manifest-bearing folders by the timestamp embedded in the contract-valid `bundle_id`, and opens only the selected manifest. Schemas `1.0` and `2.0` remain load-compatible, but after a successful v3 replacement move superseded v1/v2/v3 folders to `Archive/<PROJECT_CODE>` to minimise SharePoint enumeration and make rollback choices explicit.
+The loader navigates only project folders named in `XerCsvProjectCodes`; additional project folders beneath `Active` are not opened or validated. Within each selected project it ignores manifest-free staging folders, orders manifest-bearing folders by the timestamp embedded in the contract-valid `bundle_id`, then fully validates the newest selected bundle. Schemas `1.0` and `2.0` remain load-compatible, but after a successful v3 replacement move superseded v1/v2/v3 folders to `Archive/<PROJECT_CODE>` to minimise SharePoint enumeration and make rollback choices explicit.
 
 Microsoft's supported upload methods are described in [Upload files and folders to a library](https://support.microsoft.com/en-US/SharePoint/documents-and-library/upload-files-and-folders-to-a-library). Upload the manifest separately even if folder drag-and-drop is available.
 
@@ -180,22 +180,32 @@ Configure the parameters in this order and set `XerCsvEnabled` last:
 | `SharePointSite` | `https://<tenant>.sharepoint.com/sites/<team-site>` | Required site-root URL used by both external assets and CSV loading |
 | `XerCsvLibrary` | `Documents` | Exact library name returned by `SharePoint.Contents`; use `Shared Documents` only when that is the selected site's connector name |
 | `XerCsvRootFolder` | `P6/XER CSV/Active` | Path below the library; no site URL |
-| `XerCsvProjectCodes` | `C5001, C5002` | Comma-separated project folders owned by CSV |
-| `SelectedProjects` | `C5001, C5002, C5003` | Overall report scope; must include every CSV-owned project |
+| `XerCsvProjectCodes` | `C5001, C5002` | Current CSV-source override; only these project folders are opened |
+| `SelectedProjects` | `ALL` | Overall report scope; use `ALL` or a finite comma-separated list |
 | `SelectedProgrammeType` | `C` | `C`, `T`, or `ALL` |
 | `XerCsvEnabled` | `true` | Activates project-folder navigation and CSV ownership |
 
 Important rules:
 
-- `XerCsvProjectCodes` is an explicit allow-list. A project folder that exists in SharePoint but is not listed remains unused.
+- `XerCsvProjectCodes` is an explicit source-ownership allow-list. A project folder that exists in SharePoint but is not listed remains unused, even if its bundle is invalid.
 - `AthenaDsn` and `SharePointSite` are the only source-location parameters. Do not hard-code another Athena DSN or SharePoint site in a query.
 - Both SharePoint queries use `SharePointSite`, giving them one site and credential scope. `XerCsvLibrary` remains separate because sites can expose their document library as `Documents` or `Shared Documents`.
 - Project codes can contain only `A-Z`, `0-9` and `_`. Spaces and punctuation are not valid routing tokens.
 - Do not enter both the C and J alias for the same numeric project, such as both `C5001` and `J5001`. The loader excludes both Athena aliases when either one is routed.
 - The code in `XerCsvProjectCodes`, the SharePoint parent folder and manifest `project_code` must be identical. The parent folder must use the exact uppercase code. C/J equivalence applies only to selected-project scope, governance and Athena exclusion; it does not make `Active/C5001` interchangeable with `Active/J5001`.
-- `SelectedProjects` must include every routed project. C/J aliases count as the same governed identity for this scope check.
+- If `SelectedProjects` is finite, it must include every routed project. C/J aliases count as the same governed identity for this scope check. `SelectedProjects = ALL` already includes every routed project and needs no parameter change when CSV ownership is switched.
 - If `SelectedProgrammeType = ALL`, every routed project needs a completed C bundle and a completed T bundle beneath its project folder.
 - If `XerCsvEnabled = false`, or `XerCsvProjectCodes` is blank, the report remains Athena-only and does not evaluate `SharePoint.Contents`.
+
+With `SelectedProjects = ALL`, the parameters behave as follows:
+
+| `XerCsvProjectCodes` | CSV source | Athena source |
+|---|---|---|
+| `C6036` | C6036 | Every other project |
+| `CNZ01` | CNZ01 | Every other project, including C6036 when Athena contains it |
+| `C6036,CNZ01` | C6036 and CNZ01 | Every other project |
+
+Athena excludes the currently routed code and its recognised numeric C/J alias. After a switch, a former CSV project returns with `IsCsvSource = false` when Athena contains it; if Athena has no records for that project, it contributes zero rows without a routing error. `SelectedProgrammeType = ALL` remains independent and still requires both a completed C bundle and a completed T bundle for every CSV-routed project.
 
 `SharePoint.Contents` starts from a SharePoint site and navigates its folders and documents. Microsoft documents the connector at [SharePoint.Contents](https://learn.microsoft.com/en-us/powerquery-m/sharepoint-contents) and [SharePoint and OneDrive files](https://learn.microsoft.com/en-us/power-query/sharepoint-onedrive-files).
 
@@ -217,13 +227,13 @@ After refresh, verify source ownership:
 - every CSV key follows `CSV::<project_code>::<C|T>::<snapshot_tag>::<native_id>` and no model key contains `|`;
 - no `task_id_key` for an Athena-owned project starts with `CSV::`;
 - hidden `XER CSV Manifest` contains only the selected bundle metadata and its row totals match the imported model;
-- hidden `XER CSV Refresh Audit` completes with `PASS` and does not raise `ERROR()`;
+- all ten hidden `XER CSV Refresh Audit` records return `PASS`; `DIAGNOSTIC_MISMATCH` is retained only as a secondary calculated reconciliation state, while ownership and governance failures still raise `ERROR()`;
 - every configured project has its baseline and expected updates;
 - project, WBS, predecessor, activity-code, calendar and resource visuals return data without relationship errors.
 
 The two audit tables and `IsCsvSource` fields are intentionally hidden technical objects; do not bind them to normal report visuals.
 
-Because ownership is whole-project, an Athena copy of update `2608` is intentionally ignored when that project is listed in `XerCsvProjectCodes`. The selected CSV bundle owns the complete project history.
+Because ownership is whole-project, an Athena copy of update `2608` is intentionally ignored when that project is listed in `XerCsvProjectCodes`. The selected CSV bundle owns the complete project history. Removing that code from the override returns the project to Athena ownership on the next full refresh.
 
 ## 6. Publish and configure Power BI Service
 
@@ -264,6 +274,23 @@ The publisher needs permission to replace both items. Publication can also be bl
 5. Set Athena and SharePoint privacy to **Organizational**, run an on-demand refresh and review **Refresh history**.
 6. After that refresh succeeds, confirm scheduled refresh remains enabled with the intended frequency, time zone and failure notifications.
 
+### Switch CSV ownership in the Service
+
+Keep `SelectedProjects = ALL`, change only `XerCsvProjectCodes`, apply the parameter, then run a standard whole-model **Refresh now**. This allows `C6036` to be changed to `CNZ01`, both codes, or back again without republishing Desktop. A successful full refresh replaces CSV-owned rows and restores a former CSV project from Athena when records exist.
+
+Where enhanced refresh is available, use a whole-model transactional request with no `objects`, for example:
+
+```json
+{
+  "type": "full",
+  "commitMode": "transactional",
+  "maxParallelism": 2,
+  "retryCount": 1
+}
+```
+
+Object-only refresh and `commitMode = partialBatch` are unsupported for a source switch because they can leave tables processed under different ownership parameters. Deploy this change to Test first; run the `C6036` → `CNZ01` → `C6036` switch, dual-project, invalid-unlisted-folder, corruption and recovery checks, then promote to Production and run one transactional full refresh.
+
 SharePoint Online ordinarily does not need an on-premises gateway when the Service can connect directly. If Athena is gateway-backed and the model combines it with SharePoint, the Power BI or gateway administrator may need to approve the cloud connection mapping through that cluster.
 
 Microsoft documents the Service settings in [Configure scheduled refresh](https://learn.microsoft.com/en-us/power-bi/connect-data/refresh-scheduled-refresh) and [Data refresh in Power BI](https://learn.microsoft.com/en-us/power-bi/connect-data/refresh-data).
@@ -277,7 +304,7 @@ Capture wall duration, cumulative external-query time, total and M-engine CPU, t
 Acceptance requires:
 
 - identical business row counts and values, no increase in VertiPaq rows, and no hidden audit error;
-- one data read per CSV table/bundle and one selected-manifest validation;
+- one data read per CSV table/bundle; the selected small manifest may be revalidated independently by each loaded query because Power Query does not share a cross-query cache;
 - zero heavy XER Athena queries when every finite `SelectedProjects` entry is CSV-owned;
 - median wall duration no more than **40 minutes**, with a target of **25 minutes or less**;
 - M-engine peak no more than **0.938 GiB**;
@@ -287,6 +314,8 @@ Use `maxParallelism = 3` when it cuts peak memory by at least 15% without increa
 
 > [!IMPORTANT]
 > Separate physical Athena/CSV partitions and aggregation of `15_XER_RESOURCE_DISTRIBUTION` are future evidence-led options, not part of this implementation. Do not configure refresh operations as though those partitions or aggregations already exist.
+
+`SelectedProjects = ALL` continues to query the broad Athena scope for every project not currently routed to CSV. The separate Athena resource optimisation is not part of this validation change; measure the ALL scenario against the existing duration, memory and capacity limits.
 
 ### Optional PBIX fallback
 
@@ -328,7 +357,7 @@ Set `XerCsvEnabled = false` and refresh. This disables all CSV routing and retur
 | `CSV headers or header order do not match` | Wrong export profile or renamed columns | Regenerate using Programme Review Bundle |
 | `Do not configure both C and J aliases` | Both aliases are present in `XerCsvProjectCodes` | Keep only the folder/manifest project code |
 | `Every routed CSV project must also be included by SelectedProjects` | The overall report scope excludes a CSV-owned project | Add the project or its recognised C/J alias to `SelectedProjects` |
-| `XER CSV manifest/model row-count mismatch` | A CSV is wrong, truncated or no longer matches the parser-completed manifest | Remove the bundle, regenerate and validate schema v3, then upload all ten CSVs before the manifest |
+| `XerCsvRowCount` / `XER CSV row-count mismatch: project=..., programme=..., bundle=..., table=..., file=..., expected=..., actual=...` | The named selected CSV is truncated, altered or no longer matches the summed manifest count | Use the project, bundle, table and filename in the error to remove or regenerate the selected bundle; upload all ten CSVs before the manifest and run a full refresh |
 | `XER CSV ownership overlap` | Routing and Athena exclusion do not agree | Verify `SelectedProjects`, `XerCsvProjectCodes`, C/J aliases and the current PBIP version; do not accept duplicated ownership |
 | `XER CSV governance failure ... dbo_project` | Governed project metadata is missing | Have the data owner add or correct the project record before activation |
 | `XER CSV governance failure ... dbo_userpermission` | No project-specific governed permission exists | Have the security/data owner add the permission record; never use the manifest to bypass RLS |
@@ -336,6 +365,7 @@ Set `XerCsvEnabled = false` and refresh. This disables all CSV routing and retur
 | Folder or library cannot be found | `SharePointSite`, `XerCsvLibrary` or `XerCsvRootFolder` is wrong | Use the site-root URL, exact connector library name and path below that library |
 | `Formula.Firewall` or privacy error | Athena and SharePoint privacy levels differ or are unset | Set both approved sources to `Organizational` in Desktop and Service |
 | Desktop succeeds but Service fails | Service credentials, ownership, parameters or gateway mapping differ | Review semantic-model settings, cloud/gateway connections and Refresh history |
+| Projects remain under their old source after changing `XerCsvProjectCodes` | An object-only or non-transactional partial refresh was used | Run standard whole-model **Refresh now** or enhanced `type=full`, `commitMode=transactional` with no `objects` |
 | Direct PBIP publication loops or targets an old item | The normal project contains a stale local Service binding | Close Desktop and clear the report and semantic-model `.pbi/localSettings.json` files once, then reopen the normal PBIP |
 | Desktop does not offer the expected same-name replacement | Destination names do not match, duplicates exist, permissions are insufficient, or republishing is blocked by tenant policy | Cancel publication; confirm exactly one same-name report/model pair, access and tenant settings before retrying |
 | A required parameter is missing after publication | An older package was published | Open the current normal PBIP, confirm all eight parameters, refresh, save and publish again |

@@ -1,10 +1,10 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
   "name": "31523302b69ed1baf714",
   "position": {
     "x": 739.28571428571422,
     "y": 85.714285714285722,
-    "z": 0,
+    "z": 1000,
     "height": 51.428571428571431,
     "width": 441.42857142857144,
     "tabOrder": 1000
@@ -74,6 +74,21 @@
               "queryRef": "03 XER_PROJWBS.Level_5",
               "nativeQueryRef": "Level_5",
               "active": false
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "03 XER_PROJWBS"
+                    }
+                  },
+                  "Property": "Level_6"
+                }
+              },
+              "queryRef": "03 XER_PROJWBS.Level_6",
+              "nativeQueryRef": "Level_6",
+              "active": false
             }
           ]
         }
@@ -133,6 +148,12 @@
           {
             "queryRefs": [
               "03 XER_PROJWBS.Level_5"
+            ],
+            "isCollapsed": true
+          },
+          {
+            "queryRefs": [
+              "03 XER_PROJWBS.Level_6"
             ],
             "isCollapsed": true
           }

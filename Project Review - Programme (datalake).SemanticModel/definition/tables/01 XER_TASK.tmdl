@@ -9,15 +9,6 @@ table '01 XER_TASK'
 
 		annotation SummarizationSetBy = Automatic
 
-	column IsCsvSource
-		dataType: boolean
-		isHidden
-		lineageTag: a6d7d117-3001-418c-931a-ee3ab09b926d
-		summarizeBy: none
-		sourceColumn: IsCsvSource
-
-		annotation SummarizationSetBy = Automatic
-
 	column status_code
 		dataType: string
 		lineageTag: 6f1c76d3-7397-4917-8e89-0541d93a3aa6
@@ -782,6 +773,15 @@ table '01 XER_TASK'
 			```
 		lineageTag: 14f94652-7f76-4212-93ba-756c89e4eff0
 		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsCsvSource
+		dataType: boolean
+		isHidden
+		lineageTag: a6d7d117-3001-418c-931a-ee3ab09b926d
+		summarizeBy: none
+		sourceColumn: IsCsvSource
 
 		annotation SummarizationSetBy = Automatic
 

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
   "name": "42e5e3dd0509ccb14090",
   "position": {
     "x": 518.57142857142856,
@@ -73,6 +73,21 @@
               },
               "queryRef": "03 XER_PROJWBS.Level_5",
               "nativeQueryRef": "Level_5",
+              "active": false
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "03 XER_PROJWBS"
+                    }
+                  },
+                  "Property": "Level_6"
+                }
+              },
+              "queryRef": "03 XER_PROJWBS.Level_6",
+              "nativeQueryRef": "Level_6",
               "active": false
             }
           ]
@@ -148,6 +163,12 @@
             ],
             "isCollapsed": true,
             "isPinned": true
+          },
+          {
+            "queryRefs": [
+              "03 XER_PROJWBS.Level_6"
+            ],
+            "isCollapsed": true
           }
         ],
         "root": {}
