@@ -72,6 +72,7 @@ flowchart TD
     - `AthenaDsn`: Amazon Athena connection DSN; default `primary_p6_bi_reporting`.
     - `SharePointSite`: Required SharePoint site-root URL used by both external assets and CSV loading.
     - `SelectedProjects`: Overall report scope as a comma-separated list of project codes (e.g. `"C5064, C5001, C4007, C4017"`) or `"ALL"`.
+    - `ExcludedProjects`: Optional comma-separated list of project codes to exclude from the report scope (e.g. `"C6036, C5064"`), or blank / `"NONE"`. Automatically excludes both C and J aliases from Athena queries.
     - `SelectedProgrammeType`: Programme type code (`"C"` for Contract, `"T"` for Target, or `"ALL"`).
     - `XerCsvEnabled`: Logical opt-in; current default `true`.
     - `XerCsvProjectCodes`: Current CSV-source override as comma-separated routed project codes; current default `C6036`. Do not enter both C and J aliases for the same project.

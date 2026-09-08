@@ -182,6 +182,7 @@ Configure the parameters in this order and set `XerCsvEnabled` last:
 | `XerCsvRootFolder` | `P6/XER CSV/Active` | Path below the library; no site URL |
 | `XerCsvProjectCodes` | `C5001, C5002` | Current CSV-source override; only these project folders are opened |
 | `SelectedProjects` | `ALL` | Overall report scope; use `ALL` or a finite comma-separated list |
+| `ExcludedProjects` | `NONE` | Optional project codes to exclude from scope; blank or `NONE` for no exclusions |
 | `SelectedProgrammeType` | `C` | `C`, `T`, or `ALL` |
 | `XerCsvEnabled` | `true` | Activates project-folder navigation and CSV ownership |
 
@@ -267,7 +268,7 @@ The publisher needs permission to replace both items. Publication can also be bl
 
 ### Configure connections and refresh
 
-1. Open the published semantic model's **Settings** and confirm all eight parameters: `AthenaDsn`, `SharePointSite`, `SelectedProjects`, `SelectedProgrammeType`, `XerCsvEnabled`, `XerCsvProjectCodes`, `XerCsvLibrary` and `XerCsvRootFolder`.
+1. Open the published semantic model's **Settings** and confirm all nine parameters: `AthenaDsn`, `SharePointSite`, `SelectedProjects`, `ExcludedProjects`, `SelectedProgrammeType`, `XerCsvEnabled`, `XerCsvProjectCodes`, `XerCsvLibrary` and `XerCsvRootFolder`.
 2. Confirm the semantic-model owner is the durable account intended to maintain refresh credentials. Take over only when authorised and necessary.
 3. Under **Gateway and cloud connections**, map the Athena DSN and, when required by the combined mashup, the SharePoint cloud connection through the approved gateway cluster.
 4. Under **Data source credentials** or its connection entry, authenticate `SharePointSite` with OAuth/Organizational account credentials. Revalidate both sources after publication because changed source definitions can require new credentials.
