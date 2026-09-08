@@ -1,0 +1,4 @@
+interface:
+  display_name: "Numbered XER Reporting"
+  short_description: "Model and validate numbered P6 XER reporting tables"
+  default_prompt: "Use $p6-numbered-xer-reporting to review the keys, calendars, float and resource spread in this report."
