@@ -52,6 +52,15 @@ table '02 XER_PROJECT'
 
 		annotation SummarizationSetBy = Automatic
 
+	column ProjectKey
+		dataType: string
+		isHidden
+		lineageTag: 329be3b8-cf74-4a92-afab-098f5916af96
+		summarizeBy: none
+		sourceColumn: ProjectKey
+
+		annotation SummarizationSetBy = Automatic
+
 	partition '02 XER_PROJECT' = m
 		mode: import
 		queryGroup: XER
@@ -105,11 +114,11 @@ table '02 XER_PROJECT'
 				    AthenaFinal = Table.SelectColumns(CleanProjectCode, ContractColumns),
 				    AthenaBranch = if XerCsvRouting[HasAthenaProjects] then Table.AddColumn(AthenaFinal, "IsCsvSource", each false, type logical) else Table.AddColumn(fnXerCsvEmptyTable("02_XER_PROJECT"), "IsCsvSource", each false, type logical),
 				    Combined = if XerCsvRouting[IsActive] then Table.Combine({AthenaBranch, fnXerCsvLoadTable("02_XER_PROJECT")}) else AthenaBranch,
-				    Final = Table.SelectColumns(Combined, ModelColumns)
+				    Final = Table.AddColumn(Table.SelectColumns(Combined, ModelColumns), "ProjectKey", each fnProjectIdentity([ProjectCode]), type nullable text)
 				in
 				    Final
 
 	annotation PBI_NavigationStepName = Navigation
 
-	annotation PBI_ResultType = Table
+	annotation PBI_ResultType = Exception
 

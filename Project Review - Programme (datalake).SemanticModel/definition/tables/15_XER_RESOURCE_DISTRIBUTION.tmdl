@@ -127,7 +127,7 @@ table 15_XER_RESOURCE_DISTRIBUTION
 				                    "t.""rsrc_type""",
 				                    "t.""unit""",
 				                    "t.""monthly_quantity""",
-				                    "SPLIT_PART(t.""filename"", '-', 1) AS ""ProjectCode"""
+				                    "TRIM(UPPER(SPLIT_PART(t.""filename"", '-', 1))) AS ""ProjectCode"""
 				                },
 				                ", "
 				            )

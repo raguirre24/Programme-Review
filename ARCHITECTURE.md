@@ -61,7 +61,7 @@ flowchart TD
 - **AWS Athena & Power Query M Integration**: Raw Primavera P6 schedule data (`.xer` file parses) resides in AWS Athena under database `primary_p6_bi_reporting` and schema `prod_projectcontrols_p6`.
 - **Query Expressions (`expressions.tmdl`)**:
   - `AthenaDB`: Establishes native Amazon Athena database connection.
-  - `AthenaScopeSql`: Constructs SQL queries dynamically, extracting baseline numbers (`BL[0-9]+`), revision tags, filtering files based on parameters, and excluding both C/J aliases of projects explicitly routed to CSV.
+  - `AthenaScopeSql`: Filters narrow project metadata first, requires a named `dbo_project` match, prefers the complete J history over C separately for Contract/Target, then selects the latest baseline and subsequent updates. Numeric C/J aliases are considered together for registry eligibility/inclusion and excluded together for project exclusions/CSV ownership; other codes require an exact registry match. All ten XER queries join this shared filename scope; TASK reuses its parsed fields. The load-disabled audit exposes `NO_NAMED_PROJECT_MATCH` for rejected files. See [ATHENA_PROGRAMME_SELECTION.md](ATHENA_PROGRAMME_SELECTION.md) for lookup and date rules.
   - `fnAthenaSource`: Parameterised M function executing SQL against kept filenames in Athena.
   - `XerCsvTableContracts`: Ordered columns, types, nullability and key rules for the ten fallback tables. New bundles use schema `3.0`; the loader remains compatible with schemas `1.0` and `2.0` during migration or rollback.
   - `XerCsvSelectedBundles`: Navigates SharePoint with `SharePoint.Contents` only through project folders explicitly named in `XerCsvProjectCodes`, ignores manifest-free staging folders, selects the newest project/programme folder, and validates that selected bundle with `fnXerCsvReadBundle`. An invalid newest bundle fails rather than falling back to an older folder.
@@ -71,7 +71,7 @@ flowchart TD
   - **Parameters**:
     - `AthenaDsn`: Amazon Athena connection DSN; default `primary_p6_bi_reporting`.
     - `SharePointSite`: Required SharePoint site-root URL used by both external assets and CSV loading.
-    - `SelectedProjects`: Overall report scope as a comma-separated list of project codes (e.g. `"C5064, C5001, C4007, C4017"`) or `"ALL"`.
+    - `SelectedProjects`: Overall report scope as a comma-separated list of project codes (e.g. `"C5064, C5001, C4007, C4017"`) or `"ALL"`. Selecting either numeric C/J alias considers both and prefers J when available for the selected programme type. Athena-owned projects must have a named registry match even when explicitly selected; `ALL` does not bypass that check.
     - `ExcludedProjects`: Optional comma-separated list of project codes to exclude from the report scope (e.g. `"C6036, C5064"`), or blank / `"NONE"`. Automatically excludes both C and J aliases from Athena queries.
     - `SelectedProgrammeType`: Programme type code (`"C"` for Contract, `"T"` for Target, or `"ALL"`).
     - `XerCsvEnabled`: Logical opt-in; current default `true`.
@@ -218,3 +218,7 @@ When modifying this repository, any AI coding agent **MUST** adhere to the follo
 
 ### 5. Post-Edit User Notification
 - Whenever TMDL semantic model or PBIR report files are modified, inform the user to **reopen or restart Power BI Desktop** to reload updated files.
+
+## Athena project preference and prefiltering
+
+See [ATHENA_PROGRAMME_SELECTION.md](ATHENA_PROGRAMME_SELECTION.md) for the J-history rule, query-only optimisation, load-disabled selection diagnostic and validation checklist. C-only projects remain included; unmatched C history is deliberately excluded once J exists for the same programme type. No database objects or permissions are changed. Hidden canonical project keys keep one project-dimension row across C/J, while programme type separates activity/baseline/resource comparisons.

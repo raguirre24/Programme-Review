@@ -785,6 +785,13 @@ table '01 XER_TASK'
 
 		annotation SummarizationSetBy = Automatic
 
+	column ProgrammeType
+		dataType: string
+		isHidden
+		lineageTag: 2f4627e3-87e7-462b-8034-fde163f1cf49
+		summarizeBy: none
+		sourceColumn: ProgrammeType
+
 	partition '01 XER_TASK' = m
 		mode: import
 		queryGroup: XER
@@ -797,7 +804,7 @@ table '01 XER_TASK'
 				                {
 				                    AthenaScopeSql,
 				                    ", task_raw AS (",
-				                    "SELECT ROW_NUMBER() OVER (ORDER BY t.""filename"", t.""task_id_key"", t.""task_code"", t.""start"", t.""finish"", t.""data_date"") AS task_row_id,",
+				                    "SELECT",
 				                    "t.""status_code"" AS status_code, t.""task_code"" AS task_code, TRY_CAST(t.""total_float"" AS DOUBLE) AS total_float, t.""task_type"" AS task_type,",
 				                    "t.""id_name"" AS id_name, TRY_CAST(SUBSTR(CAST(t.""early_start_date"" AS VARCHAR), 1, 10) AS DATE) AS early_start_date, t.""calendar_id_key"" AS calendar_id_key, t.""task_id_key"" AS task_id_key,",
 				                    "t.""driving_path_flag"" AS driving_path_flag, TRY_CAST(t.""remainingduration"" AS DOUBLE) AS remainingduration, TRY_CAST(SUBSTR(CAST(t.""early_end_date"" AS VARCHAR), 1, 10) AS DATE) AS early_end_date,",
@@ -805,16 +812,15 @@ table '01 XER_TASK'
 				                    "t.""task_name"" AS task_name, TRY_CAST(SUBSTR(CAST(t.""data_date"" AS VARCHAR), 1, 10) AS DATE) AS data_date, TRY_CAST(SUBSTR(CAST(t.""act_end_date"" AS VARCHAR), 1, 10) AS DATE) AS act_end_date, TRY_CAST(SUBSTR(CAST(t.""finish"" AS VARCHAR), 1, 10) AS DATE) AS finish,",
 				                    "t.""proj_id_key"" AS proj_id_key, t.""wbs_id_key"" AS wbs_id_key, TRY_CAST(t.""free_float"" AS DOUBLE) AS free_float, t.""cstr_type"" AS cstr_type,",
 				                    "TRY_CAST(SUBSTR(CAST(t.""start"" AS VARCHAR), 1, 10) AS DATE) AS start, t.""filename"" AS filename, TRY_CAST(SUBSTR(CAST(t.""late_end_date"" AS VARCHAR), 1, 10) AS DATE) AS late_end_date,",
-				                    "SPLIT_PART(SPLIT_PART(t.""filename"", '_', 1), '-', 1) AS raw_project_code,",
-				                    "CASE WHEN UPPER(SPLIT_PART(SPLIT_PART(t.""filename"", '_', 1), '-', 1)) LIKE 'C%' THEN CONCAT('J', SUBSTR(SPLIT_PART(SPLIT_PART(t.""filename"", '_', 1), '-', 1), 2)) ELSE SPLIT_PART(SPLIT_PART(t.""filename"", '_', 1), '-', 1) END AS j_project_code,",
-				                    "CASE WHEN UPPER(SPLIT_PART(SPLIT_PART(t.""filename"", '_', 1), '-', 1)) LIKE 'J%' THEN CONCAT('C', SUBSTR(SPLIT_PART(SPLIT_PART(t.""filename"", '_', 1), '-', 1), 2)) ELSE SPLIT_PART(SPLIT_PART(t.""filename"", '_', 1), '-', 1) END AS c_project_code,",
-				                    "SPLIT_PART(SPLIT_PART(t.""filename"", '_', 1), '-', 2) AS programme_type,",
-				                    "SPLIT_PART(SPLIT_PART(t.""filename"", '_', 1), '-', 3) AS update_tag",
+				                    "kf.project_code AS raw_project_code,",
+				                    "CASE WHEN REGEXP_LIKE(kf.project_code, '^C[0-9]+$') THEN CONCAT('J', SUBSTR(kf.project_code, 2)) ELSE kf.project_code END AS j_project_code,",
+				                    "CASE WHEN REGEXP_LIKE(kf.project_code, '^J[0-9]+$') THEN CONCAT('C', SUBSTR(kf.project_code, 2)) ELSE kf.project_code END AS c_project_code,",
+				                    "kf.programme_type, kf.tag AS update_tag, kf.project_identity",
 				                    "FROM prod_projectcontrols_p6.""01_xer_task"" t",
 				                    "INNER JOIN kept_filenames kf ON t.""filename"" = kf.""filename""",
 				                    "), task_update_parts AS (",
 				                    "SELECT *,",
-				                    "CASE WHEN update_tag IS NOT NULL AND REGEXP_LIKE(update_tag, '^BL') THEN TRUE ELSE FALSE END AS is_bl,",
+				                    "REGEXP_LIKE(update_tag, '^BL[0-9]+(-[A-Z])?$') AS is_bl,",
 				                    "TRY_CAST(NULLIF(REGEXP_EXTRACT(update_tag, '^([0-9]{2})', 1), '') AS INTEGER) AS tag_first_number,",
 				                    "TRY_CAST(NULLIF(REGEXP_EXTRACT(update_tag, '([0-9]{2})$', 1), '') AS INTEGER) AS tag_last_number",
 				                    "FROM task_raw",
@@ -842,8 +848,8 @@ table '01 XER_TASK'
 				                    "FROM task_with_filled_update u",
 				                    "), task_named AS (",
 				                    "SELECT b.*,",
-				                    "COALESCE(j_proj.""projectname"", c_proj.""projectname"") AS project_name,",
-				                    "COALESCE(j_proj.""projectname"", c_proj.""projectname"", b.j_project_code) AS project_group_key",
+				                    "COALESCE(NULLIF(TRIM(j_proj.""projectname""), ''), NULLIF(TRIM(c_proj.""projectname""), '')) AS project_name,",
+				                    "CONCAT(b.project_identity, ':', b.programme_type) AS project_group_key",
 				                    "FROM task_base b",
 				                    "LEFT JOIN prod_projectcontrols_linkedsitereports.""dbo_project"" j_proj ON j_proj.""projectno"" = b.j_project_code",
 				                    "LEFT JOIN prod_projectcontrols_linkedsitereports.""dbo_project"" c_proj ON c_proj.""projectno"" = b.c_project_code",
@@ -851,18 +857,25 @@ table '01 XER_TASK'
 				                    "SELECT DISTINCT project_group_key, programme_type, update_date_filled AS update_date",
 				                    "FROM task_named",
 				                    "WHERE is_bl = FALSE AND update_date_filled IS NOT NULL",
-				                    "), update_candidates AS (",
-				                    "SELECT u.task_row_id,",
-				                    "CASE WHEN u.update_date_filled IS NULL THEN NULL ELSE CAST(date_add('day', -1, date_add('month', 1, date_trunc('month', date_add('month', (0 - shift_months), u.update_date_filled)))) AS DATE) END AS candidate_update_date,",
-				                    "ROW_NUMBER() OVER (PARTITION BY u.task_row_id ORDER BY shift_months) AS candidate_rank",
-				                    "FROM task_named u",
-				                    "CROSS JOIN UNNEST(SEQUENCE(0, CASE WHEN u.is_bl = TRUE AND u.update_date_filled IS NOT NULL THEN 240 ELSE 0 END)) AS s(shift_months)",
-				                    "LEFT JOIN non_bl_dates nbd ON nbd.project_group_key = u.project_group_key AND nbd.programme_type = u.programme_type AND nbd.update_date = CASE WHEN u.update_date_filled IS NULL THEN NULL ELSE CAST(date_add('day', -1, date_add('month', 1, date_trunc('month', date_add('month', (0 - shift_months), u.update_date_filled)))) AS DATE) END",
-				                    "WHERE u.is_bl = FALSE OR nbd.update_date IS NULL",
+				                    "), baseline_dates AS (",
+				                    "SELECT DISTINCT project_group_key, programme_type, update_date_filled",
+				                    "FROM task_named",
+				                    "WHERE is_bl = TRUE AND update_date_filled IS NOT NULL",
+				                    "), baseline_date_candidates AS (",
+				                    "SELECT b.project_group_key, b.programme_type, b.update_date_filled,",
+				                    "CAST(date_add('day', -1, date_add('month', 1, date_trunc('month', date_add('month', (0 - shift_months), b.update_date_filled)))) AS DATE) AS candidate_update_date",
+				                    "FROM baseline_dates b",
+				                    "CROSS JOIN UNNEST(SEQUENCE(0, 240)) AS s(shift_months)",
+				                    "), baseline_update_dates AS (",
+				                    "SELECT c.project_group_key, c.programme_type, c.update_date_filled, MAX(c.candidate_update_date) AS update_date",
+				                    "FROM baseline_date_candidates c",
+				                    "LEFT JOIN non_bl_dates nbd ON nbd.project_group_key = c.project_group_key AND nbd.programme_type = c.programme_type AND nbd.update_date = c.candidate_update_date",
+				                    "WHERE nbd.update_date IS NULL",
+				                    "GROUP BY c.project_group_key, c.programme_type, c.update_date_filled",
 				                    "), task_prepared AS (",
-				                    "SELECT u.*, c.candidate_update_date AS update_date",
+				                    "SELECT u.*, CASE WHEN u.is_bl = TRUE THEN b.update_date ELSE u.update_date_filled END AS update_date",
 				                    "FROM task_named u",
-				                    "LEFT JOIN update_candidates c ON c.task_row_id = u.task_row_id AND c.candidate_rank = 1",
+				                    "LEFT JOIN baseline_update_dates b ON u.is_bl = TRUE AND b.project_group_key = u.project_group_key AND b.programme_type = u.programme_type AND b.update_date_filled = u.update_date_filled",
 				                    "), task_snapshot AS (",
 				                    "SELECT project_group_key, task_code, update_date,",
 				                    "MAX(start) AS snapshot_start, MAX(finish) AS snapshot_finish, MAX(data_date) AS snapshot_data_date,",
@@ -1030,7 +1043,10 @@ table '01 XER_TASK'
 				    AthenaFinal = Table.SelectColumns(Renamed, ContractColumns),
 				    AthenaBranch = if XerCsvRouting[HasAthenaProjects] then Table.AddColumn(AthenaFinal, "IsCsvSource", each false, type logical) else Table.AddColumn(fnXerCsvEmptyTable("01_XER_TASK"), "IsCsvSource", each false, type logical),
 				    Combined = if XerCsvRouting[IsActive] then Table.Combine({AthenaBranch, fnXerCsvLoadTable("01_XER_TASK")}) else AthenaBranch,
-				    Final = Table.SelectColumns(Combined, ModelColumns)
+				    WithProgrammeType = Table.AddColumn(Combined, "ProgrammeType", each
+				        let Parts = Text.Split(Text.Upper(Text.Trim([filename])), "-")
+				        in if List.Count(Parts) > 1 then Text.Trim(Parts{1}) else null, type nullable text),
+				    Final = Table.SelectColumns(WithProgrammeType, List.Combine({ModelColumns, {"ProgrammeType"}}))
 				in
 				    Final
 				```

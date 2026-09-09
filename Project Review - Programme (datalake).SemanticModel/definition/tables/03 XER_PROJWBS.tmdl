@@ -119,15 +119,6 @@ table '03 XER_PROJWBS'
 
 		annotation SummarizationSetBy = Automatic
 
-	column ProjectKey = UPPER(TRIM('03 XER_PROJWBS'[ProjectCode]))
-		isHidden
-		lineageTag: 30c14428-4703-41f5-9a09-81175d3f4ee9
-		summarizeBy: none
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
 	column IsCsvSource
 		dataType: boolean
 		isHidden
@@ -150,6 +141,17 @@ table '03 XER_PROJWBS'
 			```
 		lineageTag: 4c8abec1-c403-4130-9749-a941eb968b11
 		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProjectKey
+		dataType: string
+		isHidden
+		lineageTag: 30c14428-4703-41f5-9a09-81175d3f4ee9
+		summarizeBy: none
+		sourceColumn: ProjectKey
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -258,14 +260,15 @@ table '03 XER_PROJWBS'
 				            }
 				        ),
 				
-				    Final =
+				    ContractFinal =
 				        Table.SelectColumns(
 				            CleanCombinedParentWBS,
 				            List.Combine({
 				                Record.Field(XerCsvTableContracts, "03_XER_PROJWBS")[Columns],
 				                {"IsCsvSource"}
 				            })
-				        )
+				        ),
+				    Final = Table.AddColumn(ContractFinal, "ProjectKey", each fnProjectIdentity([ProjectCode]), type nullable text)
 				in
 				    Final
 

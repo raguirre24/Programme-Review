@@ -19,7 +19,7 @@ table Resources
 			VAR CurrentMonth = MAX('Resource Calendar'[Month])
 			
 			VAR ActiveProjects = VALUES('15_XER_RESOURCE_DISTRIBUTION'[ProjectCode])
-			VAR ActiveTaskCodes = SUMMARIZE('01 XER_TASK', '01 XER_TASK'[ProjectCode], '01 XER_TASK'[task_code])
+			VAR ActiveTaskCodes = SUMMARIZE('01 XER_TASK', '01 XER_TASK'[ProjectCode], '01 XER_TASK'[task_code], '01 XER_TASK'[ProgrammeType])
 			VAR ActiveRsrcNames = VALUES('15_XER_RESOURCE_DISTRIBUTION'[rsrc_name])
 			VAR ActiveRsrcTypes = VALUES('15_XER_RESOURCE_DISTRIBUTION'[rsrc_type])
 			
@@ -38,7 +38,7 @@ table Resources
 			        MAX('Monthly Resource Distribution Baseline'[distribution_month]),
 			        ALL('Resource Calendar'),
 			        ALL('Monthly Resource Distribution Baseline'[distribution_month]),
-			        TREATAS(ActiveTaskCodes, 'Monthly Resource Distribution Baseline'[ProjectCode], 'Monthly Resource Distribution Baseline'[task_code]),
+			        TREATAS(ActiveTaskCodes, 'Monthly Resource Distribution Baseline'[ProjectCode], 'Monthly Resource Distribution Baseline'[task_code], 'Monthly Resource Distribution Baseline'[ProgrammeType]),
 			        TREATAS(ActiveRsrcNames, 'Monthly Resource Distribution Baseline'[rsrc_name]),
 			        TREATAS(ActiveRsrcTypes, 'Monthly Resource Distribution Baseline'[rsrc_type]),
 			        REMOVEFILTERS(CurrentDate)
@@ -109,7 +109,7 @@ table Resources
 			    )
 			VAR ActiveTaskCodes =
 			    CALCULATETABLE(
-			        SUMMARIZE('01 XER_TASK', '01 XER_TASK'[ProjectCode], '01 XER_TASK'[task_code]),
+			        SUMMARIZE('01 XER_TASK', '01 XER_TASK'[ProjectCode], '01 XER_TASK'[task_code], '01 XER_TASK'[ProgrammeType]),
 			        REMOVEFILTERS(CurrentDate)
 			    )
 			VAR ActiveRsrcNames =
@@ -129,7 +129,7 @@ table Resources
 			        MAX('Monthly Resource Distribution Baseline'[distribution_month]),
 			        ALL('Resource Calendar'),
 			        ALL('Monthly Resource Distribution Baseline'[distribution_month]),
-			        TREATAS(ActiveTaskCodes, 'Monthly Resource Distribution Baseline'[ProjectCode], 'Monthly Resource Distribution Baseline'[task_code]),
+			        TREATAS(ActiveTaskCodes, 'Monthly Resource Distribution Baseline'[ProjectCode], 'Monthly Resource Distribution Baseline'[task_code], 'Monthly Resource Distribution Baseline'[ProgrammeType]),
 			        TREATAS(ActiveRsrcNames, 'Monthly Resource Distribution Baseline'[rsrc_name]),
 			        TREATAS(ActiveRsrcTypes, 'Monthly Resource Distribution Baseline'[rsrc_type]),
 			        REMOVEFILTERS(CurrentDate)
@@ -159,7 +159,7 @@ table Resources
 			    CALCULATE(
 			        SUM('Monthly Resource Distribution Baseline'[monthly_hours]),
 			        TREATAS(AllMonthsUpToCurrent, 'Monthly Resource Distribution Baseline'[distribution_month]),
-			        TREATAS(ActiveTaskCodes, 'Monthly Resource Distribution Baseline'[ProjectCode], 'Monthly Resource Distribution Baseline'[task_code]),
+			        TREATAS(ActiveTaskCodes, 'Monthly Resource Distribution Baseline'[ProjectCode], 'Monthly Resource Distribution Baseline'[task_code], 'Monthly Resource Distribution Baseline'[ProgrammeType]),
 			        TREATAS(ActiveRsrcNames, 'Monthly Resource Distribution Baseline'[rsrc_name]),
 			        TREATAS(ActiveRsrcTypes, 'Monthly Resource Distribution Baseline'[rsrc_type]),
 			        REMOVEFILTERS(CurrentDate)
@@ -182,7 +182,7 @@ table Resources
 			-- Capture the selected task and resource scope without the monthly update filter
 			VAR ActiveTaskCodes =
 			    CALCULATETABLE(
-			        SUMMARIZE('01 XER_TASK', '01 XER_TASK'[ProjectCode], '01 XER_TASK'[task_code]),
+			        SUMMARIZE('01 XER_TASK', '01 XER_TASK'[ProjectCode], '01 XER_TASK'[task_code], '01 XER_TASK'[ProgrammeType]),
 			        REMOVEFILTERS(CurrentDate)
 			    )
 			VAR ActiveRsrcNames =
@@ -200,7 +200,7 @@ table Resources
 			    CALCULATE (
 			        SUM ( 'Monthly Resource Distribution Baseline'[monthly_hours] ),
 			        ALL ( 'Resource Calendar' ),
-			        TREATAS(ActiveTaskCodes, 'Monthly Resource Distribution Baseline'[ProjectCode], 'Monthly Resource Distribution Baseline'[task_code]),
+			        TREATAS(ActiveTaskCodes, 'Monthly Resource Distribution Baseline'[ProjectCode], 'Monthly Resource Distribution Baseline'[task_code], 'Monthly Resource Distribution Baseline'[ProgrammeType]),
 			        TREATAS(ActiveRsrcNames, 'Monthly Resource Distribution Baseline'[rsrc_name]),
 			        TREATAS(ActiveRsrcTypes, 'Monthly Resource Distribution Baseline'[rsrc_type]),
 			        REMOVEFILTERS(CurrentDate)

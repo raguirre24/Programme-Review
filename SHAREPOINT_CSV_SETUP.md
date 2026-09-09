@@ -403,3 +403,9 @@ Do not solve validation failures by removing manifest rows, changing hashes, ren
 - [ ] On-demand Service refresh succeeds before scheduled refresh is enabled.
 - [ ] Matched Service median is at most 40 minutes; M peak is at most 0.938 GiB; total peak is at most 7.5 GiB with 20% headroom; chosen parallelism is recorded.
 - [ ] Bundle replacement and rollback tested in the test workspace.
+
+## Athena J-history preference
+
+Athena selection treats numeric C/J project codes as aliases and prefers the complete J series separately for Contract and Target, retaining C only when no J series exists for that type. Selecting either alias in `SelectedProjects` considers both. This applies only to Athena-owned projects: explicit CSV ownership still excludes both Athena aliases, and CSV bundle/manifest contracts remain unchanged. `ExcludedProjects` still removes both aliases. See [ATHENA_PROGRAMME_SELECTION.md](ATHENA_PROGRAMME_SELECTION.md) for examples, the metadata selection audit and refresh checks.
+
+Athena-owned files also require a matching nonblank project name in `dbo_project` before any XER rows are imported. A numeric C/J family can match either registry alias; other project codes require an exact match. Explicit `SelectedProjects` values and `ALL` cannot override this check. Rejected filenames appear as `NO_NAMED_PROJECT_MATCH` in the selection audit. This Athena gate does not change the explicitly governed CSV routing or bundle validation rules.

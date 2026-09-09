@@ -6,7 +6,7 @@ expression SharePointSite = "https://accionaau-my.sharepoint.com/personal/ricard
 
 	annotation PBI_ResultType = Text
 
-expression SelectedProjects = "C5064, C4017" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+expression SelectedProjects = "J5064" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
 	lineageTag: a1b2c3d4-5e6f-7a8b-9c0d-ef1234567890
 	queryGroup: Database
 
@@ -124,99 +124,98 @@ expression AthenaScopeSql =
 		let
 		    ProgTypeRaw = Text.Upper(Text.Trim(SelectedProgrammeType)),
 		    ProgType =
-		        if List.Contains({"C", "T", "ALL"}, ProgTypeRaw) then
-		            ProgTypeRaw
-		        else
-		            error "SelectedProgrammeType must be C, T, or ALL.",
-		
-		    FilterList = ProjectFilterList,
+		        if List.Contains({"C", "T", "ALL"}, ProgTypeRaw) then ProgTypeRaw
+		        else error "SelectedProgrammeType must be C, T, or ALL.",
+		    // Selection is by project family; exclusions and CSV ownership still remove both aliases.
+		    FilterList = fnProjectCodeAliases(ProjectFilterList),
 		    ExclusionList = ProjectExclusionList,
-		
-		    QuoteText = (value as text) as text =>
-		        "'" & Text.Replace(value, "'", "''") & "'",
-		
-		    ProgrammeTypeFilter =
-		        if ProgType = "ALL" then
-		            "SPLIT_PART(filename, '-', 2) IN ('C', 'T')"
-		        else
-		            "SPLIT_PART(filename, '-', 2) = " & QuoteText(ProgType),
-		
-		    ProjectFilter =
-		        if FilterList = null then
-		            ""
-		        else
-		            " AND SPLIT_PART(filename, '-', 1) IN (" &
-		            Text.Combine(List.Transform(FilterList, each QuoteText(_)), ", ") &
-		            ")",
-		
-		    ProjectExclusion =
-		        if List.Count(ExclusionList) = 0 then
-		            ""
-		        else
-		            " AND TRIM(UPPER(SPLIT_PART(filename, '-', 1))) NOT IN (" &
-		            Text.Combine(List.Transform(ExclusionList, each QuoteText(_)), ", ") &
-		            ")",
-		
 		    CsvExcludedProjectCodes = XerCsvRouting[AthenaExcludedProjectCodes],
-		
-		    CsvProjectExclusion =
-		        if List.Count(CsvExcludedProjectCodes) = 0 then
-		            ""
-		        else
-		            " AND TRIM(UPPER(SPLIT_PART(filename, '-', 1))) NOT IN (" &
-		            Text.Combine(List.Transform(CsvExcludedProjectCodes, each QuoteText(_)), ", ") &
-		            ")",
-		
+		    QuoteText = (value as text) as text => "'" & Text.Replace(value, "'", "''") & "'",
+		    ProjectToken = "TRIM(UPPER(SPLIT_PART(filename, '-', 1)))",
+		    ProgrammeToken = "TRIM(UPPER(SPLIT_PART(filename, '-', 2)))",
+		    ProgrammeTypeFilter = ProgrammeToken &
+		        (if ProgType = "ALL" then " IN ('C', 'T')" else " = " & QuoteText(ProgType)),
+		    ProjectFilter = if FilterList = null then "" else
+		        " AND " & ProjectToken & " IN (" & Text.Combine(List.Transform(FilterList, QuoteText), ", ") & ")",
+		    ProjectExclusion = if List.Count(ExclusionList) = 0 then "" else
+		        " AND " & ProjectToken & " NOT IN (" & Text.Combine(List.Transform(ExclusionList, QuoteText), ", ") & ")",
+		    CsvProjectExclusion = if List.Count(CsvExcludedProjectCodes) = 0 then "" else
+		        " AND " & ProjectToken & " NOT IN (" & Text.Combine(List.Transform(CsvExcludedProjectCodes, QuoteText), ", ") & ")",
+		    // A CJ identity has only C/J aliases; MAX selects J. An EXACT identity has one code.
+		    // Require a named dbo_project match before preference and baseline ranking.
+		    // Each native table query reuses this SQL; it is not a cross-query cache.
 		    Sql =
-		        "WITH " &
-		        "parsed AS (" &
-		            "SELECT DISTINCT filename, " &
-		            "TRY_CAST(SUBSTR(CAST(monthupdate AS VARCHAR), 1, 10) AS DATE) AS monthupdate, " &
-		            "REGEXP_REPLACE(filename, '_[0-9]{8}\.xer$', '') AS filename_stem, " &
-		            "SPLIT_PART(filename, '-', 1) AS project_code, " &
-		            "SPLIT_PART(filename, '-', 2) AS programme_type, " &
-		            "SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3) AS tag, " &
-		            "CASE WHEN REGEXP_LIKE(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), '^BL[0-9]+') THEN TRUE ELSE FALSE END AS is_baseline, " &
-		            "CASE WHEN REGEXP_LIKE(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), '^BL[0-9]+') THEN CAST(REGEXP_EXTRACT(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), 'BL([0-9]+)', 1) AS INTEGER) END AS bl_number, " &
-		            "REGEXP_EXTRACT(SPLIT_PART(SPLIT_PART(filename, '_', 1), '-', 3), '^BL[0-9]+-([A-Z])$', 1) AS bl_revision " &
-		            "FROM prod_projectcontrols_p6.""02_xer_project"" " &
-		            "WHERE " & ProgrammeTypeFilter & ProjectFilter & ProjectExclusion & CsvProjectExclusion &
-		        "), " &
-		        "file_info AS (" &
-		            "SELECT DISTINCT filename, project_code, programme_type, " &
-		            "is_baseline, bl_number, monthupdate, " &
-		            "NULLIF(bl_revision, '') AS bl_revision " &
-		            "FROM parsed " &
-		        "), " &
-		        "ranked_baselines AS (" &
-		            "SELECT *, ROW_NUMBER() OVER (" &
-		                "PARTITION BY project_code, programme_type " &
-		                "ORDER BY bl_number DESC, " &
-		                    "bl_revision DESC NULLS LAST, " &
-		                    "monthupdate DESC NULLS LAST, " &
-		                    "filename DESC" &
-		            ") AS bl_rank " &
-		            "FROM file_info " &
-		            "WHERE is_baseline = TRUE" &
-		        "), " &
-		        "latest_baseline AS (" &
-		            "SELECT project_code, programme_type, " &
-		            "monthupdate AS anchor_date, filename AS anchor_filename " &
-		            "FROM ranked_baselines " &
-		            "WHERE bl_rank = 1" &
-		        "), " &
-		        "kept_filenames AS (" &
-		            "SELECT DISTINCT f.filename " &
-		            "FROM file_info f " &
-		            "LEFT JOIN latest_baseline lb " &
-		                "ON f.project_code = lb.project_code " &
-		                "AND f.programme_type = lb.programme_type " &
-		            "WHERE " &
-		                "lb.anchor_date IS NULL " &
-		                "OR f.filename = lb.anchor_filename " &
-		                "OR (f.is_baseline = FALSE AND f.monthupdate > lb.anchor_date) " &
-		                "OR f.monthupdate IS NULL" &
-		        ") "
+		        "WITH candidate_files AS ( " &
+		        "    SELECT DISTINCT filename, " &
+		        "        TRY_CAST(SUBSTR(CAST(monthupdate AS VARCHAR), 1, 10) AS DATE) AS monthupdate, " &
+		        "        TRIM(UPPER(SPLIT_PART(filename, '-', 1))) AS project_code, " &
+		        "        TRIM(UPPER(SPLIT_PART(filename, '-', 2))) AS programme_type " &
+		        "    FROM prod_projectcontrols_p6.""02_xer_project"" " &
+		        "    WHERE " & ProgrammeTypeFilter & ProjectFilter & ProjectExclusion & CsvProjectExclusion & " " &
+		        "), identified_files AS ( " &
+		        "    SELECT filename, monthupdate, project_code, programme_type, " &
+		        "        CASE WHEN REGEXP_LIKE(project_code, '^[CJ][0-9]+$') " &
+		        "            THEN CONCAT('CJ:', SUBSTR(project_code, 2)) " &
+		        "            ELSE CONCAT('EXACT:', project_code) END AS project_identity " &
+		        "    FROM candidate_files " &
+		        "), registered_project_codes AS ( " &
+		        "    SELECT projectno AS project_code " &
+		        "    FROM prod_projectcontrols_linkedsitereports.""dbo_project"" " &
+		        "    WHERE NULLIF(TRIM(projectno), '') IS NOT NULL " &
+		        "        AND NULLIF(TRIM(projectname), '') IS NOT NULL " &
+		        "), registered_projects AS ( " &
+		        "    SELECT DISTINCT CASE WHEN REGEXP_LIKE(project_code, '^[CJ][0-9]+$') " &
+		        "        THEN CONCAT('CJ:', SUBSTR(project_code, 2)) " &
+		        "        ELSE CONCAT('EXACT:', project_code) END AS project_identity " &
+		        "    FROM registered_project_codes " &
+		        "), eligible_files AS ( " &
+		        "    SELECT f.filename, f.monthupdate, f.project_code, f.programme_type, f.project_identity " &
+		        "    FROM identified_files f " &
+		        "    INNER JOIN registered_projects r ON r.project_identity = f.project_identity " &
+		        "), preferred_projects AS ( " &
+		        "    SELECT project_identity, programme_type, MAX(project_code) AS preferred_project_code " &
+		        "    FROM eligible_files " &
+		        "    GROUP BY project_identity, programme_type " &
+		        "), preferred_files AS ( " &
+		        "    SELECT f.filename, f.monthupdate, f.project_code, f.programme_type, f.project_identity, " &
+		        "        REGEXP_REPLACE( " &
+		        "            REGEXP_REPLACE(TRIM(UPPER(f.filename)), '(_[0-9]{8})?\.XER$', ''), " &
+		        "            '^[^-]+-[^-]+-', '') AS tag " &
+		        "    FROM eligible_files f " &
+		        "    INNER JOIN preferred_projects p " &
+		        "        ON f.project_identity = p.project_identity " &
+		        "        AND f.programme_type = p.programme_type " &
+		        "        AND f.project_code = p.preferred_project_code " &
+		        "), file_info AS ( " &
+		        "    SELECT filename, monthupdate, project_code, programme_type, project_identity, tag, " &
+		        "        REGEXP_LIKE(tag, '^BL[0-9]+(-[A-Z])?$') AS is_baseline, " &
+		        "        CASE WHEN REGEXP_LIKE(tag, '^BL[0-9]+(-[A-Z])?$') " &
+		        "            THEN TRY_CAST(REGEXP_EXTRACT(tag, '^BL([0-9]+)', 1) AS BIGINT) END AS bl_number, " &
+		        "        NULLIF(REGEXP_EXTRACT(tag, '^BL[0-9]+-([A-Z])$', 1), '') AS bl_revision " &
+		        "    FROM preferred_files " &
+		        "), ranked_baselines AS ( " &
+		        "    SELECT filename, project_identity, programme_type, monthupdate, " &
+		        "        ROW_NUMBER() OVER ( " &
+		        "            PARTITION BY project_identity, programme_type " &
+		        "            ORDER BY bl_number DESC NULLS LAST, bl_revision DESC NULLS LAST, " &
+		        "                monthupdate DESC NULLS LAST, filename DESC " &
+		        "        ) AS bl_rank " &
+		        "    FROM file_info " &
+		        "    WHERE is_baseline = TRUE " &
+		        "), latest_baseline AS ( " &
+		        "    SELECT project_identity, programme_type, monthupdate AS anchor_date, filename AS anchor_filename " &
+		        "    FROM ranked_baselines " &
+		        "    WHERE bl_rank = 1 " &
+		        "), kept_filenames AS ( " &
+		        "    SELECT DISTINCT f.filename, f.project_code, f.programme_type, f.project_identity, f.tag " &
+		        "    FROM file_info f " &
+		        "    LEFT JOIN latest_baseline lb " &
+		        "        ON f.project_identity = lb.project_identity AND f.programme_type = lb.programme_type " &
+		        "    WHERE lb.anchor_date IS NULL " &
+		        "        OR f.filename = lb.anchor_filename " &
+		        "        OR (f.is_baseline = FALSE AND f.monthupdate > lb.anchor_date) " &
+		        "        OR f.monthupdate IS NULL " &
+		        ")  "
 		in
 		    Sql
 	lineageTag: 697373d3-5d41-4354-ad93-6757a27eefee
@@ -300,11 +299,7 @@ expression XerCsvRouting =
 		    DigitChars = List.Transform({48..57}, each Character.FromNumber(_)),
 		    IsNumericSuffix = (value as text) as logical =>
 		        Text.Length(value) > 1 and Text.Length(Text.Remove(Text.Range(value, 1), DigitChars)) = 0,
-		    Identity = (value as text) as text =>
-		        if List.Contains({"C", "J"}, Text.Start(value, 1)) and IsNumericSuffix(value) then
-		            Text.Range(value, 1)
-		        else
-		            value,
+		    Identity = fnProjectIdentity,
 		    Alternate = (value as text) as nullable text =>
 		        if Text.Start(value, 1) = "C" and IsNumericSuffix(value) then
 		            "J" & Text.Range(value, 1)
@@ -1317,4 +1312,144 @@ expression ProjectExclusionList =
 	annotation PBI_ResultType = List
 
 	annotation PBI_NavigationStepName = Navigation
+
+expression fnProjectIdentity =
+		(value as nullable text) as nullable text =>
+		let
+		    Code = if value = null then null else Text.Upper(Text.Trim(value)),
+		    Digits = List.Transform({48..57}, each Character.FromNumber(_)),
+		    IsAlias = Code <> null and Text.Length(Code) > 1
+		        and List.Contains({"C", "J"}, Text.Start(Code, 1))
+		        and Text.Length(Text.Remove(Text.Range(Code, 1), Digits)) = 0
+		in
+		    if Code = null or Code = "" then null
+		    else if IsAlias then "CJ:" & Text.Range(Code, 1)
+		    else "EXACT:" & Code
+	lineageTag: 9d3bda4b-4559-46f3-80f7-a004b1835ba5
+	queryGroup: Database
+
+	annotation PBI_ResultType = Function
+
+expression fnProjectCodeAliases =
+		(projectCodes as nullable list) as nullable list =>
+		if projectCodes = null then null else
+		    List.Sort(List.Distinct(List.Combine(List.Transform(projectCodes, (code as text) =>
+		        let
+		            Normalised = Text.Upper(Text.Trim(code)),
+		            Identity = fnProjectIdentity(Normalised)
+		        in
+		            if Text.StartsWith(Identity, "CJ:") then
+		                {"C" & Text.Range(Identity, 3), "J" & Text.Range(Identity, 3)}
+		            else {Normalised}
+		    ))))
+	lineageTag: e447801e-0f84-482c-b27b-c27c911fc5be
+	queryGroup: Database
+
+	annotation PBI_ResultType = Function
+
+expression AthenaProgrammeSelectionAudit =
+		let
+		    Empty = #table(type table [filename = text, project_code = text, project_identity = text,
+		        programme_type = text, monthupdate = nullable date, preferred_project_code = nullable text,
+		        selection_reason = text], {}),
+		    // Metadata-only, load-disabled diagnostic. Preview explicitly when investigating selection.
+		    Sql = AthenaScopeSql &
+		        "SELECT DISTINCT f.filename, f.project_code, f.project_identity, f.programme_type, " &
+		        "f.monthupdate, p.preferred_project_code, " &
+		        "CASE WHEN r.project_identity IS NULL THEN 'NO_NAMED_PROJECT_MATCH' " &
+		        "WHEN f.project_code <> p.preferred_project_code THEN 'J_HISTORY_PREFERRED' " &
+		        "WHEN kf.filename IS NOT NULL THEN 'KEPT' ELSE 'OUTSIDE_BASELINE_WINDOW' END AS selection_reason " &
+		        "FROM identified_files f " &
+		        "LEFT JOIN registered_projects r ON f.project_identity = r.project_identity " &
+		        "LEFT JOIN preferred_projects p ON f.project_identity = p.project_identity AND f.programme_type = p.programme_type " &
+		        "LEFT JOIN kept_filenames kf ON f.filename = kf.filename",
+		    Result = if XerCsvRouting[HasAthenaProjects] then Value.NativeQuery(AthenaDB, Sql, null) else Empty
+		in
+		    Result
+	lineageTag: 53860075-4d85-4bc6-9279-950594d77bc1
+	queryGroup: Database
+
+	annotation PBI_ResultType = Table
+
+expression dbo_project_events =
+		let
+		    Source =
+		        Value.NativeQuery(
+		            AthenaDB,
+		            "SELECT ""projectid"", ""eventname"", ""eventtype"",""eventdate"",""locationname"",""description"",""eventstatus"",""eventcategory"",""impact"",""impactedagreements"",""cost"" FROM prod_projectcontrols_linkedsite.""project_events_capture""",
+		            null
+		        ),
+		
+		    // 1. Merge with your existing dbo_project table
+		    MergedWithProject =
+		        Table.NestedJoin(
+		            Source,
+		            {"projectid"},
+		            dbo_project,
+		            {"projectid"},
+		            "ProjectDetails",
+		            JoinKind.LeftOuter
+		        ),
+		
+		    // 2. Expand only the projectno column
+		    ExpandedProject =
+		        Table.ExpandTableColumn(
+		            MergedWithProject,
+		            "ProjectDetails",
+		            {"projectno"},
+		            {"projectno"}
+		        ),
+		
+		    // 3. Generate the alternate project code for each row
+		    AddAltProjectNo =
+		        Table.AddColumn(
+		            ExpandedProject,
+		            "AltProjectNo",
+		            each
+		                if [projectno] = null or [projectno] = "" then
+		                    null
+		                else if Text.StartsWith([projectno], "C") then
+		                    "J" & Text.Middle([projectno], 1)
+		                else if Text.StartsWith([projectno], "J") then
+		                    "C" & Text.Middle([projectno], 1)
+		                else
+		                    null,
+		            type nullable text
+		        ),
+		
+		    // 4. Group the codes into a list and remove nulls/duplicates
+		    AddCodeList =
+		        Table.AddColumn(
+		            AddAltProjectNo,
+		            "AllProjectCodes",
+		            each
+		                List.RemoveNulls(
+		                    List.Distinct({[projectno], [AltProjectNo]})
+		                ),
+		            type list
+		        ),
+		
+		    // 5. Expand the list column to duplicate the rows for both codes
+		    ExpandedCodes =
+		        Table.ExpandListColumn(AddCodeList, "AllProjectCodes"),
+		
+		    // 6. Clean up temporary columns and rename the final code column back to 'projectno'
+		    RenameForRLS =
+		        Table.RenameColumns(
+		            Table.RemoveColumns(ExpandedCodes, {"projectno", "AltProjectNo"}),
+		            {{"AllProjectCodes", "projectno"}}
+		        ),
+		
+		    // 7. Remove any identical duplicate rows that may have been created
+		    Deduped =
+		        Table.Distinct(RenameForRLS),
+		    #"Removed Other Columns" = Table.SelectColumns(Deduped,{"eventname", "eventtype", "eventdate", "locationname", "description", "eventstatus", "eventcategory", "impact", "impactedagreements", "cost", "projectno"})
+		in
+		    #"Removed Other Columns"
+	lineageTag: b73c1473-8ef2-46ac-a07d-b2883378c02b
+	queryGroup: Database
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
 

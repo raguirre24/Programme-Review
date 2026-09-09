@@ -38,7 +38,7 @@ table Project_Dimension
 	column CompanyId
 		formatString: 0
 		lineageTag: f974fd61-5cb6-491d-99c2-c0cffcb14675
-		summarizeBy: count
+		summarizeBy: none
 		isNameInferred
 		sourceColumn: [CompanyId]
 
@@ -47,7 +47,7 @@ table Project_Dimension
 	column ProjectId
 		formatString: 0
 		lineageTag: ea353b97-1a97-4a4b-97a9-0017737f893d
-		summarizeBy: count
+		summarizeBy: none
 		isNameInferred
 		sourceColumn: [ProjectId]
 
@@ -69,18 +69,20 @@ table Project_Dimension
 		source = ```
 				
 				VAR BaseProjects =
-				    DISTINCT(
-				        SELECTCOLUMNS(
+				    SELECTCOLUMNS(
+				        SUMMARIZE(
 				            FILTER(
 				                ALL('02 XER_PROJECT'),
-				                VAR ProjectKey = UPPER(TRIM('02 XER_PROJECT'[ProjectCode]))
+				                VAR ProjectKey = '02 XER_PROJECT'[ProjectKey]
 				                RETURN
 				                    ProjectKey <> BLANK()
 				                        && ProjectKey <> ""
 				            ),
-				    "ProjectKey", UPPER(TRIM('02 XER_PROJECT'[ProjectCode])),
-				    "ProjectCode", UPPER(TRIM('02 XER_PROJECT'[ProjectCode]))
-				        )
+				            '02 XER_PROJECT'[ProjectKey],
+				            "RepresentativeProjectCode", MAX('02 XER_PROJECT'[ProjectCode])
+				        ),
+				        "ProjectKey", '02 XER_PROJECT'[ProjectKey],
+				        "ProjectCode", UPPER(TRIM([RepresentativeProjectCode]))
 				    )
 				VAR WithProjectCodeVariants =
 				    ADDCOLUMNS(
@@ -88,14 +90,14 @@ table Project_Dimension
 				        "DisplayProjectCode",
 				            SWITCH(
 				                TRUE(),
-				                UPPER(LEFT([ProjectCode], 1)) = "C", "J" & MID([ProjectCode], 2, LEN([ProjectCode]) - 1),
+				                LEFT([ProjectKey], 3) = "CJ:" && LEFT([ProjectCode], 1) = "C", "J" & MID([ProjectCode], 2, LEN([ProjectCode]) - 1),
 				                [ProjectCode]
 				            ),
 				        "SecurityAltProjectCode",
 				            SWITCH(
 				                TRUE(),
-				                UPPER(LEFT([ProjectCode], 1)) = "C", "J" & MID([ProjectCode], 2, LEN([ProjectCode]) - 1),
-				                UPPER(LEFT([ProjectCode], 1)) = "J", "C" & MID([ProjectCode], 2, LEN([ProjectCode]) - 1),
+				                LEFT([ProjectKey], 3) = "CJ:" && LEFT([ProjectCode], 1) = "C", "J" & MID([ProjectCode], 2, LEN([ProjectCode]) - 1),
+				                LEFT([ProjectKey], 3) = "CJ:" && LEFT([ProjectCode], 1) = "J", "C" & MID([ProjectCode], 2, LEN([ProjectCode]) - 1),
 				                BLANK()
 				            )
 				    )

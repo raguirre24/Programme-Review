@@ -31,6 +31,15 @@ table 'Monthly Resource Distribution Baseline'
 		isNameInferred
 		sourceColumn: [rsrc_type]
 
+	column ProgrammeType
+		isHidden
+		lineageTag: 5f1d36e9-3d15-4179-ae4a-2246df092662
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [ProgrammeType]
+
+		annotation SummarizationSetBy = Automatic
+
 	partition 'Monthly Resource Distribution Baseline' = calculated
 		mode: import
 		source =
@@ -42,6 +51,7 @@ table 'Monthly Resource Distribution Baseline'
 				    ),
 				    "distribution_month", '15_XER_RESOURCE_DISTRIBUTION'[distribution_month],
 				    "ProjectCode", '15_XER_RESOURCE_DISTRIBUTION'[ProjectCode],
+				    "ProgrammeType", RELATED('01 XER_TASK'[ProgrammeType]),
 				    "task_code", RELATED('01 XER_TASK'[task_code]),
 				    "rsrc_name", '15_XER_RESOURCE_DISTRIBUTION'[rsrc_name],
 				    "rsrc_type", '15_XER_RESOURCE_DISTRIBUTION'[rsrc_type],

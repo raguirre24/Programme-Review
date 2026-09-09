@@ -3,12 +3,13 @@ table '04 XER_BASELINE'
 
 	measure 'BL Month Update' =
 			
+			VAR ActiveProgrammes =
+			    SUMMARIZE('01 XER_TASK', '01 XER_TASK'[ProjectCode], '01 XER_TASK'[ProgrammeType])
+			RETURN
 			CALCULATE(
 			    MIN('04 XER_BASELINE'[First_Project_Month]),
-			    FILTER(
-			        ALL('04 XER_BASELINE'),
-			        '04 XER_BASELINE'[ProjectCode] IN VALUES('01 XER_TASK'[ProjectCode])
-			    )
+			    REMOVEFILTERS('04 XER_BASELINE'),
+			    TREATAS(ActiveProgrammes, '04 XER_BASELINE'[ProjectCode], '04 XER_BASELINE'[ProgrammeType])
 			)
 		formatString: mmmm yyyy
 		lineageTag: 376f681b-acae-4523-9944-fe379b3099df
@@ -110,6 +111,15 @@ table '04 XER_BASELINE'
 
 		annotation SummarizationSetBy = Automatic
 
+	column ProgrammeType
+		isHidden
+		lineageTag: e90c9211-03ab-41de-bfc2-79d4ab44169f
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: 01 XER_TASK[ProgrammeType]
+
+		annotation SummarizationSetBy = Automatic
+
 	partition '04 XER_BASELINE' = calculated
 		mode: import
 		source =
@@ -118,18 +128,21 @@ table '04 XER_BASELINE'
 				    SUMMARIZE(
 				        '01 XER_TASK',
 				        '01 XER_TASK'[ProjectCode],
+				        '01 XER_TASK'[ProgrammeType],
 				        "First_Project_Month", MIN( '01 XER_TASK'[UpdateDate] )
 				    )
 				RETURN
 				    GENERATE(
 				        ProjectStartMonths,
 				        VAR CurrentProject = '01 XER_TASK'[ProjectCode]
+				        VAR CurrentProgrammeType = '01 XER_TASK'[ProgrammeType]
 				        VAR BaselineDate = [First_Project_Month]
 				        RETURN
 				            SELECTCOLUMNS(
 				                FILTER(
 				                    '01 XER_TASK',
 				                    '01 XER_TASK'[ProjectCode] = CurrentProject &&
+				                    '01 XER_TASK'[ProgrammeType] = CurrentProgrammeType &&
 				                    '01 XER_TASK'[UpdateDate] = BaselineDate
 				                ),
 				                "task_id_key", '01 XER_TASK'[task_id_key],

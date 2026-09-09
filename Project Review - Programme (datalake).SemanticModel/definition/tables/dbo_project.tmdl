@@ -67,7 +67,7 @@ table dbo_project
 				    Source =
 				        Value.NativeQuery(
 				            AthenaDB,
-				            "SELECT ""projectno"",""projectid"", ""projectname"", ""companyid"",""state"" FROM prod_projectcontrols_linkedsitereports.""dbo_project""",
+				            "SELECT ""projectno"",""projectid"", NULLIF(TRIM(""projectname""), '') AS ""projectname"", ""companyid"",""state"" FROM prod_projectcontrols_linkedsitereports.""dbo_project""",
 				            null
 				        )
 				in
@@ -77,5 +77,5 @@ table dbo_project
 
 	annotation PBI_NavigationStepName = Navigation
 
-	annotation PBI_ResultType = Exception
+	annotation PBI_ResultType = Table
 
