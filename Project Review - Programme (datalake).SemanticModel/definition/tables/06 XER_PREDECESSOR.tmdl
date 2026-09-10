@@ -387,6 +387,27 @@ table '06 XER_PREDECESSOR'
 
 		annotation SummarizationSetBy = Automatic
 
+	/// Assessment classification supplied by the current Programme Review CSV parser; null for Athena rows.
+	column free_float_status
+		dataType: string
+		lineageTag: 44a7239d-6592-420c-bddb-395f0b84d6ed
+		summarizeBy: none
+		sourceColumn: free_float_status
+
+	/// Calendar and endpoint basis used for the relationship free-float assessment.
+	column free_float_basis
+		dataType: string
+		lineageTag: 5825686d-5044-4b93-9531-6304c22f4434
+		summarizeBy: none
+		sourceColumn: free_float_basis
+
+	/// Explanation of calculated or unresolved relationship free float. Blank numeric values remain null.
+	column free_float_reason
+		dataType: string
+		lineageTag: a418566f-c5ad-4b2a-9a9a-df3d9e4d4d83
+		summarizeBy: none
+		sourceColumn: free_float_reason
+
 	partition '06 XER_PREDECESSOR' = m
 		mode: import
 		queryGroup: XER
@@ -431,7 +452,9 @@ table '06 XER_PREDECESSOR'
 				    Contract = Record.Field(XerCsvTableContracts, "06_XER_PREDECESSOR"),
 				    ContractModelColumns = Record.FieldOrDefault(Contract, "ModelColumns", Contract[Columns]),
 				    ModelColumns = List.Combine({ContractModelColumns, {"IsCsvSource"}}),
-				    AthenaFinal = Table.SelectColumns(Typed, ContractModelColumns),
+				    AssessmentColumns = {"free_float_status", "free_float_basis", "free_float_reason"},
+				    AthenaWithAssessment = List.Accumulate(AssessmentColumns, Typed, (state as table, columnName as text) => Table.AddColumn(state, columnName, each null, type nullable text)),
+				    AthenaFinal = Table.SelectColumns(AthenaWithAssessment, ContractModelColumns),
 				    AthenaBranch = if XerCsvRouting[HasAthenaProjects] then Table.AddColumn(AthenaFinal, "IsCsvSource", each false, type logical) else Table.AddColumn(Table.SelectColumns(fnXerCsvEmptyTable("06_XER_PREDECESSOR"), ContractModelColumns), "IsCsvSource", each false, type logical),
 				    Combined = if XerCsvRouting[IsActive] then Table.Combine({AthenaBranch, fnXerCsvLoadTable("06_XER_PREDECESSOR")}) else AthenaBranch,
 				    Final = Table.SelectColumns(Combined, ModelColumns)

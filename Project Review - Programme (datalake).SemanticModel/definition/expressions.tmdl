@@ -6,7 +6,7 @@ expression SharePointSite = "https://accionaau-my.sharepoint.com/personal/ricard
 
 	annotation PBI_ResultType = Text
 
-expression SelectedProjects = "J5064" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+expression SelectedProjects = "J5064, CNZ01" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
 	lineageTag: a1b2c3d4-5e6f-7a8b-9c0d-ef1234567890
 	queryGroup: Database
 
@@ -17,31 +17,14 @@ expression SelectedProjects = "J5064" meta [IsParameterQuery=true, Type="Text", 
 expression ProjectFilterList =
 		let
 		    Raw = Text.Trim(SelectedProjects),
-		    RawTokens =
-		        List.Select(
-		            List.Transform(Text.Split(Raw, ","), each Text.Trim(_)),
-		            each _ <> ""
-		        ),
-		    Tokens = List.Transform(RawTokens, each Text.Upper(_)),
-		    ProjectCodeChars =
-		        List.Combine({
-		            List.Transform({48..57}, each Character.FromNumber(_)),
-		            List.Transform({65..90}, each Character.FromNumber(_)),
-		            {"_"}
-		        }),
-		    InvalidTokens =
-		        List.Select(
-		            Tokens,
-		            each _ <> "ALL" and Text.Length(Text.Remove(_, ProjectCodeChars)) > 0
-		        ),
+		    Tokens = fnXerCsvProjectList(Raw),
+		    IsJsonList = Text.StartsWith(Raw, "["),
 		    Result =
 		        if List.Count(Tokens) = 0 then
 		            error "SelectedProjects must contain a comma-separated list of project codes or ALL."
-		        else if List.Count(InvalidTokens) > 0 then
-		            error "SelectedProjects can contain only project codes using A-Z, 0-9 or underscore, or ALL."
-		        else if List.Count(Tokens) = 1 and Tokens{0} = "ALL" then
+		        else if not IsJsonList and List.Count(Tokens) = 1 and Tokens{0} = "ALL" then
 		            null
-		        else if List.Contains(Tokens, "ALL") then
+		        else if not IsJsonList and List.Contains(Tokens, "ALL") then
 		            error "Use ALL by itself, not mixed with project codes."
 		        else
 		            List.Sort(List.Distinct(Tokens))
@@ -225,7 +208,7 @@ expression AthenaScopeSql =
 
 	annotation PBI_ResultType = Text
 
-expression XerCsvEnabled = false meta [IsParameterQuery=true, Type="Logical", IsParameterQueryRequired=true]
+expression XerCsvEnabled = true meta [IsParameterQuery=true, Type="Logical", IsParameterQueryRequired=true]
 	lineageTag: 1553888a-a615-4930-b8a4-9c6d618fcfd8
 	queryGroup: XER
 
@@ -233,7 +216,7 @@ expression XerCsvEnabled = false meta [IsParameterQuery=true, Type="Logical", Is
 
 	annotation PBI_ResultType = Logical
 
-expression XerCsvProjectCodes = "C6036" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+expression XerCsvProjectCodes = "CNZ01" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
 	lineageTag: af3f4c0a-0ad6-40ef-ac87-568eb549a5ff
 	queryGroup: XER
 
@@ -262,28 +245,7 @@ expression XerCsvProjectFilterList =
 		    {}
 		else
 		let
-		    Raw = Text.Trim(XerCsvProjectCodes),
-		    RawTokens =
-		        List.Select(
-		            List.Transform(Text.Split(Raw, ","), each Text.Upper(Text.Trim(_))),
-		            each _ <> ""
-		        ),
-		    AllowedChars =
-		        List.Combine({
-		            List.Transform({48..57}, each Character.FromNumber(_)),
-		            List.Transform({65..90}, each Character.FromNumber(_)),
-		            {"_"}
-		        }),
-		    InvalidTokens = List.Select(RawTokens, each Text.Length(Text.Remove(_, AllowedChars)) > 0),
-		    Result =
-		        if List.Count(InvalidTokens) > 0 then
-		            error Error.Record(
-		                "XerCsvRouting",
-		                "XerCsvProjectCodes can contain only comma-separated project codes using A-Z, 0-9 or underscore.",
-		                [InvalidCodes = Text.Combine(InvalidTokens, ", ")]
-		            )
-		        else
-		            List.Sort(List.Distinct(RawTokens))
+		    Result = fnXerCsvProjectList(XerCsvProjectCodes)
 		in
 		    Result
 	lineageTag: e660bda3-5c00-4f32-a5a9-90adeaa22e90
@@ -461,9 +423,9 @@ expression XerCsvTableContracts =
 		    ],
 		    #"06_XER_PREDECESSOR" = [
 		        FileName = "06_XER_PREDECESSOR.csv",
-		        Columns = {"task_id_key", "pred_type", "predecessor_status_code", "task_type", "predecessor_task_type", "lag", "start", "finish", "predecessor_start", "predecessor_finish", "free_float", "pred_task_id_key", "status_code", "total_float", "task_pred_id_key", "ProjectCode"},
-		        ModelColumns = {"task_id_key", "pred_type", "predecessor_status_code", "task_type", "predecessor_task_type", "lag", "start", "finish", "predecessor_start", "predecessor_finish", "free_float", "pred_task_id_key", "status_code", "total_float", "ProjectCode"},
-		        Types = {{"task_id_key", type nullable text}, {"pred_type", type nullable text}, {"predecessor_status_code", type nullable text}, {"task_type", type nullable text}, {"predecessor_task_type", type nullable text}, {"lag", type nullable number}, {"start", type nullable date}, {"finish", type nullable date}, {"predecessor_start", type nullable date}, {"predecessor_finish", type nullable date}, {"free_float", type nullable number}, {"pred_task_id_key", type nullable text}, {"status_code", type nullable text}, {"total_float", type nullable number}, {"task_pred_id_key", type nullable text}, {"ProjectCode", type nullable text}},
+		        Columns = {"task_id_key", "pred_type", "predecessor_status_code", "task_type", "predecessor_task_type", "lag", "start", "finish", "predecessor_start", "predecessor_finish", "free_float", "free_float_status", "free_float_basis", "free_float_reason", "pred_task_id_key", "status_code", "total_float", "task_pred_id_key", "ProjectCode"},
+		        ModelColumns = {"task_id_key", "pred_type", "predecessor_status_code", "task_type", "predecessor_task_type", "lag", "start", "finish", "predecessor_start", "predecessor_finish", "free_float", "free_float_status", "free_float_basis", "free_float_reason", "pred_task_id_key", "status_code", "total_float", "ProjectCode"},
+		        Types = {{"task_id_key", type nullable text}, {"pred_type", type nullable text}, {"predecessor_status_code", type nullable text}, {"task_type", type nullable text}, {"predecessor_task_type", type nullable text}, {"lag", type nullable number}, {"start", type nullable date}, {"finish", type nullable date}, {"predecessor_start", type nullable date}, {"predecessor_finish", type nullable date}, {"free_float", type nullable number}, {"free_float_status", type nullable text}, {"free_float_basis", type nullable text}, {"free_float_reason", type nullable text}, {"pred_task_id_key", type nullable text}, {"status_code", type nullable text}, {"total_float", type nullable number}, {"task_pred_id_key", type nullable text}, {"ProjectCode", type nullable text}},
 		        DateColumns = {"start", "finish", "predecessor_start", "predecessor_finish"}, LogicalColumns = {}, IntegerColumns = {}, NumberColumns = {"lag", "free_float", "total_float"},
 		        RequiredColumns = {"pred_type", "task_id_key", "pred_task_id_key", "ProjectCode", "task_pred_id_key"},
 		        NamespaceColumns = {"task_id_key", "pred_task_id_key", "task_pred_id_key"},
@@ -659,8 +621,7 @@ expression fnXerCsvReadBundle =
 		let
 		    fn = (bundleName as text, folder as table) as nullable record =>
 		        let
-		            SupportedSchemaVersions = {"1.0", "2.0", "3.0"},
-		            RecommendedSchemaVersion = "3.0",
+		            RequiredSchemaVersion = "4.0",
 		            ExpectedManifestColumns = {
 		                "schema_version", "bundle_id", "bundle_status", "parser_version", "project_code", "project_name",
 		                "programme_type", "original_xer_filename", "canonical_xer_filename", "snapshot_kind", "snapshot_tag",
@@ -687,7 +648,11 @@ expression fnXerCsvReadBundle =
 		                                error Error.Record("XerCsvManifest", "Manifest headers or header order do not match the Programme Review contract.", [BundleId = bundleName, ActualHeaders = HeaderSignature])
 		                            else
 		                                Promoted,
-		                        StrictTokens = fnXerCsvValidateRawTokens(HeaderChecked, {"monthupdate", "update_date", "data_date"}, {}, {"row_count"}, {}, bundleName & "/XER_CSV_MANIFEST.csv"),
+		                        RawVersions = List.Distinct(Table.Column(HeaderChecked, "schema_version")),
+		                        VersionChecked = if List.Count(RawVersions) = 1 and RawVersions{0} = RequiredSchemaVersion then HeaderChecked else error Error.Record("XerCsvManifest", "Unsupported schema_version; Programme Review requires schema 4.0 only. Regenerate the complete Programme Review bundle with the current parser. Mixed versions and older bundles are not accepted.", [BundleId = bundleName, ActualSchemaVersions = Text.Combine(List.Transform(RawVersions, each if _ = null then "<blank>" else Text.From(_)), ", "), RequiredSchemaVersion = RequiredSchemaVersion]),
+		                        InvalidProjectCodes = Table.RowCount(Table.SelectRows(VersionChecked, each [project_code] = null or [project_code] = "" or [project_code] <> Text.Upper(Text.Trim([project_code]), ""))),
+		                        IdentityChecked = if InvalidProjectCodes = 0 then VersionChecked else error Error.Record("XerCsvManifest", "Manifest project_code must preserve the current parser's full trimmed, invariant-uppercase business code.", [BundleId = bundleName]),
+		                        StrictTokens = fnXerCsvValidateRawTokens(IdentityChecked, {"monthupdate", "update_date", "data_date"}, {}, {"row_count"}, {}, bundleName & "/XER_CSV_MANIFEST.csv"),
 		                        InvalidExportedAt = Table.RowCount(Table.SelectRows(StrictTokens, each let token = [exported_at_utc], parsed = try DateTimeZone.FromText(token) in token = null or token = "" or not Text.EndsWith(token, "Z") or parsed[HasError])),
 		                        ExportedAtChecked = if InvalidExportedAt = 0 then StrictTokens else error Error.Record("XerCsvFormat", "exported_at_utc must be a non-blank ISO-8601 UTC value ending in Z.", [BundleId = bundleName]),
 		                        Typed = Table.TransformColumnTypes(
@@ -708,7 +673,7 @@ expression fnXerCsvReadBundle =
 		                            {
 		                                {"schema_version", each Text.Trim(_), type text}, {"bundle_id", each Text.Trim(_), type text},
 		                                {"bundle_status", each Text.Upper(Text.Trim(_)), type text}, {"parser_version", each Text.Trim(_), type text},
-		                                {"project_code", each Text.Upper(Text.Trim(_)), type text}, {"project_name", each Text.Trim(_), type text},
+		                                {"project_code", each _, type text}, {"project_name", each Text.Trim(_), type text},
 		                                {"programme_type", each Text.Upper(Text.Trim(_)), type text}, {"original_xer_filename", each Text.Trim(_), type text},
 		                                {"canonical_xer_filename", each Text.Trim(_), type text}, {"snapshot_kind", each Text.Upper(Text.Trim(_)), type text},
 		                                {"snapshot_tag", each Text.Trim(_), type text}, {"source_sha256", each Text.Upper(Text.Trim(_)), type text},
@@ -737,7 +702,7 @@ expression fnXerCsvReadBundle =
 		                ProgrammeTypes = List.Distinct(Table.Column(ParsedManifest, "programme_type")),
 		                ProjectCode = if List.Count(ProjectCodes) = 1 then ProjectCodes{0} else null,
 		                ProgrammeType = if List.Count(ProgrammeTypes) = 1 then ProgrammeTypes{0} else null,
-		                Prefix = if ProjectCode = null or ProgrammeType = null then "" else ProjectCode & "_" & ProgrammeType & "_",
+		                Prefix = if ProjectCode = null or ProgrammeType = null then "" else fnXerCsvProjectFileToken(ProjectCode) & "_" & ProgrammeType & "_",
 		                BundleTail = if Text.StartsWith(bundleName, Prefix) then Text.Range(bundleName, Text.Length(Prefix)) else "",
 		                BundleTailParts = Text.Split(BundleTail, "_"),
 		                TimestampPart = if List.Count(BundleTailParts) = 2 then BundleTailParts{0} else "",
@@ -778,7 +743,7 @@ expression fnXerCsvReadBundle =
 		                                let
 		                                    sourceRows = Table.SelectRows(ParsedManifest, each [canonical_xer_filename] = canonicalName),
 		                                    source = sourceRows{0},
-		                                    canonicalPrefix = ProjectCode & "-" & ProgrammeType & "-",
+		                                    canonicalPrefix = fnXerCsvProjectFileToken(ProjectCode) & "-" & ProgrammeType & "-",
 		                                    hasEnvelope = Text.StartsWith(canonicalName, canonicalPrefix) and Text.EndsWith(canonicalName, ".xer"),
 		                                    core = if hasEnvelope then Text.Range(canonicalName, Text.Length(canonicalPrefix), Text.Length(canonicalName) - Text.Length(canonicalPrefix) - 4) else "",
 		                                    coreParts = Text.Split(core, "_"),
@@ -837,8 +802,6 @@ expression fnXerCsvReadBundle =
 		                        null
 		                    else if Table.RowCount(ChildFolders) > 0 or List.Count(MissingFiles) > 0 or List.Count(UnexpectedFiles) > 0 or List.Count(DuplicateFiles) > 0 then
 		                        error Error.Record("XerCsvBundle", "A completed bundle must contain exactly the ten contract CSV files and XER_CSV_MANIFEST.csv, with no duplicate files or child folders.", [BundleId = bundleName, MissingFiles = Text.Combine(MissingFiles, ", "), UnexpectedFiles = Text.Combine(UnexpectedFiles, ", ")])
-		                    else if List.Count(SchemaVersions) <> 1 or not List.Contains(SupportedSchemaVersions, SchemaVersions{0}) then
-		                        error Error.Record("XerCsvManifest", "Unsupported schema_version; Programme Review accepts 1.0 and 2.0 for migration or rollback and 3.0 for current bundles.", [BundleId = bundleName, ActualSchemaVersions = Text.Combine(SchemaVersions, ", "), RecommendedSchemaVersion = RecommendedSchemaVersion])
 		                    else if List.Count(BundleIds) <> 1 or BundleIds{0} <> bundleName or not BundleNameValid then
 		                        error Error.Record("XerCsvManifest", "bundle_id must match the folder and use <PROJECT>_<C|T>_<yyyyMMddTHHmmssZ>_<hash8>.", [BundleId = bundleName])
 		                    else if ProjectCode = null or ProgrammeType = null or not List.Contains({"C", "T"}, ProgrammeType) then
@@ -881,11 +844,12 @@ expression XerCsvSelectedBundles =
 		        ProjectFolders = Table.SelectRows(ActiveRoot, each Value.Is([Content], type table)),
 		        ReadProjectFolder = (projectCode as text) as record =>
 		            let
-		                NormalisedProjectCode = Text.Upper(Text.Trim(projectCode)),
+		                NormalisedProjectCode = Text.Upper(Text.Trim(projectCode), ""),
+		                ExpectedFolderName = fnXerCsvProjectFileToken(NormalisedProjectCode),
 		                Matches =
 		                    Table.SelectRows(
 		                        ProjectFolders,
-		                        each Text.Upper(Text.Trim(Text.From([Name]))) = NormalisedProjectCode
+		                        each Text.From([Name]) = ExpectedFolderName
 		                    ),
 		                MatchCount = Table.RowCount(Matches),
 		                Match =
@@ -895,7 +859,7 @@ expression XerCsvSelectedBundles =
 		                        error Error.Record(
 		                            "XerCsvProjectFolder",
 		                            "No active SharePoint project folder exists for a configured CSV project.",
-		                            [ProjectCode = NormalisedProjectCode, ExpectedPath = RootFolder & "/" & NormalisedProjectCode]
+		                            [ProjectCode = NormalisedProjectCode, ExpectedPath = RootFolder & "/" & ExpectedFolderName]
 		                        )
 		                    else
 		                        error Error.Record(
@@ -905,13 +869,13 @@ expression XerCsvSelectedBundles =
 		                        ),
 		                FolderName = Text.From(Match[Name]),
 		                ExactFolderNameChecked =
-		                    if FolderName = NormalisedProjectCode then
+		                    if FolderName = ExpectedFolderName then
 		                        true
 		                    else
 		                        error Error.Record(
 		                            "XerCsvProjectFolder",
-		                            "The SharePoint project folder must use the exact uppercase project code configured in XerCsvProjectCodes.",
-		                            [ProjectCode = NormalisedProjectCode, ActualFolderName = FolderName]
+		                            "The SharePoint project folder must use the current parser's encoded project filename component.",
+		                            [ProjectCode = NormalisedProjectCode, ExpectedFolderName = ExpectedFolderName, ActualFolderName = FolderName]
 		                        )
 		            in
 		                if ExactFolderNameChecked then [ProjectCode = NormalisedProjectCode, FolderName = FolderName, Content = Match[Content]] else error "Invalid SharePoint project folder.",
@@ -926,7 +890,7 @@ expression XerCsvSelectedBundles =
 		                        FileRows = Table.SelectRows(Folder, each Value.Is([Content], type binary)),
 		                        ManifestFiles = Table.SelectRows(FileRows, each [Name] = "XER_CSV_MANIFEST.csv"),
 		                        ManifestCount = Table.RowCount(ManifestFiles),
-		                        Prefix = projectFolder[ProjectCode] & "_",
+		                        Prefix = fnXerCsvProjectFileToken(projectFolder[ProjectCode]) & "_",
 		                        Tail = if Text.StartsWith(BundleId, Prefix) then Text.Range(BundleId, Text.Length(Prefix)) else "",
 		                        Parts = Text.Split(Tail, "_"),
 		                        ProgrammeType = if List.Count(Parts) = 3 then Text.Upper(Parts{0}) else "",
@@ -1056,7 +1020,9 @@ expression fnXerCsvReadBundleTable =
 		                            {ColumnName, (cellValue as any) as any => fnXerCsvConvertValue(cellValue, ColumnName, Contract, bundle), TargetType}
 		                ),
 		            Converted = Table.TransformColumns(RowCountChecked, TransformOperations, null, MissingField.Error),
-		            Selected = Table.SelectColumns(Converted, Contract[Columns], MissingField.Error),
+		            InvalidUniqueKeys = List.Select(Contract[UniqueKeys], (keyColumns as list) => Table.RowCount(Table.Distinct(Table.SelectColumns(Converted, keyColumns))) <> ActualRows),
+		            UniqueChecked = if List.Count(InvalidUniqueKeys) = 0 then Converted else error Error.Record("XerCsvData", "Current CSV bundle contains duplicate primary keys.", [BundleId = bundle[BundleId], TableName = tableName, Keys = Text.Combine(List.Transform(InvalidUniqueKeys, each Text.Combine(_, ", ")), "; ")]),
+		            Selected = Table.SelectColumns(UniqueChecked, Contract[Columns], MissingField.Error),
 		            WithSource = Table.AddColumn(Selected, "IsCsvSource", each true, type logical)
 		        in
 		            WithSource
@@ -1098,15 +1064,15 @@ expression AthenaDsn = "primary_p6_bi_reporting" meta [IsParameterQuery=true, Ty
 
 	annotation PBI_ResultType = Text
 
-expression fnXerCsvCompactKey =
+expression fnXerCsvValidateKey =
 		let
 		    fn = (value as any, bundle as record, columnName as text, required as logical) as nullable text =>
 		        let
-		            Raw = if value = null then null else Text.Trim(Text.From(value)),
+		            Raw = if value = null then null else Text.From(value),
 		            IsBlank = Raw = null or Raw = "",
 		            Parts = if IsBlank then {} else Text.Split(Raw, "::"),
-		            ProjectCode = Text.Upper(Text.Trim(bundle[ProjectCode])),
-		            ProgrammeType = Text.Upper(Text.Trim(bundle[ProgrammeType])),
+		            ProjectToken = fnXerCsvProjectToken(bundle[ProjectCode]),
+		            ProgrammeType = bundle[ProgrammeType],
 		            DigitChars = List.Transform({48..57}, each Character.FromNumber(_)),
 		            UpperChars = List.Transform({65..90}, each Character.FromNumber(_)),
 		            IsDigits = (token as text) as logical => Text.Length(token) > 0 and Text.Length(Text.Remove(token, DigitChars)) = 0,
@@ -1120,42 +1086,19 @@ expression fnXerCsvCompactKey =
 		                in
 		                    token = Text.Trim(token) and (BaselineValid or (UpdateMonth <> null and UpdateMonth >= 1 and UpdateMonth <= 12)),
 		            IsNativeId = (token as text) as logical => Text.Trim(token) <> "" and token = Text.Trim(token) and not Text.Contains(token, "|") and not Text.Contains(token, "::"),
-		            V3Valid =
+		            CurrentValid =
 		                List.Count(Parts) = 5 and Parts{0} = "CSV" and
-		                Text.Upper(Parts{1}) = ProjectCode and Text.Upper(Parts{2}) = ProgrammeType and
-		                IsSnapshotTag(Parts{3}) and IsNativeId(Parts{4}),
-		            V2Canonical = if List.Count(Parts) = 4 and Parts{0} = "CSV" and Parts{1} = bundle[BundleId] then Parts{2} else null,
-		            CanonicalPrefix = ProjectCode & "-" & ProgrammeType & "-",
-		            V2HasEnvelope = V2Canonical <> null and Text.StartsWith(V2Canonical, CanonicalPrefix) and Text.EndsWith(V2Canonical, ".xer"),
-		            V2Core = if V2HasEnvelope then Text.Range(V2Canonical, Text.Length(CanonicalPrefix), Text.Length(V2Canonical) - Text.Length(CanonicalPrefix) - 4) else "",
-		            V2CoreParts = Text.Split(V2Core, "_"),
-		            V2SnapshotTag = if List.Count(V2CoreParts) = 2 then V2CoreParts{0} else "",
-		            V2NativeId = if List.Count(Parts) = 4 then Parts{3} else "",
-		            V2DateToken = if List.Count(V2CoreParts) = 2 then V2CoreParts{1} else "",
-		            V2Valid = V2HasEnvelope and List.Count(V2CoreParts) = 2 and IsSnapshotTag(V2SnapshotTag) and Text.Length(V2DateToken) = 8 and IsDigits(V2DateToken) and IsNativeId(V2NativeId),
-		            V1Parts = if IsBlank then {} else Text.Split(Raw, "|"),
-		            V1Tail = if List.Count(V1Parts) = 3 and V1Parts{0} = "CSV" and V1Parts{1} = bundle[BundleId] then V1Parts{2} else null,
-		            V1MarkerPosition = if V1Tail = null then -1 else Text.PositionOf(V1Tail, ".xer.", Occurrence.First),
-		            V1Canonical = if V1MarkerPosition >= 0 then Text.Start(V1Tail, V1MarkerPosition + 4) else null,
-		            V1NativeId = if V1MarkerPosition >= 0 then Text.Range(V1Tail, V1MarkerPosition + 5) else "",
-		            V1HasEnvelope = V1Canonical <> null and Text.StartsWith(V1Canonical, CanonicalPrefix) and Text.EndsWith(V1Canonical, ".xer"),
-		            V1Core = if V1HasEnvelope then Text.Range(V1Canonical, Text.Length(CanonicalPrefix), Text.Length(V1Canonical) - Text.Length(CanonicalPrefix) - 4) else "",
-		            V1CoreParts = Text.Split(V1Core, "_"),
-		            V1SnapshotTag = if List.Count(V1CoreParts) = 2 then V1CoreParts{0} else "",
-		            V1DateToken = if List.Count(V1CoreParts) = 2 then V1CoreParts{1} else "",
-		            V1Valid = V1HasEnvelope and List.Count(V1CoreParts) = 2 and IsSnapshotTag(V1SnapshotTag) and Text.Length(V1DateToken) = 8 and IsDigits(V1DateToken) and IsNativeId(V1NativeId),
-		            SnapshotTag = if V3Valid then Parts{3} else if V2Valid then V2SnapshotTag else if V1Valid then V1SnapshotTag else null,
-		            NativeId = if V3Valid then Parts{4} else if V2Valid then V2NativeId else if V1Valid then V1NativeId else null,
-		            Compact = if SnapshotTag = null or NativeId = null then null else "CSV::" & ProjectCode & "::" & ProgrammeType & "::" & SnapshotTag & "::" & NativeId,
+		                Parts{1} = ProjectToken and Parts{2} = ProgrammeType and
+		                IsSnapshotTag(Parts{3}) and List.Contains(bundle[Manifest][snapshot_tag], Parts{3}) and IsNativeId(Parts{4}),
 		            Result =
 		                if IsBlank and not required then
 		                    null
 		                else if IsBlank then
 		                    error Error.Record("XerCsvData", "A required relationship key is blank.", [BundleId = bundle[BundleId], Column = columnName])
-		                else if Compact = null or (Text.Contains(Raw, "|") and not V1Valid) then
-		                    error Error.Record("XerCsvData", "Relationship key is neither a valid legacy schema 1.0/2.0 key nor a compact schema 3.0 key.", [BundleId = bundle[BundleId], Column = columnName, Value = Raw])
+		                else if not CurrentValid then
+		                    error Error.Record("XerCsvData", "Relationship key must use the current schema 4.0 namespace and a snapshot present in this manifest. Regenerate older bundles; keys are never rewritten during import.", [BundleId = bundle[BundleId], Column = columnName, Value = Raw])
 		                else
-		                    Compact
+		                    Raw
 		        in
 		            Result
 		in
@@ -1187,10 +1130,9 @@ expression fnXerCsvConvertValue =
 		            IntegerValid = not IsBlank and Text.Length(UnsignedInteger) > 0 and Text.Length(Text.Remove(UnsignedInteger, DigitChars)) = 0,
 		            NumberValue = if IsBlank then null else try Number.FromText(Token, "en-US"),
 		            NumberValid = not IsBlank and Token = Trimmed and Text.Length(Text.Select(Token, DigitChars)) > 0 and Text.Length(Text.Remove(Token, NumberChars)) = 0 and not Text.Contains(Token, ",") and not NumberValue[HasError],
-		            ProjectValue = if IsBlank then null else Text.Upper(Trimmed),
 		            Result =
 		                if IsNamespace then
-		                    fnXerCsvCompactKey(value, bundle, columnName, IsRequired)
+		                    fnXerCsvValidateKey(value, bundle, columnName, IsRequired)
 		                else if IsBlank and IsRequired then
 		                    error Error.Record("XerCsvData", "A required CSV field is null or blank.", [BundleId = bundle[BundleId], Column = columnName])
 		                else if IsBlank then
@@ -1204,7 +1146,9 @@ expression fnXerCsvConvertValue =
 		                else if IsNumberColumn then
 		                    if NumberValid then NumberValue[Value] else error Error.Record("XerCsvFormat", "Number value must use an invariant decimal point.", [BundleId = bundle[BundleId], Column = columnName, Value = Token])
 		                else if contract[ProjectColumn] <> null and columnName = contract[ProjectColumn] then
-		                    if ProjectValue = bundle[ProjectCode] then ProjectValue else error Error.Record("XerCsvData", "CSV ProjectCode does not match its SharePoint project folder.", [BundleId = bundle[BundleId], Column = columnName, Value = Token, Expected = bundle[ProjectCode]])
+		                    if Token = bundle[ProjectCode] then Token else error Error.Record("XerCsvData", "CSV ProjectCode must exactly match the full business code in its manifest.", [BundleId = bundle[BundleId], Column = columnName, Value = Token, Expected = bundle[ProjectCode]])
+		                else if columnName = "filename" then
+		                    if List.Contains(bundle[Manifest][canonical_xer_filename], Token) then Token else error Error.Record("XerCsvData", "CSV filename must match a canonical XER filename in the selected manifest.", [BundleId = bundle[BundleId], Column = columnName, Value = Token])
 		                else
 		                    Token
 		        in
@@ -1257,27 +1201,8 @@ expression ExcludedProjects = "J2050" meta [IsParameterQuery=true, Type="Text", 
 expression ProjectExclusionList =
 		let
 		    Raw = if ExcludedProjects = null then "" else Text.Trim(ExcludedProjects),
-		    UpperRaw = Text.Upper(Raw),
-		    RawTokens =
-		        if UpperRaw = "" or UpperRaw = "NONE" then
-		            {}
-		        else
-		            List.Select(
-		                List.Transform(Text.Split(Raw, ","), each Text.Trim(_)),
-		                each _ <> ""
-		            ),
-		    Tokens = List.Transform(RawTokens, each Text.Upper(_)),
-		    ProjectCodeChars =
-		        List.Combine({
-		            List.Transform({48..57}, each Character.FromNumber(_)),
-		            List.Transform({65..90}, each Character.FromNumber(_)),
-		            {"_"}
-		        }),
-		    InvalidTokens =
-		        List.Select(
-		            Tokens,
-		            each Text.Length(Text.Remove(_, ProjectCodeChars)) > 0
-		        ),
+		    IsJsonList = Text.StartsWith(Raw, "["),
+		    Tokens = if Text.Upper(Raw) = "NONE" then {} else fnXerCsvProjectList(Raw),
 		    DigitChars = List.Transform({48..57}, each Character.FromNumber(_)),
 		    IsNumericSuffix = (value as text) as logical =>
 		        Text.Length(value) > 1 and Text.Length(Text.Remove(Text.Range(value, 1), DigitChars)) = 0,
@@ -1298,10 +1223,8 @@ expression ProjectExclusionList =
 		            )
 		        ),
 		    Result =
-		        if List.Contains(Tokens, "ALL") then
+		        if not IsJsonList and List.Contains(Tokens, "ALL") then
 		            error "ExcludedProjects cannot contain ALL. Leave ExcludedProjects blank or set to NONE if no projects should be excluded."
-		        else if List.Count(InvalidTokens) > 0 then
-		            error "ExcludedProjects can contain only project codes using A-Z, 0-9 or underscore, or NONE."
 		        else
 		            ExpandedWithAliases
 		in
@@ -1452,4 +1375,101 @@ expression dbo_project_events =
 	annotation PBI_NavigationStepName = Navigation
 
 	annotation PBI_ResultType = Table
+
+expression fnXerCsvProjectList =
+		(value as nullable text) as list =>
+		let
+		    Raw = if value = null then "" else Text.Trim(value),
+		    IsJsonList = Text.StartsWith(Raw, "["),
+		    Parsed = if IsJsonList then try Json.Document(Text.ToBinary(Raw, TextEncoding.Utf8)) else null,
+		    Tokens =
+		        if not IsJsonList then Text.Split(Raw, ",")
+		        else if Parsed[HasError] then error Error.Record("XerCsvRouting", "Project codes must be a comma-separated list or a JSON array of strings.", [Value = Raw])
+		        else if not Value.Is(Parsed[Value], type list) then error Error.Record("XerCsvRouting", "Project-code JSON must be an array of strings.", [Value = Raw])
+		        else if not List.AllTrue(List.Transform(Parsed[Value], each Value.Is(_, type text))) then error Error.Record("XerCsvRouting", "Every JSON project code must be a string.", [Value = Raw])
+		        else Parsed[Value],
+		    Normalised = List.Transform(Tokens, each Text.Upper(Text.Trim(_), "")),
+		    NonBlank = List.Select(Normalised, each _ <> "")
+		in
+		    if IsJsonList and List.Count(NonBlank) <> List.Count(Normalised) then error Error.Record("XerCsvRouting", "A JSON project code cannot be blank.", [Value = Raw])
+		    else List.Sort(List.Distinct(NonBlank))
+	lineageTag: 6b8a8b96-f9d4-4803-bb02-017d2284e4cb
+	queryGroup: XER
+
+	annotation PBI_ResultType = Function
+
+expression fnXerCsvProjectToken =
+		(projectCode as text) as text =>
+		let
+		    Bytes = Binary.ToList(Text.ToBinary(projectCode, TextEncoding.Utf8)),
+		    Encoded = List.Transform(Bytes, (value as number) =>
+		        if (value >= 65 and value <= 90) or (value >= 97 and value <= 122) or (value >= 48 and value <= 57) or List.Contains({32, 45, 95}, value)
+		        then Character.FromNumber(value)
+		        else "%" & Text.Upper(Binary.ToText(Binary.FromList({value}), BinaryEncoding.Hex)))
+		in
+		    Text.Combine(Encoded, "")
+	lineageTag: 0ef619dd-c453-459b-b384-3c4b4812e16e
+	queryGroup: XER
+
+	annotation PBI_ResultType = Function
+
+expression fnXerCsvSha256 =
+		(value as text) as text =>
+		    let
+		        Bytes = Binary.ToList(Text.ToBinary(value, TextEncoding.Utf8)),
+		        BitLength = List.Count(Bytes) * 8,
+		        Padding = Number.Mod(56 - Number.Mod(List.Count(Bytes) + 1, 64) + 64, 64),
+		        LengthBytes = List.Transform({7,6,5,4,3,2,1,0}, each Number.Mod(Number.IntegerDivide(BitLength, Number.Power(256, _)), 256)),
+		        Message = List.Buffer(List.Combine({Bytes, {128}, List.Repeat({0}, Padding), LengthBytes})),
+		        Mod32 = (n as number) as number => Number.Mod(n, 4294967296),
+		        Rotate = (n as number, bits as number) as number => Number.IntegerDivide(n, Number.Power(2, bits)) + Number.Mod(n, Number.Power(2, bits)) * Number.Power(2, 32 - bits),
+		        Xor3 = (a as number, b as number, c as number) as number => Number.BitwiseXor(Number.BitwiseXor(a, b), c),
+		        Small0 = (n as number) as number => Xor3(Rotate(n, 7), Rotate(n, 18), Number.IntegerDivide(n, 8)),
+		        Small1 = (n as number) as number => Xor3(Rotate(n, 17), Rotate(n, 19), Number.IntegerDivide(n, 1024)),
+		        Large0 = (n as number) as number => Xor3(Rotate(n, 2), Rotate(n, 13), Rotate(n, 22)),
+		        Large1 = (n as number) as number => Xor3(Rotate(n, 6), Rotate(n, 11), Rotate(n, 25)),
+		        Constants = List.Buffer({
+		            1116352408,1899447441,3049323471,3921009573,961987163,1508970993,2453635748,2870763221,
+		            3624381080,310598401,607225278,1426881987,1925078388,2162078206,2614888103,3248222580,
+		            3835390401,4022224774,264347078,604807628,770255983,1249150122,1555081692,1996064986,
+		            2554220882,2821834349,2952996808,3210313671,3336571891,3584528711,113926993,338241895,
+		            666307205,773529912,1294757372,1396182291,1695183700,1986661051,2177026350,2456956037,
+		            2730485921,2820302411,3259730800,3345764771,3516065817,3600352804,4094571909,275423344,
+		            430227734,506948616,659060556,883997877,958139571,1322822218,1537002063,1747873779,
+		            1955562222,2024104815,2227730452,2361852424,2428436474,2756734187,3204031479,3329325298}),
+		        Initial = {1779033703,3144134277,1013904242,2773480762,1359893119,2600822924,528734635,1541459225},
+		        ProcessBlock = (hash as list, block as number) as list =>
+		            let
+		                Words16 = List.Transform({0..15}, (i) => List.Sum(List.Transform({0..3}, (j) => Message{block * 64 + i * 4 + j} * Number.Power(256, 3 - j)))),
+		                Words = List.Buffer(List.Accumulate({16..63}, Words16, (w, i) => w & {Mod32(Small1(w{i - 2}) + w{i - 7} + Small0(w{i - 15}) + w{i - 16})})),
+		                Compressed = List.Accumulate({0..63}, hash, (h, i) =>
+		                    let
+		                        Choose = Number.BitwiseXor(Number.BitwiseAnd(h{4}, h{5}), Number.BitwiseAnd(4294967295 - h{4}, h{6})),
+		                        Majority = Xor3(Number.BitwiseAnd(h{0}, h{1}), Number.BitwiseAnd(h{0}, h{2}), Number.BitwiseAnd(h{1}, h{2})),
+		                        T1 = Mod32(h{7} + Large1(h{4}) + Choose + Constants{i} + Words{i}),
+		                        T2 = Mod32(Large0(h{0}) + Majority)
+		                    in
+		                        {Mod32(T1 + T2), h{0}, h{1}, h{2}, Mod32(h{3} + T1), h{4}, h{5}, h{6}}),
+		                Result = List.Transform({0..7}, each Mod32(hash{_} + Compressed{_}))
+		            in
+		                List.Buffer(Result),
+		        Digest = List.Accumulate({0..Number.IntegerDivide(List.Count(Message), 64) - 1}, Initial, ProcessBlock),
+		        DigestBytes = List.Combine(List.Transform(Digest, (word) => List.Transform({3,2,1,0}, each Number.Mod(Number.IntegerDivide(word, Number.Power(256, _)), 256))))
+		    in
+		    Text.Upper(Binary.ToText(Binary.FromList(DigestBytes), BinaryEncoding.Hex))
+	lineageTag: b1046161-df05-47dc-885c-b0535a28a424
+	queryGroup: XER
+
+	annotation PBI_ResultType = Function
+
+expression fnXerCsvProjectFileToken =
+		(projectCode as text) as text =>
+		let
+		    Encoded = fnXerCsvProjectToken(projectCode)
+		in
+		    if Text.Length(Encoded) <= 100 then Encoded else "~" & fnXerCsvSha256(projectCode)
+	lineageTag: 6c2b26f9-1b78-4dbb-b2d4-b0c7e1425b14
+	queryGroup: XER
+
+	annotation PBI_ResultType = Function
 
