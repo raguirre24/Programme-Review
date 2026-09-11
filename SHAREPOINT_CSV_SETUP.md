@@ -1,6 +1,6 @@
 # SharePoint CSV setup for Programme Review
 
-This guide explains how to make a complete project history available to Programme Review from SharePoint CSV files. CSV ownership is **whole-project replacement**: when a project is listed in `XerCsvProjectCodes`, all ten imported XER tables for that project come from its selected SharePoint bundle and Athena is excluded for that project. Projects not listed in `XerCsvProjectCodes` continue to use Athena.
+This guide explains how to make a complete project history available to Programme Review from SharePoint CSV files. CSV ownership is **whole-project replacement**: when a project is listed in `XerCsvProjectCodes`, all eleven imported XER tables for that project come from its selected SharePoint bundle and Athena is excluded for that project. Projects not listed in `XerCsvProjectCodes` continue to use Athena.
 
 ## 1. Prerequisites
 
@@ -12,7 +12,7 @@ Before enabling CSV loading, confirm the following:
 - Prefer a durable organisational or service account for Power BI Service refresh. Do not rely on an account that may leave the project or lose access.
 - The people publishing bundles need permission to create folders, upload files and move superseded bundles to `Archive`. The refresh account itself only needs read access unless it is also used to publish bundles.
 - Every CSV-owned project exists in governed `dbo_project` data and has a project-specific entry in `dbo_userpermission`. The manifest never grants report access; the existing RLS role remains authoritative.
-- The XER parser has generated and validated a completed **Programme Review** schema `4.0` bundle. Only `4.0` is accepted: older versions, mixed-version manifests, Tender Review bundles and legacy Enhanced exports must be regenerated using the current Programme Review profile.
+- The XER parser has generated and validated a completed **Programme Review** schema `5.0` bundle. Only `5.0` is accepted: older versions, mixed-version manifests, Tender Review bundles and legacy Enhanced exports must be regenerated using the current Programme Review profile.
 
 The existing `SharePointSite` currently uses a personal SharePoint/OneDrive site. That is supported because the report already accesses its `Documents` library through `SharePoint.Contents`. A team-site URL would normally look like:
 
@@ -51,7 +51,7 @@ Documents/
          └─ C5002/
 ```
 
-Do not mix bundles from different projects in one project folder. Do not place the ten CSV files directly in `C5001` or `C5002`; each export must retain its parser-generated `<bundle_id>` folder.
+Do not mix bundles from different projects in one project folder. Do not place the eleven CSV files directly in `C5001` or `C5002`; each export must retain its parser-generated `<bundle_id>` folder.
 
 The original `.xer` files do **not** belong anywhere beneath `XER CSV/Active`. They are inputs to the parser, not files read by this Power BI connection. If the original XERs must be retained for audit, keep them in a separate governed archive outside `XerCsvRootFolder`.
 
@@ -65,7 +65,7 @@ The parser creates one immutable full-history bundle for one project and one pro
 <PROJECT>_<C|T>_<yyyyMMddTHHmmssZ>_<hash8>
 ```
 
-Bundles must use manifest schema `4.0` and relationship keys in this exact form:
+Bundles must use manifest schema `5.0` and relationship keys in this exact form:
 
 ```text
 CSV::<encoded_project_code>::<programme_type>::<snapshot_tag>::<native_id>
@@ -75,21 +75,21 @@ The `::` delimiter is required because this report's WBS hierarchy uses DAX `PAT
 
 The manifest and CSV `ProjectCode` retain the full trimmed, uppercase business name, including punctuation and Unicode. The parser encodes other characters as uppercase UTF-8 percent bytes, including literal `%`, while ASCII letters, digits, `_`, `-` and spaces remain readable. For example, `QAC000623-01-02` remains unchanged and `A/B` becomes `A%2FB`. Keys always use this full encoded component. If the encoded component exceeds 100 characters, project folders, bundle names and canonical XER filenames use `~` followed by the uppercase SHA-256 of the normalised UTF-8 project code. Do not shorten the key component. Copy generated names exactly; a literal percent sequence is part of the folder name.
 
-Schema `4.0` requires the current 19-column manifest and exact ordered headers in all ten CSV files. Table `06_XER_PREDECESSOR` includes `free_float_status`, `free_float_basis` and `free_float_reason` immediately after `free_float`. The report imports those explanations and preserves unresolved numeric float as null. The explanation fields remain null for Athena data that does not provide them.
+Schema `5.0` requires the current 19-column manifest and exact ordered headers in all eleven CSV files. Table `06_XER_PREDECESSOR` includes `free_float_status`, `free_float_basis` and `free_float_reason` immediately after `free_float`. The report imports those explanations and preserves unresolved numeric float as null. The explanation fields remain null for Athena data that does not provide them.
 
 ### The short answer: which files share a folder?
 
-The ten generated CSV files and `XER_CSV_MANIFEST.csv` are uploaded into the **same `<bundle_id>` folder**. The manifest is not stored in a separate manifest folder. Upload the ten CSVs first and upload the manifest into that same folder last.
+The eleven generated CSV files and `XER_CSV_MANIFEST.csv` are uploaded into the **same `<bundle_id>` folder**. The manifest is not stored in a separate manifest folder. Upload the eleven CSVs first and upload the manifest into that same folder last.
 
 The original `.xer` files are **not uploaded into the bundle**. The manifest records their names and hashes for audit, but Power BI does not need the original XER binaries in the SharePoint CSV location.
 
 | Item | Place inside `Active/<PROJECT_CODE>/<bundle_id>`? | Publication rule |
 |---|---:|---|
 | Original `.xer` input files | No | Keep locally or in a separate governed XER archive outside `XerCsvRootFolder` |
-| Ten parser-generated table CSVs | Yes | Upload first, all into the same `<bundle_id>` folder |
+| Eleven parser-generated table CSVs | Yes | Upload first, all into the same `<bundle_id>` folder |
 | `XER_CSV_MANIFEST.csv` | Yes | Upload into the same `<bundle_id>` folder, but upload it last |
 | Web download `<bundle_id>.zip` | No | Extract the ZIP and upload the inner bundle files; never upload the ZIP itself |
-| Any extra notes, copies or subfolders | No | A completed bundle must contain exactly the eleven required files |
+| Any extra notes, copies or subfolders | No | A completed bundle must contain exactly the twelve required files |
 
 ### Publication flow
 
@@ -97,7 +97,7 @@ The original `.xer` files are **not uploaded into the bundle**. The manifest rec
 flowchart TD
     A[Original baseline and update XER files] -->|Parser input only| B[Programme Review parser profile]
     B --> C[Local bundle_id output folder]
-    C --> D[Ten generated table CSVs]
+    C --> D[Eleven generated table CSVs]
     C --> E[XER_CSV_MANIFEST.csv]
     D -->|1. Upload first| F[SharePoint Active / PROJECT_CODE / bundle_id]
     E -->|2. Upload last into the same folder| F
@@ -125,6 +125,7 @@ Documents/
                ├─ 08_XER_ACTVCODE.csv
                ├─ 09_XER_TASKACTV.csv
                ├─ 10_XER_CALENDAR.csv
+               ├─ 11_XER_CALENDAR_DETAILED.csv
                ├─ 12_XER_RSRC.csv
                ├─ 15_XER_RESOURCE_DISTRIBUTION.csv
                └─ XER_CSV_MANIFEST.csv              ← same folder; uploaded last
@@ -134,10 +135,10 @@ There must be no `.xer`, `.zip`, notes, duplicate CSVs or child folders inside t
 
 Publish it as follows:
 
-1. In the Windows parser, add the complete history and choose **Create Programme Review bundle**. In the web parser, choose the **Programme Review** export profile and then **Create Programme Review Bundle**. The output manifest must use schema `4.0`.
-2. Confirm the local output contains exactly the ten table CSVs listed below plus `XER_CSV_MANIFEST.csv`. The web parser downloads a ZIP: extract it first and use the inner parser-generated `<bundle_id>` folder. Do not upload the ZIP file to SharePoint.
+1. In the Windows parser, add the complete history and choose **Create Programme Review bundle**. In the web parser, choose the **Programme Review** export profile and then **Create Programme Review Bundle**. The output manifest must use schema `5.0`.
+2. Confirm the local output contains exactly the eleven table CSVs listed below plus `XER_CSV_MANIFEST.csv`. The web parser downloads a ZIP: extract it first and use the inner parser-generated `<bundle_id>` folder. Do not upload the ZIP file to SharePoint.
 3. In SharePoint, open `Active/<PROJECT_CODE>` and create or upload a folder using the exact parser-generated `<bundle_id>`.
-4. Upload the ten table CSVs first. Wait until SharePoint shows that all ten uploads have completed.
+4. Upload the eleven table CSVs first. Wait until SharePoint shows that all eleven uploads have completed.
 5. Upload `XER_CSV_MANIFEST.csv` separately and last. The loader ignores a staging folder without a manifest, which prevents it from selecting a partially uploaded bundle.
 6. Do not rename the bundle folder, manifest or table files after publication.
 
@@ -152,6 +153,7 @@ Required files:
 08_XER_ACTVCODE.csv
 09_XER_TASKACTV.csv
 10_XER_CALENDAR.csv
+11_XER_CALENDAR_DETAILED.csv
 12_XER_RSRC.csv
 15_XER_RESOURCE_DISTRIBUTION.csv
 XER_CSV_MANIFEST.csv
@@ -159,16 +161,16 @@ XER_CSV_MANIFEST.csv
 
 Before activation, open the manifest and verify:
 
-- `schema_version` is exactly `4.0` on every row;
+- `schema_version` is exactly `5.0` on every row;
 - `bundle_status` is `complete`;
 - `project_code` matches the configured business code and its encoded filename component matches the parent SharePoint project folder;
 - `programme_type` is `C` or `T` as required;
 - `bundle_id` matches the bundle folder exactly;
-- every source XER has one manifest row for each of the ten table names.
+- every source XER has one manifest row for each of the eleven table names.
 
-The parser's successful publication validation is authoritative for SHA-256 hashes, duplicate keys and full cross-table referential integrity. The report independently validates each selected import envelope, tokens and types. During each table load it sums manifest `row_count` across all source snapshots, counts the corresponding CSV data rows after header validation, and blocks a mismatch before type and key conversion. It does not redownload all ten tables through `01 XER_TASK` to repeat parser validation.
+The parser's successful publication validation is authoritative for SHA-256 hashes, duplicate keys and full cross-table referential integrity. The report independently validates each selected import envelope, tokens and types. During each table load it sums manifest `row_count` across all source snapshots, counts the corresponding CSV data rows after header validation, and blocks a mismatch before type and key conversion. It does not redownload all eleven tables through `01 XER_TASK` to repeat parser validation.
 
-The loader navigates only project folders represented by `XerCsvProjectCodes`; additional project folders beneath `Active` are not opened or validated. Within each selected project it ignores manifest-free staging folders, orders manifest-bearing folders by the timestamp embedded in the contract-valid `bundle_id`, then fully validates the newest selected bundle. A selected older or mixed-version bundle fails before table loading; the loader does not fall back to an older bundle. Move superseded folders to `Archive/<PROJECT_CODE>`. Rollback is possible only to another valid schema `4.0` bundle.
+The loader navigates only project folders represented by `XerCsvProjectCodes`; additional project folders beneath `Active` are not opened or validated. Within each selected project it ignores manifest-free staging folders, orders manifest-bearing folders by the timestamp embedded in the contract-valid `bundle_id`, then fully validates the newest selected bundle. A selected older or mixed-version bundle fails before table loading; the loader does not fall back to an older bundle. Move superseded folders to `Archive/<PROJECT_CODE>`. Rollback is possible only to another valid schema `5.0` bundle.
 
 Microsoft's supported upload methods are described in [Upload files and folders to a library](https://support.microsoft.com/en-US/SharePoint/documents-and-library/upload-files-and-folders-to-a-library). Upload the manifest separately even if folder drag-and-drop is available.
 
@@ -232,7 +234,7 @@ After refresh, verify source ownership:
 - every CSV key follows `CSV::<encoded_project_code>::<C|T>::<snapshot_tag>::<native_id>` and no model key contains `|`;
 - no `task_id_key` for an Athena-owned project starts with `CSV::`;
 - hidden `XER CSV Manifest` contains only the selected bundle metadata and its row totals match the imported model;
-- all ten hidden `XER CSV Refresh Audit` records return `PASS`; `DIAGNOSTIC_MISMATCH` is retained only as a secondary calculated reconciliation state, while ownership and governance failures still raise `ERROR()`;
+- all eleven hidden `XER CSV Refresh Audit` records return `PASS`; `DIAGNOSTIC_MISMATCH` is retained only as a secondary calculated reconciliation state, while ownership and governance failures still raise `ERROR()`;
 - every configured project has its baseline and expected updates;
 - project, WBS, predecessor, activity-code, calendar and resource visuals return data without relationship errors.
 
@@ -330,7 +332,7 @@ If direct PBIP publication is unavailable, open the normal root PBIP and use **S
 
 ### Replace a project bundle
 
-1. Generate a new schema `4.0` full-history bundle for the same project and programme type.
+1. Generate a new schema `5.0` full-history bundle for the same project and programme type.
 2. Publish it beneath the same `Active/<PROJECT_CODE>` folder, with the manifest uploaded last.
 3. Refresh in Desktop or the test workspace.
 4. Confirm the new history, baseline, previous period, logic, activity codes, calendars and resources.
@@ -357,12 +359,12 @@ Set `XerCsvEnabled = false` and refresh. This disables all CSV routing and retur
 | `A completed bundle manifest does not match its parent` | A bundle was uploaded beneath the wrong project folder | Move it to the project folder matching manifest `project_code` |
 | `The SharePoint project folder must use the current parser's encoded project filename component` | The folder differs from the encoded name associated with `XerCsvProjectCodes` | Use the exact generated project filename component; keep the full business code in the parameter and manifest |
 | `No completed active CSV bundle exists` | Manifest missing, wrong programme type, or no complete bundle for a required C/T pair | Complete the upload and add the manifest last; check `SelectedProgrammeType` |
-| `Unsupported schema_version` | Bundle has an older, future, missing or mixed version | Regenerate the complete bundle as Programme Review schema `4.0`; do not manually edit the version cell |
+| `Unsupported schema_version` | Bundle has an older, future, missing or mixed version | Regenerate the complete bundle as Programme Review schema `5.0`; do not manually edit the version cell |
 | `Manifest headers or header order do not match` | Manifest was manually edited or created by another process | Regenerate the bundle; do not edit contract files manually |
 | `CSV headers or header order do not match` | Wrong export profile or renamed columns | Regenerate using Programme Review Bundle |
 | `Do not configure both C and J aliases` | Both aliases are present in `XerCsvProjectCodes` | Keep only the folder/manifest project code |
 | `Every routed CSV project must also be included by SelectedProjects` | The overall report scope excludes a CSV-owned project | Add the project or its recognised C/J alias to `SelectedProjects` |
-| `XerCsvRowCount` / `XER CSV row-count mismatch: project=..., programme=..., bundle=..., table=..., file=..., expected=..., actual=...` | The named selected CSV is truncated, altered or no longer matches the summed manifest count | Use the project, bundle, table and filename in the error to remove or regenerate the selected bundle; upload all ten CSVs before the manifest and run a full refresh |
+| `XerCsvRowCount` / `XER CSV row-count mismatch: project=..., programme=..., bundle=..., table=..., file=..., expected=..., actual=...` | The named selected CSV is truncated, altered or no longer matches the summed manifest count | Use the project, bundle, table and filename in the error to remove or regenerate the selected bundle; upload all eleven CSVs before the manifest and run a full refresh |
 | `XER CSV ownership overlap` | Routing and Athena exclusion do not agree | Verify `SelectedProjects`, `XerCsvProjectCodes`, C/J aliases and the current PBIP version; do not accept duplicated ownership |
 | `XER CSV governance failure ... dbo_project` | Governed project metadata is missing | Have the data owner add or correct the project record before activation |
 | `XER CSV governance failure ... dbo_userpermission` | No project-specific governed permission exists | Have the security/data owner add the permission record; never use the manifest to bypass RLS |
@@ -375,7 +377,7 @@ Set `XerCsvEnabled = false` and refresh. This disables all CSV routing and retur
 | Desktop does not offer the expected same-name replacement | Destination names do not match, duplicates exist, permissions are insufficient, or republishing is blocked by tenant policy | Cancel publication; confirm exactly one same-name report/model pair, access and tenant settings before retrying |
 | A required parameter is missing after publication | An older package was published | Open the current normal PBIP, confirm all eight parameters, refresh, save and publish again |
 | New bundle is not selected | Manifest not uploaded or its `bundle_id` timestamp is older | Validate the folder name and selected programme type; upload the manifest last and do not rename the bundle |
-| A newer bundle folder is selected but refresh fails | Its selected manifest or eleven-file envelope is invalid | Move that newest bundle to `Archive/<PROJECT_CODE>` or regenerate it; the loader intentionally does not hide the failure by choosing older data |
+| A newer bundle folder is selected but refresh fails | Its selected manifest or twelve-file envelope is invalid | Move that newest bundle to `Archive/<PROJECT_CODE>` or regenerate it; the loader intentionally does not hide the failure by choosing older data |
 | Refresh peak memory remains high | Excessive parallelism or model processing still dominates | Run the matched `maxParallelism` 6/3/2 experiment; do not add buffering around large CSV tables |
 | Median refresh remains above 40 minutes | Athena or SharePoint external calls are still repeated or source performance changed | Use Query Diagnostics, Athena history and Service metrics to confirm one CSV read per table and the all-CSV Athena short-circuit |
 | Refresh shows no SharePoint request | CSV mode is disabled or project list blank | Set the site parameters and project list, then enable `XerCsvEnabled` |
@@ -387,9 +389,9 @@ Do not solve validation failures by removing manifest rows, changing hashes, ren
 - [ ] `AthenaDsn`, `SharePointSite` and the exact `XerCsvLibrary` name are confirmed (`Documents` for the existing site).
 - [ ] `P6/XER CSV/Active` and `P6/XER CSV/Archive` created.
 - [ ] Every manual project has its own matching folder under both roots.
-- [ ] Bundle contains exactly ten table CSVs and one manifest.
+- [ ] Bundle contains exactly eleven table CSVs and one manifest.
 - [ ] Table CSVs uploaded first and manifest uploaded last.
-- [ ] Every manifest row uses schema `4.0`; all ten files have current headers.
+- [ ] Every manifest row uses schema `5.0`; all eleven files have current headers.
 - [ ] `project_code`, bundle ID and programme type match their folder locations.
 - [ ] Project exists in `dbo_project` and has governed `dbo_userpermission` data.
 - [ ] All eight Desktop parameters checked and `XerCsvEnabled` enabled last.
@@ -413,3 +415,23 @@ Do not solve validation failures by removing manifest rows, changing hashes, ren
 Athena selection treats numeric C/J project codes as aliases and prefers the complete J series separately for Contract and Target, retaining C only when no J series exists for that type. Selecting either alias in `SelectedProjects` considers both. This applies only to Athena-owned projects: explicit CSV ownership still excludes both Athena aliases, and CSV bundle/manifest contracts remain unchanged. `ExcludedProjects` still removes both aliases. See [ATHENA_PROGRAMME_SELECTION.md](ATHENA_PROGRAMME_SELECTION.md) for examples, the metadata selection audit and refresh checks.
 
 Athena-owned files also require a matching nonblank project name in `dbo_project` before any XER rows are imported. A numeric C/J family can match either registry alias; other project codes require an exact match. Explicit `SelectedProjects` values and `ALL` cannot override this check. Rejected filenames appear as `NO_NAMED_PROJECT_MATCH` in the selection audit. This Athena gate does not change the explicitly governed CSV routing or bundle validation rules.
+
+## Detailed calendar table 11
+
+Schema 5.0 adds `11_XER_CALENDAR_DETAILED.csv` to the complete bundle: eleven numbered CSVs plus the manifest, with eleven manifest rows per source. The report table is `11 XER_CALENDAR_DETAILED`; its Athena source is `11_xer_calendar_detailed`, through the same `fnAthenaSource` / `kept_filenames` scope and whole-project ownership rules as the other tables.
+
+The exact ordered business columns are:
+
+```text
+clndr_name,clndr_type,date,day_of_week,working_day,work_hours,exception_type,clndr_id_key,MonthUpdate,day_of_week_num,working_day_int
+```
+
+This is calendar rules and overrides, **not** a dense date table: each calendar has seven undated weekday rules, followed by dated exceptions and, where applicable, undated invalid-exception markers. Repeated calendar keys are expected. Do not deduplicate by calendar or mark this as a date table. `working_day` stays nullable Y/N text; `date`, hours and integer flags remain nullable. Unknown is not zero. These report changes do not recalculate calendar hours or relationship/resource results.
+
+For CSV, case-sensitive `MonthUpdate` must match the source manifest `monthupdate`. Nonblank calendar keys must use the manifest namespace and refer to table 10. Invalid-calendar rows with blank `clndr_id_key` are retained, with no fabricated calendar or stage identity. The loader validates bundle totals, known-key source counts and all remaining rows by metadata MonthUpdate bucket. If several sources share that date, the exact eleven-column projection cannot attribute blank-key rows to a particular source; per-source attribution is explicitly unverified for those rows.
+
+Existing table 10 required-key and uniqueness checks remain in force. Retaining invalid rows in table 11 does not repair an independently invalid table 10 CSV; a table 10 file with missing or duplicate primary calendar identities can still fail refresh. This is an existing table 10 identity boundary, not a new table 11 calculation or row-removal policy.
+
+Hidden `ProjectKey` is taken from the CSV bundle's actual reporting project through the existing Programme project-identity helper, never from the CSV filename or a blank calendar key. Athena alone uses its existing filename-based project policy. `IsCsvSource` stays hidden. A direct one-way `Project_Dimension -> 11 XER_CALENDAR_DETAILED` relationship secures unused/resource and invalid calendars independently of task usage; the one-way `10 XER_CALENDARS -> 11 XER_CALENDAR_DETAILED` relationship supports calendar filtering. Existing task/calendar relationships are unchanged.
+
+Before release, Power BI Desktop/Service runtime checks must cover Athena-only, CSV-only and mixed ownership; header-only 10/11; unused and resource calendars; blank-key invalid rows; seven weekday rows and split-shift/dated exceptions; multiple sources sharing a metadata date; project/State grants and denied projects; and calendar filtering without filtering out unrelated task data. Assert that unknown hours/dates remain blank and no table 11 row leaks across projects. TOM deserialisation and Microsoft M parsing are static checks, not native M execution, source-schema verification, refresh or RLS proof. Actual Athena column availability/types and live View-as results remain manual gates.

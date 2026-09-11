@@ -1,0 +1,139 @@
+table '11 XER_CALENDAR_DETAILED'
+	lineageTag: b3c7b0e5-429b-4025-aeae-9bfb74c53856
+
+	column clndr_name
+		dataType: string
+		lineageTag: ac2c17a0-ef31-48d0-8751-d67b7ca3d821
+		summarizeBy: none
+		sourceColumn: clndr_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column clndr_type
+		dataType: string
+		lineageTag: 7d8e6a9b-c152-43d5-bab8-955853d7e702
+		summarizeBy: none
+		sourceColumn: clndr_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column date
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: 79040d19-9fc9-4309-815f-b174c477dc63
+		summarizeBy: none
+		sourceColumn: date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column day_of_week
+		dataType: string
+		lineageTag: f58b577a-d085-40dc-a59c-ea8f309bc094
+		summarizeBy: none
+		sourceColumn: day_of_week
+
+		annotation SummarizationSetBy = Automatic
+
+	column working_day
+		dataType: string
+		lineageTag: ca774eb4-0191-4fa1-bf0f-bad229d0efa5
+		summarizeBy: none
+		sourceColumn: working_day
+
+		annotation SummarizationSetBy = Automatic
+
+	column work_hours
+		dataType: double
+		lineageTag: 1c98693a-f98f-430d-8780-e63b19d1cca6
+		summarizeBy: none
+		sourceColumn: work_hours
+
+		annotation SummarizationSetBy = Automatic
+
+	column exception_type
+		dataType: string
+		lineageTag: 3b8b64b9-2ed5-47bd-903c-e8d03ab162c7
+		summarizeBy: none
+		sourceColumn: exception_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column clndr_id_key
+		dataType: string
+		lineageTag: e51fae36-9e60-4d89-8e6c-a78bf17e8ab8
+		summarizeBy: none
+		sourceColumn: clndr_id_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthUpdate
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: 70a7c3ea-fdda-42c6-9573-a4451a15b599
+		summarizeBy: none
+		sourceColumn: MonthUpdate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column day_of_week_num
+		dataType: int64
+		lineageTag: f62e1f4c-8908-4011-a973-cd87e17d789a
+		summarizeBy: none
+		sourceColumn: day_of_week_num
+
+		annotation SummarizationSetBy = Automatic
+
+	column working_day_int
+		dataType: int64
+		lineageTag: d9b09544-91fc-4513-ae85-b4fbed5f7f2b
+		summarizeBy: none
+		sourceColumn: working_day_int
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsCsvSource
+		dataType: boolean
+		isHidden
+		lineageTag: 899bf5c8-d124-4451-aaff-b05c949fd56c
+		summarizeBy: none
+		sourceColumn: IsCsvSource
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProjectKey
+		dataType: string
+		isHidden
+		lineageTag: b82dac5f-0563-4210-896f-7d2326ec29bd
+		summarizeBy: none
+		sourceColumn: ProjectKey
+
+		annotation SummarizationSetBy = Automatic
+
+	partition '11 XER_CALENDAR_DETAILED' = m
+		mode: import
+		queryGroup: XER
+		source =
+				let
+				    // Rules plus dated overrides, not a dense date table; preserve duplicates and unknown calendar values.
+				    Contract = Record.Field(XerCsvTableContracts, "11_XER_CALENDAR_DETAILED"),
+				    ModelColumns = List.Combine({Contract[Columns], {"IsCsvSource", "ProjectKey"}}),
+				    Source = fnAthenaSource("11_xer_calendar_detailed", Text.Combine({"t.""clndr_name""", "t.""clndr_type""", "t.""date""", "t.""day_of_week""", "t.""working_day""", "t.""work_hours""", "t.""exception_type""", "t.""clndr_id_key""", "t.""monthupdate"" AS ""MonthUpdate""", "t.""day_of_week_num""", "t.""working_day_int""", "TRIM(UPPER(SPLIT_PART(t.""filename"", '-', 1))) AS ""__ProjectCode"""}, ", ")),
+				    NullBlanks = Table.TransformColumns(Source, List.Transform(Contract[Columns], (columnName as text) as list => {columnName, each if _ = null or _ = "" then null else _})),
+				    AthenaTyped = Table.TransformColumnTypes(NullBlanks, Contract[Types], "en-NZ"),
+				    AthenaWithProject = Table.AddColumn(AthenaTyped, "ProjectKey", each fnProjectIdentity([__ProjectCode]), type nullable text),
+				    AthenaFinal = Table.AddColumn(Table.SelectColumns(AthenaWithProject, List.Combine({Contract[Columns], {"ProjectKey"}})), "IsCsvSource", each false, type logical),
+				    Empty = Table.AddColumn(Table.AddColumn(fnXerCsvEmptyTable("11_XER_CALENDAR_DETAILED"), "IsCsvSource", each false, type logical), "ProjectKey", each null, type nullable text),
+				    AthenaBranch = if XerCsvRouting[HasAthenaProjects] then AthenaFinal else Empty,
+				    Combined = if XerCsvRouting[IsActive] then Table.Combine({AthenaBranch, fnXerCsvLoadTable("11_XER_CALENDAR_DETAILED")}) else AthenaBranch,
+				    Final = Table.SelectColumns(Combined, ModelColumns, MissingField.Error)
+				in
+				    Final
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

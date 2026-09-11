@@ -1,0 +1,24 @@
+/// Disconnected Resource Playground input; one value per scenario.
+table 'Scenario Mode'
+	lineageTag: 71bfb884-af01-561e-8c56-82afec931b46
+
+	column Mode
+		dataType: string
+		lineageTag: 034b958a-2c4d-5b75-ad8b-419f5c11dddd
+		summarizeBy: none
+		sourceColumn: [Mode]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Scenario Mode' = calculated
+		mode: import
+		source =
+				DATATABLE ( "Mode", STRING, {
+				    { "Find finish date" },
+				    { "Meet target date" }
+				} )
+
+	annotation ResourcePlaygroundScaffold = 1
+
+	annotation PBI_Id = bd62524cdf395c28952827acc88482a0
+

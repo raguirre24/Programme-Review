@@ -6,7 +6,7 @@ expression SharePointSite = "https://accionaau-my.sharepoint.com/personal/ricard
 
 	annotation PBI_ResultType = Text
 
-expression SelectedProjects = "J5064, CNZ01" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+expression SelectedProjects = "J4007" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
 	lineageTag: a1b2c3d4-5e6f-7a8b-9c0d-ef1234567890
 	queryGroup: Database
 
@@ -208,7 +208,7 @@ expression AthenaScopeSql =
 
 	annotation PBI_ResultType = Text
 
-expression XerCsvEnabled = true meta [IsParameterQuery=true, Type="Logical", IsParameterQueryRequired=true]
+expression XerCsvEnabled = false meta [IsParameterQuery=true, Type="Logical", IsParameterQueryRequired=true]
 	lineageTag: 1553888a-a615-4930-b8a4-9c6d618fcfd8
 	queryGroup: XER
 
@@ -477,6 +477,17 @@ expression XerCsvTableContracts =
 		        SourceKeyColumn = "clndr_id_key",
 		        ProjectColumn = null
 		    ],
+		    #"11_XER_CALENDAR_DETAILED" = [
+		        FileName = "11_XER_CALENDAR_DETAILED.csv",
+		        Columns = {"clndr_name", "clndr_type", "date", "day_of_week", "working_day", "work_hours", "exception_type", "clndr_id_key", "MonthUpdate", "day_of_week_num", "working_day_int"},
+		        Types = {{"clndr_name", type nullable text}, {"clndr_type", type nullable text}, {"date", type nullable date}, {"day_of_week", type nullable text}, {"working_day", type nullable text}, {"work_hours", type nullable number}, {"exception_type", type nullable text}, {"clndr_id_key", type nullable text}, {"MonthUpdate", type nullable date}, {"day_of_week_num", Int64.Type}, {"working_day_int", Int64.Type}},
+		        DateColumns = {"date", "MonthUpdate"}, LogicalColumns = {}, IntegerColumns = {"day_of_week_num", "working_day_int"}, NumberColumns = {"work_hours"},
+		        RequiredColumns = {"MonthUpdate"},
+		        NamespaceColumns = {"clndr_id_key"},
+		        UniqueKeys = {},
+		        SourceKeyColumn = "clndr_id_key",
+		        ProjectColumn = null
+		    ],
 		    #"12_XER_RSRC" = [
 		        FileName = "12_XER_RSRC.csv",
 		        Columns = {"rsrc_id_key", "def_qty_per_hr"},
@@ -621,7 +632,7 @@ expression fnXerCsvReadBundle =
 		let
 		    fn = (bundleName as text, folder as table) as nullable record =>
 		        let
-		            RequiredSchemaVersion = "4.0",
+		            RequiredSchemaVersion = "5.0",
 		            ExpectedManifestColumns = {
 		                "schema_version", "bundle_id", "bundle_status", "parser_version", "project_code", "project_name",
 		                "programme_type", "original_xer_filename", "canonical_xer_filename", "snapshot_kind", "snapshot_tag",
@@ -649,7 +660,7 @@ expression fnXerCsvReadBundle =
 		                            else
 		                                Promoted,
 		                        RawVersions = List.Distinct(Table.Column(HeaderChecked, "schema_version")),
-		                        VersionChecked = if List.Count(RawVersions) = 1 and RawVersions{0} = RequiredSchemaVersion then HeaderChecked else error Error.Record("XerCsvManifest", "Unsupported schema_version; Programme Review requires schema 4.0 only. Regenerate the complete Programme Review bundle with the current parser. Mixed versions and older bundles are not accepted.", [BundleId = bundleName, ActualSchemaVersions = Text.Combine(List.Transform(RawVersions, each if _ = null then "<blank>" else Text.From(_)), ", "), RequiredSchemaVersion = RequiredSchemaVersion]),
+		                        VersionChecked = if List.Count(RawVersions) = 1 and RawVersions{0} = RequiredSchemaVersion then HeaderChecked else error Error.Record("XerCsvManifest", "Unsupported schema_version; Programme Review requires schema 5.0 only. Regenerate the complete Programme Review bundle with the current parser. Mixed versions and older bundles are not accepted.", [BundleId = bundleName, ActualSchemaVersions = Text.Combine(List.Transform(RawVersions, each if _ = null then "<blank>" else Text.From(_)), ", "), RequiredSchemaVersion = RequiredSchemaVersion]),
 		                        InvalidProjectCodes = Table.RowCount(Table.SelectRows(VersionChecked, each [project_code] = null or [project_code] = "" or [project_code] <> Text.Upper(Text.Trim([project_code]), ""))),
 		                        IdentityChecked = if InvalidProjectCodes = 0 then VersionChecked else error Error.Record("XerCsvManifest", "Manifest project_code must preserve the current parser's full trimmed, invariant-uppercase business code.", [BundleId = bundleName]),
 		                        StrictTokens = fnXerCsvValidateRawTokens(IdentityChecked, {"monthupdate", "update_date", "data_date"}, {}, {"row_count"}, {}, bundleName & "/XER_CSV_MANIFEST.csv"),
@@ -801,7 +812,7 @@ expression fnXerCsvReadBundle =
 		                    if not IsComplete then
 		                        null
 		                    else if Table.RowCount(ChildFolders) > 0 or List.Count(MissingFiles) > 0 or List.Count(UnexpectedFiles) > 0 or List.Count(DuplicateFiles) > 0 then
-		                        error Error.Record("XerCsvBundle", "A completed bundle must contain exactly the ten contract CSV files and XER_CSV_MANIFEST.csv, with no duplicate files or child folders.", [BundleId = bundleName, MissingFiles = Text.Combine(MissingFiles, ", "), UnexpectedFiles = Text.Combine(UnexpectedFiles, ", ")])
+		                        error Error.Record("XerCsvBundle", "A completed bundle must contain exactly the eleven contract CSV files and XER_CSV_MANIFEST.csv, with no duplicate files or child folders.", [BundleId = bundleName, MissingFiles = Text.Combine(MissingFiles, ", "), UnexpectedFiles = Text.Combine(UnexpectedFiles, ", ")])
 		                    else if List.Count(BundleIds) <> 1 or BundleIds{0} <> bundleName or not BundleNameValid then
 		                        error Error.Record("XerCsvManifest", "bundle_id must match the folder and use <PROJECT>_<C|T>_<yyyyMMddTHHmmssZ>_<hash8>.", [BundleId = bundleName])
 		                    else if ProjectCode = null or ProgrammeType = null or not List.Contains({"C", "T"}, ProgrammeType) then
@@ -1023,7 +1034,9 @@ expression fnXerCsvReadBundleTable =
 		            InvalidUniqueKeys = List.Select(Contract[UniqueKeys], (keyColumns as list) => Table.RowCount(Table.Distinct(Table.SelectColumns(Converted, keyColumns))) <> ActualRows),
 		            UniqueChecked = if List.Count(InvalidUniqueKeys) = 0 then Converted else error Error.Record("XerCsvData", "Current CSV bundle contains duplicate primary keys.", [BundleId = bundle[BundleId], TableName = tableName, Keys = Text.Combine(List.Transform(InvalidUniqueKeys, each Text.Combine(_, ", ")), "; ")]),
 		            Selected = Table.SelectColumns(UniqueChecked, Contract[Columns], MissingField.Error),
-		            WithSource = Table.AddColumn(Selected, "IsCsvSource", each true, type logical)
+		            CalendarChecked = if tableName = "11_XER_CALENDAR_DETAILED" then fnXerCsvValidateCalendarDetails(Selected, bundle) else Selected,
+		            WithProject = if tableName = "11_XER_CALENDAR_DETAILED" then Table.AddColumn(CalendarChecked, "ProjectKey", each fnProjectIdentity(bundle[ProjectCode]), type nullable text) else CalendarChecked,
+		            WithSource = Table.AddColumn(WithProject, "IsCsvSource", each true, type logical)
 		        in
 		            WithSource
 		in
@@ -1041,8 +1054,9 @@ expression fnXerCsvLoadTable =
 		        let
 		            Contract = if Record.HasFields(XerCsvTableContracts, tableName) then Record.Field(XerCsvTableContracts, tableName) else error Error.Record("XerCsvContract", "Unknown Programme Review CSV table.", [TableName = tableName]),
 		            ContractModelColumns = Record.FieldOrDefault(Contract, "ModelColumns", Contract[Columns]),
-		            ModelColumns = List.Combine({ContractModelColumns, {"IsCsvSource"}}),
-		            Empty = Table.AddColumn(fnXerCsvEmptyTable(tableName), "IsCsvSource", each true, type logical),
+		            ModelColumns = List.Combine({ContractModelColumns, {"IsCsvSource"}, if tableName = "11_XER_CALENDAR_DETAILED" then {"ProjectKey"} else {}}),
+		            EmptySource = Table.AddColumn(fnXerCsvEmptyTable(tableName), "IsCsvSource", each true, type logical),
+		            Empty = if tableName = "11_XER_CALENDAR_DETAILED" then Table.AddColumn(EmptySource, "ProjectKey", each null, type nullable text) else EmptySource,
 		            Combined = if XerCsvRouting[IsActive] then Table.Combine(List.Transform(XerCsvSelectedBundles, each fnXerCsvReadBundleTable(_, tableName))) else Empty,
 		            Result = Table.SelectColumns(Combined, ModelColumns, MissingField.Error)
 		        in
@@ -1096,7 +1110,7 @@ expression fnXerCsvValidateKey =
 		                else if IsBlank then
 		                    error Error.Record("XerCsvData", "A required relationship key is blank.", [BundleId = bundle[BundleId], Column = columnName])
 		                else if not CurrentValid then
-		                    error Error.Record("XerCsvData", "Relationship key must use the current schema 4.0 namespace and a snapshot present in this manifest. Regenerate older bundles; keys are never rewritten during import.", [BundleId = bundle[BundleId], Column = columnName, Value = Raw])
+		                    error Error.Record("XerCsvData", "Relationship key must use the current schema 5.0 namespace and a snapshot present in this manifest. Regenerate older bundles; keys are never rewritten during import.", [BundleId = bundle[BundleId], Column = columnName, Value = Raw])
 		                else
 		                    Raw
 		        in
@@ -1469,6 +1483,35 @@ expression fnXerCsvProjectFileToken =
 		in
 		    if Text.Length(Encoded) <= 100 then Encoded else "~" & fnXerCsvSha256(projectCode)
 	lineageTag: 6c2b26f9-1b78-4dbb-b2d4-b0c7e1425b14
+	queryGroup: XER
+
+	annotation PBI_ResultType = Function
+
+expression fnXerCsvValidateCalendarDetails =
+		(source as table, bundle as record) as table =>
+		let
+		    // Invalid calendars retain blank keys; the exact transport cannot assign them to a stage.
+		    // Reconcile attributable source counts and remaining rows by metadata MonthUpdate, never invent an identity.
+		    ManifestRows = Table.SelectRows(bundle[Manifest], each [table_name] = "11_XER_CALENDAR_DETAILED"),
+		    Metadata = Table.AddColumn(ManifestRows, "__CalendarSourceToken", each [snapshot_tag], type text),
+		    WithToken = Table.AddColumn(source, "__CalendarSourceToken", each if [clndr_id_key] = null then null else Text.Split([clndr_id_key], "::"){3}, type nullable text),
+		    InvalidContext = Table.RowCount(Table.SelectRows(WithToken, (current as record) as logical =>
+		        let
+		            Matches = if current[__CalendarSourceToken] = null then Table.SelectRows(Metadata, each [monthupdate] = current[MonthUpdate]) else Table.SelectRows(Metadata, each [__CalendarSourceToken] = current[__CalendarSourceToken] and [monthupdate] = current[MonthUpdate])
+		        in current[MonthUpdate] = null or Table.RowCount(Matches) = 0)),
+		    KnownCountsValid = List.AllTrue(List.Transform(Table.ToRecords(Metadata), (metadata as record) as logical =>
+		        Table.RowCount(Table.SelectRows(WithToken, each [__CalendarSourceToken] = metadata[__CalendarSourceToken])) <= metadata[row_count])),
+		    MonthCountsValid = List.AllTrue(List.Transform(List.Distinct(Metadata[monthupdate]), (month as date) as logical =>
+		        Table.RowCount(Table.SelectRows(WithToken, each [MonthUpdate] = month)) = List.Sum(Table.SelectRows(Metadata, each [monthupdate] = month)[row_count]))),
+		    CalendarKeys = List.Buffer(fnXerCsvReadBundleTable(bundle, "10_XER_CALENDAR")[clndr_id_key]),
+		    UnknownKeys = List.Difference(List.Distinct(List.RemoveNulls(source[clndr_id_key])), CalendarKeys),
+		    Result =
+		        if InvalidContext > 0 or not KnownCountsValid or not MonthCountsValid or List.Count(UnknownKeys) > 0 then
+		            error Error.Record("XerCsvCalendar", "Detailed calendar keys, metadata MonthUpdate or attributable source counts do not match this bundle. Blank-key rows are retained without a fabricated stage identity.", [BundleId = bundle[BundleId], InvalidContextRows = InvalidContext, UnknownCalendarKeys = List.Count(UnknownKeys)])
+		        else source
+		in
+		    Result
+	lineageTag: 3e4a582b-6556-49a8-bd8a-d01a249627f6
 	queryGroup: XER
 
 	annotation PBI_ResultType = Function

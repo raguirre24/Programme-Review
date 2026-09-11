@@ -1,0 +1,28 @@
+/// Disconnected Resource Playground input; one value per scenario.
+table 'Scenario Quantity Scale'
+	lineageTag: 582de3c0-e813-5aa0-8e44-4c3215615293
+
+	column Multiplier
+		dataType: decimal
+		formatString: #,0.##
+		lineageTag: 094dcda5-a03e-5ebb-bd71-1d788eda5471
+		summarizeBy: none
+		sourceColumn: [Multiplier]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Scenario Quantity Scale' = calculated
+		mode: import
+		source =
+				DATATABLE ( "Multiplier", CURRENCY, {
+				    { 0.01 },
+				    { 0.1 },
+				    { 1 },
+				    { 1000 },
+				    { 1000000 }
+				} )
+
+	annotation ResourcePlaygroundScaffold = 1
+
+	annotation PBI_Id = d930796b19ce5829a5a91943fc17cb2b
+

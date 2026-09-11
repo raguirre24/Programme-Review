@@ -1,0 +1,54 @@
+/// Native field parameter switching the shared chart axis between week and month.
+table 'Scenario Period'
+	lineageTag: e493616b-7060-5890-a289-97c0fc8f8e1d
+
+	column Period
+		dataType: string
+		lineageTag: 852a863f-6979-5f31-a52b-01efdf83f278
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Period Order'
+
+		relatedColumnDetails
+			groupByColumn: 'Period Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Period Fields'
+		dataType: string
+		isHidden
+		lineageTag: 97ba149b-fec9-5f92-a3e5-626dcd5b0670
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Period Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Period Order'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 007992dd-d5ef-56b7-b8b6-faaea144ba03
+		summarizeBy: none
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Scenario Period' = calculated
+		mode: import
+		source =
+				{
+				    ( "Week", NAMEOF ( 'Scenario Date'[Week] ), 1 ),
+				    ( "Month", NAMEOF ( 'Scenario Date'[Month] ), 2 )
+				}
+
+	annotation ResourcePlaygroundScaffold = 1
+
+	annotation PBI_Id = 7b36fe8616565269b76feabf68cc716e
+

@@ -1,0 +1,21 @@
+/// Bounded exact numeric input. No what-if parameter sampling metadata is applied.
+table 'Scenario Quantity'
+	lineageTag: f14a8855-b0a0-580f-b2a4-8fd63b22780c
+
+	column Value
+		dataType: int64
+		formatString: #,0
+		lineageTag: d726c773-85eb-558a-aedd-2f30c2b9d0a6
+		summarizeBy: none
+		sourceColumn: [Value]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Scenario Quantity' = calculated
+		mode: import
+		source = SELECTCOLUMNS ( GENERATESERIES ( 0, 100000, 1 ), "Value", [Value] )
+
+	annotation ResourcePlaygroundScaffold = 1
+
+	annotation PBI_Id = 8aa6fbb888755d44b3d9d9062d8906ef
+

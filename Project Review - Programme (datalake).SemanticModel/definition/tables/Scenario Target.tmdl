@@ -1,0 +1,36 @@
+/// DD-MM-YYYY date input over the shared axis; measures enforce today's minimum and available date coverage.
+table 'Scenario Target'
+	lineageTag: 64e87f4f-6a23-565e-9936-c43499c0ab81
+
+	column Date
+		dataType: dateTime
+		formatString: dd-MM-yyyy
+		lineageTag: 3e9bf34e-5c52-50b5-adb6-b8133def673d
+		summarizeBy: none
+		sourceColumn: [Date]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Date Input'
+		dataType: string
+		lineageTag: 4c8f65a5-4503-5c95-a387-0fa2b912cf6e
+		summarizeBy: none
+		sourceColumn: [Date Input]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Scenario Target' = calculated
+		mode: import
+		source =
+				SELECTCOLUMNS (
+				    'Scenario Date',
+				    "Date", 'Scenario Date'[Date],
+				    "Date Input", FORMAT ( 'Scenario Date'[Date], "dd-MM-yyyy" )
+				)
+
+	annotation ResourcePlaygroundScaffold = 1
+
+	annotation PBI_Id = 81f6070529e8553283a2486bd96d32cf
+

@@ -1,0 +1,1617 @@
+/// Hypothetical resource forecasts calculated directly from table-11 rules and exceptions. No calendar-by-date rows are materialised.
+table 'Resource Scenario Measures'
+	lineageTag: d7b30071-db90-5b01-9092-f0ffe3a752d1
+
+	/// Start defaults to today only when its entire input table is unfiltered. An unmatched or ambiguous typed date remains blank.
+	measure 'Scenario Selected Start' = IF(NOT ISFILTERED('Scenario Start'), TODAY(), SELECTEDVALUE('Scenario Start'[Date]))
+		formatString: dd-MM-yyyy
+		isHidden
+		displayFolder: Internal\Inputs
+		lineageTag: 6cc63391-b037-58ac-a165-acac32456b1e
+
+	/// Target defaults to the earlier of start plus 30 days and the available date coverage end, only when its input table is unfiltered. Unmatched or ambiguous typed dates remain blank.
+	measure 'Scenario Selected Target' =
+			VAR StartDate = [Scenario Selected Start]
+			VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			RETURN IF(NOT ISFILTERED('Scenario Target'), IF(NOT ISBLANK(StartDate), MIN(StartDate + 30, HorizonEnd)), SELECTEDVALUE('Scenario Target'[Date]))
+		formatString: dd-MM-yyyy
+		isHidden
+		displayFolder: Internal\Inputs
+		lineageTag: 52a5a3b2-4697-50f2-be76-1d1a779b3336
+
+	/// Evaluated input defaults only when its entire table is unfiltered; invalid or ambiguous filtered selections remain blank.
+	measure 'Scenario Selected Rate' = IF(NOT ISFILTERED('Scenario Rate'), 100, SELECTEDVALUE('Scenario Rate'[Value]))
+		formatString: #,0.########
+		isHidden
+		displayFolder: Internal\Inputs
+		lineageTag: 03e0993e-363b-524a-8096-dc645c7269b9
+
+	/// Evaluated input defaults only when its entire table is unfiltered; invalid or ambiguous filtered selections remain blank.
+	measure 'Scenario Selected Limit' = IF(NOT ISFILTERED('Scenario Limit'), 100, SELECTEDVALUE('Scenario Limit'[Value]))
+		formatString: #,0.########
+		isHidden
+		displayFolder: Internal\Inputs
+		lineageTag: e84e34d5-5034-5ad4-9255-37198769d566
+
+	/// Evaluated input defaults only when its entire table is unfiltered; invalid or ambiguous filtered selections remain blank.
+	measure 'Scenario Selected Mode' = IF(NOT ISFILTERED('Scenario Mode'), "Find finish date", SELECTEDVALUE('Scenario Mode'[Mode]))
+		formatString: @
+		isHidden
+		displayFolder: Internal\Inputs
+		lineageTag: 74f998c3-dd50-5eea-b8f0-4bbe0c70f7d2
+
+	/// Evaluated input defaults only when its entire table is unfiltered; invalid or ambiguous filtered selections remain blank.
+	measure 'Scenario Selected Basis' = IF(NOT ISFILTERED('Scenario Rate Basis'), "Per working day", SELECTEDVALUE('Scenario Rate Basis'[Basis]))
+		formatString: @
+		isHidden
+		displayFolder: Internal\Inputs
+		lineageTag: aa6e05a7-dc1d-5a1a-885e-736c3f1b2861
+
+	/// Evaluated input defaults only when its entire table is unfiltered; invalid or ambiguous filtered selections remain blank.
+	measure 'Scenario Selected Limit Mode' = IF(NOT ISFILTERED('Scenario Limit Mode'), "No limit", SELECTEDVALUE('Scenario Limit Mode'[Mode]))
+		formatString: @
+		isHidden
+		displayFolder: Internal\Inputs
+		lineageTag: eac384b5-0436-5e6c-a673-f6daa1b1932e
+
+	/// Evaluated input defaults only when its entire table is unfiltered; invalid or ambiguous filtered selections remain blank.
+	measure 'Scenario Selected Unit' = IF(NOT ISFILTERED('Scenario Unit'), "items", SELECTEDVALUE('Scenario Unit'[Unit]))
+		formatString: @
+		isHidden
+		displayFolder: Internal\Inputs
+		lineageTag: fec654cd-1d36-533c-a7ec-e34b77a47a59
+
+	/// Selected quantity multiplied by the explicit scale. Unfiltered defaults are 1000 and 1; invalid or ambiguous filtered selections remain blank.
+	measure 'Scenario Selected Quantity' =
+			VAR Quantity = IF(NOT ISFILTERED('Scenario Quantity'), 1000, SELECTEDVALUE('Scenario Quantity'[Value]))
+			VAR Scale = IF(NOT ISFILTERED('Scenario Quantity Scale'), 1, SELECTEDVALUE('Scenario Quantity Scale'[Multiplier]))
+			RETURN IF(NOT ISBLANK(Quantity) && NOT ISBLANK(Scale), CONVERT(Quantity * Scale, DOUBLE))
+		formatString: #,0.########
+		displayFolder: Inputs
+		lineageTag: 3ea5e5a0-41a2-5691-8729-fd8f4945db21
+
+	/// Floating-point completion tolerance: max(1e-8, quantity times 1e-14). Used only when proving completion and snapping a numerically complete remainder to zero; daily capacities are not rounded.
+	measure 'Scenario Quantity Tolerance' =
+			VAR Quantity = [Scenario Selected Quantity]
+			RETURN IF(NOT ISBLANK(Quantity), MAX(0.00000001, ABS(Quantity) * 0.00000000000001))
+		formatString: #,0.########
+		isHidden
+		displayFolder: Internal\Allocation
+		lineageTag: ee90ee68-44b1-5470-b50b-910c863fd71b
+
+	/// Require a valid target from today through the available date coverage, and on or after start in both calculation modes.
+	measure 'Scenario Target Validation' =
+			VAR StartDate = [Scenario Selected Start]
+			VAR TargetDate = [Scenario Selected Target]
+			VAR HorizonStart = TODAY()
+			VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			RETURN SWITCH(TRUE(),
+			    ISBLANK(TargetDate), "Enter one valid target date (DD-MM-YYYY).",
+			    ISBLANK(StartDate), "Enter one valid start date (DD-MM-YYYY).",
+			    TargetDate < HorizonStart || TargetDate > HorizonEnd,
+			        "Target date must be between " & FORMAT(HorizonStart, "dd-MM-yyyy") & " and " & FORMAT(HorizonEnd, "dd-MM-yyyy") & ".",
+			    TargetDate < StartDate, "Target finish is before the start date.",
+			    "")
+		formatString: @
+		isHidden
+		displayFolder: Internal\Validation
+		lineageTag: 96cb0b18-6bf6-5bf7-9389-0c0181337107
+
+	/// Validate disconnected inputs without calling rate, target capacity or finish solvers.
+	measure 'Scenario Input Validation' =
+			VAR Quantity = [Scenario Selected Quantity]
+			VAR StartDate = [Scenario Selected Start]
+			VAR TargetDate = [Scenario Selected Target]
+			VAR Mode = [Scenario Selected Mode]
+			VAR Basis = [Scenario Selected Basis]
+			VAR Rate = [Scenario Selected Rate]
+			VAR LimitMode = [Scenario Selected Limit Mode]
+			VAR DailyLimit = [Scenario Selected Limit]
+			VAR HorizonStart = TODAY()
+			VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			RETURN
+			    SWITCH(TRUE(),
+			        ISBLANK(Quantity), "Select one quantity and quantity scale.",
+			        Quantity < 0, "Quantity must be zero or positive.",
+			        ISBLANK([Scenario Selected Unit]), "Select one unit.",
+			        NOT (Mode IN { "Find finish date", "Meet target date" }), "Select one calculation mode.",
+			        NOT (Basis IN { "Per working day", "Per working hour" }), "Select one production basis.",
+			        ISBLANK(StartDate), "Enter one valid start date (DD-MM-YYYY).",
+			        StartDate < HorizonStart || StartDate > HorizonEnd,
+			            "Start date must be between " & FORMAT(HorizonStart, "dd-MM-yyyy") & " and " & FORMAT(HorizonEnd, "dd-MM-yyyy") & ".",
+			        NOT (LimitMode IN { "No limit", "Daily limit" }), "Select one daily limit mode.",
+			        LimitMode = "Daily limit" && ISBLANK(DailyLimit), "Select one daily limit.",
+			        LimitMode = "Daily limit" && DailyLimit < 0, "Daily limit must be zero or positive.",
+			        Mode = "Find finish date" && ISBLANK(Rate), "Select one production rate.",
+			        Mode = "Find finish date" && Rate < 0, "Production rate must be zero or positive.",
+			        [Scenario Target Validation] <> "", [Scenario Target Validation],
+			        ""
+			    )
+		formatString: @
+		isHidden
+		displayFolder: Internal\Validation
+		lineageTag: 71c28c1a-d874-503c-8ca4-8f1b708aab02
+
+	/// Require one secured identity, exactly seven valid Standard rules and no undated unknown exception marker. Source defects are not repaired.
+	measure 'Scenario Calendar Validation' =
+			VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
+			VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
+			VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			VAR CalendarRows =
+			    CALCULATETABLE(
+			        '11 XER_CALENDAR_DETAILED',
+			        KEEPFILTERS(TREATAS({ CalendarKey }, '11 XER_CALENDAR_DETAILED'[clndr_id_key])),
+			        KEEPFILTERS(TREATAS({ ProjectKey }, '11 XER_CALENDAR_DETAILED'[ProjectKey])),
+			        KEEPFILTERS(TREATAS({ CsvSource }, '11 XER_CALENDAR_DETAILED'[IsCsvSource]))
+			    )
+			
+			VAR WeekRows = FILTER(CalendarRows, ISBLANK('11 XER_CALENDAR_DETAILED'[date]) && '11 XER_CALENDAR_DETAILED'[exception_type] == "Standard")
+			VAR UndatedMarkers = COUNTROWS(FILTER(CalendarRows, ISBLANK('11 XER_CALENDAR_DETAILED'[date]) && '11 XER_CALENDAR_DETAILED'[exception_type] <> "Standard"))
+			VAR ValidWeekRows = FILTER(WeekRows,
+			    NOT ISBLANK('11 XER_CALENDAR_DETAILED'[day_of_week_num])
+			    && '11 XER_CALENDAR_DETAILED'[day_of_week_num] >= 1 && '11 XER_CALENDAR_DETAILED'[day_of_week_num] <= 7
+			    && (NOT ISBLANK('11 XER_CALENDAR_DETAILED'[work_hours])
+			    && '11 XER_CALENDAR_DETAILED'[work_hours] >= 0 && '11 XER_CALENDAR_DETAILED'[work_hours] <= 24
+			    && NOT ISBLANK('11 XER_CALENDAR_DETAILED'[working_day_int])
+			    && IF('11 XER_CALENDAR_DETAILED'[work_hours] > 0,
+			        '11 XER_CALENDAR_DETAILED'[working_day] == "Y" && '11 XER_CALENDAR_DETAILED'[working_day_int] == 1,
+			        '11 XER_CALENDAR_DETAILED'[working_day] == "N" && '11 XER_CALENDAR_DETAILED'[working_day_int] == 0)))
+			VAR UniqueWeekdays = COUNTROWS(SUMMARIZE(WeekRows, '11 XER_CALENDAR_DETAILED'[day_of_week_num]))
+			VAR SourceMonths = COUNTROWS(SUMMARIZE(CalendarRows, '11 XER_CALENDAR_DETAILED'[MonthUpdate]))
+			RETURN
+			    SWITCH(TRUE(),
+			        NOT HASONEVALUE('Project_Dimension'[ProjectKey]), "Select one project.",
+			        NOT HASONEVALUE('CurrentDate'[UpdateDate]) || ISBLANK(SELECTEDVALUE('CurrentDate'[UpdateDate])),
+			            "Select one report update month.",
+			        COUNTROWS('Scenario Calendar') > 1 && HASONEVALUE('Scenario Calendar'[Calendar]),
+			            "This calendar name identifies more than one calendar in the selected project and update. Select a unique calendar name.",
+			        COUNTROWS('Scenario Calendar') <> 1 || ISBLANK(CalendarKey) || ISBLANK(ProjectKey) || ISBLANK(CsvSource),
+			            "Select one calendar available for the selected project and update.",
+			        COUNTROWS(CalendarRows) = 0, "The selected calendar has no available table-11 rows in the current project scope.",
+			        SourceMonths <> 1, "The calendar identity contains conflicting source snapshots.",
+			        UndatedMarkers > 0, "Calendar exceptions include an unresolved date or inheritance marker.",
+			        COUNTROWS(WeekRows) <> 7 || UniqueWeekdays <> 7, "Calendar requires seven unique standard weekday rules.",
+			        COUNTROWS(ValidWeekRows) <> 7, "Calendar weekday hours or working flags are unknown or inconsistent.",
+			        ""
+			    )
+		formatString: @
+		isHidden
+		displayFolder: Internal\Validation
+		lineageTag: 4326902d-fa73-5aab-8710-b85bc80d12f9
+
+	/// First invalid or duplicated dated replacement on or after the requested start. It limits proof but does not invalidate a prior proven completion.
+	measure 'Scenario First Unknown Date' =
+			VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
+			VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
+			VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			VAR CalendarRows =
+			    CALCULATETABLE(
+			        '11 XER_CALENDAR_DETAILED',
+			        KEEPFILTERS(TREATAS({ CalendarKey }, '11 XER_CALENDAR_DETAILED'[clndr_id_key])),
+			        KEEPFILTERS(TREATAS({ ProjectKey }, '11 XER_CALENDAR_DETAILED'[ProjectKey])),
+			        KEEPFILTERS(TREATAS({ CsvSource }, '11 XER_CALENDAR_DETAILED'[IsCsvSource]))
+			    )
+			
+			VAR StartDate = [Scenario Selected Start]
+			VAR Exceptions = FILTER(CalendarRows, NOT ISBLANK('11 XER_CALENDAR_DETAILED'[date]) && '11 XER_CALENDAR_DETAILED'[date] >= StartDate)
+			VAR InvalidRows = FILTER(Exceptions,
+			    NOT (NOT ISBLANK('11 XER_CALENDAR_DETAILED'[work_hours])
+			    && '11 XER_CALENDAR_DETAILED'[work_hours] >= 0 && '11 XER_CALENDAR_DETAILED'[work_hours] <= 24
+			    && NOT ISBLANK('11 XER_CALENDAR_DETAILED'[working_day_int])
+			    && IF('11 XER_CALENDAR_DETAILED'[work_hours] > 0,
+			        '11 XER_CALENDAR_DETAILED'[working_day] == "Y" && '11 XER_CALENDAR_DETAILED'[working_day_int] == 1,
+			        '11 XER_CALENDAR_DETAILED'[working_day] == "N" && '11 XER_CALENDAR_DETAILED'[working_day_int] == 0))
+			    || '11 XER_CALENDAR_DETAILED'[date] <> INT('11 XER_CALENDAR_DETAILED'[date])
+			    || ISBLANK('11 XER_CALENDAR_DETAILED'[day_of_week_num])
+			    || '11 XER_CALENDAR_DETAILED'[day_of_week_num] <> WEEKDAY('11 XER_CALENDAR_DETAILED'[date], 2)
+			    || NOT ('11 XER_CALENDAR_DETAILED'[exception_type] IN { "Exception - Working", "Exception - Non-Working" })
+			    || ('11 XER_CALENDAR_DETAILED'[exception_type] = "Exception - Working" && '11 XER_CALENDAR_DETAILED'[work_hours] <= 0)
+			    || ('11 XER_CALENDAR_DETAILED'[exception_type] = "Exception - Non-Working" && '11 XER_CALENDAR_DETAILED'[work_hours] <> 0))
+			VAR DateCounts = GROUPBY(Exceptions, '11 XER_CALENDAR_DETAILED'[date], "__Rows", COUNTX(CURRENTGROUP(), 1))
+			VAR DuplicateDates = FILTER(DateCounts, [__Rows] <> 1)
+			VAR FirstInvalid = MINX(InvalidRows, INT('11 XER_CALENDAR_DETAILED'[date]))
+			VAR FirstDuplicate = MINX(DuplicateDates, INT('11 XER_CALENDAR_DETAILED'[date]))
+			RETURN IF(ISBLANK(FirstInvalid), FirstDuplicate,
+			    IF(ISBLANK(FirstDuplicate), FirstInvalid, MIN(FirstInvalid, FirstDuplicate)))
+		formatString: dd-MM-yyyy
+		isHidden
+		displayFolder: Internal\Validation
+		lineageTag: a56d7f02-1634-56a4-9558-af9946eba94b
+
+	/// Last provable calendar date, capped at the final date of the full shared axis regardless of chart date, week or month filters.
+	measure 'Scenario Safe Through' =
+			VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			VAR UnknownDate = [Scenario First Unknown Date]
+			RETURN IF([Scenario Calendar Validation] = "",
+			    IF(ISBLANK(UnknownDate), HorizonEnd, MIN(HorizonEnd, UnknownDate - 1)))
+		formatString: dd-MM-yyyy
+		isHidden
+		displayFolder: Internal\Validation
+		lineageTag: c4ff1a78-1a92-5f77-afbb-dbd5f5be3e46
+
+	/// Cumulative working hours from the selected start to the axis endpoint: seven weekday counts plus dated replacement deltas. Never iterates all prior dates.
+	measure 'Scenario Hours Through' =
+			VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
+			VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
+			VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			VAR CalendarRows =
+			    CALCULATETABLE(
+			        '11 XER_CALENDAR_DETAILED',
+			        KEEPFILTERS(TREATAS({ CalendarKey }, '11 XER_CALENDAR_DETAILED'[clndr_id_key])),
+			        KEEPFILTERS(TREATAS({ ProjectKey }, '11 XER_CALENDAR_DETAILED'[ProjectKey])),
+			        KEEPFILTERS(TREATAS({ CsvSource }, '11 XER_CALENDAR_DETAILED'[IsCsvSource]))
+			    )
+			
+			VAR StartDate = [Scenario Selected Start]
+			VAR Endpoint = MAX('Scenario Date'[Date])
+			VAR SafeThrough = [Scenario Safe Through]
+			
+			VAR WeekRows = FILTER(CalendarRows, ISBLANK('11 XER_CALENDAR_DETAILED'[date]) && '11 XER_CALENDAR_DETAILED'[exception_type] == "Standard")
+			VAR Exceptions = FILTER(CalendarRows, NOT ISBLANK('11 XER_CALENDAR_DETAILED'[date]) && '11 XER_CALENDAR_DETAILED'[date] >= StartDate && '11 XER_CALENDAR_DETAILED'[date] <= Endpoint)
+			VAR SpanDays = MAX(0, INT(Endpoint - StartDate) + 1)
+			VAR FullWeeks = QUOTIENT(SpanDays, 7)
+			VAR ExtraDays = MOD(SpanDays, 7)
+			VAR StartWeekday = WEEKDAY(StartDate, 2)
+			VAR WeeklyTotal = SUMX(WeekRows,
+			    VAR RuleWeekday = '11 XER_CALENDAR_DETAILED'[day_of_week_num]
+			    VAR Occurrences = FullWeeks + IF(MOD(RuleWeekday - StartWeekday, 7) < ExtraDays, 1, 0)
+			    VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			    VAR DailyWeight = VAR WeightResult = Hours
+			RETURN WeightResult
+			    RETURN Occurrences * DailyWeight)
+			VAR ExceptionCorrection = SUMX(Exceptions,
+			    VAR ExceptionWeekday = WEEKDAY('11 XER_CALENDAR_DETAILED'[date], 2)
+			    VAR NormalHours = MAXX(FILTER(WeekRows, '11 XER_CALENDAR_DETAILED'[day_of_week_num] = ExceptionWeekday), '11 XER_CALENDAR_DETAILED'[work_hours])
+			    VAR ReplacementHours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			    VAR NormalWeight =
+			        VAR Hours = NormalHours
+			        VAR WeightResult = Hours
+			RETURN WeightResult
+			    VAR ReplacementWeight =
+			        VAR Hours = ReplacementHours
+			        VAR WeightResult = Hours
+			RETURN WeightResult
+			    RETURN ReplacementWeight - NormalWeight)
+			RETURN
+			    IF(NOT ISBLANK(StartDate) && NOT ISBLANK(Endpoint)
+			        && StartDate >= TODAY() && StartDate <= CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			        && Endpoint >= TODAY() && Endpoint <= CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			        && [Scenario Calendar Validation] = ""
+			        ,
+			        IF(Endpoint < StartDate, 0,
+			            IF(Endpoint <= SafeThrough, MAX(0, WeeklyTotal + ExceptionCorrection))))
+		formatString: #,0.########
+		isHidden
+		displayFolder: Internal\Sparse interval kernels
+		lineageTag: 7ac312a6-960d-59e4-a044-26396e6ddb33
+
+	/// Cumulative count of positive-hour working dates using weekday arithmetic and exception deltas; this is not hours divided by eight.
+	measure 'Scenario Working Days Through' =
+			VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
+			VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
+			VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			VAR CalendarRows =
+			    CALCULATETABLE(
+			        '11 XER_CALENDAR_DETAILED',
+			        KEEPFILTERS(TREATAS({ CalendarKey }, '11 XER_CALENDAR_DETAILED'[clndr_id_key])),
+			        KEEPFILTERS(TREATAS({ ProjectKey }, '11 XER_CALENDAR_DETAILED'[ProjectKey])),
+			        KEEPFILTERS(TREATAS({ CsvSource }, '11 XER_CALENDAR_DETAILED'[IsCsvSource]))
+			    )
+			
+			VAR StartDate = [Scenario Selected Start]
+			VAR Endpoint = MAX('Scenario Date'[Date])
+			VAR SafeThrough = [Scenario Safe Through]
+			
+			VAR WeekRows = FILTER(CalendarRows, ISBLANK('11 XER_CALENDAR_DETAILED'[date]) && '11 XER_CALENDAR_DETAILED'[exception_type] == "Standard")
+			VAR Exceptions = FILTER(CalendarRows, NOT ISBLANK('11 XER_CALENDAR_DETAILED'[date]) && '11 XER_CALENDAR_DETAILED'[date] >= StartDate && '11 XER_CALENDAR_DETAILED'[date] <= Endpoint)
+			VAR SpanDays = MAX(0, INT(Endpoint - StartDate) + 1)
+			VAR FullWeeks = QUOTIENT(SpanDays, 7)
+			VAR ExtraDays = MOD(SpanDays, 7)
+			VAR StartWeekday = WEEKDAY(StartDate, 2)
+			VAR WeeklyTotal = SUMX(WeekRows,
+			    VAR RuleWeekday = '11 XER_CALENDAR_DETAILED'[day_of_week_num]
+			    VAR Occurrences = FullWeeks + IF(MOD(RuleWeekday - StartWeekday, 7) < ExtraDays, 1, 0)
+			    VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			    VAR DailyWeight = VAR WeightResult = IF(Hours > 0, 1, 0)
+			RETURN WeightResult
+			    RETURN Occurrences * DailyWeight)
+			VAR ExceptionCorrection = SUMX(Exceptions,
+			    VAR ExceptionWeekday = WEEKDAY('11 XER_CALENDAR_DETAILED'[date], 2)
+			    VAR NormalHours = MAXX(FILTER(WeekRows, '11 XER_CALENDAR_DETAILED'[day_of_week_num] = ExceptionWeekday), '11 XER_CALENDAR_DETAILED'[work_hours])
+			    VAR ReplacementHours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			    VAR NormalWeight =
+			        VAR Hours = NormalHours
+			        VAR WeightResult = IF(Hours > 0, 1, 0)
+			RETURN WeightResult
+			    VAR ReplacementWeight =
+			        VAR Hours = ReplacementHours
+			        VAR WeightResult = IF(Hours > 0, 1, 0)
+			RETURN WeightResult
+			    RETURN ReplacementWeight - NormalWeight)
+			RETURN
+			    IF(NOT ISBLANK(StartDate) && NOT ISBLANK(Endpoint)
+			        && StartDate >= TODAY() && StartDate <= CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			        && Endpoint >= TODAY() && Endpoint <= CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			        && [Scenario Calendar Validation] = ""
+			        ,
+			        IF(Endpoint < StartDate, 0,
+			            IF(Endpoint <= SafeThrough, MAX(0, WeeklyTotal + ExceptionCorrection))))
+		formatString: #,0.########
+		isHidden
+		displayFolder: Internal\Sparse interval kernels
+		lineageTag: e7c853d1-1b7a-52ef-8176-2b93b563e629
+
+	/// Production required by the inclusive target date: quantity per working date, or per working hour without a daily cap. Capped hourly inverse is explicitly unsupported.
+	measure 'Scenario Required Rate' =
+			VAR Quantity = [Scenario Selected Quantity]
+			VAR StartDate = [Scenario Selected Start]
+			VAR TargetDate = [Scenario Selected Target]
+			VAR Basis = [Scenario Selected Basis]
+			VAR HourlyCapped = Basis = "Per working hour" && [Scenario Selected Limit Mode] = "Daily limit"
+			VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			VAR AvailableWork =
+			    IF(Basis = "Per working day",
+			        CALCULATE([Scenario Working Days Through], REMOVEFILTERS('Scenario Date'), TREATAS({ TargetDate }, 'Scenario Date'[Date])),
+			        CALCULATE([Scenario Hours Through], REMOVEFILTERS('Scenario Date'), TREATAS({ TargetDate }, 'Scenario Date'[Date])))
+			RETURN IF([Scenario Input Validation] = "" && [Scenario Calendar Validation] = "" && [Scenario Target Validation] = ""
+			    && NOT ISBLANK(TargetDate) && TargetDate >= StartDate && TargetDate <= HorizonEnd
+			    && NOT HourlyCapped && NOT ISBLANK(Quantity),
+			    IF(Quantity = 0, 0, DIVIDE(CONVERT(Quantity, DOUBLE), CONVERT(AvailableWork, DOUBLE))))
+		formatString: #,0.########
+		displayFolder: Results
+		lineageTag: c1ef0241-678c-5142-9904-fee4f686523d
+
+	/// Rate used by forward capacity; inverse mode supplies its required rate. Does not depend on capacity or finish.
+	measure 'Scenario Applied Rate' =
+			VAR Mode = [Scenario Selected Mode]
+			RETURN IF([Scenario Input Validation] = "",
+			    CONVERT(IF(Mode = "Meet target date", [Scenario Required Rate], [Scenario Selected Rate]), DOUBLE))
+		formatString: #,0.########
+		isHidden
+		displayFolder: Internal\Inputs
+		lineageTag: 178c128e-eebe-528b-bb61-e567a20fa912
+
+	/// Cumulative production capacity from seven weekday counts plus dated replacement deltas. Each daily capacity is capped before aggregation.
+	measure 'Scenario Capacity Through' =
+			VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
+			VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
+			VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			VAR CalendarRows =
+			    CALCULATETABLE(
+			        '11 XER_CALENDAR_DETAILED',
+			        KEEPFILTERS(TREATAS({ CalendarKey }, '11 XER_CALENDAR_DETAILED'[clndr_id_key])),
+			        KEEPFILTERS(TREATAS({ ProjectKey }, '11 XER_CALENDAR_DETAILED'[ProjectKey])),
+			        KEEPFILTERS(TREATAS({ CsvSource }, '11 XER_CALENDAR_DETAILED'[IsCsvSource]))
+			    )
+			
+			VAR StartDate = [Scenario Selected Start]
+			VAR Endpoint = MAX('Scenario Date'[Date])
+			VAR SafeThrough = [Scenario Safe Through]
+			
+			VAR Rate = [Scenario Applied Rate]
+			VAR Basis = [Scenario Selected Basis]
+			VAR LimitEnabled = [Scenario Selected Limit Mode] = "Daily limit"
+			VAR DailyLimit = [Scenario Selected Limit]
+			
+			VAR WeekRows = FILTER(CalendarRows, ISBLANK('11 XER_CALENDAR_DETAILED'[date]) && '11 XER_CALENDAR_DETAILED'[exception_type] == "Standard")
+			VAR Exceptions = FILTER(CalendarRows, NOT ISBLANK('11 XER_CALENDAR_DETAILED'[date]) && '11 XER_CALENDAR_DETAILED'[date] >= StartDate && '11 XER_CALENDAR_DETAILED'[date] <= Endpoint)
+			VAR SpanDays = MAX(0, INT(Endpoint - StartDate) + 1)
+			VAR FullWeeks = QUOTIENT(SpanDays, 7)
+			VAR ExtraDays = MOD(SpanDays, 7)
+			VAR StartWeekday = WEEKDAY(StartDate, 2)
+			VAR WeeklyTotal = SUMX(WeekRows,
+			    VAR RuleWeekday = '11 XER_CALENDAR_DETAILED'[day_of_week_num]
+			    VAR Occurrences = FullWeeks + IF(MOD(RuleWeekday - StartWeekday, 7) < ExtraDays, 1, 0)
+			    VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			    VAR DailyWeight = VAR RawCapacity = IF(Hours > 0, IF(Basis = "Per working hour", Rate * Hours, Rate), 0)
+			RETURN IF(LimitEnabled, MIN(RawCapacity, DailyLimit), RawCapacity)
+			    RETURN Occurrences * DailyWeight)
+			VAR ExceptionCorrection = SUMX(Exceptions,
+			    VAR ExceptionWeekday = WEEKDAY('11 XER_CALENDAR_DETAILED'[date], 2)
+			    VAR NormalHours = MAXX(FILTER(WeekRows, '11 XER_CALENDAR_DETAILED'[day_of_week_num] = ExceptionWeekday), '11 XER_CALENDAR_DETAILED'[work_hours])
+			    VAR ReplacementHours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			    VAR NormalWeight =
+			        VAR Hours = NormalHours
+			        VAR RawCapacity = IF(Hours > 0, IF(Basis = "Per working hour", Rate * Hours, Rate), 0)
+			RETURN IF(LimitEnabled, MIN(RawCapacity, DailyLimit), RawCapacity)
+			    VAR ReplacementWeight =
+			        VAR Hours = ReplacementHours
+			        VAR RawCapacity = IF(Hours > 0, IF(Basis = "Per working hour", Rate * Hours, Rate), 0)
+			RETURN IF(LimitEnabled, MIN(RawCapacity, DailyLimit), RawCapacity)
+			    RETURN ReplacementWeight - NormalWeight)
+			RETURN
+			    IF(NOT ISBLANK(StartDate) && NOT ISBLANK(Endpoint)
+			        && StartDate >= TODAY() && StartDate <= CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			        && Endpoint >= TODAY() && Endpoint <= CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			        && [Scenario Calendar Validation] = ""
+			        && NOT ISBLANK(Rate),
+			        IF(Endpoint < StartDate, 0,
+			            IF(Endpoint <= SafeThrough, MAX(0, WeeklyTotal + ExceptionCorrection))))
+		formatString: #,0.########
+		isHidden
+		displayFolder: Internal\Sparse interval kernels
+		lineageTag: 362cae3b-939b-5102-82c7-4c7126794337
+
+	/// Quantity allocated through an axis endpoint. Before today or beyond the available date coverage it is blank. Within that coverage, after unknown availability it remains Q only when completion is already proven; blanks are never coerced into zero capacity.
+	measure 'Scenario Allocated Through' =
+			VAR Quantity = [Scenario Selected Quantity]
+			VAR StartDate = [Scenario Selected Start]
+			VAR Endpoint = MAX('Scenario Date'[Date])
+			VAR SafeThrough = [Scenario Safe Through]
+			VAR Tolerance = [Scenario Quantity Tolerance]
+			VAR Capacity =
+			    IF(Endpoint <= SafeThrough, [Scenario Capacity Through],
+			        IF(SafeThrough < StartDate, 0,
+			            CALCULATE([Scenario Capacity Through], REMOVEFILTERS('Scenario Date'), TREATAS({ SafeThrough }, 'Scenario Date'[Date]))))
+			RETURN IF(Endpoint >= TODAY() && Endpoint <= CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			    && [Scenario Input Validation] = "" && [Scenario Calendar Validation] = "",
+			    SWITCH(TRUE(),
+			        Quantity = 0, 0,
+			        Endpoint < StartDate, 0,
+			        ISBLANK(Capacity), BLANK(),
+			        Capacity >= Quantity - Tolerance, Quantity,
+			        Endpoint > SafeThrough, BLANK(),
+			        MIN(Quantity, Capacity)))
+		formatString: #,0.########
+		isHidden
+		displayFolder: Internal\Allocation
+		lineageTag: 71067350-3aa9-54a6-b5bc-0aa1433920d2
+
+	/// Exact allocation over one contiguous visible bucket using two cumulative endpoints, clipped to known coverage.
+	measure 'Scenario Boundary Quantity' =
+			VAR StartDate = [Scenario Selected Start]
+			VAR PeriodStart = MIN('Scenario Date'[Date])
+			VAR PeriodEnd = MAX('Scenario Date'[Date])
+			VAR Quantity = [Scenario Selected Quantity]
+			VAR KnownPeriodEnd = MIN(PeriodEnd, [Scenario Safe Through])
+			VAR ThroughEnd = IF(KnownPeriodEnd >= StartDate,
+			    CALCULATE([Scenario Allocated Through], REMOVEFILTERS('Scenario Date'), TREATAS({ KnownPeriodEnd }, 'Scenario Date'[Date])))
+			VAR ThroughBefore = IF(PeriodStart <= StartDate, 0,
+			    CALCULATE([Scenario Allocated Through], REMOVEFILTERS('Scenario Date'), TREATAS({ PeriodStart - 1 }, 'Scenario Date'[Date])))
+			RETURN IF(PeriodEnd >= StartDate && PeriodStart <= KnownPeriodEnd && NOT ISBLANK(ThroughEnd) && NOT ISBLANK(ThroughBefore)
+			    && ThroughBefore < Quantity,
+			    MAX(0, ThroughEnd - ThroughBefore))
+		formatString: #,0.########
+		isHidden
+		displayFolder: Internal\Allocation
+		lineageTag: 1f0bea15-0d3c-5f9d-89c6-01bcb7438dbd
+
+	/// Use two endpoints for a contiguous bucket. Explicitly sparse date filters sum only those selected dates, never all historical dates.
+	measure 'Scenario Bucket Quantity' =
+			VAR __ScenarioBucketStart = MIN('Scenario Date'[Date])
+			VAR __ScenarioBucketEnd = MAX('Scenario Date'[Date])
+			VAR VisibleDates = VALUES('Scenario Date'[Date])
+			VAR IsContiguous = COUNTROWS(VisibleDates) = INT(__ScenarioBucketEnd - __ScenarioBucketStart) + 1
+			RETURN IF(IsContiguous, [Scenario Boundary Quantity],
+			    SUMX(VisibleDates, CALCULATE([Scenario Boundary Quantity])))
+		formatString: #,0.########
+		isHidden
+		displayFolder: Internal\Allocation
+		lineageTag: f2d6feda-f58d-5d16-91eb-cef4c935cd55
+
+	/// Selected allocations from one resolved sparse calendar and rate. Contiguous totals use two endpoints; sparse totals retain only selected dates. Independent of chart period selection and avoids nested inverse-rate expansion.
+	measure 'Scenario Period Quantity' =
+			VAR StartDate = [Scenario Selected Start]
+			VAR PeriodStart = MIN('Scenario Date'[Date])
+			VAR PeriodEnd = MAX('Scenario Date'[Date])
+			VAR HorizonStart = TODAY()
+			VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			
+			VAR Quantity = [Scenario Selected Quantity]
+			RETURN IF((FALSE()) || ([Scenario Selected Mode] = "Meet target date" && [Scenario Selected Basis] = "Per working hour" && [Scenario Selected Limit Mode] = "Daily limit") || ISBLANK(StartDate)
+			    || ISBLANK(Quantity) || Quantity <= 0 || PeriodEnd < StartDate
+			    || StartDate < HorizonStart || StartDate > HorizonEnd || PeriodStart > HorizonEnd, BLANK(),
+			    IF([Scenario Input Validation] <> "" || [Scenario Calendar Validation] <> "", BLANK(),
+			        VAR SafeThrough = [Scenario Safe Through]
+			        RETURN IF(ISBLANK(SafeThrough) || SafeThrough < StartDate || PeriodStart > SafeThrough, BLANK(),
+			            VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
+			            VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
+			            VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			            VAR CalendarRows = CALCULATETABLE(
+			                '11 XER_CALENDAR_DETAILED',
+			                KEEPFILTERS(TREATAS({CalendarKey}, '11 XER_CALENDAR_DETAILED'[clndr_id_key])),
+			                KEEPFILTERS(TREATAS({ProjectKey}, '11 XER_CALENDAR_DETAILED'[ProjectKey])),
+			                KEEPFILTERS(TREATAS({CsvSource}, '11 XER_CALENDAR_DETAILED'[IsCsvSource])))
+			            VAR WeekRows = FILTER(CalendarRows, ISBLANK('11 XER_CALENDAR_DETAILED'[date]) && '11 XER_CALENDAR_DETAILED'[exception_type] == "Standard")
+			            VAR Exceptions = FILTER(CalendarRows, NOT ISBLANK('11 XER_CALENDAR_DETAILED'[date])
+			                && '11 XER_CALENDAR_DETAILED'[date] >= StartDate && '11 XER_CALENDAR_DETAILED'[date] <= SafeThrough)
+			            VAR Basis = [Scenario Selected Basis]
+			            VAR Mode = [Scenario Selected Mode]
+			            VAR DailyLimit = CONVERT([Scenario Selected Limit], DOUBLE)
+			            VAR LimitEnabled = [Scenario Selected Limit Mode] = "Daily limit"
+			            VAR TargetDate = [Scenario Selected Target]
+			            VAR StartWeekday = WEEKDAY(StartDate, 2)
+			            VAR TargetSpan = MAX(0, INT(TargetDate - StartDate) + 1)
+			            VAR TargetWeeks = QUOTIENT(TargetSpan, 7)
+			            VAR TargetExtra = MOD(TargetSpan, 7)
+			            VAR TargetWeekWork = SUMX(WeekRows,
+			                VAR RuleWeekday = '11 XER_CALENDAR_DETAILED'[day_of_week_num]
+			                VAR Occurrences = TargetWeeks + IF(MOD(RuleWeekday - StartWeekday, 7) < TargetExtra, 1, 0)
+			                VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                RETURN Occurrences * IF(Basis = "Per working day", IF(Hours > 0, 1, 0), Hours))
+			            VAR TargetExceptionWork = SUMX(FILTER(Exceptions, '11 XER_CALENDAR_DETAILED'[date] <= TargetDate),
+			                VAR ExceptionWeekday = WEEKDAY('11 XER_CALENDAR_DETAILED'[date], 2)
+			                VAR NormalHours = MAXX(FILTER(WeekRows, '11 XER_CALENDAR_DETAILED'[day_of_week_num] = ExceptionWeekday), '11 XER_CALENDAR_DETAILED'[work_hours])
+			                VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                RETURN IF(Basis = "Per working day", IF(Hours > 0, 1, 0) - IF(NormalHours > 0, 1, 0), Hours - NormalHours))
+			            VAR TargetWork = IF(TargetDate <= SafeThrough, MAX(0, TargetWeekWork + TargetExceptionWork))
+			            VAR Rate = IF(Mode = "Meet target date",
+			                IF(NOT (Basis = "Per working hour" && LimitEnabled), DIVIDE(CONVERT(Quantity, DOUBLE), CONVERT(TargetWork, DOUBLE))),
+			                CONVERT([Scenario Selected Rate], DOUBLE))
+			            RETURN IF(ISBLANK(Rate), BLANK(),
+			                VAR WeekCapacity = SELECTCOLUMNS(WeekRows,
+			                    "__Weekday", '11 XER_CALENDAR_DETAILED'[day_of_week_num],
+			                    "__Weight",
+			                        VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                        VAR RawCapacity = IF(Hours > 0, IF(Basis = "Per working hour", Rate * Hours, Rate), 0)
+			                        RETURN IF(LimitEnabled, MIN(RawCapacity, DailyLimit), RawCapacity))
+			                VAR ExceptionCapacity = SELECTCOLUMNS(Exceptions,
+			                    "__ExceptionDate", '11 XER_CALENDAR_DETAILED'[date],
+			                    "__Correction",
+			                        VAR ExceptionWeekday = WEEKDAY('11 XER_CALENDAR_DETAILED'[date], 2)
+			                        VAR NormalCapacity = MAXX(FILTER(WeekCapacity, [__Weekday] = ExceptionWeekday), [__Weight])
+			                        VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                        VAR RawCapacity = IF(Hours > 0, IF(Basis = "Per working hour", Rate * Hours, Rate), 0)
+			                        VAR ReplacementCapacity = IF(LimitEnabled, MIN(RawCapacity, DailyLimit), RawCapacity)
+			                        RETURN ReplacementCapacity - NormalCapacity)
+			                VAR KnownPeriodEnd = MIN(PeriodEnd, SafeThrough)
+			                VAR VisibleDates = VALUES('Scenario Date'[Date])
+			                VAR IsContiguous = COUNTROWS(VisibleDates) = INT(PeriodEnd - PeriodStart) + 1
+			                VAR SparseDates = FILTER(VisibleDates, NOT IsContiguous && 'Scenario Date'[Date] >= StartDate && 'Scenario Date'[Date] <= SafeThrough)
+			                VAR NeededEndpoints = DISTINCT(UNION(
+			                    ROW("__Endpoint", PeriodStart - 1),
+			                    ROW("__Endpoint", KnownPeriodEnd),
+			                    SELECTCOLUMNS(SparseDates, "__Endpoint", 'Scenario Date'[Date]),
+			                    SELECTCOLUMNS(SparseDates, "__Endpoint", 'Scenario Date'[Date] - 1)))
+			                VAR EndpointCapacity = ADDCOLUMNS(NeededEndpoints, "__Capacity",
+			                    VAR Endpoint = [__Endpoint]
+			                    VAR SpanDays = MAX(0, INT(Endpoint - StartDate) + 1)
+			                    VAR FullWeeks = QUOTIENT(SpanDays, 7)
+			                    VAR ExtraDays = MOD(SpanDays, 7)
+			                    VAR WeeklyTotal = SUMX(WeekCapacity, [__Weight] * (FullWeeks + IF(MOD([__Weekday] - StartWeekday, 7) < ExtraDays, 1, 0)))
+			                    VAR ExceptionTotal = SUMX(FILTER(ExceptionCapacity, [__ExceptionDate] <= Endpoint), [__Correction])
+			                    RETURN IF(Endpoint < StartDate, 0, MAX(0, WeeklyTotal + ExceptionTotal)))
+			                VAR Tolerance = [Scenario Quantity Tolerance]
+			                VAR EndpointAllocation = ADDCOLUMNS(EndpointCapacity, "__Allocated",
+			                    VAR Capacity = [__Capacity]
+			                    RETURN IF(Capacity >= Quantity - Tolerance, Quantity, MIN(Quantity, Capacity)))
+			                VAR AllocatedBefore = MAXX(FILTER(EndpointAllocation, [__Endpoint] = PeriodStart - 1), [__Allocated])
+			                VAR AllocatedEnd = MAXX(FILTER(EndpointAllocation, [__Endpoint] = KnownPeriodEnd), [__Allocated])
+			                VAR SparseQuantity = SUMX(SparseDates,
+			                    VAR AxisDate = 'Scenario Date'[Date]
+			                    VAR AllocatedDayEnd = MAXX(FILTER(EndpointAllocation, [__Endpoint] = AxisDate), [__Allocated])
+			                    VAR AllocatedDayBefore = MAXX(FILTER(EndpointAllocation, [__Endpoint] = AxisDate - 1), [__Allocated])
+			                    RETURN MAX(0, AllocatedDayEnd - AllocatedDayBefore))
+			                RETURN IF(AllocatedBefore < Quantity, IF(IsContiguous, MAX(0, AllocatedEnd - AllocatedBefore), SparseQuantity))
+			            )
+			        )
+			    )
+			)
+		formatString: #,0.########
+		displayFolder: Results
+		lineageTag: 3b7995ed-0312-5366-89a1-4b38cfb4ee88
+
+	/// Cumulative allocated quantity at the latest visible endpoint. Partial periods stop at known coverage; a proven completed quantity remains complete beyond later unknown dates only inside the available date coverage.
+	measure 'Scenario Cumulative Quantity' =
+			VAR StartDate = [Scenario Selected Start]
+			VAR PeriodStart = MIN('Scenario Date'[Date])
+			VAR PeriodEnd = MAX('Scenario Date'[Date])
+			VAR SafeThrough = [Scenario Safe Through]
+			VAR KnownPeriodEnd = MIN(PeriodEnd, SafeThrough)
+			VAR Allocated = IF(KnownPeriodEnd >= StartDate,
+			    CALCULATE([Scenario Allocated Through], REMOVEFILTERS('Scenario Date'), TREATAS({ KnownPeriodEnd }, 'Scenario Date'[Date])))
+			RETURN IF(PeriodEnd >= StartDate && PeriodStart <= CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date')) && NOT ISBLANK(Allocated)
+			    && (PeriodStart <= SafeThrough || Allocated = [Scenario Selected Quantity]), Allocated)
+		formatString: #,0.########
+		displayFolder: Results
+		lineageTag: 01817895-881e-5d6a-a7fa-a11a2da5a4e4
+
+	/// Earliest proven completion day: month-end checkpoints clipped to known coverage, followed by at most 31 daily probes. Independent of chart zoom.
+	measure 'Scenario Finish Date' =
+			VAR StartDate = [Scenario Selected Start]
+			VAR SafeThrough = [Scenario Safe Through]
+			VAR Threshold = [Scenario Selected Quantity]
+			VAR Tolerance = [Scenario Quantity Tolerance]
+			VAR MonthValues = CALCULATETABLE(VALUES('Scenario Date'[Month]), REMOVEFILTERS('Scenario Date'))
+			VAR MonthCandidates = SELECTCOLUMNS(
+			    FILTER(MonthValues, EOMONTH('Scenario Date'[Month], 0) >= StartDate && 'Scenario Date'[Month] <= SafeThrough),
+			    "__Endpoint", MIN(EOMONTH('Scenario Date'[Month], 0), SafeThrough))
+			VAR MonthCapacity = ADDCOLUMNS(MonthCandidates, "__Capacity",
+			    VAR ProbeDate = [__Endpoint]
+			    RETURN CALCULATE([Scenario Capacity Through], REMOVEFILTERS('Scenario Date'), TREATAS({ ProbeDate }, 'Scenario Date'[Date])))
+			VAR FirstBoundary = MINX(FILTER(MonthCapacity, NOT ISBLANK([__Capacity]) && [__Capacity] >= Threshold - Tolerance), [__Endpoint])
+			VAR MonthStart = IF(NOT ISBLANK(FirstBoundary), MAX(StartDate, EOMONTH(FirstBoundary, -1) + 1))
+			VAR DatesInMonth = CALCULATETABLE(
+			    VALUES('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'),
+			    'Scenario Date'[Date] >= MonthStart, 'Scenario Date'[Date] <= FirstBoundary)
+			VAR DailyCapacity = ADDCOLUMNS(DatesInMonth, "__Capacity",
+			    VAR ProbeDate = 'Scenario Date'[Date]
+			    RETURN CALCULATE([Scenario Capacity Through], REMOVEFILTERS('Scenario Date'), TREATAS({ ProbeDate }, 'Scenario Date'[Date])))
+			RETURN IF([Scenario Input Validation] = "" && [Scenario Calendar Validation] = ""
+			    && NOT ISBLANK(Threshold) && Threshold > 0 && SafeThrough >= StartDate && NOT ISBLANK(FirstBoundary),
+			    MINX(FILTER(DailyCapacity, NOT ISBLANK([__Capacity]) && [__Capacity] >= Threshold - Tolerance), 'Scenario Date'[Date]))
+		formatString: dd-MM-yyyy
+		displayFolder: Results
+		lineageTag: b204772c-66a0-52e5-879e-583346addd6e
+
+	/// First eligible working date on or after the selected start, found with the same bounded month-then-day search.
+	measure 'Scenario Effective Start' =
+			VAR StartDate = [Scenario Selected Start]
+			VAR SafeThrough = [Scenario Safe Through]
+			VAR Threshold = IF([Scenario Selected Quantity] > 0, 1)
+			VAR Tolerance = 0
+			VAR MonthValues = CALCULATETABLE(VALUES('Scenario Date'[Month]), REMOVEFILTERS('Scenario Date'))
+			VAR MonthCandidates = SELECTCOLUMNS(
+			    FILTER(MonthValues, EOMONTH('Scenario Date'[Month], 0) >= StartDate && 'Scenario Date'[Month] <= SafeThrough),
+			    "__Endpoint", MIN(EOMONTH('Scenario Date'[Month], 0), SafeThrough))
+			VAR MonthCapacity = ADDCOLUMNS(MonthCandidates, "__Capacity",
+			    VAR ProbeDate = [__Endpoint]
+			    RETURN CALCULATE([Scenario Working Days Through], REMOVEFILTERS('Scenario Date'), TREATAS({ ProbeDate }, 'Scenario Date'[Date])))
+			VAR FirstBoundary = MINX(FILTER(MonthCapacity, NOT ISBLANK([__Capacity]) && [__Capacity] >= Threshold - Tolerance), [__Endpoint])
+			VAR MonthStart = IF(NOT ISBLANK(FirstBoundary), MAX(StartDate, EOMONTH(FirstBoundary, -1) + 1))
+			VAR DatesInMonth = CALCULATETABLE(
+			    VALUES('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'),
+			    'Scenario Date'[Date] >= MonthStart, 'Scenario Date'[Date] <= FirstBoundary)
+			VAR DailyCapacity = ADDCOLUMNS(DatesInMonth, "__Capacity",
+			    VAR ProbeDate = 'Scenario Date'[Date]
+			    RETURN CALCULATE([Scenario Working Days Through], REMOVEFILTERS('Scenario Date'), TREATAS({ ProbeDate }, 'Scenario Date'[Date])))
+			RETURN IF([Scenario Input Validation] = "" && [Scenario Calendar Validation] = ""
+			    && NOT ISBLANK(Threshold) && Threshold > 0 && SafeThrough >= StartDate && NOT ISBLANK(FirstBoundary),
+			    MINX(FILTER(DailyCapacity, NOT ISBLANK([__Capacity]) && [__Capacity] >= Threshold - Tolerance), 'Scenario Date'[Date]))
+		formatString: dd-MM-yyyy
+		displayFolder: Results
+		lineageTag: f430eb4e-d1e1-506c-9dea-21273ca2a0ba
+
+	/// Positive-hour working dates from the requested start through the proven finish, including the partial final working date.
+	measure 'Scenario Working Days' =
+			VAR FinishDate = [Scenario Finish Date]
+			RETURN IF(NOT ISBLANK(FinishDate),
+			    CALCULATE([Scenario Working Days Through], REMOVEFILTERS('Scenario Date'), TREATAS({ FinishDate }, 'Scenario Date'[Date])))
+		formatString: #,0
+		displayFolder: Results
+		lineageTag: fe45cee2-91ac-595d-bed9-4d56bc80f360
+
+	/// Inclusive civil days from the requested start through proven finish, including initial nonworking dates.
+	measure 'Scenario Elapsed Days' =
+			VAR FinishDate = [Scenario Finish Date]
+			VAR StartDate = [Scenario Selected Start]
+			RETURN IF(NOT ISBLANK(FinishDate), INT(FinishDate - StartDate) + 1)
+		formatString: #,0
+		displayFolder: Results
+		lineageTag: 34385e6a-24e0-5539-80f4-d693599b7d81
+
+	/// Selected date's resolved table-11 hours: dated replacement first, otherwise its validated weekday rule. Unknown days stay blank.
+	measure 'Scenario Daily Hours' =
+			VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
+			VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
+			VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			VAR CalendarRows =
+			    CALCULATETABLE(
+			        '11 XER_CALENDAR_DETAILED',
+			        KEEPFILTERS(TREATAS({ CalendarKey }, '11 XER_CALENDAR_DETAILED'[clndr_id_key])),
+			        KEEPFILTERS(TREATAS({ ProjectKey }, '11 XER_CALENDAR_DETAILED'[ProjectKey])),
+			        KEEPFILTERS(TREATAS({ CsvSource }, '11 XER_CALENDAR_DETAILED'[IsCsvSource]))
+			    )
+			
+			VAR AxisDate = SELECTEDVALUE('Scenario Date'[Date])
+			VAR StartDate = [Scenario Selected Start]
+			VAR SafeThrough = [Scenario Safe Through]
+			VAR ExceptionRows = FILTER(CalendarRows, '11 XER_CALENDAR_DETAILED'[date] == AxisDate)
+			VAR WeekRows = FILTER(CalendarRows, ISBLANK('11 XER_CALENDAR_DETAILED'[date]) && '11 XER_CALENDAR_DETAILED'[exception_type] == "Standard"
+			    && '11 XER_CALENDAR_DETAILED'[day_of_week_num] = WEEKDAY(AxisDate, 2))
+			RETURN IF(NOT ISBLANK(AxisDate) && AxisDate >= StartDate && AxisDate <= SafeThrough
+			    && [Scenario Input Validation] = "" && [Scenario Calendar Validation] = "",
+			    IF(COUNTROWS(ExceptionRows) = 1, MAXX(ExceptionRows, '11 XER_CALENDAR_DETAILED'[work_hours]), MAXX(WeekRows, '11 XER_CALENDAR_DETAILED'[work_hours])))
+		formatString: #,0.########
+		displayFolder: Results
+		lineageTag: 0981924b-4f73-57cc-befe-7b066349c28d
+
+	/// Available production on the selected date before remaining quantity truncates the final allocation.
+	measure 'Scenario Daily Capacity' =
+			VAR Hours = [Scenario Daily Hours]
+			VAR Rate = [Scenario Applied Rate]
+			VAR RawCapacity = IF(Hours > 0, IF([Scenario Selected Basis] = "Per working hour", Rate * Hours, Rate), 0)
+			RETURN IF(NOT ISBLANK(Hours) && NOT ISBLANK(Rate),
+			    IF([Scenario Selected Limit Mode] = "Daily limit", MIN(RawCapacity, [Scenario Selected Limit]), RawCapacity))
+		formatString: #,0.########
+		displayFolder: Results
+		lineageTag: d7e630b1-f070-59e9-a098-16aec037fafb
+
+	/// Unallocated scenario quantity after the selected date, retaining unknown rather than inventing zero.
+	measure 'Scenario Daily Remaining' =
+			VAR Allocated = [Scenario Allocated Through]
+			RETURN IF(HASONEVALUE('Scenario Date'[Date]) && NOT ISBLANK(Allocated), MAX(0, [Scenario Selected Quantity] - Allocated))
+		formatString: #,0.########
+		displayFolder: Results
+		lineageTag: 75bf683c-eb8a-5603-ba30-54a99c25e608
+
+	/// Retained daily row predicate, including the first unresolved day. Native daily detail uses bounded display measures without a visual-level measure filter.
+	measure 'Scenario Show Daily Row' =
+			VAR AxisDate = SELECTEDVALUE('Scenario Date'[Date])
+			VAR StartDate = [Scenario Selected Start]
+			RETURN IF(ISBLANK(AxisDate) || ISBLANK(StartDate) || AxisDate < StartDate
+			    || StartDate < TODAY() || AxisDate > CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date')), 0,
+			    VAR ThroughBefore = IF(AxisDate <= StartDate, 0,
+			        CALCULATE([Scenario Allocated Through], REMOVEFILTERS('Scenario Date'), TREATAS({ AxisDate - 1 }, 'Scenario Date'[Date])))
+			    RETURN IF([Scenario Input Validation] = "" && [Scenario Calendar Validation] = ""
+			        && NOT ISBLANK(ThroughBefore) && ThroughBefore < [Scenario Selected Quantity], 1, 0))
+		formatString: 0
+		isHidden
+		displayFolder: Internal\Display
+		lineageTag: daeaed5b-63bc-5400-be27-b91877ee83d1
+
+	/// Retained period row predicate with early date guards and one required display period. Native charts use bounded display measures without a visual-level measure filter.
+	measure 'Scenario Show Period Row' =
+			VAR PeriodStart = MIN('Scenario Date'[Date])
+			VAR PeriodEnd = MAX('Scenario Date'[Date])
+			VAR StartDate = [Scenario Selected Start]
+			VAR PeriodOrder = SELECTEDVALUE('Scenario Period'[Period Order])
+			RETURN IF(NOT HASONEVALUE('Scenario Period'[Period Order]) || NOT (PeriodOrder IN { 1, 2 }) || ISBLANK(StartDate)
+			    || StartDate < TODAY() || PeriodEnd < StartDate || PeriodStart > CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date')), 0,
+			    VAR ThroughBefore = IF(PeriodStart <= StartDate, 0,
+			        CALCULATE([Scenario Allocated Through], REMOVEFILTERS('Scenario Date'), TREATAS({ PeriodStart - 1 }, 'Scenario Date'[Date])))
+			    RETURN IF([Scenario Input Validation] = "" && [Scenario Calendar Validation] = ""
+			        && NOT ISBLANK(ThroughBefore) && ThroughBefore < [Scenario Selected Quantity], 1, 0))
+		formatString: 0
+		isHidden
+		displayFolder: Internal\Display
+		lineageTag: 5ea78d88-eb30-5407-be4e-7db2dfe86252
+
+	/// Quantity allocated by the inclusive selected target date.
+	measure 'Scenario Target Quantity' =
+			VAR Endpoint = [Scenario Selected Target]
+			VAR StartDate = [Scenario Selected Start]
+			VAR Allocated = IF(Endpoint < StartDate, 0,
+			    CALCULATE([Scenario Allocated Through], REMOVEFILTERS('Scenario Date'), TREATAS({ Endpoint }, 'Scenario Date'[Date])))
+			RETURN IF([Scenario Input Validation] = "" && [Scenario Calendar Validation] = ""
+			    && [Scenario Target Validation] = ""
+			    && NOT ISBLANK(Endpoint) && NOT ISBLANK(Allocated), Allocated)
+		formatString: #,0.########
+		displayFolder: Results
+		lineageTag: 8b34056a-f4e6-5b89-8453-6346d34e1de0
+
+	/// Quantity remaining after the inclusive target date.
+	measure 'Scenario Target Remaining' =
+			VAR Endpoint = [Scenario Selected Target]
+			VAR StartDate = [Scenario Selected Start]
+			VAR Allocated = IF(Endpoint < StartDate, 0,
+			    CALCULATE([Scenario Allocated Through], REMOVEFILTERS('Scenario Date'), TREATAS({ Endpoint }, 'Scenario Date'[Date])))
+			RETURN IF([Scenario Input Validation] = "" && [Scenario Calendar Validation] = ""
+			    && [Scenario Target Validation] = ""
+			    && NOT ISBLANK(Endpoint) && NOT ISBLANK(Allocated), MAX(0, [Scenario Selected Quantity] - Allocated))
+		formatString: #,0.########
+		displayFolder: Results
+		lineageTag: ee95ad74-afd1-55d4-9ce8-0806a67d9fb1
+
+	/// Remaining quantity at the last provable calendar date; may be a partial forecast.
+	measure 'Scenario Horizon Remaining' =
+			VAR Endpoint = [Scenario Safe Through]
+			VAR StartDate = [Scenario Selected Start]
+			VAR Allocated = IF(Endpoint < StartDate, 0,
+			    CALCULATE([Scenario Allocated Through], REMOVEFILTERS('Scenario Date'), TREATAS({ Endpoint }, 'Scenario Date'[Date])))
+			RETURN IF([Scenario Input Validation] = "" && [Scenario Calendar Validation] = ""
+			
+			    && NOT ISBLANK(Endpoint) && NOT ISBLANK(Allocated), MAX(0, [Scenario Selected Quantity] - Allocated))
+		formatString: #,0.########
+		displayFolder: Results
+		lineageTag: dbcc11c1-0837-535d-91e0-d01df26ff374
+
+	/// User-facing explanation for input errors, source unknowns, unsupported inverse mode, target infeasibility and proven hypothetical completion.
+	measure 'Scenario Status' =
+			VAR InputIssue = [Scenario Input Validation]
+			VAR CalendarIssue = [Scenario Calendar Validation]
+			VAR TargetIssue = [Scenario Target Validation]
+			VAR Quantity = [Scenario Selected Quantity]
+			VAR Mode = [Scenario Selected Mode]
+			VAR Basis = [Scenario Selected Basis]
+			VAR LimitEnabled = [Scenario Selected Limit Mode] = "Daily limit"
+			VAR DailyLimit = [Scenario Selected Limit]
+			VAR TargetDate = [Scenario Selected Target]
+			VAR UnknownDate = [Scenario First Unknown Date]
+			VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			VAR RequiredRate = [Scenario Required Rate]
+			VAR Rate = [Scenario Applied Rate]
+			VAR FinishDate = [Scenario Finish Date]
+			RETURN
+			    SWITCH(TRUE(),
+			        InputIssue <> "", InputIssue,
+			        Quantity = 0, "No work to distribute.",
+			        CalendarIssue <> "", CalendarIssue,
+			        Mode = "Meet target date" && Basis = "Per working hour" && LimitEnabled,
+			            "Target-date mode with hourly production and a daily cap is not supported. Use per working day or remove the cap.",
+			        Mode = "Meet target date" && NOT ISBLANK(UnknownDate) && TargetDate >= UnknownDate,
+			            "Target-rate calculation is unavailable: calendar data is unknown from " & FORMAT(UnknownDate, "dd-MM-yyyy") & ".",
+			        Mode = "Meet target date" && ISBLANK(RequiredRate), "The target interval contains no available working time.",
+			        LimitEnabled && DailyLimit = 0, "Daily limit is zero; no quantity can be produced.",
+			        NOT ISBLANK(Rate) && Rate = 0, "Production rate is zero; no finish date can be calculated.",
+			        Mode = "Meet target date" && Basis = "Per working day" && LimitEnabled && RequiredRate > DailyLimit,
+			            "Target is infeasible at the daily limit. Required: " & FORMAT(RequiredRate, "#,0.########") & " per working day.",
+			        NOT ISBLANK(FinishDate), "Hypothetical forecast: completion " & FORMAT(FinishDate, "dd-MM-yyyy") & "."
+			            & IF(Mode = "Find finish date" && TargetIssue <> "", " Target comparison unavailable: " & TargetIssue, ""),
+			        NOT ISBLANK(UnknownDate) && UnknownDate <= HorizonEnd,
+			            "Completion is unavailable: calendar data is unknown from " & FORMAT(UnknownDate, "dd-MM-yyyy") & ". Known allocation is retained.",
+			        "Quantity exceeds the available capacity through " & FORMAT(HorizonEnd, "dd-MM-yyyy") & "."
+			    )
+		formatString: @
+		displayFolder: Results
+		lineageTag: 62ae2bd5-ce0a-5004-a30b-f1dd3ece7d41
+
+	/// Visible forecast and production-basis label for the resource distribution chart.
+	measure 'Scenario Chart Title' =
+			IF(NOT HASONEVALUE('Scenario Period'[Period Order]) || NOT (SELECTEDVALUE('Scenario Period'[Period Order]) IN { 1, 2 }), "Select one display period: Week or Month.",
+			VAR Unit = COALESCE([Scenario Selected Unit], "quantity")
+			VAR Basis = COALESCE([Scenario Selected Basis], "select production basis")
+			VAR UnknownDate = [Scenario First Unknown Date]
+			VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			RETURN "Hypothetical resource distribution | " & Unit & " | " & Basis
+			    & " | Date coverage through " & FORMAT(HorizonEnd, "dd-MM-yyyy")
+			    & IF(NOT ISBLANK(UnknownDate) && UnknownDate <= HorizonEnd,
+			        " | Known allocation through " & FORMAT(UnknownDate - 1, "dd-MM-yyyy"), ""))
+		formatString: @
+		displayFolder: Display
+		lineageTag: 3c656370-11e9-5fd1-a92c-33392a784b7b
+
+	/// Evaluated quantity, calendar name, dates and capacity assumptions inside the available date coverage from today.
+	measure 'Scenario Input Summary' =
+			VAR Quantity = [Scenario Selected Quantity]
+			VAR Unit = COALESCE([Scenario Selected Unit], "select unit")
+			VAR CalendarName = IF(COUNTROWS('Scenario Calendar') = 1,
+			    COALESCE(SELECTEDVALUE('Scenario Calendar'[Calendar Name]), "unnamed calendar"), "select one calendar")
+			VAR StartDate = [Scenario Selected Start]
+			VAR Rate = [Scenario Applied Rate]
+			VAR Basis = COALESCE([Scenario Selected Basis], "select basis")
+			VAR LimitEnabled = [Scenario Selected Limit Mode] = "Daily limit"
+			VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			RETURN
+			    IF(ISBLANK(Quantity), "Select quantity", FORMAT(Quantity, "#,0.########") & " " & Unit)
+			    & " | " & CalendarName
+			    & " | Start: " & IF(ISBLANK(StartDate), "select date", FORMAT(StartDate, "dd-MM-yyyy"))
+			    & " | Rate: " & IF(ISBLANK(Rate), "unavailable", FORMAT(Rate, "#,0.########") & " " & Basis)
+			    & IF(LimitEnabled, " | Daily cap: " & FORMAT([Scenario Selected Limit], "#,0.########"), " | No daily cap")
+			    & " | Date coverage: " & FORMAT(TODAY(), "dd-MM-yyyy") & " to " & FORMAT(HorizonEnd, "dd-MM-yyyy")
+			    & " | Target: " & IF(ISBLANK([Scenario Selected Target]), "select date", FORMAT([Scenario Selected Target], "dd-MM-yyyy"))
+			    & ". Future exceptions are limited to those present in the selected source. Daily detail ends at completion or the date coverage limit."
+		formatString: @
+		displayFolder: Display
+		lineageTag: 3288832e-9926-542e-a8a0-3ea4c29a81f8
+
+	/// Chart allocation from one resolved calendar and rate per bucket. Two endpoint capacities normally suffice; sparse selected dates use only their own boundaries.
+	measure 'Scenario Chart Quantity' =
+			VAR StartDate = [Scenario Selected Start]
+			VAR PeriodStart = MIN('Scenario Date'[Date])
+			VAR PeriodEnd = MAX('Scenario Date'[Date])
+			VAR HorizonStart = TODAY()
+			VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			VAR PeriodOrder = SELECTEDVALUE('Scenario Period'[Period Order])
+			VAR Quantity = [Scenario Selected Quantity]
+			RETURN IF(NOT HASONEVALUE('Scenario Period'[Period Order]) || NOT (PeriodOrder IN { 1, 2 }) || ISBLANK(StartDate)
+			    || ISBLANK(Quantity) || Quantity <= 0 || PeriodEnd < StartDate
+			    || StartDate < HorizonStart || StartDate > HorizonEnd || PeriodStart > HorizonEnd, BLANK(),
+			    IF([Scenario Input Validation] <> "" || [Scenario Calendar Validation] <> "", BLANK(),
+			        VAR SafeThrough = [Scenario Safe Through]
+			        RETURN IF(ISBLANK(SafeThrough) || SafeThrough < StartDate || PeriodStart > SafeThrough, BLANK(),
+			            VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
+			            VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
+			            VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			            VAR CalendarRows = CALCULATETABLE(
+			                '11 XER_CALENDAR_DETAILED',
+			                KEEPFILTERS(TREATAS({CalendarKey}, '11 XER_CALENDAR_DETAILED'[clndr_id_key])),
+			                KEEPFILTERS(TREATAS({ProjectKey}, '11 XER_CALENDAR_DETAILED'[ProjectKey])),
+			                KEEPFILTERS(TREATAS({CsvSource}, '11 XER_CALENDAR_DETAILED'[IsCsvSource])))
+			            VAR WeekRows = FILTER(CalendarRows, ISBLANK('11 XER_CALENDAR_DETAILED'[date]) && '11 XER_CALENDAR_DETAILED'[exception_type] == "Standard")
+			            VAR Exceptions = FILTER(CalendarRows, NOT ISBLANK('11 XER_CALENDAR_DETAILED'[date])
+			                && '11 XER_CALENDAR_DETAILED'[date] >= StartDate && '11 XER_CALENDAR_DETAILED'[date] <= SafeThrough)
+			            VAR Basis = [Scenario Selected Basis]
+			            VAR Mode = [Scenario Selected Mode]
+			            VAR DailyLimit = CONVERT([Scenario Selected Limit], DOUBLE)
+			            VAR LimitEnabled = [Scenario Selected Limit Mode] = "Daily limit"
+			            VAR TargetDate = [Scenario Selected Target]
+			            VAR StartWeekday = WEEKDAY(StartDate, 2)
+			            VAR TargetSpan = MAX(0, INT(TargetDate - StartDate) + 1)
+			            VAR TargetWeeks = QUOTIENT(TargetSpan, 7)
+			            VAR TargetExtra = MOD(TargetSpan, 7)
+			            VAR TargetWeekWork = SUMX(WeekRows,
+			                VAR RuleWeekday = '11 XER_CALENDAR_DETAILED'[day_of_week_num]
+			                VAR Occurrences = TargetWeeks + IF(MOD(RuleWeekday - StartWeekday, 7) < TargetExtra, 1, 0)
+			                VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                RETURN Occurrences * IF(Basis = "Per working day", IF(Hours > 0, 1, 0), Hours))
+			            VAR TargetExceptionWork = SUMX(FILTER(Exceptions, '11 XER_CALENDAR_DETAILED'[date] <= TargetDate),
+			                VAR ExceptionWeekday = WEEKDAY('11 XER_CALENDAR_DETAILED'[date], 2)
+			                VAR NormalHours = MAXX(FILTER(WeekRows, '11 XER_CALENDAR_DETAILED'[day_of_week_num] = ExceptionWeekday), '11 XER_CALENDAR_DETAILED'[work_hours])
+			                VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                RETURN IF(Basis = "Per working day", IF(Hours > 0, 1, 0) - IF(NormalHours > 0, 1, 0), Hours - NormalHours))
+			            VAR TargetWork = IF(TargetDate <= SafeThrough, MAX(0, TargetWeekWork + TargetExceptionWork))
+			            VAR Rate = IF(Mode = "Meet target date",
+			                IF(NOT (Basis = "Per working hour" && LimitEnabled), DIVIDE(CONVERT(Quantity, DOUBLE), CONVERT(TargetWork, DOUBLE))),
+			                CONVERT([Scenario Selected Rate], DOUBLE))
+			            RETURN IF(ISBLANK(Rate), BLANK(),
+			                VAR WeekCapacity = SELECTCOLUMNS(WeekRows,
+			                    "__Weekday", '11 XER_CALENDAR_DETAILED'[day_of_week_num],
+			                    "__Weight",
+			                        VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                        VAR RawCapacity = IF(Hours > 0, IF(Basis = "Per working hour", Rate * Hours, Rate), 0)
+			                        RETURN IF(LimitEnabled, MIN(RawCapacity, DailyLimit), RawCapacity))
+			                VAR ExceptionCapacity = SELECTCOLUMNS(Exceptions,
+			                    "__ExceptionDate", '11 XER_CALENDAR_DETAILED'[date],
+			                    "__Correction",
+			                        VAR ExceptionWeekday = WEEKDAY('11 XER_CALENDAR_DETAILED'[date], 2)
+			                        VAR NormalCapacity = MAXX(FILTER(WeekCapacity, [__Weekday] = ExceptionWeekday), [__Weight])
+			                        VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                        VAR RawCapacity = IF(Hours > 0, IF(Basis = "Per working hour", Rate * Hours, Rate), 0)
+			                        VAR ReplacementCapacity = IF(LimitEnabled, MIN(RawCapacity, DailyLimit), RawCapacity)
+			                        RETURN ReplacementCapacity - NormalCapacity)
+			                VAR KnownPeriodEnd = MIN(PeriodEnd, SafeThrough)
+			                VAR VisibleDates = VALUES('Scenario Date'[Date])
+			                VAR IsContiguous = COUNTROWS(VisibleDates) = INT(PeriodEnd - PeriodStart) + 1
+			                VAR SparseDates = FILTER(VisibleDates, NOT IsContiguous && 'Scenario Date'[Date] >= StartDate && 'Scenario Date'[Date] <= SafeThrough)
+			                VAR NeededEndpoints = DISTINCT(UNION(
+			                    ROW("__Endpoint", PeriodStart - 1),
+			                    ROW("__Endpoint", KnownPeriodEnd),
+			                    SELECTCOLUMNS(SparseDates, "__Endpoint", 'Scenario Date'[Date]),
+			                    SELECTCOLUMNS(SparseDates, "__Endpoint", 'Scenario Date'[Date] - 1)))
+			                VAR EndpointCapacity = ADDCOLUMNS(NeededEndpoints, "__Capacity",
+			                    VAR Endpoint = [__Endpoint]
+			                    VAR SpanDays = MAX(0, INT(Endpoint - StartDate) + 1)
+			                    VAR FullWeeks = QUOTIENT(SpanDays, 7)
+			                    VAR ExtraDays = MOD(SpanDays, 7)
+			                    VAR WeeklyTotal = SUMX(WeekCapacity, [__Weight] * (FullWeeks + IF(MOD([__Weekday] - StartWeekday, 7) < ExtraDays, 1, 0)))
+			                    VAR ExceptionTotal = SUMX(FILTER(ExceptionCapacity, [__ExceptionDate] <= Endpoint), [__Correction])
+			                    RETURN IF(Endpoint < StartDate, 0, MAX(0, WeeklyTotal + ExceptionTotal)))
+			                VAR Tolerance = [Scenario Quantity Tolerance]
+			                VAR EndpointAllocation = ADDCOLUMNS(EndpointCapacity, "__Allocated",
+			                    VAR Capacity = [__Capacity]
+			                    RETURN IF(Capacity >= Quantity - Tolerance, Quantity, MIN(Quantity, Capacity)))
+			                VAR AllocatedBefore = MAXX(FILTER(EndpointAllocation, [__Endpoint] = PeriodStart - 1), [__Allocated])
+			                VAR AllocatedEnd = MAXX(FILTER(EndpointAllocation, [__Endpoint] = KnownPeriodEnd), [__Allocated])
+			                VAR SparseQuantity = SUMX(SparseDates,
+			                    VAR AxisDate = 'Scenario Date'[Date]
+			                    VAR AllocatedDayEnd = MAXX(FILTER(EndpointAllocation, [__Endpoint] = AxisDate), [__Allocated])
+			                    VAR AllocatedDayBefore = MAXX(FILTER(EndpointAllocation, [__Endpoint] = AxisDate - 1), [__Allocated])
+			                    RETURN MAX(0, AllocatedDayEnd - AllocatedDayBefore))
+			                RETURN IF(AllocatedBefore < Quantity, IF(IsContiguous, MAX(0, AllocatedEnd - AllocatedBefore), SparseQuantity))
+			            )
+			        )
+			    )
+			)
+		formatString: #,0.########
+		displayFolder: Display
+		lineageTag: c4cc1292-e3ca-5c66-a7ee-20ebde0df90f
+
+	/// Chart cumulative allocation using the same generated calendar and rate calculation as chart quantity; inactive and wholly unknown buckets remain blank.
+	measure 'Scenario Chart Cumulative Quantity' =
+			VAR StartDate = [Scenario Selected Start]
+			VAR PeriodStart = MIN('Scenario Date'[Date])
+			VAR PeriodEnd = MAX('Scenario Date'[Date])
+			VAR HorizonStart = TODAY()
+			VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			VAR PeriodOrder = SELECTEDVALUE('Scenario Period'[Period Order])
+			VAR Quantity = [Scenario Selected Quantity]
+			RETURN IF(NOT HASONEVALUE('Scenario Period'[Period Order]) || NOT (PeriodOrder IN { 1, 2 }) || ISBLANK(StartDate)
+			    || ISBLANK(Quantity) || Quantity <= 0 || PeriodEnd < StartDate
+			    || StartDate < HorizonStart || StartDate > HorizonEnd || PeriodStart > HorizonEnd, BLANK(),
+			    IF([Scenario Input Validation] <> "" || [Scenario Calendar Validation] <> "", BLANK(),
+			        VAR SafeThrough = [Scenario Safe Through]
+			        RETURN IF(ISBLANK(SafeThrough) || SafeThrough < StartDate || PeriodStart > SafeThrough, BLANK(),
+			            VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
+			            VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
+			            VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			            VAR CalendarRows = CALCULATETABLE(
+			                '11 XER_CALENDAR_DETAILED',
+			                KEEPFILTERS(TREATAS({CalendarKey}, '11 XER_CALENDAR_DETAILED'[clndr_id_key])),
+			                KEEPFILTERS(TREATAS({ProjectKey}, '11 XER_CALENDAR_DETAILED'[ProjectKey])),
+			                KEEPFILTERS(TREATAS({CsvSource}, '11 XER_CALENDAR_DETAILED'[IsCsvSource])))
+			            VAR WeekRows = FILTER(CalendarRows, ISBLANK('11 XER_CALENDAR_DETAILED'[date]) && '11 XER_CALENDAR_DETAILED'[exception_type] == "Standard")
+			            VAR Exceptions = FILTER(CalendarRows, NOT ISBLANK('11 XER_CALENDAR_DETAILED'[date])
+			                && '11 XER_CALENDAR_DETAILED'[date] >= StartDate && '11 XER_CALENDAR_DETAILED'[date] <= SafeThrough)
+			            VAR Basis = [Scenario Selected Basis]
+			            VAR Mode = [Scenario Selected Mode]
+			            VAR DailyLimit = CONVERT([Scenario Selected Limit], DOUBLE)
+			            VAR LimitEnabled = [Scenario Selected Limit Mode] = "Daily limit"
+			            VAR TargetDate = [Scenario Selected Target]
+			            VAR StartWeekday = WEEKDAY(StartDate, 2)
+			            VAR TargetSpan = MAX(0, INT(TargetDate - StartDate) + 1)
+			            VAR TargetWeeks = QUOTIENT(TargetSpan, 7)
+			            VAR TargetExtra = MOD(TargetSpan, 7)
+			            VAR TargetWeekWork = SUMX(WeekRows,
+			                VAR RuleWeekday = '11 XER_CALENDAR_DETAILED'[day_of_week_num]
+			                VAR Occurrences = TargetWeeks + IF(MOD(RuleWeekday - StartWeekday, 7) < TargetExtra, 1, 0)
+			                VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                RETURN Occurrences * IF(Basis = "Per working day", IF(Hours > 0, 1, 0), Hours))
+			            VAR TargetExceptionWork = SUMX(FILTER(Exceptions, '11 XER_CALENDAR_DETAILED'[date] <= TargetDate),
+			                VAR ExceptionWeekday = WEEKDAY('11 XER_CALENDAR_DETAILED'[date], 2)
+			                VAR NormalHours = MAXX(FILTER(WeekRows, '11 XER_CALENDAR_DETAILED'[day_of_week_num] = ExceptionWeekday), '11 XER_CALENDAR_DETAILED'[work_hours])
+			                VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                RETURN IF(Basis = "Per working day", IF(Hours > 0, 1, 0) - IF(NormalHours > 0, 1, 0), Hours - NormalHours))
+			            VAR TargetWork = IF(TargetDate <= SafeThrough, MAX(0, TargetWeekWork + TargetExceptionWork))
+			            VAR Rate = IF(Mode = "Meet target date",
+			                IF(NOT (Basis = "Per working hour" && LimitEnabled), DIVIDE(CONVERT(Quantity, DOUBLE), CONVERT(TargetWork, DOUBLE))),
+			                CONVERT([Scenario Selected Rate], DOUBLE))
+			            RETURN IF(ISBLANK(Rate), BLANK(),
+			                VAR WeekCapacity = SELECTCOLUMNS(WeekRows,
+			                    "__Weekday", '11 XER_CALENDAR_DETAILED'[day_of_week_num],
+			                    "__Weight",
+			                        VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                        VAR RawCapacity = IF(Hours > 0, IF(Basis = "Per working hour", Rate * Hours, Rate), 0)
+			                        RETURN IF(LimitEnabled, MIN(RawCapacity, DailyLimit), RawCapacity))
+			                VAR ExceptionCapacity = SELECTCOLUMNS(Exceptions,
+			                    "__ExceptionDate", '11 XER_CALENDAR_DETAILED'[date],
+			                    "__Correction",
+			                        VAR ExceptionWeekday = WEEKDAY('11 XER_CALENDAR_DETAILED'[date], 2)
+			                        VAR NormalCapacity = MAXX(FILTER(WeekCapacity, [__Weekday] = ExceptionWeekday), [__Weight])
+			                        VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                        VAR RawCapacity = IF(Hours > 0, IF(Basis = "Per working hour", Rate * Hours, Rate), 0)
+			                        VAR ReplacementCapacity = IF(LimitEnabled, MIN(RawCapacity, DailyLimit), RawCapacity)
+			                        RETURN ReplacementCapacity - NormalCapacity)
+			                VAR KnownPeriodEnd = MIN(PeriodEnd, SafeThrough)
+			                VAR VisibleDates = VALUES('Scenario Date'[Date])
+			                VAR IsContiguous = COUNTROWS(VisibleDates) = INT(PeriodEnd - PeriodStart) + 1
+			                VAR SparseDates = FILTER(VisibleDates, NOT IsContiguous && 'Scenario Date'[Date] >= StartDate && 'Scenario Date'[Date] <= SafeThrough)
+			                VAR NeededEndpoints = DISTINCT(UNION(
+			                    ROW("__Endpoint", PeriodStart - 1),
+			                    ROW("__Endpoint", KnownPeriodEnd),
+			                    SELECTCOLUMNS(SparseDates, "__Endpoint", 'Scenario Date'[Date]),
+			                    SELECTCOLUMNS(SparseDates, "__Endpoint", 'Scenario Date'[Date] - 1)))
+			                VAR EndpointCapacity = ADDCOLUMNS(NeededEndpoints, "__Capacity",
+			                    VAR Endpoint = [__Endpoint]
+			                    VAR SpanDays = MAX(0, INT(Endpoint - StartDate) + 1)
+			                    VAR FullWeeks = QUOTIENT(SpanDays, 7)
+			                    VAR ExtraDays = MOD(SpanDays, 7)
+			                    VAR WeeklyTotal = SUMX(WeekCapacity, [__Weight] * (FullWeeks + IF(MOD([__Weekday] - StartWeekday, 7) < ExtraDays, 1, 0)))
+			                    VAR ExceptionTotal = SUMX(FILTER(ExceptionCapacity, [__ExceptionDate] <= Endpoint), [__Correction])
+			                    RETURN IF(Endpoint < StartDate, 0, MAX(0, WeeklyTotal + ExceptionTotal)))
+			                VAR Tolerance = [Scenario Quantity Tolerance]
+			                VAR EndpointAllocation = ADDCOLUMNS(EndpointCapacity, "__Allocated",
+			                    VAR Capacity = [__Capacity]
+			                    RETURN IF(Capacity >= Quantity - Tolerance, Quantity, MIN(Quantity, Capacity)))
+			                VAR AllocatedBefore = MAXX(FILTER(EndpointAllocation, [__Endpoint] = PeriodStart - 1), [__Allocated])
+			                VAR AllocatedEnd = MAXX(FILTER(EndpointAllocation, [__Endpoint] = KnownPeriodEnd), [__Allocated])
+			                VAR SparseQuantity = SUMX(SparseDates,
+			                    VAR AxisDate = 'Scenario Date'[Date]
+			                    VAR AllocatedDayEnd = MAXX(FILTER(EndpointAllocation, [__Endpoint] = AxisDate), [__Allocated])
+			                    VAR AllocatedDayBefore = MAXX(FILTER(EndpointAllocation, [__Endpoint] = AxisDate - 1), [__Allocated])
+			                    RETURN MAX(0, AllocatedDayEnd - AllocatedDayBefore))
+			                RETURN IF(AllocatedBefore < Quantity, AllocatedEnd)
+			            )
+			        )
+			    )
+			)
+		formatString: #,0.########
+		displayFolder: Display
+		lineageTag: aa292bcf-136e-576e-8665-6446c401232f
+
+	/// Known calendar hours for an active daily audit row. Uses the shared display kernel, ignores chart period, and is bounded by today and the final date of the shared axis.
+	measure 'Scenario Daily Display Hours' = ```
+			VAR StartDate = [Scenario Selected Start]
+			VAR PeriodStart = MIN('Scenario Date'[Date])
+			VAR PeriodEnd = MAX('Scenario Date'[Date])
+			VAR HorizonStart = TODAY()
+			VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			
+			VAR Quantity = [Scenario Selected Quantity]
+			RETURN IF(NOT HASONEVALUE('Scenario Date'[Date]) || ISBLANK(StartDate)
+			    || ISBLANK(Quantity) || Quantity <= 0 || PeriodEnd < StartDate
+			    || StartDate < HorizonStart || StartDate > HorizonEnd || PeriodStart > HorizonEnd, BLANK(),
+			    IF([Scenario Input Validation] <> "" || [Scenario Calendar Validation] <> "", BLANK(),
+			        VAR SafeThrough = [Scenario Safe Through]
+			        RETURN IF(ISBLANK(SafeThrough) || SafeThrough < StartDate || PeriodStart > SafeThrough, BLANK(),
+			            VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
+			            VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
+			            VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			            VAR CalendarRows = CALCULATETABLE(
+			                '11 XER_CALENDAR_DETAILED',
+			                KEEPFILTERS(TREATAS({CalendarKey}, '11 XER_CALENDAR_DETAILED'[clndr_id_key])),
+			                KEEPFILTERS(TREATAS({ProjectKey}, '11 XER_CALENDAR_DETAILED'[ProjectKey])),
+			                KEEPFILTERS(TREATAS({CsvSource}, '11 XER_CALENDAR_DETAILED'[IsCsvSource])))
+			            VAR WeekRows = FILTER(CalendarRows, ISBLANK('11 XER_CALENDAR_DETAILED'[date]) && '11 XER_CALENDAR_DETAILED'[exception_type] == "Standard")
+			            VAR Exceptions = FILTER(CalendarRows, NOT ISBLANK('11 XER_CALENDAR_DETAILED'[date])
+			                && '11 XER_CALENDAR_DETAILED'[date] >= StartDate && '11 XER_CALENDAR_DETAILED'[date] <= SafeThrough)
+			            VAR Basis = [Scenario Selected Basis]
+			            VAR Mode = [Scenario Selected Mode]
+			            VAR DailyLimit = CONVERT([Scenario Selected Limit], DOUBLE)
+			            VAR LimitEnabled = [Scenario Selected Limit Mode] = "Daily limit"
+			            VAR TargetDate = [Scenario Selected Target]
+			            VAR StartWeekday = WEEKDAY(StartDate, 2)
+			            VAR TargetSpan = MAX(0, INT(TargetDate - StartDate) + 1)
+			            VAR TargetWeeks = QUOTIENT(TargetSpan, 7)
+			            VAR TargetExtra = MOD(TargetSpan, 7)
+			            VAR TargetWeekWork = SUMX(WeekRows,
+			                VAR RuleWeekday = '11 XER_CALENDAR_DETAILED'[day_of_week_num]
+			                VAR Occurrences = TargetWeeks + IF(MOD(RuleWeekday - StartWeekday, 7) < TargetExtra, 1, 0)
+			                VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                RETURN Occurrences * IF(Basis = "Per working day", IF(Hours > 0, 1, 0), Hours))
+			            VAR TargetExceptionWork = SUMX(FILTER(Exceptions, '11 XER_CALENDAR_DETAILED'[date] <= TargetDate),
+			                VAR ExceptionWeekday = WEEKDAY('11 XER_CALENDAR_DETAILED'[date], 2)
+			                VAR NormalHours = MAXX(FILTER(WeekRows, '11 XER_CALENDAR_DETAILED'[day_of_week_num] = ExceptionWeekday), '11 XER_CALENDAR_DETAILED'[work_hours])
+			                VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                RETURN IF(Basis = "Per working day", IF(Hours > 0, 1, 0) - IF(NormalHours > 0, 1, 0), Hours - NormalHours))
+			            VAR TargetWork = IF(TargetDate <= SafeThrough, MAX(0, TargetWeekWork + TargetExceptionWork))
+			            VAR Rate = IF(Mode = "Meet target date",
+			                IF(NOT (Basis = "Per working hour" && LimitEnabled), DIVIDE(CONVERT(Quantity, DOUBLE), CONVERT(TargetWork, DOUBLE))),
+			                CONVERT([Scenario Selected Rate], DOUBLE))
+			            RETURN IF(ISBLANK(Rate), BLANK(),
+			                VAR WeekCapacity = SELECTCOLUMNS(WeekRows,
+			                    "__Weekday", '11 XER_CALENDAR_DETAILED'[day_of_week_num],
+			                    "__Weight",
+			                        VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                        VAR RawCapacity = IF(Hours > 0, IF(Basis = "Per working hour", Rate * Hours, Rate), 0)
+			                        RETURN IF(LimitEnabled, MIN(RawCapacity, DailyLimit), RawCapacity))
+			                VAR ExceptionCapacity = SELECTCOLUMNS(Exceptions,
+			                    "__ExceptionDate", '11 XER_CALENDAR_DETAILED'[date],
+			                    "__Correction",
+			                        VAR ExceptionWeekday = WEEKDAY('11 XER_CALENDAR_DETAILED'[date], 2)
+			                        VAR NormalCapacity = MAXX(FILTER(WeekCapacity, [__Weekday] = ExceptionWeekday), [__Weight])
+			                        VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                        VAR RawCapacity = IF(Hours > 0, IF(Basis = "Per working hour", Rate * Hours, Rate), 0)
+			                        VAR ReplacementCapacity = IF(LimitEnabled, MIN(RawCapacity, DailyLimit), RawCapacity)
+			                        RETURN ReplacementCapacity - NormalCapacity)
+			                VAR KnownPeriodEnd = MIN(PeriodEnd, SafeThrough)
+			                VAR VisibleDates = VALUES('Scenario Date'[Date])
+			                VAR IsContiguous = COUNTROWS(VisibleDates) = INT(PeriodEnd - PeriodStart) + 1
+			                VAR SparseDates = FILTER(VisibleDates, NOT IsContiguous && 'Scenario Date'[Date] >= StartDate && 'Scenario Date'[Date] <= SafeThrough)
+			                VAR NeededEndpoints = DISTINCT(UNION(
+			                    ROW("__Endpoint", PeriodStart - 1),
+			                    ROW("__Endpoint", KnownPeriodEnd),
+			                    SELECTCOLUMNS(SparseDates, "__Endpoint", 'Scenario Date'[Date]),
+			                    SELECTCOLUMNS(SparseDates, "__Endpoint", 'Scenario Date'[Date] - 1)))
+			                VAR EndpointCapacity = ADDCOLUMNS(NeededEndpoints, "__Capacity",
+			                    VAR Endpoint = [__Endpoint]
+			                    VAR SpanDays = MAX(0, INT(Endpoint - StartDate) + 1)
+			                    VAR FullWeeks = QUOTIENT(SpanDays, 7)
+			                    VAR ExtraDays = MOD(SpanDays, 7)
+			                    VAR WeeklyTotal = SUMX(WeekCapacity, [__Weight] * (FullWeeks + IF(MOD([__Weekday] - StartWeekday, 7) < ExtraDays, 1, 0)))
+			                    VAR ExceptionTotal = SUMX(FILTER(ExceptionCapacity, [__ExceptionDate] <= Endpoint), [__Correction])
+			                    RETURN IF(Endpoint < StartDate, 0, MAX(0, WeeklyTotal + ExceptionTotal)))
+			                VAR Tolerance = [Scenario Quantity Tolerance]
+			                VAR EndpointAllocation = ADDCOLUMNS(EndpointCapacity, "__Allocated",
+			                    VAR Capacity = [__Capacity]
+			                    RETURN IF(Capacity >= Quantity - Tolerance, Quantity, MIN(Quantity, Capacity)))
+			                VAR AllocatedBefore = MAXX(FILTER(EndpointAllocation, [__Endpoint] = PeriodStart - 1), [__Allocated])
+			                VAR AllocatedEnd = MAXX(FILTER(EndpointAllocation, [__Endpoint] = KnownPeriodEnd), [__Allocated])
+			                VAR SparseQuantity = SUMX(SparseDates,
+			                    VAR AxisDate = 'Scenario Date'[Date]
+			                    VAR AllocatedDayEnd = MAXX(FILTER(EndpointAllocation, [__Endpoint] = AxisDate), [__Allocated])
+			                    VAR AllocatedDayBefore = MAXX(FILTER(EndpointAllocation, [__Endpoint] = AxisDate - 1), [__Allocated])
+			                    RETURN MAX(0, AllocatedDayEnd - AllocatedDayBefore))
+			                RETURN IF(AllocatedBefore < Quantity, 
+			VAR DayExceptions = FILTER(Exceptions, '11 XER_CALENDAR_DETAILED'[date] = PeriodEnd)
+			RETURN IF(COUNTROWS(DayExceptions) = 1,
+			    MAXX(DayExceptions, '11 XER_CALENDAR_DETAILED'[work_hours]),
+			    MAXX(FILTER(WeekRows, '11 XER_CALENDAR_DETAILED'[day_of_week_num] = WEEKDAY(PeriodEnd, 2)), '11 XER_CALENDAR_DETAILED'[work_hours]))
+			)
+			            )
+			        )
+			    )
+			)
+			```
+		formatString: #,0.########
+		displayFolder: Display
+		lineageTag: d6448d01-0778-50d7-b925-20f5291ab443
+
+	/// Known daily production capacity before final quantity truncation. Hidden after completion or unknown coverage; shares the chart allocation arithmetic.
+	measure 'Scenario Daily Display Capacity' = ```
+			VAR StartDate = [Scenario Selected Start]
+			VAR PeriodStart = MIN('Scenario Date'[Date])
+			VAR PeriodEnd = MAX('Scenario Date'[Date])
+			VAR HorizonStart = TODAY()
+			VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			
+			VAR Quantity = [Scenario Selected Quantity]
+			RETURN IF(NOT HASONEVALUE('Scenario Date'[Date]) || ISBLANK(StartDate)
+			    || ISBLANK(Quantity) || Quantity <= 0 || PeriodEnd < StartDate
+			    || StartDate < HorizonStart || StartDate > HorizonEnd || PeriodStart > HorizonEnd, BLANK(),
+			    IF([Scenario Input Validation] <> "" || [Scenario Calendar Validation] <> "", BLANK(),
+			        VAR SafeThrough = [Scenario Safe Through]
+			        RETURN IF(ISBLANK(SafeThrough) || SafeThrough < StartDate || PeriodStart > SafeThrough, BLANK(),
+			            VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
+			            VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
+			            VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			            VAR CalendarRows = CALCULATETABLE(
+			                '11 XER_CALENDAR_DETAILED',
+			                KEEPFILTERS(TREATAS({CalendarKey}, '11 XER_CALENDAR_DETAILED'[clndr_id_key])),
+			                KEEPFILTERS(TREATAS({ProjectKey}, '11 XER_CALENDAR_DETAILED'[ProjectKey])),
+			                KEEPFILTERS(TREATAS({CsvSource}, '11 XER_CALENDAR_DETAILED'[IsCsvSource])))
+			            VAR WeekRows = FILTER(CalendarRows, ISBLANK('11 XER_CALENDAR_DETAILED'[date]) && '11 XER_CALENDAR_DETAILED'[exception_type] == "Standard")
+			            VAR Exceptions = FILTER(CalendarRows, NOT ISBLANK('11 XER_CALENDAR_DETAILED'[date])
+			                && '11 XER_CALENDAR_DETAILED'[date] >= StartDate && '11 XER_CALENDAR_DETAILED'[date] <= SafeThrough)
+			            VAR Basis = [Scenario Selected Basis]
+			            VAR Mode = [Scenario Selected Mode]
+			            VAR DailyLimit = CONVERT([Scenario Selected Limit], DOUBLE)
+			            VAR LimitEnabled = [Scenario Selected Limit Mode] = "Daily limit"
+			            VAR TargetDate = [Scenario Selected Target]
+			            VAR StartWeekday = WEEKDAY(StartDate, 2)
+			            VAR TargetSpan = MAX(0, INT(TargetDate - StartDate) + 1)
+			            VAR TargetWeeks = QUOTIENT(TargetSpan, 7)
+			            VAR TargetExtra = MOD(TargetSpan, 7)
+			            VAR TargetWeekWork = SUMX(WeekRows,
+			                VAR RuleWeekday = '11 XER_CALENDAR_DETAILED'[day_of_week_num]
+			                VAR Occurrences = TargetWeeks + IF(MOD(RuleWeekday - StartWeekday, 7) < TargetExtra, 1, 0)
+			                VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                RETURN Occurrences * IF(Basis = "Per working day", IF(Hours > 0, 1, 0), Hours))
+			            VAR TargetExceptionWork = SUMX(FILTER(Exceptions, '11 XER_CALENDAR_DETAILED'[date] <= TargetDate),
+			                VAR ExceptionWeekday = WEEKDAY('11 XER_CALENDAR_DETAILED'[date], 2)
+			                VAR NormalHours = MAXX(FILTER(WeekRows, '11 XER_CALENDAR_DETAILED'[day_of_week_num] = ExceptionWeekday), '11 XER_CALENDAR_DETAILED'[work_hours])
+			                VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                RETURN IF(Basis = "Per working day", IF(Hours > 0, 1, 0) - IF(NormalHours > 0, 1, 0), Hours - NormalHours))
+			            VAR TargetWork = IF(TargetDate <= SafeThrough, MAX(0, TargetWeekWork + TargetExceptionWork))
+			            VAR Rate = IF(Mode = "Meet target date",
+			                IF(NOT (Basis = "Per working hour" && LimitEnabled), DIVIDE(CONVERT(Quantity, DOUBLE), CONVERT(TargetWork, DOUBLE))),
+			                CONVERT([Scenario Selected Rate], DOUBLE))
+			            RETURN IF(ISBLANK(Rate), BLANK(),
+			                VAR WeekCapacity = SELECTCOLUMNS(WeekRows,
+			                    "__Weekday", '11 XER_CALENDAR_DETAILED'[day_of_week_num],
+			                    "__Weight",
+			                        VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                        VAR RawCapacity = IF(Hours > 0, IF(Basis = "Per working hour", Rate * Hours, Rate), 0)
+			                        RETURN IF(LimitEnabled, MIN(RawCapacity, DailyLimit), RawCapacity))
+			                VAR ExceptionCapacity = SELECTCOLUMNS(Exceptions,
+			                    "__ExceptionDate", '11 XER_CALENDAR_DETAILED'[date],
+			                    "__Correction",
+			                        VAR ExceptionWeekday = WEEKDAY('11 XER_CALENDAR_DETAILED'[date], 2)
+			                        VAR NormalCapacity = MAXX(FILTER(WeekCapacity, [__Weekday] = ExceptionWeekday), [__Weight])
+			                        VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                        VAR RawCapacity = IF(Hours > 0, IF(Basis = "Per working hour", Rate * Hours, Rate), 0)
+			                        VAR ReplacementCapacity = IF(LimitEnabled, MIN(RawCapacity, DailyLimit), RawCapacity)
+			                        RETURN ReplacementCapacity - NormalCapacity)
+			                VAR KnownPeriodEnd = MIN(PeriodEnd, SafeThrough)
+			                VAR VisibleDates = VALUES('Scenario Date'[Date])
+			                VAR IsContiguous = COUNTROWS(VisibleDates) = INT(PeriodEnd - PeriodStart) + 1
+			                VAR SparseDates = FILTER(VisibleDates, NOT IsContiguous && 'Scenario Date'[Date] >= StartDate && 'Scenario Date'[Date] <= SafeThrough)
+			                VAR NeededEndpoints = DISTINCT(UNION(
+			                    ROW("__Endpoint", PeriodStart - 1),
+			                    ROW("__Endpoint", KnownPeriodEnd),
+			                    SELECTCOLUMNS(SparseDates, "__Endpoint", 'Scenario Date'[Date]),
+			                    SELECTCOLUMNS(SparseDates, "__Endpoint", 'Scenario Date'[Date] - 1)))
+			                VAR EndpointCapacity = ADDCOLUMNS(NeededEndpoints, "__Capacity",
+			                    VAR Endpoint = [__Endpoint]
+			                    VAR SpanDays = MAX(0, INT(Endpoint - StartDate) + 1)
+			                    VAR FullWeeks = QUOTIENT(SpanDays, 7)
+			                    VAR ExtraDays = MOD(SpanDays, 7)
+			                    VAR WeeklyTotal = SUMX(WeekCapacity, [__Weight] * (FullWeeks + IF(MOD([__Weekday] - StartWeekday, 7) < ExtraDays, 1, 0)))
+			                    VAR ExceptionTotal = SUMX(FILTER(ExceptionCapacity, [__ExceptionDate] <= Endpoint), [__Correction])
+			                    RETURN IF(Endpoint < StartDate, 0, MAX(0, WeeklyTotal + ExceptionTotal)))
+			                VAR Tolerance = [Scenario Quantity Tolerance]
+			                VAR EndpointAllocation = ADDCOLUMNS(EndpointCapacity, "__Allocated",
+			                    VAR Capacity = [__Capacity]
+			                    RETURN IF(Capacity >= Quantity - Tolerance, Quantity, MIN(Quantity, Capacity)))
+			                VAR AllocatedBefore = MAXX(FILTER(EndpointAllocation, [__Endpoint] = PeriodStart - 1), [__Allocated])
+			                VAR AllocatedEnd = MAXX(FILTER(EndpointAllocation, [__Endpoint] = KnownPeriodEnd), [__Allocated])
+			                VAR SparseQuantity = SUMX(SparseDates,
+			                    VAR AxisDate = 'Scenario Date'[Date]
+			                    VAR AllocatedDayEnd = MAXX(FILTER(EndpointAllocation, [__Endpoint] = AxisDate), [__Allocated])
+			                    VAR AllocatedDayBefore = MAXX(FILTER(EndpointAllocation, [__Endpoint] = AxisDate - 1), [__Allocated])
+			                    RETURN MAX(0, AllocatedDayEnd - AllocatedDayBefore))
+			                RETURN IF(AllocatedBefore < Quantity, 
+			MAXX(FILTER(WeekCapacity, [__Weekday] = WEEKDAY(PeriodEnd, 2)), [__Weight])
+			    + SUMX(FILTER(ExceptionCapacity, [__ExceptionDate] = PeriodEnd), [__Correction])
+			)
+			            )
+			        )
+			    )
+			)
+			```
+		formatString: #,0.########
+		displayFolder: Display
+		lineageTag: 359d6d8e-d1f9-5b75-a1f9-bbb9e02078eb
+
+	/// Known allocated quantity for an active date inside the available date coverage from today. Independent of chart period; no visual-level measure filter is needed.
+	measure 'Scenario Daily Display Quantity' =
+			VAR StartDate = [Scenario Selected Start]
+			VAR PeriodStart = MIN('Scenario Date'[Date])
+			VAR PeriodEnd = MAX('Scenario Date'[Date])
+			VAR HorizonStart = TODAY()
+			VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			
+			VAR Quantity = [Scenario Selected Quantity]
+			RETURN IF(NOT HASONEVALUE('Scenario Date'[Date]) || ISBLANK(StartDate)
+			    || ISBLANK(Quantity) || Quantity <= 0 || PeriodEnd < StartDate
+			    || StartDate < HorizonStart || StartDate > HorizonEnd || PeriodStart > HorizonEnd, BLANK(),
+			    IF([Scenario Input Validation] <> "" || [Scenario Calendar Validation] <> "", BLANK(),
+			        VAR SafeThrough = [Scenario Safe Through]
+			        RETURN IF(ISBLANK(SafeThrough) || SafeThrough < StartDate || PeriodStart > SafeThrough, BLANK(),
+			            VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
+			            VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
+			            VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			            VAR CalendarRows = CALCULATETABLE(
+			                '11 XER_CALENDAR_DETAILED',
+			                KEEPFILTERS(TREATAS({CalendarKey}, '11 XER_CALENDAR_DETAILED'[clndr_id_key])),
+			                KEEPFILTERS(TREATAS({ProjectKey}, '11 XER_CALENDAR_DETAILED'[ProjectKey])),
+			                KEEPFILTERS(TREATAS({CsvSource}, '11 XER_CALENDAR_DETAILED'[IsCsvSource])))
+			            VAR WeekRows = FILTER(CalendarRows, ISBLANK('11 XER_CALENDAR_DETAILED'[date]) && '11 XER_CALENDAR_DETAILED'[exception_type] == "Standard")
+			            VAR Exceptions = FILTER(CalendarRows, NOT ISBLANK('11 XER_CALENDAR_DETAILED'[date])
+			                && '11 XER_CALENDAR_DETAILED'[date] >= StartDate && '11 XER_CALENDAR_DETAILED'[date] <= SafeThrough)
+			            VAR Basis = [Scenario Selected Basis]
+			            VAR Mode = [Scenario Selected Mode]
+			            VAR DailyLimit = CONVERT([Scenario Selected Limit], DOUBLE)
+			            VAR LimitEnabled = [Scenario Selected Limit Mode] = "Daily limit"
+			            VAR TargetDate = [Scenario Selected Target]
+			            VAR StartWeekday = WEEKDAY(StartDate, 2)
+			            VAR TargetSpan = MAX(0, INT(TargetDate - StartDate) + 1)
+			            VAR TargetWeeks = QUOTIENT(TargetSpan, 7)
+			            VAR TargetExtra = MOD(TargetSpan, 7)
+			            VAR TargetWeekWork = SUMX(WeekRows,
+			                VAR RuleWeekday = '11 XER_CALENDAR_DETAILED'[day_of_week_num]
+			                VAR Occurrences = TargetWeeks + IF(MOD(RuleWeekday - StartWeekday, 7) < TargetExtra, 1, 0)
+			                VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                RETURN Occurrences * IF(Basis = "Per working day", IF(Hours > 0, 1, 0), Hours))
+			            VAR TargetExceptionWork = SUMX(FILTER(Exceptions, '11 XER_CALENDAR_DETAILED'[date] <= TargetDate),
+			                VAR ExceptionWeekday = WEEKDAY('11 XER_CALENDAR_DETAILED'[date], 2)
+			                VAR NormalHours = MAXX(FILTER(WeekRows, '11 XER_CALENDAR_DETAILED'[day_of_week_num] = ExceptionWeekday), '11 XER_CALENDAR_DETAILED'[work_hours])
+			                VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                RETURN IF(Basis = "Per working day", IF(Hours > 0, 1, 0) - IF(NormalHours > 0, 1, 0), Hours - NormalHours))
+			            VAR TargetWork = IF(TargetDate <= SafeThrough, MAX(0, TargetWeekWork + TargetExceptionWork))
+			            VAR Rate = IF(Mode = "Meet target date",
+			                IF(NOT (Basis = "Per working hour" && LimitEnabled), DIVIDE(CONVERT(Quantity, DOUBLE), CONVERT(TargetWork, DOUBLE))),
+			                CONVERT([Scenario Selected Rate], DOUBLE))
+			            RETURN IF(ISBLANK(Rate), BLANK(),
+			                VAR WeekCapacity = SELECTCOLUMNS(WeekRows,
+			                    "__Weekday", '11 XER_CALENDAR_DETAILED'[day_of_week_num],
+			                    "__Weight",
+			                        VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                        VAR RawCapacity = IF(Hours > 0, IF(Basis = "Per working hour", Rate * Hours, Rate), 0)
+			                        RETURN IF(LimitEnabled, MIN(RawCapacity, DailyLimit), RawCapacity))
+			                VAR ExceptionCapacity = SELECTCOLUMNS(Exceptions,
+			                    "__ExceptionDate", '11 XER_CALENDAR_DETAILED'[date],
+			                    "__Correction",
+			                        VAR ExceptionWeekday = WEEKDAY('11 XER_CALENDAR_DETAILED'[date], 2)
+			                        VAR NormalCapacity = MAXX(FILTER(WeekCapacity, [__Weekday] = ExceptionWeekday), [__Weight])
+			                        VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                        VAR RawCapacity = IF(Hours > 0, IF(Basis = "Per working hour", Rate * Hours, Rate), 0)
+			                        VAR ReplacementCapacity = IF(LimitEnabled, MIN(RawCapacity, DailyLimit), RawCapacity)
+			                        RETURN ReplacementCapacity - NormalCapacity)
+			                VAR KnownPeriodEnd = MIN(PeriodEnd, SafeThrough)
+			                VAR VisibleDates = VALUES('Scenario Date'[Date])
+			                VAR IsContiguous = COUNTROWS(VisibleDates) = INT(PeriodEnd - PeriodStart) + 1
+			                VAR SparseDates = FILTER(VisibleDates, NOT IsContiguous && 'Scenario Date'[Date] >= StartDate && 'Scenario Date'[Date] <= SafeThrough)
+			                VAR NeededEndpoints = DISTINCT(UNION(
+			                    ROW("__Endpoint", PeriodStart - 1),
+			                    ROW("__Endpoint", KnownPeriodEnd),
+			                    SELECTCOLUMNS(SparseDates, "__Endpoint", 'Scenario Date'[Date]),
+			                    SELECTCOLUMNS(SparseDates, "__Endpoint", 'Scenario Date'[Date] - 1)))
+			                VAR EndpointCapacity = ADDCOLUMNS(NeededEndpoints, "__Capacity",
+			                    VAR Endpoint = [__Endpoint]
+			                    VAR SpanDays = MAX(0, INT(Endpoint - StartDate) + 1)
+			                    VAR FullWeeks = QUOTIENT(SpanDays, 7)
+			                    VAR ExtraDays = MOD(SpanDays, 7)
+			                    VAR WeeklyTotal = SUMX(WeekCapacity, [__Weight] * (FullWeeks + IF(MOD([__Weekday] - StartWeekday, 7) < ExtraDays, 1, 0)))
+			                    VAR ExceptionTotal = SUMX(FILTER(ExceptionCapacity, [__ExceptionDate] <= Endpoint), [__Correction])
+			                    RETURN IF(Endpoint < StartDate, 0, MAX(0, WeeklyTotal + ExceptionTotal)))
+			                VAR Tolerance = [Scenario Quantity Tolerance]
+			                VAR EndpointAllocation = ADDCOLUMNS(EndpointCapacity, "__Allocated",
+			                    VAR Capacity = [__Capacity]
+			                    RETURN IF(Capacity >= Quantity - Tolerance, Quantity, MIN(Quantity, Capacity)))
+			                VAR AllocatedBefore = MAXX(FILTER(EndpointAllocation, [__Endpoint] = PeriodStart - 1), [__Allocated])
+			                VAR AllocatedEnd = MAXX(FILTER(EndpointAllocation, [__Endpoint] = KnownPeriodEnd), [__Allocated])
+			                VAR SparseQuantity = SUMX(SparseDates,
+			                    VAR AxisDate = 'Scenario Date'[Date]
+			                    VAR AllocatedDayEnd = MAXX(FILTER(EndpointAllocation, [__Endpoint] = AxisDate), [__Allocated])
+			                    VAR AllocatedDayBefore = MAXX(FILTER(EndpointAllocation, [__Endpoint] = AxisDate - 1), [__Allocated])
+			                    RETURN MAX(0, AllocatedDayEnd - AllocatedDayBefore))
+			                RETURN IF(AllocatedBefore < Quantity, MAX(0, AllocatedEnd - AllocatedBefore))
+			            )
+			        )
+			    )
+			)
+		formatString: #,0.########
+		displayFolder: Display
+		lineageTag: d0265230-ce8f-581e-8ad4-bbb05e5e70de
+
+	/// Known cumulative allocation on an active daily audit row, from the same generated endpoint calculation as daily quantity.
+	measure 'Scenario Daily Display Cumulative' =
+			VAR StartDate = [Scenario Selected Start]
+			VAR PeriodStart = MIN('Scenario Date'[Date])
+			VAR PeriodEnd = MAX('Scenario Date'[Date])
+			VAR HorizonStart = TODAY()
+			VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			
+			VAR Quantity = [Scenario Selected Quantity]
+			RETURN IF(NOT HASONEVALUE('Scenario Date'[Date]) || ISBLANK(StartDate)
+			    || ISBLANK(Quantity) || Quantity <= 0 || PeriodEnd < StartDate
+			    || StartDate < HorizonStart || StartDate > HorizonEnd || PeriodStart > HorizonEnd, BLANK(),
+			    IF([Scenario Input Validation] <> "" || [Scenario Calendar Validation] <> "", BLANK(),
+			        VAR SafeThrough = [Scenario Safe Through]
+			        RETURN IF(ISBLANK(SafeThrough) || SafeThrough < StartDate || PeriodStart > SafeThrough, BLANK(),
+			            VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
+			            VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
+			            VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			            VAR CalendarRows = CALCULATETABLE(
+			                '11 XER_CALENDAR_DETAILED',
+			                KEEPFILTERS(TREATAS({CalendarKey}, '11 XER_CALENDAR_DETAILED'[clndr_id_key])),
+			                KEEPFILTERS(TREATAS({ProjectKey}, '11 XER_CALENDAR_DETAILED'[ProjectKey])),
+			                KEEPFILTERS(TREATAS({CsvSource}, '11 XER_CALENDAR_DETAILED'[IsCsvSource])))
+			            VAR WeekRows = FILTER(CalendarRows, ISBLANK('11 XER_CALENDAR_DETAILED'[date]) && '11 XER_CALENDAR_DETAILED'[exception_type] == "Standard")
+			            VAR Exceptions = FILTER(CalendarRows, NOT ISBLANK('11 XER_CALENDAR_DETAILED'[date])
+			                && '11 XER_CALENDAR_DETAILED'[date] >= StartDate && '11 XER_CALENDAR_DETAILED'[date] <= SafeThrough)
+			            VAR Basis = [Scenario Selected Basis]
+			            VAR Mode = [Scenario Selected Mode]
+			            VAR DailyLimit = CONVERT([Scenario Selected Limit], DOUBLE)
+			            VAR LimitEnabled = [Scenario Selected Limit Mode] = "Daily limit"
+			            VAR TargetDate = [Scenario Selected Target]
+			            VAR StartWeekday = WEEKDAY(StartDate, 2)
+			            VAR TargetSpan = MAX(0, INT(TargetDate - StartDate) + 1)
+			            VAR TargetWeeks = QUOTIENT(TargetSpan, 7)
+			            VAR TargetExtra = MOD(TargetSpan, 7)
+			            VAR TargetWeekWork = SUMX(WeekRows,
+			                VAR RuleWeekday = '11 XER_CALENDAR_DETAILED'[day_of_week_num]
+			                VAR Occurrences = TargetWeeks + IF(MOD(RuleWeekday - StartWeekday, 7) < TargetExtra, 1, 0)
+			                VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                RETURN Occurrences * IF(Basis = "Per working day", IF(Hours > 0, 1, 0), Hours))
+			            VAR TargetExceptionWork = SUMX(FILTER(Exceptions, '11 XER_CALENDAR_DETAILED'[date] <= TargetDate),
+			                VAR ExceptionWeekday = WEEKDAY('11 XER_CALENDAR_DETAILED'[date], 2)
+			                VAR NormalHours = MAXX(FILTER(WeekRows, '11 XER_CALENDAR_DETAILED'[day_of_week_num] = ExceptionWeekday), '11 XER_CALENDAR_DETAILED'[work_hours])
+			                VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                RETURN IF(Basis = "Per working day", IF(Hours > 0, 1, 0) - IF(NormalHours > 0, 1, 0), Hours - NormalHours))
+			            VAR TargetWork = IF(TargetDate <= SafeThrough, MAX(0, TargetWeekWork + TargetExceptionWork))
+			            VAR Rate = IF(Mode = "Meet target date",
+			                IF(NOT (Basis = "Per working hour" && LimitEnabled), DIVIDE(CONVERT(Quantity, DOUBLE), CONVERT(TargetWork, DOUBLE))),
+			                CONVERT([Scenario Selected Rate], DOUBLE))
+			            RETURN IF(ISBLANK(Rate), BLANK(),
+			                VAR WeekCapacity = SELECTCOLUMNS(WeekRows,
+			                    "__Weekday", '11 XER_CALENDAR_DETAILED'[day_of_week_num],
+			                    "__Weight",
+			                        VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                        VAR RawCapacity = IF(Hours > 0, IF(Basis = "Per working hour", Rate * Hours, Rate), 0)
+			                        RETURN IF(LimitEnabled, MIN(RawCapacity, DailyLimit), RawCapacity))
+			                VAR ExceptionCapacity = SELECTCOLUMNS(Exceptions,
+			                    "__ExceptionDate", '11 XER_CALENDAR_DETAILED'[date],
+			                    "__Correction",
+			                        VAR ExceptionWeekday = WEEKDAY('11 XER_CALENDAR_DETAILED'[date], 2)
+			                        VAR NormalCapacity = MAXX(FILTER(WeekCapacity, [__Weekday] = ExceptionWeekday), [__Weight])
+			                        VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                        VAR RawCapacity = IF(Hours > 0, IF(Basis = "Per working hour", Rate * Hours, Rate), 0)
+			                        VAR ReplacementCapacity = IF(LimitEnabled, MIN(RawCapacity, DailyLimit), RawCapacity)
+			                        RETURN ReplacementCapacity - NormalCapacity)
+			                VAR KnownPeriodEnd = MIN(PeriodEnd, SafeThrough)
+			                VAR VisibleDates = VALUES('Scenario Date'[Date])
+			                VAR IsContiguous = COUNTROWS(VisibleDates) = INT(PeriodEnd - PeriodStart) + 1
+			                VAR SparseDates = FILTER(VisibleDates, NOT IsContiguous && 'Scenario Date'[Date] >= StartDate && 'Scenario Date'[Date] <= SafeThrough)
+			                VAR NeededEndpoints = DISTINCT(UNION(
+			                    ROW("__Endpoint", PeriodStart - 1),
+			                    ROW("__Endpoint", KnownPeriodEnd),
+			                    SELECTCOLUMNS(SparseDates, "__Endpoint", 'Scenario Date'[Date]),
+			                    SELECTCOLUMNS(SparseDates, "__Endpoint", 'Scenario Date'[Date] - 1)))
+			                VAR EndpointCapacity = ADDCOLUMNS(NeededEndpoints, "__Capacity",
+			                    VAR Endpoint = [__Endpoint]
+			                    VAR SpanDays = MAX(0, INT(Endpoint - StartDate) + 1)
+			                    VAR FullWeeks = QUOTIENT(SpanDays, 7)
+			                    VAR ExtraDays = MOD(SpanDays, 7)
+			                    VAR WeeklyTotal = SUMX(WeekCapacity, [__Weight] * (FullWeeks + IF(MOD([__Weekday] - StartWeekday, 7) < ExtraDays, 1, 0)))
+			                    VAR ExceptionTotal = SUMX(FILTER(ExceptionCapacity, [__ExceptionDate] <= Endpoint), [__Correction])
+			                    RETURN IF(Endpoint < StartDate, 0, MAX(0, WeeklyTotal + ExceptionTotal)))
+			                VAR Tolerance = [Scenario Quantity Tolerance]
+			                VAR EndpointAllocation = ADDCOLUMNS(EndpointCapacity, "__Allocated",
+			                    VAR Capacity = [__Capacity]
+			                    RETURN IF(Capacity >= Quantity - Tolerance, Quantity, MIN(Quantity, Capacity)))
+			                VAR AllocatedBefore = MAXX(FILTER(EndpointAllocation, [__Endpoint] = PeriodStart - 1), [__Allocated])
+			                VAR AllocatedEnd = MAXX(FILTER(EndpointAllocation, [__Endpoint] = KnownPeriodEnd), [__Allocated])
+			                VAR SparseQuantity = SUMX(SparseDates,
+			                    VAR AxisDate = 'Scenario Date'[Date]
+			                    VAR AllocatedDayEnd = MAXX(FILTER(EndpointAllocation, [__Endpoint] = AxisDate), [__Allocated])
+			                    VAR AllocatedDayBefore = MAXX(FILTER(EndpointAllocation, [__Endpoint] = AxisDate - 1), [__Allocated])
+			                    RETURN MAX(0, AllocatedDayEnd - AllocatedDayBefore))
+			                RETURN IF(AllocatedBefore < Quantity, AllocatedEnd)
+			            )
+			        )
+			    )
+			)
+		formatString: #,0.########
+		displayFolder: Display
+		lineageTag: af876edb-5c1f-522a-b6d0-4b668367189b
+
+	/// Quantity remaining after an active known date. Unknown coverage remains blank and is diagnosed by Scenario Status.
+	measure 'Scenario Daily Display Remaining' =
+			VAR StartDate = [Scenario Selected Start]
+			VAR PeriodStart = MIN('Scenario Date'[Date])
+			VAR PeriodEnd = MAX('Scenario Date'[Date])
+			VAR HorizonStart = TODAY()
+			VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			
+			VAR Quantity = [Scenario Selected Quantity]
+			RETURN IF(NOT HASONEVALUE('Scenario Date'[Date]) || ISBLANK(StartDate)
+			    || ISBLANK(Quantity) || Quantity <= 0 || PeriodEnd < StartDate
+			    || StartDate < HorizonStart || StartDate > HorizonEnd || PeriodStart > HorizonEnd, BLANK(),
+			    IF([Scenario Input Validation] <> "" || [Scenario Calendar Validation] <> "", BLANK(),
+			        VAR SafeThrough = [Scenario Safe Through]
+			        RETURN IF(ISBLANK(SafeThrough) || SafeThrough < StartDate || PeriodStart > SafeThrough, BLANK(),
+			            VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
+			            VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
+			            VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			            VAR CalendarRows = CALCULATETABLE(
+			                '11 XER_CALENDAR_DETAILED',
+			                KEEPFILTERS(TREATAS({CalendarKey}, '11 XER_CALENDAR_DETAILED'[clndr_id_key])),
+			                KEEPFILTERS(TREATAS({ProjectKey}, '11 XER_CALENDAR_DETAILED'[ProjectKey])),
+			                KEEPFILTERS(TREATAS({CsvSource}, '11 XER_CALENDAR_DETAILED'[IsCsvSource])))
+			            VAR WeekRows = FILTER(CalendarRows, ISBLANK('11 XER_CALENDAR_DETAILED'[date]) && '11 XER_CALENDAR_DETAILED'[exception_type] == "Standard")
+			            VAR Exceptions = FILTER(CalendarRows, NOT ISBLANK('11 XER_CALENDAR_DETAILED'[date])
+			                && '11 XER_CALENDAR_DETAILED'[date] >= StartDate && '11 XER_CALENDAR_DETAILED'[date] <= SafeThrough)
+			            VAR Basis = [Scenario Selected Basis]
+			            VAR Mode = [Scenario Selected Mode]
+			            VAR DailyLimit = CONVERT([Scenario Selected Limit], DOUBLE)
+			            VAR LimitEnabled = [Scenario Selected Limit Mode] = "Daily limit"
+			            VAR TargetDate = [Scenario Selected Target]
+			            VAR StartWeekday = WEEKDAY(StartDate, 2)
+			            VAR TargetSpan = MAX(0, INT(TargetDate - StartDate) + 1)
+			            VAR TargetWeeks = QUOTIENT(TargetSpan, 7)
+			            VAR TargetExtra = MOD(TargetSpan, 7)
+			            VAR TargetWeekWork = SUMX(WeekRows,
+			                VAR RuleWeekday = '11 XER_CALENDAR_DETAILED'[day_of_week_num]
+			                VAR Occurrences = TargetWeeks + IF(MOD(RuleWeekday - StartWeekday, 7) < TargetExtra, 1, 0)
+			                VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                RETURN Occurrences * IF(Basis = "Per working day", IF(Hours > 0, 1, 0), Hours))
+			            VAR TargetExceptionWork = SUMX(FILTER(Exceptions, '11 XER_CALENDAR_DETAILED'[date] <= TargetDate),
+			                VAR ExceptionWeekday = WEEKDAY('11 XER_CALENDAR_DETAILED'[date], 2)
+			                VAR NormalHours = MAXX(FILTER(WeekRows, '11 XER_CALENDAR_DETAILED'[day_of_week_num] = ExceptionWeekday), '11 XER_CALENDAR_DETAILED'[work_hours])
+			                VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                RETURN IF(Basis = "Per working day", IF(Hours > 0, 1, 0) - IF(NormalHours > 0, 1, 0), Hours - NormalHours))
+			            VAR TargetWork = IF(TargetDate <= SafeThrough, MAX(0, TargetWeekWork + TargetExceptionWork))
+			            VAR Rate = IF(Mode = "Meet target date",
+			                IF(NOT (Basis = "Per working hour" && LimitEnabled), DIVIDE(CONVERT(Quantity, DOUBLE), CONVERT(TargetWork, DOUBLE))),
+			                CONVERT([Scenario Selected Rate], DOUBLE))
+			            RETURN IF(ISBLANK(Rate), BLANK(),
+			                VAR WeekCapacity = SELECTCOLUMNS(WeekRows,
+			                    "__Weekday", '11 XER_CALENDAR_DETAILED'[day_of_week_num],
+			                    "__Weight",
+			                        VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                        VAR RawCapacity = IF(Hours > 0, IF(Basis = "Per working hour", Rate * Hours, Rate), 0)
+			                        RETURN IF(LimitEnabled, MIN(RawCapacity, DailyLimit), RawCapacity))
+			                VAR ExceptionCapacity = SELECTCOLUMNS(Exceptions,
+			                    "__ExceptionDate", '11 XER_CALENDAR_DETAILED'[date],
+			                    "__Correction",
+			                        VAR ExceptionWeekday = WEEKDAY('11 XER_CALENDAR_DETAILED'[date], 2)
+			                        VAR NormalCapacity = MAXX(FILTER(WeekCapacity, [__Weekday] = ExceptionWeekday), [__Weight])
+			                        VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+			                        VAR RawCapacity = IF(Hours > 0, IF(Basis = "Per working hour", Rate * Hours, Rate), 0)
+			                        VAR ReplacementCapacity = IF(LimitEnabled, MIN(RawCapacity, DailyLimit), RawCapacity)
+			                        RETURN ReplacementCapacity - NormalCapacity)
+			                VAR KnownPeriodEnd = MIN(PeriodEnd, SafeThrough)
+			                VAR VisibleDates = VALUES('Scenario Date'[Date])
+			                VAR IsContiguous = COUNTROWS(VisibleDates) = INT(PeriodEnd - PeriodStart) + 1
+			                VAR SparseDates = FILTER(VisibleDates, NOT IsContiguous && 'Scenario Date'[Date] >= StartDate && 'Scenario Date'[Date] <= SafeThrough)
+			                VAR NeededEndpoints = DISTINCT(UNION(
+			                    ROW("__Endpoint", PeriodStart - 1),
+			                    ROW("__Endpoint", KnownPeriodEnd),
+			                    SELECTCOLUMNS(SparseDates, "__Endpoint", 'Scenario Date'[Date]),
+			                    SELECTCOLUMNS(SparseDates, "__Endpoint", 'Scenario Date'[Date] - 1)))
+			                VAR EndpointCapacity = ADDCOLUMNS(NeededEndpoints, "__Capacity",
+			                    VAR Endpoint = [__Endpoint]
+			                    VAR SpanDays = MAX(0, INT(Endpoint - StartDate) + 1)
+			                    VAR FullWeeks = QUOTIENT(SpanDays, 7)
+			                    VAR ExtraDays = MOD(SpanDays, 7)
+			                    VAR WeeklyTotal = SUMX(WeekCapacity, [__Weight] * (FullWeeks + IF(MOD([__Weekday] - StartWeekday, 7) < ExtraDays, 1, 0)))
+			                    VAR ExceptionTotal = SUMX(FILTER(ExceptionCapacity, [__ExceptionDate] <= Endpoint), [__Correction])
+			                    RETURN IF(Endpoint < StartDate, 0, MAX(0, WeeklyTotal + ExceptionTotal)))
+			                VAR Tolerance = [Scenario Quantity Tolerance]
+			                VAR EndpointAllocation = ADDCOLUMNS(EndpointCapacity, "__Allocated",
+			                    VAR Capacity = [__Capacity]
+			                    RETURN IF(Capacity >= Quantity - Tolerance, Quantity, MIN(Quantity, Capacity)))
+			                VAR AllocatedBefore = MAXX(FILTER(EndpointAllocation, [__Endpoint] = PeriodStart - 1), [__Allocated])
+			                VAR AllocatedEnd = MAXX(FILTER(EndpointAllocation, [__Endpoint] = KnownPeriodEnd), [__Allocated])
+			                VAR SparseQuantity = SUMX(SparseDates,
+			                    VAR AxisDate = 'Scenario Date'[Date]
+			                    VAR AllocatedDayEnd = MAXX(FILTER(EndpointAllocation, [__Endpoint] = AxisDate), [__Allocated])
+			                    VAR AllocatedDayBefore = MAXX(FILTER(EndpointAllocation, [__Endpoint] = AxisDate - 1), [__Allocated])
+			                    RETURN MAX(0, AllocatedDayEnd - AllocatedDayBefore))
+			                RETURN IF(AllocatedBefore < Quantity, MAX(0, Quantity - AllocatedEnd))
+			            )
+			        )
+			    )
+			)
+		formatString: #,0.########
+		displayFolder: Display
+		lineageTag: 141ef9da-1109-5240-bc0d-8f29fc012324
+
+	/// Today's minimum start and the full shared date-axis coverage end. The upper boundary is independent of date, week and month filters.
+	measure 'Scenario Evaluation Window' =
+			VAR WindowStart = TODAY()
+			VAR WindowEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			RETURN "Start from today, " & FORMAT(WindowStart, "dd-MM-yyyy")
+			    & " | Date coverage through " & FORMAT(WindowEnd, "dd-MM-yyyy") & " inclusive. Enter dates as DD-MM-YYYY."
+		formatString: @
+		displayFolder: Display
+		lineageTag: 5e43ba7f-4150-5823-a4d2-0382e1e5b383
+
+	partition 'Resource Scenario Measures' = m
+		mode: import
+		source = #table(type table [], {})
+
+	annotation PBI_ResultType = Table
+

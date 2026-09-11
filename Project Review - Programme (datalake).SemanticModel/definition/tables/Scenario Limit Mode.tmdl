@@ -1,0 +1,24 @@
+/// Disconnected Resource Playground input; one value per scenario.
+table 'Scenario Limit Mode'
+	lineageTag: 1046d997-ab4c-5dad-8254-e0c774d3f68c
+
+	column Mode
+		dataType: string
+		lineageTag: 8fbd3721-fd45-5b81-aeab-5d6ca351e7e5
+		summarizeBy: none
+		sourceColumn: [Mode]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Scenario Limit Mode' = calculated
+		mode: import
+		source =
+				DATATABLE ( "Mode", STRING, {
+				    { "No limit" },
+				    { "Daily limit" }
+				} )
+
+	annotation ResourcePlaygroundScaffold = 1
+
+	annotation PBI_Id = 20bbb8bb33d15c1e9e5c0a5a6a2c57c5
+

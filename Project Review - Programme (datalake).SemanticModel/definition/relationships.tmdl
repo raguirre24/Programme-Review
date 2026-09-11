@@ -159,3 +159,19 @@ relationship 348ad1a8-0e68-48ff-16c6-932cffb8c434
 	fromColumn: '01 XER_TASK'.PreviousMonthStartVarianceCategory
 	toColumn: Filter_Start_Delay.PreviousMonthStartVariance
 
+relationship dd212ac0-fb63-4d26-8b88-b2343ba64f22
+	fromColumn: '11 XER_CALENDAR_DETAILED'.ProjectKey
+	toColumn: Project_Dimension.ProjectKey
+
+relationship efca7ce5-7caa-4d02-8ec3-cbd3cf2d8a9c
+	fromColumn: '11 XER_CALENDAR_DETAILED'.clndr_id_key
+	toColumn: '10 XER_CALENDARS'.clndr_id_key
+
+relationship ff9c8aac-84d4-55e5-abdc-d851fa7169b7
+	fromColumn: 'Scenario Calendar'.ProjectKey
+	toColumn: Project_Dimension.ProjectKey
+
+relationship a0f40ec2-e2b0-54a3-ba7e-6975e796a745
+	fromColumn: 'Scenario Calendar'.'Report Update Date'
+	toColumn: CurrentDate.UpdateDate
+

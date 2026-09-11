@@ -1,0 +1,53 @@
+/// One shared display-date axis providing finite forecast coverage; measures require starts on or after today.
+table 'Scenario Date'
+	lineageTag: 25b15092-bb0f-55b9-94d9-e1f3b42b2290
+
+	column Date
+		dataType: dateTime
+		formatString: dd-MM-yyyy
+		lineageTag: 824114cf-75fb-5712-b163-95b32ece4d5d
+		summarizeBy: none
+		sourceColumn: [Date]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Week
+		dataType: dateTime
+		formatString: dd-MM-yyyy
+		lineageTag: 262fd944-3b9a-5d93-99ac-49d591604e1f
+		summarizeBy: none
+		sourceColumn: [Week]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Month
+		dataType: dateTime
+		formatString: MMM yyyy
+		lineageTag: 1b727490-54bb-56e7-b895-34c41622a8c1
+		summarizeBy: none
+		sourceColumn: [Month]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition 'Scenario Date' = calculated
+		mode: import
+		source =
+				VAR __ScenarioAxisStart = DATE ( YEAR ( TODAY () ) - 1, 1, 1 )
+				VAR __ScenarioAxisEnd = DATE ( YEAR ( TODAY () ) + 10, 12, 31 )
+				RETURN
+				    ADDCOLUMNS (
+				        CALENDAR ( __ScenarioAxisStart, __ScenarioAxisEnd ),
+				        "Week", [Date] - WEEKDAY ( [Date], 2 ) + 1,
+				        "Month", DATE ( YEAR ( [Date] ), MONTH ( [Date] ), 1 )
+				    )
+
+	annotation ResourcePlaygroundScaffold = 1
+
+	annotation PBI_Id = eb6bf44e61ae5cd2b1e40d59a50bf136
+

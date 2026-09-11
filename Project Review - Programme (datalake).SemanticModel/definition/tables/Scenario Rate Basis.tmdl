@@ -1,0 +1,24 @@
+/// Disconnected Resource Playground input; one value per scenario.
+table 'Scenario Rate Basis'
+	lineageTag: e4589462-e391-592e-b6ca-9adf1869b286
+
+	column Basis
+		dataType: string
+		lineageTag: 192e4e71-5f40-5198-bec3-34cb5f40794d
+		summarizeBy: none
+		sourceColumn: [Basis]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Scenario Rate Basis' = calculated
+		mode: import
+		source =
+				DATATABLE ( "Basis", STRING, {
+				    { "Per working day" },
+				    { "Per working hour" }
+				} )
+
+	annotation ResourcePlaygroundScaffold = 1
+
+	annotation PBI_Id = 77ac86d095805df5b7ba67225199d1b6
+

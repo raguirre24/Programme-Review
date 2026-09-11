@@ -38428,6 +38428,459 @@ cultureInfo en-NZ
 			          }
 			        }
 			      ]
+			    },
+			    "resource_scenario_measures.scenario_finish_date": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Scenario Finish Date"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Potential finish": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.scenario_required_rate": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Scenario Required Rate"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Required production": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.scenario_horizon_remaining": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Scenario Horizon Remaining"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Remaining at last known date": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.scenario_effective_start": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Scenario Effective Start"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "First working date": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.scenario_daily_hours": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Scenario Daily Hours"
+			        }
+			      },
+			      "State": "Generated"
+			    },
+			    "resource_scenario_measures.scenario_daily_capacity": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Scenario Daily Capacity"
+			        }
+			      },
+			      "State": "Generated"
+			    },
+			    "resource_scenario_measures.scenario_period_quantity": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Scenario Period Quantity"
+			        }
+			      },
+			      "State": "Generated"
+			    },
+			    "resource_scenario_measures.scenario_cumulative_quantity": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Scenario Cumulative Quantity"
+			        }
+			      },
+			      "State": "Generated"
+			    },
+			    "resource_scenario_measures.scenario_daily_remaining": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Scenario Daily Remaining"
+			        }
+			      },
+			      "State": "Generated"
+			    },
+			    "resource_scenario_measures.scenario_input_summary": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Scenario Input Summary"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Evaluated inputs": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.scenario_target_quantity": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Scenario Target Quantity"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Quantity by target": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.scenario_status": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Scenario Status"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Scenario status": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.scenario_working_days": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Scenario Working Days"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Working dates used": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.scenario_target_remaining": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Scenario Target Remaining"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Remaining at target": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.scenario_elapsed_days": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Scenario Elapsed Days"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Elapsed days": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "scenario_date.month": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Scenario Date",
+			          "ConceptualProperty": "Month"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Month": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.scenario_daily_display_hours": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Scenario Daily Display Hours"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Working hours": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.scenario_daily_display_capacity": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Scenario Daily Display Capacity"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Capacity": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.scenario_daily_display_quantity": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Scenario Daily Display Quantity"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Allocated": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.scenario_daily_display_cumulative": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Scenario Daily Display Cumulative"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Cumulative": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.scenario_daily_display_remaining": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Scenario Daily Display Remaining"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Remaining": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.scenario_chart_quantity": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Scenario Chart Quantity"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Allocated quantity": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.scenario_chart_cumulative_quantity": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Scenario Chart Cumulative Quantity"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Cumulative quantity": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "scenario_date.date": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Scenario Date",
+			          "ConceptualProperty": "Date"
+			        }
+			      },
+			      "State": "Generated"
+			    },
+			    "resource_scenario_measures.scenario_evaluation_window": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Scenario Evaluation Window"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Planning window": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
 			    }
 			  },
 			  "Relationships": {

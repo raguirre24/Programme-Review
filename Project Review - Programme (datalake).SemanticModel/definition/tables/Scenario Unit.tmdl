@@ -1,0 +1,27 @@
+/// Disconnected Resource Playground input; one value per scenario.
+table 'Scenario Unit'
+	lineageTag: d04f8612-8a4d-5b33-9814-1815d37e034a
+
+	column Unit
+		dataType: string
+		lineageTag: 67cc88a8-f892-58cc-a289-9260a10e6bfe
+		summarizeBy: none
+		sourceColumn: [Unit]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Scenario Unit' = calculated
+		mode: import
+		source =
+				DATATABLE ( "Unit", STRING, {
+				    { "labour-hours" },
+				    { "tonnes" },
+				    { "m³" },
+				    { "metres" },
+				    { "items" }
+				} )
+
+	annotation ResourcePlaygroundScaffold = 1
+
+	annotation PBI_Id = c4a305cf94ca52fbb5800a2aac585ed2
+

@@ -1,0 +1,177 @@
+/// One row per governed calendar identity; explicitly secured by Project_Dimension.
+table 'Scenario Calendar'
+	lineageTag: 534518f1-11ca-5a26-a5cd-3e6872c5989e
+
+	column ProjectKey
+		dataType: string
+		isHidden
+		lineageTag: 3c48ae93-0516-5598-a345-9d030eac3163
+		summarizeBy: none
+		sourceColumn: [ProjectKey]
+
+		annotation SummarizationSetBy = Automatic
+
+	column clndr_id_key
+		dataType: string
+		isHidden
+		lineageTag: 38be064e-d87d-5a6c-b3ec-97d25ca497f8
+		summarizeBy: none
+		sourceColumn: [clndr_id_key]
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsCsvSource
+		dataType: boolean
+		isHidden
+		lineageTag: c9996d1a-679a-5c85-9b1e-61cdbc47fc06
+		summarizeBy: none
+		sourceColumn: [IsCsvSource]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Calendar Name'
+		dataType: string
+		isHidden
+		lineageTag: 578b67be-cffa-5bcc-8f60-2e56c16a9b62
+		summarizeBy: none
+		sourceColumn: [Calendar Name]
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthUpdate
+		dataType: dateTime
+		formatString: dd-MM-yyyy
+		lineageTag: ec13d69a-3ac0-5f8a-88ed-114749c3bc96
+		summarizeBy: none
+		sourceColumn: [MonthUpdate]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Calendar
+		dataType: string
+		lineageTag: 880d6f3d-2d14-541b-9e55-9561e33f53ee
+		summarizeBy: none
+		sourceColumn: [Calendar]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Report Update Date'
+		dataType: dateTime
+		isHidden
+		formatString: dd-MM-yyyy
+		lineageTag: eab3197d-755b-577e-8206-32f5753eb8b7
+		summarizeBy: none
+		sourceColumn: [Report Update Date]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition 'Scenario Calendar' = calculated
+		mode: import
+		source =
+				VAR SourceRows =
+				    FILTER (
+				        '11 XER_CALENDAR_DETAILED',
+				        NOT ISBLANK ( '11 XER_CALENDAR_DETAILED'[ProjectKey] )
+				            && '11 XER_CALENDAR_DETAILED'[ProjectKey] <> ""
+				            && NOT ISBLANK ( '11 XER_CALENDAR_DETAILED'[clndr_id_key] )
+				            && '11 XER_CALENDAR_DETAILED'[clndr_id_key] <> ""
+				    )
+				VAR Identities =
+				    SUMMARIZE (
+				        SourceRows,
+				        '11 XER_CALENDAR_DETAILED'[ProjectKey],
+				        '11 XER_CALENDAR_DETAILED'[clndr_id_key],
+				        '11 XER_CALENDAR_DETAILED'[IsCsvSource]
+				    )
+				VAR TaskSourceGroups =
+				    SUMMARIZE (
+				        '01 XER_TASK',
+				        '01 XER_TASK'[filename],
+				        '01 XER_TASK'[ProjectCode],
+				        '01 XER_TASK'[IsCsvSource],
+				        '01 XER_TASK'[UpdateDate],
+				        "__TaskMinimumKey", MIN ( '01 XER_TASK'[task_id_key] ),
+				        "__TaskMaximumKey", MAX ( '01 XER_TASK'[task_id_key] )
+				    )
+				VAR TaskSourceNamespaces =
+				    ADDCOLUMNS (
+				        TaskSourceGroups,
+				        "__MinimumNamespace",
+				            VAR TaskKey = [__TaskMinimumKey]
+				            VAR Delimiter = IF ( '01 XER_TASK'[IsCsvSource], "::", "." )
+				            VAR Tail = PATHITEMREVERSE ( SUBSTITUTE ( TaskKey, Delimiter, "|" ), 1 )
+				            RETURN IF ( NOT ISBLANK ( TaskKey ) && CONTAINSSTRING ( TaskKey, Delimiter ),
+				                LEFT ( TaskKey, LEN ( TaskKey ) - LEN ( Tail ) - LEN ( Delimiter ) ) ),
+				        "__MaximumNamespace",
+				            VAR TaskKey = [__TaskMaximumKey]
+				            VAR Delimiter = IF ( '01 XER_TASK'[IsCsvSource], "::", "." )
+				            VAR Tail = PATHITEMREVERSE ( SUBSTITUTE ( TaskKey, Delimiter, "|" ), 1 )
+				            RETURN IF ( NOT ISBLANK ( TaskKey ) && CONTAINSSTRING ( TaskKey, Delimiter ),
+				                LEFT ( TaskKey, LEN ( TaskKey ) - LEN ( Tail ) - LEN ( Delimiter ) ) )
+				    )
+				VAR WithMetadata =
+				    ADDCOLUMNS (
+				        Identities,
+				        "Calendar Name",
+				            VAR CalendarKey = '11 XER_CALENDAR_DETAILED'[clndr_id_key]
+				            VAR ProjectKey = '11 XER_CALENDAR_DETAILED'[ProjectKey]
+				            VAR CsvSource = '11 XER_CALENDAR_DETAILED'[IsCsvSource]
+				            VAR MatchingRows = FILTER ( SourceRows,
+				                '11 XER_CALENDAR_DETAILED'[clndr_id_key] = CalendarKey
+				                    && '11 XER_CALENDAR_DETAILED'[ProjectKey] = ProjectKey
+				                    && '11 XER_CALENDAR_DETAILED'[IsCsvSource] = CsvSource )
+				            VAR Names = DISTINCT ( SELECTCOLUMNS ( MatchingRows, "Name", '11 XER_CALENDAR_DETAILED'[clndr_name] ) )
+				            RETURN IF ( COUNTROWS ( Names ) = 1, MAXX ( Names, [Name] ), "Conflicting calendar names" ),
+				        "MonthUpdate",
+				            VAR CalendarKey = '11 XER_CALENDAR_DETAILED'[clndr_id_key]
+				            VAR ProjectKey = '11 XER_CALENDAR_DETAILED'[ProjectKey]
+				            VAR CsvSource = '11 XER_CALENDAR_DETAILED'[IsCsvSource]
+				            VAR MatchingRows = FILTER ( SourceRows,
+				                '11 XER_CALENDAR_DETAILED'[clndr_id_key] = CalendarKey
+				                    && '11 XER_CALENDAR_DETAILED'[ProjectKey] = ProjectKey
+				                    && '11 XER_CALENDAR_DETAILED'[IsCsvSource] = CsvSource )
+				            VAR __ScenarioUpdateValues = DISTINCT ( SELECTCOLUMNS ( MatchingRows, "Update", '11 XER_CALENDAR_DETAILED'[MonthUpdate] ) )
+				            RETURN IF ( COUNTROWS ( __ScenarioUpdateValues ) = 1, MAXX ( __ScenarioUpdateValues, [Update] ) ),
+				        "Report Update Date",
+				            VAR CalendarKey = '11 XER_CALENDAR_DETAILED'[clndr_id_key]
+				            VAR CsvSource = '11 XER_CALENDAR_DETAILED'[IsCsvSource]
+				            VAR Delimiter = IF ( CsvSource, "::", "." )
+				            VAR Tail = PATHITEMREVERSE ( SUBSTITUTE ( CalendarKey, Delimiter, "|" ), 1 )
+				            VAR Namespace = IF ( CONTAINSSTRING ( CalendarKey, Delimiter ),
+				                LEFT ( CalendarKey, LEN ( CalendarKey ) - LEN ( Tail ) - LEN ( Delimiter ) ) )
+				            VAR MatchingGroups = FILTER ( TaskSourceNamespaces,
+				                '01 XER_TASK'[IsCsvSource] == CsvSource
+				                    && ( [__MinimumNamespace] == Namespace || [__MaximumNamespace] == Namespace ) )
+				            VAR ConflictingNamespaces = COUNTROWS ( FILTER ( MatchingGroups,
+				                ISBLANK ( [__MinimumNamespace] ) || ISBLANK ( [__MaximumNamespace] )
+				                    || [__MinimumNamespace] <> [__MaximumNamespace] ) )
+				            VAR UpdateDates = DISTINCT ( SELECTCOLUMNS ( MatchingGroups, "__ReportDate", '01 XER_TASK'[UpdateDate] ) )
+				            VAR ReportDate = MAXX ( UpdateDates, [__ReportDate] )
+				            RETURN IF ( NOT ISBLANK ( Namespace ) && ConflictingNamespaces = 0
+				                && COUNTROWS ( UpdateDates ) = 1 && NOT ISBLANK ( ReportDate ), ReportDate )
+				    )
+				VAR __ScenarioWithLabel =
+				    ADDCOLUMNS (
+				        WithMetadata,
+				        "Calendar", COALESCE ( [Calendar Name], "Unnamed calendar" )
+				    )
+				RETURN
+				    SELECTCOLUMNS (
+				        __ScenarioWithLabel,
+				        "ProjectKey", [ProjectKey],
+				        "clndr_id_key", [clndr_id_key],
+				        "IsCsvSource", [IsCsvSource],
+				        "Calendar Name", [Calendar Name],
+				        "MonthUpdate", [MonthUpdate],
+				        "Report Update Date", [Report Update Date],
+				        "Calendar", [Calendar]
+				    )
+
+	annotation ResourcePlaygroundScaffold = 1
+
+	annotation PBI_Id = 7a0ff3a4080b581eb7cdbb8a7cdf8cab
+
