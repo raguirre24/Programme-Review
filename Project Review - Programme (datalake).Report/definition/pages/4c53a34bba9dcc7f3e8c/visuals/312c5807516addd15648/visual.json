@@ -5,8 +5,8 @@
     "x": 1244,
     "y": 112,
     "z": 500,
-    "width": 518,
     "height": 68,
+    "width": 518,
     "tabOrder": 1
   },
   "visual": {
@@ -98,7 +98,7 @@
                           [
                             {
                               "Literal": {
-                                "Value": "datetime'2026-08-31T00:00:00'"
+                                "Value": "datetime'2026-09-30T00:00:00'"
                               }
                             }
                           ]
@@ -131,7 +131,7 @@
             "strictSingleSelect": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
                 }
               }
             },

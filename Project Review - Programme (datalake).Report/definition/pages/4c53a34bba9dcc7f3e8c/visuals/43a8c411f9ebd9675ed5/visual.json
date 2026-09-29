@@ -11,6 +11,30 @@
   },
   "visual": {
     "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Resource Scenario Measures"
+                    }
+                  },
+                  "Property": "Scenario Evaluation Window"
+                }
+              },
+              "queryRef": "Resource Scenario Measures.Scenario Evaluation Window",
+              "nativeQueryRef": "Planning window",
+              "active": true,
+              "displayName": "Planning window"
+            }
+          ]
+        }
+      }
+    },
     "objects": {
       "categoryLabels": [
         {
@@ -146,30 +170,24 @@
         }
       ]
     },
-    "drillFilterOtherVisuals": true,
-    "query": {
-      "queryState": {
-        "Values": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Resource Scenario Measures"
-                    }
-                  },
-                  "Property": "Scenario Evaluation Window"
-                }
-              },
-              "queryRef": "Resource Scenario Measures.Scenario Evaluation Window",
-              "nativeQueryRef": "Planning window",
-              "active": true,
-              "displayName": "Planning window"
-            }
-          ]
-        }
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "e31c1f00a8a2d7071c22",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Resource Scenario Measures"
+              }
+            },
+            "Property": "Scenario Evaluation Window"
+          }
+        },
+        "type": "Advanced"
       }
-    }
+    ]
   }
 }

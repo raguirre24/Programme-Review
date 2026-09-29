@@ -32,23 +32,6 @@
             }
           ]
         }
-      },
-      "sortDefinition": {
-        "sort": [
-          {
-            "field": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "Scenario Quantity Scale"
-                  }
-                },
-                "Property": "Multiplier"
-              }
-            },
-            "direction": "Ascending"
-          }
-        ]
       }
     },
     "objects": {
@@ -105,9 +88,8 @@
               "solid": {
                 "color": {
                   "expr": {
-                    "ThemeDataColor": {
-                      "ColorId": 1,
-                      "Percent": 0
+                    "Literal": {
+                      "Value": "'[object Object]'"
                     }
                   }
                 }
@@ -156,7 +138,7 @@
                           [
                             {
                               "Literal": {
-                                "Value": "1M"
+                                "Value": "1L"
                               }
                             }
                           ]

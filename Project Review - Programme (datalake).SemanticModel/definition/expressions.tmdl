@@ -6,7 +6,7 @@ expression SharePointSite = "https://accionaau-my.sharepoint.com/personal/ricard
 
 	annotation PBI_ResultType = Text
 
-expression SelectedProjects = "J4007" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+expression SelectedProjects = "J4007, J5064" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
 	lineageTag: a1b2c3d4-5e6f-7a8b-9c0d-ef1234567890
 	queryGroup: Database
 
@@ -1204,7 +1204,7 @@ expression XerCsvSelectedManifest =
 
 	annotation PBI_ResultType = Table
 
-expression ExcludedProjects = "J2050" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=false]
+expression ExcludedProjects = null meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=false]
 	lineageTag: c3d4e5f6-7a8b-9c0d-1e2f-345678901234
 	queryGroup: Database
 
@@ -1503,7 +1503,11 @@ expression fnXerCsvValidateCalendarDetails =
 		        Table.RowCount(Table.SelectRows(WithToken, each [__CalendarSourceToken] = metadata[__CalendarSourceToken])) <= metadata[row_count])),
 		    MonthCountsValid = List.AllTrue(List.Transform(List.Distinct(Metadata[monthupdate]), (month as date) as logical =>
 		        Table.RowCount(Table.SelectRows(WithToken, each [MonthUpdate] = month)) = List.Sum(Table.SelectRows(Metadata, each [monthupdate] = month)[row_count]))),
-		    CalendarKeys = List.Buffer(fnXerCsvReadBundleTable(bundle, "10_XER_CALENDAR")[clndr_id_key]),
+		    CalendarFiles = Table.SelectRows(bundle[Files], each [Name] = "10_XER_CALENDAR.csv"),
+		    CalendarContent = if Table.RowCount(CalendarFiles) = 1 then CalendarFiles{0}[Content] else error Error.Record("XerCsvBundle", "Expected exactly one 10_XER_CALENDAR.csv file.", [BundleId = bundle[BundleId]]),
+		    CalendarRaw = Csv.Document(CalendarContent, [Delimiter = ",", Columns = 2, Encoding = 65001, QuoteStyle = QuoteStyle.Csv, ExtraValues = ExtraValues.Error]),
+		    CalendarPromoted = Table.PromoteHeaders(CalendarRaw, [PromoteAllScalars = true]),
+		    CalendarKeys = List.Buffer(List.Transform(CalendarPromoted[clndr_id_key], each if _ = null then null else Text.Trim(Text.From(_)))),
 		    UnknownKeys = List.Difference(List.Distinct(List.RemoveNulls(source[clndr_id_key])), CalendarKeys),
 		    Result =
 		        if InvalidContext > 0 or not KnownCountsValid or not MonthCountsValid or List.Count(UnknownKeys) > 0 then

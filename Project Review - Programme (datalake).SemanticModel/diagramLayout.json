@@ -498,16 +498,6 @@
         },
         {
           "location": {},
-          "nodeIndex": "dbo_project_events",
-          "nodeLineageTag": "bdadf15a-6705-4859-949b-353d8115ef5b",
-          "size": {
-            "height": 300,
-            "width": 234
-          },
-          "zIndex": 0
-        },
-        {
-          "location": {},
           "nodeIndex": "XER CSV Manifest",
           "nodeLineageTag": "2323da7a-ddf5-4014-854e-c88b25c20d84",
           "size": {
@@ -525,6 +515,156 @@
             "width": 234
           },
           "zIndex": 0
+        },
+        {
+          "location": {},
+          "nodeIndex": "Resource Scenario Measures",
+          "nodeLineageTag": "d7b30071-db90-5b01-9092-f0ffe3a752d1",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {},
+          "nodeIndex": "11 XER_CALENDAR_DETAILED",
+          "nodeLineageTag": "b3c7b0e5-429b-4025-aeae-9bfb74c53856",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {},
+          "nodeIndex": "Scenario Calendar",
+          "nodeLineageTag": "534518f1-11ca-5a26-a5cd-3e6872c5989e",
+          "size": {
+            "height": 248,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {},
+          "nodeIndex": "Scenario Date",
+          "nodeLineageTag": "25b15092-bb0f-55b9-94d9-e1f3b42b2290",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {},
+          "nodeIndex": "Scenario Limit",
+          "nodeLineageTag": "747929bf-6d19-5eaf-922c-447516fb320f",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {},
+          "nodeIndex": "Scenario Limit Mode",
+          "nodeLineageTag": "1046d997-ab4c-5dad-8254-e0c774d3f68c",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {},
+          "nodeIndex": "Scenario Mode",
+          "nodeLineageTag": "71bfb884-af01-561e-8c56-82afec931b46",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {},
+          "nodeIndex": "Scenario Period",
+          "nodeLineageTag": "e493616b-7060-5890-a289-97c0fc8f8e1d",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {},
+          "nodeIndex": "Scenario Quantity",
+          "nodeLineageTag": "f14a8855-b0a0-580f-b2a4-8fd63b22780c",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {},
+          "nodeIndex": "Scenario Quantity Scale",
+          "nodeLineageTag": "582de3c0-e813-5aa0-8e44-4c3215615293",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {},
+          "nodeIndex": "Scenario Rate",
+          "nodeLineageTag": "e88b59a6-3684-53e5-aa96-1ba055c0f0a9",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {},
+          "nodeIndex": "Scenario Rate Basis",
+          "nodeLineageTag": "e4589462-e391-592e-b6ca-9adf1869b286",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {},
+          "nodeIndex": "Scenario Start",
+          "nodeLineageTag": "b039b702-c3d9-5030-90e8-d6152b0c2f5b",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {},
+          "nodeIndex": "Scenario Target",
+          "nodeLineageTag": "64e87f4f-6a23-565e-9936-c43499c0ab81",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {},
+          "nodeIndex": "Scenario Unit",
+          "nodeLineageTag": "d04f8612-8a4d-5b33-9814-1815d37e034a",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
         }
       ],
       "name": "All tables",
@@ -538,7 +678,7 @@
       "ordinal": 1,
       "scrollPosition": {
         "x": 0,
-        "y": 468.0378775394235
+        "y": 467.37494447148617
       },
       "nodes": [
         {
@@ -1075,19 +1215,6 @@
           "nodeLineageTag": "b6b57912-cd01-4aa2-a5f1-73da79d32e2a",
           "size": {
             "height": 248,
-            "width": 234
-          },
-          "zIndex": 0
-        },
-        {
-          "location": {
-            "x": 776,
-            "y": 353
-          },
-          "nodeIndex": "dbo_project_events",
-          "nodeLineageTag": "bdadf15a-6705-4859-949b-353d8115ef5b",
-          "size": {
-            "height": 300,
             "width": 234
           },
           "zIndex": 0

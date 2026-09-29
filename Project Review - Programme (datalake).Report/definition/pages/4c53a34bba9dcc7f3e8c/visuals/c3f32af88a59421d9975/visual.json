@@ -272,5 +272,23 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "a1400da1a088a69c0b05",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Scenario Limit"
+              }
+            },
+            "Property": "Value"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

@@ -72,7 +72,7 @@
             "strictSingleSelect": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
                 }
               }
             }
@@ -124,7 +124,7 @@
                           [
                             {
                               "Literal": {
-                                "Value": "datetime'2026-08-31T00:00:00'"
+                                "Value": "datetime'2026-09-30T00:00:00'"
                               }
                             }
                           ]
