@@ -589,7 +589,7 @@ class ProjectRegistryTests(Fixtures):
         self.add("C1046", register=False)
         self.assertEqual(self.keep(), set())
 
-    def test_all_ten_native_consumers_keep_the_same_registered_snapshots(self):
+    def test_all_eleven_native_consumers_keep_the_same_registered_snapshots(self):
         shared_tables = set()
         for path in (DEFINITION / "tables").glob("*.tmdl"):
             shared_tables.update(re.findall(r'fnAthenaSource\s*\(\s*"([A-Za-z0-9_]+)"',
@@ -597,7 +597,8 @@ class ProjectRegistryTests(Fixtures):
         self.assertEqual(shared_tables, {
             "02_xer_project", "03_xer_projwbs", "06_xer_predecessor",
             "07_xer_actvtype", "08_xer_actvcode", "09_xer_taskactv",
-            "10_xer_calendar", "12_xer_rsrc", "15_xer_resource_distribution",
+            "10_xer_calendar", "11_xer_calendar_detailed", "12_xer_rsrc",
+            "15_xer_resource_distribution",
         })
         old = self.add("C4017", "BL1", "2025-01-31")
         baseline = self.add("C4017", "BL2", "2026-01-31")
@@ -616,7 +617,7 @@ class ProjectRegistryTests(Fixtures):
             self.add_task(name)
         rows = self.db.execute(task_stage_sql("task_raw", "filename")).fetchall()
         self.assertEqual(sorted(rows), sorted([(baseline,), (update,)]))
-        self.assertEqual(len(shared_tables) + 1, 10)
+        self.assertEqual(len(shared_tables) + 1, 11)
 
 
 class TaskTests(Fixtures):
