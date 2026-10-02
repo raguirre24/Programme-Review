@@ -1,0 +1,19 @@
+/// Disconnected update axis so history visuals can show every update up to the CurrentDate selection.
+table UpdateHistory
+	lineageTag: 9d2afdd4-47f3-4002-b03e-438230a6ac38
+
+	column UpdateDate
+		formatString: Long Date
+		lineageTag: 768342aa-f110-4097-92f5-ea2d288773c0
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: 01 XER_TASK[UpdateDate]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition UpdateHistory = calculated
+		mode: import
+		source = DISTINCT('01 XER_TASK'[UpdateDate])
+

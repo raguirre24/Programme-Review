@@ -20,13 +20,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "CurrentDate"
+                      "Entity": "UpdateHistory"
                     }
                   },
                   "Property": "UpdateDate"
                 }
               },
-              "queryRef": "CurrentDate.UpdateDate",
+              "queryRef": "UpdateHistory.UpdateDate",
               "nativeQueryRef": "UpdateDate",
               "active": true
             }
@@ -42,7 +42,7 @@
                       "Entity": "XER  Counts"
                     }
                   },
-                  "Property": "Baseline_FinishVariance_<1_Month_TT_Task"
+                  "Property": "Baseline_FinishVariance_<1_Month_TT_Task (History)"
                 }
               },
               "queryRef": "XER  Counts.Baseline_FinishVariance_<1_Month_TT_Task",
@@ -57,7 +57,7 @@
                       "Entity": "XER  Counts"
                     }
                   },
-                  "Property": "Baseline_FinishVariance_<3_Month_TT_Task"
+                  "Property": "Baseline_FinishVariance_<3_Month_TT_Task (History)"
                 }
               },
               "queryRef": "XER  Counts.Baseline_FinishVariance_<3_Month_TT_Task",
@@ -72,7 +72,7 @@
                       "Entity": "XER  Counts"
                     }
                   },
-                  "Property": "Baseline_FinishVariance_<6_Month_TT_Task"
+                  "Property": "Baseline_FinishVariance_<6_Month_TT_Task (History)"
                 }
               },
               "queryRef": "XER  Counts.Baseline_FinishVariance_<6_Month_TT_Task",
@@ -87,7 +87,7 @@
                       "Entity": "XER  Counts"
                     }
                   },
-                  "Property": "Baseline_FinishVariance_>6_Month_TT_Task"
+                  "Property": "Baseline_FinishVariance_>6_Month_TT_Task (History)"
                 }
               },
               "queryRef": "XER  Counts.Baseline_FinishVariance_>6_Month_TT_Task",
@@ -102,11 +102,12 @@
                       "Entity": "XER  Counts"
                     }
                   },
-                  "Property": "Baseline_FinishVariance_All_Other"
+                  "Property": "Baseline_FinishVariance_All_Other (History)"
                 }
               },
               "queryRef": "XER  Counts.Baseline_FinishVariance_All_Other",
-              "nativeQueryRef": "Baseline_FinishVariance_All_Other"
+              "nativeQueryRef": "Baseline_FinishVariance_All_Other",
+              "displayName": "Baseline_FinishVariance_All_Other"
             }
           ]
         }
@@ -118,7 +119,7 @@
               "Column": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "CurrentDate"
+                    "Entity": "UpdateHistory"
                   }
                 },
                 "Property": "UpdateDate"
@@ -516,7 +517,7 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "CurrentDate"
+                "Entity": "UpdateHistory"
               }
             },
             "Property": "UpdateDate"
@@ -533,7 +534,7 @@
                 "Entity": "XER  Counts"
               }
             },
-            "Property": "Baseline_FinishVariance_<1_Month_TT_Task"
+            "Property": "Baseline_FinishVariance_<1_Month_TT_Task (History)"
           }
         },
         "type": "Advanced"
@@ -547,7 +548,7 @@
                 "Entity": "XER  Counts"
               }
             },
-            "Property": "Baseline_FinishVariance_<3_Month_TT_Task"
+            "Property": "Baseline_FinishVariance_<3_Month_TT_Task (History)"
           }
         },
         "type": "Advanced"
@@ -561,7 +562,7 @@
                 "Entity": "XER  Counts"
               }
             },
-            "Property": "Baseline_FinishVariance_<6_Month_TT_Task"
+            "Property": "Baseline_FinishVariance_<6_Month_TT_Task (History)"
           }
         },
         "type": "Advanced"
@@ -575,7 +576,7 @@
                 "Entity": "XER  Counts"
               }
             },
-            "Property": "Baseline_FinishVariance_>6_Month_TT_Task"
+            "Property": "Baseline_FinishVariance_>6_Month_TT_Task (History)"
           }
         },
         "type": "Advanced"
@@ -589,7 +590,7 @@
                 "Entity": "XER  Counts"
               }
             },
-            "Property": "Baseline_FinishVariance_All_Other"
+            "Property": "Baseline_FinishVariance_All_Other (History)"
           }
         },
         "type": "Advanced"

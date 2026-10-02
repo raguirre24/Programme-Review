@@ -20,13 +20,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "01 XER_TASK"
+                      "Entity": "UpdateHistory"
                     }
                   },
                   "Property": "UpdateDate"
                 }
               },
-              "queryRef": "01 XER_TASK.UpdateDate",
+              "queryRef": "UpdateHistory.UpdateDate",
               "nativeQueryRef": "UpdateDate",
               "active": true,
               "format": "MMM yy"
@@ -43,11 +43,12 @@
                       "Entity": "XER  Counts"
                     }
                   },
-                  "Property": "No Constraint %"
+                  "Property": "No Constraint % (History)"
                 }
               },
               "queryRef": "XER  Counts.No Constraint %",
-              "nativeQueryRef": "No Constraint %"
+              "nativeQueryRef": "No Constraint %",
+              "displayName": "No Constraint %"
             }
           ]
         },
@@ -61,11 +62,12 @@
                       "Entity": "XER  Counts"
                     }
                   },
-                  "Property": "As Late%"
+                  "Property": "As Late% (History)"
                 }
               },
               "queryRef": "XER  Counts.As Late%",
-              "nativeQueryRef": "As Late%"
+              "nativeQueryRef": "As Late%",
+              "displayName": "As Late%"
             },
             {
               "field": {
@@ -75,11 +77,12 @@
                       "Entity": "XER  Counts"
                     }
                   },
-                  "Property": "Fin On %"
+                  "Property": "Fin On % (History)"
                 }
               },
               "queryRef": "XER  Counts.Fin On %",
-              "nativeQueryRef": "Fin On %"
+              "nativeQueryRef": "Fin On %",
+              "displayName": "Fin On %"
             },
             {
               "field": {
@@ -89,11 +92,12 @@
                       "Entity": "XER  Counts"
                     }
                   },
-                  "Property": "Fin On/Aft %"
+                  "Property": "Fin On/Aft % (History)"
                 }
               },
               "queryRef": "XER  Counts.Fin On/Aft %",
-              "nativeQueryRef": "Fin On/Aft %"
+              "nativeQueryRef": "Fin On/Aft %",
+              "displayName": "Fin On/Aft %"
             },
             {
               "field": {
@@ -103,11 +107,12 @@
                       "Entity": "XER  Counts"
                     }
                   },
-                  "Property": "Fin On/Bef %"
+                  "Property": "Fin On/Bef % (History)"
                 }
               },
               "queryRef": "XER  Counts.Fin On/Bef %",
-              "nativeQueryRef": "Fin On/Bef %"
+              "nativeQueryRef": "Fin On/Bef %",
+              "displayName": "Fin On/Bef %"
             },
             {
               "field": {
@@ -117,11 +122,12 @@
                       "Entity": "XER  Counts"
                     }
                   },
-                  "Property": "Mand Fin %"
+                  "Property": "Mand Fin % (History)"
                 }
               },
               "queryRef": "XER  Counts.Mand Fin %",
-              "nativeQueryRef": "Mand Fin %"
+              "nativeQueryRef": "Mand Fin %",
+              "displayName": "Mand Fin %"
             },
             {
               "field": {
@@ -131,11 +137,12 @@
                       "Entity": "XER  Counts"
                     }
                   },
-                  "Property": "Mand Start %"
+                  "Property": "Mand Start % (History)"
                 }
               },
               "queryRef": "XER  Counts.Mand Start %",
-              "nativeQueryRef": "Mand Start %"
+              "nativeQueryRef": "Mand Start %",
+              "displayName": "Mand Start %"
             },
             {
               "field": {
@@ -145,11 +152,12 @@
                       "Entity": "XER  Counts"
                     }
                   },
-                  "Property": "Start On %"
+                  "Property": "Start On % (History)"
                 }
               },
               "queryRef": "XER  Counts.Start on %",
-              "nativeQueryRef": "Start On %"
+              "nativeQueryRef": "Start On %",
+              "displayName": "Start On %"
             },
             {
               "field": {
@@ -159,11 +167,12 @@
                       "Entity": "XER  Counts"
                     }
                   },
-                  "Property": "Start On/Aft %"
+                  "Property": "Start On/Aft % (History)"
                 }
               },
               "queryRef": "XER  Counts.Start On/Aft %",
-              "nativeQueryRef": "Start On/Aft %"
+              "nativeQueryRef": "Start On/Aft %",
+              "displayName": "Start On/Aft %"
             },
             {
               "field": {
@@ -173,11 +182,12 @@
                       "Entity": "XER  Counts"
                     }
                   },
-                  "Property": "Start On/Bef %"
+                  "Property": "Start On/Bef % (History)"
                 }
               },
               "queryRef": "XER  Counts.Start On/Bef %",
-              "nativeQueryRef": "Start On/Bef %"
+              "nativeQueryRef": "Start On/Bef %",
+              "displayName": "Start On/Bef %"
             }
           ]
         }
@@ -189,7 +199,7 @@
               "Column": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "01 XER_TASK"
+                    "Entity": "UpdateHistory"
                   }
                 },
                 "Property": "UpdateDate"

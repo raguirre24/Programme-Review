@@ -3349,16 +3349,6 @@ cultureInfo en-NZ
 			            },
 			            "Weight": 0.468
 			          }
-			        },
-			        {
-			          "Complete": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -5492,26 +5482,6 @@ cultureInfo en-NZ
 			            },
 			            "Weight": 0.9
 			          }
-			        },
-			        {
-			          "Total Remaining": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
-			        },
-			        {
-			          "Remaining": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -5534,16 +5504,6 @@ cultureInfo en-NZ
 			            "Type": "Noun",
 			            "State": "Generated",
 			            "Weight": 0.99
-			          }
-			        },
-			        {
-			          "0-10 days": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -5568,16 +5528,6 @@ cultureInfo en-NZ
 			            "State": "Generated",
 			            "Weight": 0.99
 			          }
-			        },
-			        {
-			          "11-30 days": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -5600,16 +5550,6 @@ cultureInfo en-NZ
 			            "Type": "Noun",
 			            "State": "Generated",
 			            "Weight": 0.99
-			          }
-			        },
-			        {
-			          "31-50 days": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -5777,16 +5717,6 @@ cultureInfo en-NZ
 			            },
 			            "Weight": 0.605
 			          }
-			        },
-			        {
-			          ">50 days": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -5819,16 +5749,6 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.605
-			          }
-			        },
-			        {
-			          "<0 days": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -6291,16 +6211,6 @@ cultureInfo en-NZ
 			            },
 			            "Weight": 0.605
 			          }
-			        },
-			        {
-			          "<50 days": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -6334,16 +6244,6 @@ cultureInfo en-NZ
 			            },
 			            "Weight": 0.605
 			          }
-			        },
-			        {
-			          "<30 days": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -6376,16 +6276,6 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.605
-			          }
-			        },
-			        {
-			          "<10 days": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -8049,16 +7939,6 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "<1 Month": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
-			        },
-			        {
 			          "Delayed <1 mth": {
 			            "State": "Suggested",
 			            "Source": {
@@ -8082,16 +7962,6 @@ cultureInfo en-NZ
 			        {
 			          "PreviousMonth_FinishVariance_<3_Month_TT_Task": {
 			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "1-3 Months": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        },
 			        {
@@ -8121,16 +7991,6 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "3-6 Months": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
-			        },
-			        {
 			          "Delayed 3-6 mths": {
 			            "State": "Suggested",
 			            "Source": {
@@ -8154,16 +8014,6 @@ cultureInfo en-NZ
 			        {
 			          "PreviousMonth_FinishVariance_>6_Month_TT_Task": {
 			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "> 6 Months": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        },
 			        {
@@ -8198,16 +8048,6 @@ cultureInfo en-NZ
 			            "State": "Generated",
 			            "Weight": 0.99
 			          }
-			        },
-			        {
-			          "0-10 days": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -8230,16 +8070,6 @@ cultureInfo en-NZ
 			            "Type": "Noun",
 			            "State": "Generated",
 			            "Weight": 0.99
-			          }
-			        },
-			        {
-			          "11-20 days": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -8264,16 +8094,6 @@ cultureInfo en-NZ
 			            "State": "Generated",
 			            "Weight": 0.99
 			          }
-			        },
-			        {
-			          "21-30 days": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -8297,16 +8117,6 @@ cultureInfo en-NZ
 			            "State": "Generated",
 			            "Weight": 0.99
 			          }
-			        },
-			        {
-			          "31-44 days": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -8322,16 +8132,6 @@ cultureInfo en-NZ
 			        {
 			          "Count_Rem_Duration_>44d": {
 			            "State": "Generated"
-			          }
-			        },
-			        {
-			          ">44 days": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -8416,16 +8216,6 @@ cultureInfo en-NZ
 			            },
 			            "Weight": 0.504
 			          }
-			        },
-			        {
-			          "<44 days": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -8508,16 +8298,6 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.504
-			          }
-			        },
-			        {
-			          "<30 days": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -8602,16 +8382,6 @@ cultureInfo en-NZ
 			            },
 			            "Weight": 0.504
 			          }
-			        },
-			        {
-			          "<20 days": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -8694,16 +8464,6 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.504
-			          }
-			        },
-			        {
-			          "<10 days": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -20687,16 +20447,6 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "0": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
-			        },
-			        {
 			          "Ahead": {
 			            "State": "Suggested",
 			            "Source": {
@@ -23996,16 +23746,6 @@ cultureInfo en-NZ
 			          "PreviousMonth_FinishVariance_Ahead_TT_Task ( 1)": {
 			            "State": "Generated",
 			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "Ahead": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -34737,16 +34477,6 @@ cultureInfo en-NZ
 			          "Baseline_FinishVariance_<1_Month_TT_Task": {
 			            "State": "Generated"
 			          }
-			        },
-			        {
-			          "<1 Month": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -34762,16 +34492,6 @@ cultureInfo en-NZ
 			        {
 			          "Baseline_FinishVariance_<3_Month_TT_Task": {
 			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "1-3 Months": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -34789,16 +34509,6 @@ cultureInfo en-NZ
 			          "Baseline_FinishVariance_<6_Month_TT_Task": {
 			            "State": "Generated"
 			          }
-			        },
-			        {
-			          "3-6 Months": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -34814,16 +34524,6 @@ cultureInfo en-NZ
 			        {
 			          "Baseline_FinishVariance_>6_Month_TT_Task": {
 			            "State": "Generated"
-			          }
-			        },
-			        {
-			          ">6 Months": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -38872,6 +38572,1171 @@ cultureInfo en-NZ
 			      "Terms": [
 			        {
 			          "Planning window": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.latest_finish_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "Latest Finish (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Latest finish": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.variance_to_previous_update_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "Variance to Previous Update (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Variance to Previous Update": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "activity_completion.completion_score_previous_date_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Activity Completion",
+			          "ConceptualProperty": "Completion Score Previous Date (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Completion Score Previous Date": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_metrics.lags_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Metrics",
+			          "ConceptualProperty": "Lags% (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Lags%": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_metrics.column0float_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Metrics",
+			          "ConceptualProperty": "0Float% (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "0Float%": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_metrics.highdur_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Metrics",
+			          "ConceptualProperty": "HighDur% (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "HighDur%": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_metrics.highfloat_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Metrics",
+			          "ConceptualProperty": "HighFloat% (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "HighFloat%": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_metrics.missingsuccessor_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Metrics",
+			          "ConceptualProperty": "MissingSuccessor% (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "MissingSuccessor%": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_metrics.datadate_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Metrics",
+			          "ConceptualProperty": "DataDate% (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "DataDate%": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_metrics.column0lead_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Metrics",
+			          "ConceptualProperty": "<0Lead% (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "<0Lead%": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_metrics.column0float_history1": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Metrics",
+			          "ConceptualProperty": "<0Float% (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "<0Float%": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_metrics.constraint_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Metrics",
+			          "ConceptualProperty": "Constraint% (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Constraint%": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_metrics.missingpredecessor_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Metrics",
+			          "ConceptualProperty": "MissingPredecessor% (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "MissingLogic%": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_metrics.score_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Metrics",
+			          "ConceptualProperty": "Score (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Score": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.count_complete_tasks_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Count_Complete_Tasks (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Complete": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.count_tasks_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Count_Tasks (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Total": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.count_remaining_tasks_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Count_Remaining_Tasks (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Total Remaining": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        },
+			        {
+			          "Remaining": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.count_incomplete_float_less_50_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Count_Incomplete_Float_Less_50 (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "<50 days": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.count_incomplete_float_less_30_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Count_Incomplete_Float_Less_30 (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "<30 days": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.count_incomplete_float_less_10_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Count_Incomplete_Float_Less_10 (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "<10 days": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.count_incomplete_float_less_0_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Count_Incomplete_Float_Less_0 (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "<0 days": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.count_incomplete_float_0_to_10_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Count_Incomplete_Float_0_to_10 (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "0-10 days": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.count_incomplete_float_10_to_30_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Count_Incomplete_Float_10_to_30 (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "11-30 days": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.count_incomplete_float_30_to_50_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Count_Incomplete_Float_30_to_50 (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "31-50 days": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.count_incomplete_float_more_50_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Count_Incomplete_Float_More_50 (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          ">50 days": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.count_rem_duration_less_44_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Count_Rem_Duration_Less_44 (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "<44 days": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.count_rem_duration_less_30_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Count_Rem_Duration_Less_30 (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "<30 days": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.count_rem_duration_less_20_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Count_Rem_Duration_Less_20 (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "<20 days": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.count_rem_duration_less_10_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Count_Rem_Duration_Less_10 (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "<10 days": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.count_rem_duration_0_to_10_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Count_Rem_Duration_0_to_10 (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "0-10 days": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.count_rem_duration_10_to_20_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Count_Rem_Duration_10_to_20 (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "11-20 days": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.count_rem_duration_20_to_30_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Count_Rem_Duration_20_to_30 (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "21-30 days": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.count_rem_duration_30_to_44_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Count_Rem_Duration_30_to_44 (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "31-44 days": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.count_rem_duration_44d_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Count_Rem_Duration_>44d (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          ">44 days": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.no_constraint__history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "No Constraint % (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "No Constraint %": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.as_late_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "As Late% (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "As Late%": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.fin_on__history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Fin On % (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Fin On %": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.fin_on_aft__history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Fin On/Aft % (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Fin On/Aft %": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.fin_on_bef__history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Fin On/Bef % (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Fin On/Bef %": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.mand_fin__history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Mand Fin % (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Mand Fin %": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.mand_start__history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Mand Start % (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Mand Start %": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.start_on__history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Start On % (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Start On %": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.start_on_aft__history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Start On/Aft % (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Start On/Aft %": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.start_on_bef__history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Start On/Bef % (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Start On/Bef %": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.previousmonth_finishvariance_ahead_tt_task_1_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "PreviousMonth_FinishVariance_Ahead_TT_Task (-1) (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Ahead": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.previousmonth_finishvariance_ahead_tt_task_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "PreviousMonth_FinishVariance_Ahead_TT_Task (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "0": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.previousmonth_finishvariance_1_month_tt_task_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "PreviousMonth_FinishVariance_<1_Month_TT_Task (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "<1 Month": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.previousmonth_finishvariance_3_month_tt_task_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "PreviousMonth_FinishVariance_<3_Month_TT_Task (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "1-3 Months": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.previousmonth_finishvariance_6_month_tt_task_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "PreviousMonth_FinishVariance_<6_Month_TT_Task (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "3-6 Months": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.previousmonth_finishvariance_6_month_tt_task_history1": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "PreviousMonth_FinishVariance_>6_Month_TT_Task (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "> 6 Months": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.baseline_finishvariance_1_month_tt_task_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Baseline_FinishVariance_<1_Month_TT_Task (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "<1 Month": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.baseline_finishvariance_3_month_tt_task_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Baseline_FinishVariance_<3_Month_TT_Task (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "1-3 Months": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.baseline_finishvariance_6_month_tt_task_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Baseline_FinishVariance_<6_Month_TT_Task (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "3-6 Months": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.baseline_finishvariance_6_month_tt_task_history1": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Baseline_FinishVariance_>6_Month_TT_Task (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          ">6 Months": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer__counts.baseline_finishvariance_all_other_history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER  Counts",
+			          "ConceptualProperty": "Baseline_FinishVariance_All_Other (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Baseline_FinishVariance_All_Other": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",

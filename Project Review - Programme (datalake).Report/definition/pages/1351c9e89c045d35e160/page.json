@@ -137,12 +137,12 @@
     {
       "source": "6ddb9f1cc011d51baf88",
       "target": "7d73fb0095030dc00414",
-      "type": "NoFilter"
+      "type": "DataFilter"
     },
     {
       "source": "6ddb9f1cc011d51baf88",
       "target": "5a895a790b0217498ab6",
-      "type": "NoFilter"
+      "type": "DataFilter"
     },
     {
       "source": "3a91548c4ddc2ccbc6ba",
@@ -152,7 +152,7 @@
     {
       "source": "6ddb9f1cc011d51baf88",
       "target": "a62d522cc32a6e801038",
-      "type": "NoFilter"
+      "type": "DataFilter"
     },
     {
       "source": "f0d83bea745d929136aa",

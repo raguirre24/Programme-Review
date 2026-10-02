@@ -82,6 +82,7 @@ ref table 'Scenario Rate Basis'
 ref table 'Scenario Unit'
 ref table 'Scenario Period'
 ref table 'Resource Scenario Measures'
+ref table UpdateHistory
 
 ref role 'Project Access'
 

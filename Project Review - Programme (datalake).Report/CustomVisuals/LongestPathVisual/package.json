@@ -16,7 +16,7 @@
     "name": "LongestPathVisual",
     "displayName": "Longest Path Visual",
     "version": "3.0.0.0",
-    "description": "Critical Path Method Gantt chart. © 2026 Ricardo Aguirre. All rights reserved. Licensed use only — see LICENSE.md in distribution. Contact ricardoaguirregarcia@gmail.com for licensing.",
+    "description": "Critical Path Method Gantt chart for P6-style schedules: longest path and float-based criticality, driving relationship tracing, WBS grouping, baseline and previous-update comparison, progress line, look-ahead filtering, and Excel and PDF export.",
     "supportUrl": "mailto:ricardoaguirregarcia@gmail.com",
     "gitHubUrl": "",
     "visualClassName": "Visual"

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "d72aba6b4758fe6616f2",
   "position": {
     "x": 902.5,
@@ -20,13 +20,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "CurrentDate"
+                      "Entity": "UpdateHistory"
                     }
                   },
                   "Property": "UpdateDate"
                 }
               },
-              "queryRef": "CurrentDate.UpdateDate",
+              "queryRef": "UpdateHistory.UpdateDate",
               "nativeQueryRef": "UpdateDate",
               "active": true
             }
@@ -42,11 +42,12 @@
                       "Entity": "Activity Completion"
                     }
                   },
-                  "Property": "Completion Score Previous Date"
+                  "Property": "Completion Score Previous Date (History)"
                 }
               },
               "queryRef": "XER Metrics.Completion Score",
-              "nativeQueryRef": "Completion Score Previous Date"
+              "nativeQueryRef": "Completion Score Previous Date (History)",
+              "displayName": "Completion Score Previous Date"
             }
           ]
         }
@@ -58,7 +59,7 @@
               "Column": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "CurrentDate"
+                    "Entity": "UpdateHistory"
                   }
                 },
                 "Property": "UpdateDate"
@@ -91,6 +92,30 @@
               "expr": {
                 "Literal": {
                   "Value": "true"
+                }
+              }
+            },
+            "strokeColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 9,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "markerColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0
+                    }
+                  }
                 }
               }
             }
@@ -231,6 +256,34 @@
         },
         "type": "Advanced",
         "howCreated": "User"
+      },
+      {
+        "name": "3e9094fe534d0de502dd",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "UpdateHistory"
+              }
+            },
+            "Property": "UpdateDate"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "0eae48066e78d86aabad",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Activity Completion"
+              }
+            },
+            "Property": "Completion Score Previous Date (History)"
+          }
+        },
+        "type": "Advanced"
       }
     ]
   }

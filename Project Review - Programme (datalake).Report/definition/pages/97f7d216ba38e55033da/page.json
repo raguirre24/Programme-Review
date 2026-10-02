@@ -87,12 +87,12 @@
     {
       "source": "43278dd5dec86b7b1c93",
       "target": "f0c9695069063ce1e7a5",
-      "type": "NoFilter"
+      "type": "DataFilter"
     },
     {
       "source": "43278dd5dec86b7b1c93",
       "target": "8d4942bbdcedd4a00594",
-      "type": "NoFilter"
+      "type": "DataFilter"
     },
     {
       "source": "3d6eaba8af0d76028d95",

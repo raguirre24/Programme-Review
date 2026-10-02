@@ -20,13 +20,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "01 XER_TASK"
+                      "Entity": "UpdateHistory"
                     }
                   },
                   "Property": "UpdateDate"
                 }
               },
-              "queryRef": "01 XER_TASK.UpdateDate",
+              "queryRef": "UpdateHistory.UpdateDate",
               "nativeQueryRef": "UpdateDate",
               "active": true,
               "format": "MMM yy"
@@ -37,22 +37,18 @@
           "projections": [
             {
               "field": {
-                "Aggregation": {
+                "Measure": {
                   "Expression": {
-                    "Column": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "01 XER_TASK"
-                        }
-                      },
-                      "Property": "Finish"
+                    "SourceRef": {
+                      "Entity": "XER Measures"
                     }
                   },
-                  "Function": 4
+                  "Property": "Latest Finish (History)"
                 }
               },
-              "queryRef": "Min(01 XER_TASK.finish)",
-              "nativeQueryRef": "Latest finish"
+              "queryRef": "XER Measures.Latest Finish (History)",
+              "nativeQueryRef": "Latest Finish (History)",
+              "displayName": "Latest finish"
             }
           ]
         },
@@ -66,11 +62,12 @@
                       "Entity": "XER Measures"
                     }
                   },
-                  "Property": "Variance to Previous Update"
+                  "Property": "Variance to Previous Update (History)"
                 }
               },
-              "queryRef": "XER Measures.Variance to Previous Update",
-              "nativeQueryRef": "Variance to Previous Update"
+              "queryRef": "XER Measures.Variance to Previous Update (History)",
+              "nativeQueryRef": "Variance to Previous Update (History)",
+              "displayName": "Variance to Previous Update"
             }
           ]
         }
@@ -82,7 +79,7 @@
               "Column": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "01 XER_TASK"
+                    "Entity": "UpdateHistory"
                   }
                 },
                 "Property": "UpdateDate"

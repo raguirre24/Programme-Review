@@ -282,6 +282,47 @@ table 'XER Measures'
 		formatString: 0
 		lineageTag: e4281729-1a94-4d8a-9a11-8274a1209b55
 
+	measure 'Variance to Previous Update (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    SUMX(
+			        HistoryUpdates,
+			        VAR AxisUpdate = UpdateHistory[UpdateDate]
+			        RETURN
+			            CALCULATE(
+			                IF(NOT ISEMPTY('01 XER_TASK'), [Variance to Previous Update]),
+			                REMOVEFILTERS(CurrentDate),
+			                TREATAS({ AxisUpdate }, '01 XER_TASK'[UpdateDate])
+			            )
+			    )
+		formatString: 0
+		lineageTag: 43d29fba-4880-4513-86d4-b34c7a29555a
+
+	measure 'Latest Finish (History)' =
+			
+			// Tooltip partner for 'Variance to Previous Update (History)'; blank after the selected update so no extra axis months appear.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        MAX('01 XER_TASK'[Finish]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: dd/mm/yyyy
+		lineageTag: db31a615-edfe-41c7-929b-f28bac3b90fa
+
 	partition 'XER Measures' = m
 		mode: import
 		source =

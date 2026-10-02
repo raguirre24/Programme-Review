@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "1cf588a229dd59ca0e55",
   "position": {
     "x": 0,
@@ -20,13 +20,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "01 XER_TASK"
+                      "Entity": "UpdateHistory"
                     }
                   },
                   "Property": "UpdateDate"
                 }
               },
-              "queryRef": "01 XER_TASK.UpdateDate",
+              "queryRef": "UpdateHistory.UpdateDate",
               "nativeQueryRef": "UpdateDate",
               "active": true
             }
@@ -42,11 +42,12 @@
                       "Entity": "XER Metrics"
                     }
                   },
-                  "Property": "HighDur%"
+                  "Property": "HighDur% (History)"
                 }
               },
               "queryRef": "XER Metrics.HighDur%",
-              "nativeQueryRef": "HighDur%"
+              "nativeQueryRef": "HighDur% (History)",
+              "displayName": "HighDur%"
             }
           ]
         }
@@ -58,7 +59,7 @@
               "Column": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "01 XER_TASK"
+                    "Entity": "UpdateHistory"
                   }
                 },
                 "Property": "UpdateDate"
@@ -78,6 +79,30 @@
               "expr": {
                 "Literal": {
                   "Value": "true"
+                }
+              }
+            },
+            "strokeColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 9,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "markerColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0
+                    }
+                  }
                 }
               }
             }
@@ -309,5 +334,37 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "2848ba20aa537809664b",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "UpdateHistory"
+              }
+            },
+            "Property": "UpdateDate"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "e8d7a56aa4d48b131112",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Metrics"
+              }
+            },
+            "Property": "HighDur% (History)"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

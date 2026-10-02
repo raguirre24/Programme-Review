@@ -76,6 +76,24 @@ table 'Activity Completion'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
+	measure 'Completion Score Previous Date (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Completion Score Previous Date]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: 0%;-0%;0%
+		lineageTag: fdfbfa71-20fa-450e-a789-e9aa349a4467
+
 	partition 'Activity Completion' = m
 		mode: import
 		source =

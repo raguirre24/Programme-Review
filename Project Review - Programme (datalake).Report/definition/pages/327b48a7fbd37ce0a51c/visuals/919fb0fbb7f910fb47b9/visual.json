@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "919fb0fbb7f910fb47b9",
   "position": {
     "x": 718.33333333333337,
@@ -20,13 +20,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "01 XER_TASK"
+                      "Entity": "UpdateHistory"
                     }
                   },
                   "Property": "UpdateDate"
                 }
               },
-              "queryRef": "01 XER_TASK.UpdateDate",
+              "queryRef": "UpdateHistory.UpdateDate",
               "nativeQueryRef": "UpdateDate",
               "active": true
             }
@@ -42,11 +42,12 @@
                       "Entity": "XER Metrics"
                     }
                   },
-                  "Property": "<0Float%"
+                  "Property": "<0Float% (History)"
                 }
               },
               "queryRef": "XER Metrics.<0Float%",
-              "nativeQueryRef": "<0Float%"
+              "nativeQueryRef": "<0Float% (History)",
+              "displayName": "<0Float%"
             }
           ]
         }
@@ -58,7 +59,7 @@
               "Column": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "01 XER_TASK"
+                    "Entity": "UpdateHistory"
                   }
                 },
                 "Property": "UpdateDate"
@@ -78,6 +79,29 @@
               "expr": {
                 "Literal": {
                   "Value": "true"
+                }
+              }
+            },
+            "strokeColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#d50000'"
+                    }
+                  }
+                }
+              }
+            },
+            "markerColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0
+                    }
+                  }
                 }
               }
             }

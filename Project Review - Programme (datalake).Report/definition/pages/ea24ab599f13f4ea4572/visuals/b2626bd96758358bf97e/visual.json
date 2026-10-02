@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "b2626bd96758358bf97e",
   "position": {
     "x": 887.5,
@@ -362,7 +362,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "406.04149866861326D"
+                  "Value": "410D"
                 }
               }
             }
@@ -404,7 +404,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "169.49995708464928D"
+                  "Value": "175D"
                 }
               }
             }
@@ -507,6 +507,20 @@
               "expr": {
                 "Literal": {
                   "Value": "'Center'"
+                }
+              }
+            },
+            "columnAdjustment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'fixedWidth'"
+                }
+              }
+            },
+            "defaultColumnWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "90D"
                 }
               }
             }

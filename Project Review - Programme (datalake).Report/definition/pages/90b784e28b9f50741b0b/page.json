@@ -353,7 +353,7 @@
     {
       "source": "94c3d990b39a785535ce",
       "target": "9d12bdba2dd507e3b52d",
-      "type": "NoFilter"
+      "type": "DataFilter"
     },
     {
       "source": "6e49a460604369390e81",

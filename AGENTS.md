@@ -8,7 +8,7 @@ Specialist skills live in `.agents/skills/` — one folder per skill, each with 
 
 | Skill folder | Use for |
 |---|---|
-| `p6-schedule-data` | Anything touching Primavera P6 / XER data: TASK, TASKPRED, WBS, calendars, float, data date, percent complete, snapshots. Also read `references/xer-table-reference.md` before writing ingestion code or wide queries |
+| `p6-schedule-data` | Anything touching Primavera P6 / XER data: TASK, TASKPRED, WBS, calendars, float, data date, percent complete, snapshots, trend-by-update visuals (history up to the `CurrentDate` selection). Also read `references/xer-table-reference.md` before writing ingestion code or wide queries |
 | `powerbi-data-connections` | Connecting Power BI to SharePoint, Amazon Athena (ODBC), SQL, dataflows; gateways, credentials, refresh failures, environment parameters |
 | `power-query-m` | Any Power Query / M code, however small; query folding, combining files, refresh performance, formula firewall |
 | `dax-development` | Any DAX — measures, calculated columns, time intelligence, wrong totals, filter context questions |

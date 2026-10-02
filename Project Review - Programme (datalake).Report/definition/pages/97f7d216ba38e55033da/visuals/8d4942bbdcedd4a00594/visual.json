@@ -20,13 +20,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "01 XER_TASK"
+                      "Entity": "UpdateHistory"
                     }
                   },
                   "Property": "UpdateDate"
                 }
               },
-              "queryRef": "01 XER_TASK.UpdateDate",
+              "queryRef": "UpdateHistory.UpdateDate",
               "nativeQueryRef": "UpdateDate",
               "active": true,
               "format": "MMM yy"
@@ -43,7 +43,7 @@
                       "Entity": "XER  Counts"
                     }
                   },
-                  "Property": "Count_Complete_Tasks"
+                  "Property": "Count_Complete_Tasks (History)"
                 }
               },
               "queryRef": "XER  Counts.Count_Complete_Tasks",
@@ -62,7 +62,7 @@
                       "Entity": "XER  Counts"
                     }
                   },
-                  "Property": "Count_Tasks"
+                  "Property": "Count_Tasks (History)"
                 }
               },
               "queryRef": "XER  Counts.Count_Tasks",
@@ -77,7 +77,7 @@
                       "Entity": "XER  Counts"
                     }
                   },
-                  "Property": "Count_Remaining_Tasks"
+                  "Property": "Count_Remaining_Tasks (History)"
                 }
               },
               "queryRef": "XER  Counts.Count_Remaining_Tasks",
@@ -92,7 +92,7 @@
                       "Entity": "XER  Counts"
                     }
                   },
-                  "Property": "Count_Rem_Duration_Less_44"
+                  "Property": "Count_Rem_Duration_Less_44 (History)"
                 }
               },
               "queryRef": "XER  Counts.Count_Rem_Duration_Less_44",
@@ -107,7 +107,7 @@
                       "Entity": "XER  Counts"
                     }
                   },
-                  "Property": "Count_Rem_Duration_Less_30"
+                  "Property": "Count_Rem_Duration_Less_30 (History)"
                 }
               },
               "queryRef": "XER  Counts.Count_Rem_Duration_Less_30",
@@ -122,7 +122,7 @@
                       "Entity": "XER  Counts"
                     }
                   },
-                  "Property": "Count_Rem_Duration_Less_20"
+                  "Property": "Count_Rem_Duration_Less_20 (History)"
                 }
               },
               "queryRef": "XER  Counts.Count_Rem_Duration_Less_20",
@@ -137,7 +137,7 @@
                       "Entity": "XER  Counts"
                     }
                   },
-                  "Property": "Count_Rem_Duration_Less_10"
+                  "Property": "Count_Rem_Duration_Less_10 (History)"
                 }
               },
               "queryRef": "XER  Counts.Count_Rem_Duration_Less_10",
@@ -154,7 +154,7 @@
               "Column": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "01 XER_TASK"
+                    "Entity": "UpdateHistory"
                   }
                 },
                 "Property": "UpdateDate"

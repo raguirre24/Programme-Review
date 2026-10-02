@@ -20,13 +20,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "CurrentDate"
+                      "Entity": "UpdateHistory"
                     }
                   },
                   "Property": "UpdateDate"
                 }
               },
-              "queryRef": "CurrentDate.UpdateDate",
+              "queryRef": "UpdateHistory.UpdateDate",
               "nativeQueryRef": "UpdateDate",
               "active": true
             }
@@ -42,7 +42,7 @@
                       "Entity": "XER  Counts"
                     }
                   },
-                  "Property": "PreviousMonth_FinishVariance_Ahead_TT_Task (-1)"
+                  "Property": "PreviousMonth_FinishVariance_Ahead_TT_Task (-1) (History)"
                 }
               },
               "queryRef": "XER  Counts.PreviousMonth_FinishVariance_Ahead_TT_Task (-1)",
@@ -57,7 +57,7 @@
                       "Entity": "XER  Counts"
                     }
                   },
-                  "Property": "PreviousMonth_FinishVariance_Ahead_TT_Task"
+                  "Property": "PreviousMonth_FinishVariance_Ahead_TT_Task (History)"
                 }
               },
               "queryRef": "XER  Counts.PreviousMonth_FinishVariance_Ahead_TT_Task",
@@ -72,7 +72,7 @@
                       "Entity": "XER  Counts"
                     }
                   },
-                  "Property": "PreviousMonth_FinishVariance_<1_Month_TT_Task"
+                  "Property": "PreviousMonth_FinishVariance_<1_Month_TT_Task (History)"
                 }
               },
               "queryRef": "XER  Counts.PreviousMonth_FinishVariance_<1_Month_TT_Task",
@@ -87,7 +87,7 @@
                       "Entity": "XER  Counts"
                     }
                   },
-                  "Property": "PreviousMonth_FinishVariance_<3_Month_TT_Task"
+                  "Property": "PreviousMonth_FinishVariance_<3_Month_TT_Task (History)"
                 }
               },
               "queryRef": "XER  Counts.PreviousMonth_FinishVariance_<3_Month_TT_Task",
@@ -102,7 +102,7 @@
                       "Entity": "XER  Counts"
                     }
                   },
-                  "Property": "PreviousMonth_FinishVariance_<6_Month_TT_Task"
+                  "Property": "PreviousMonth_FinishVariance_<6_Month_TT_Task (History)"
                 }
               },
               "queryRef": "XER  Counts.PreviousMonth_FinishVariance_<6_Month_TT_Task",
@@ -117,7 +117,7 @@
                       "Entity": "XER  Counts"
                     }
                   },
-                  "Property": "PreviousMonth_FinishVariance_>6_Month_TT_Task"
+                  "Property": "PreviousMonth_FinishVariance_>6_Month_TT_Task (History)"
                 }
               },
               "queryRef": "XER  Counts.PreviousMonth_FinishVariance_>6_Month_TT_Task",
@@ -134,7 +134,7 @@
               "Column": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "CurrentDate"
+                    "Entity": "UpdateHistory"
                   }
                 },
                 "Property": "UpdateDate"
@@ -593,7 +593,7 @@
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "CurrentDate"
+                "Entity": "UpdateHistory"
               }
             },
             "Property": "UpdateDate"
@@ -610,7 +610,7 @@
                 "Entity": "XER  Counts"
               }
             },
-            "Property": "PreviousMonth_FinishVariance_Ahead_TT_Task (-1)"
+            "Property": "PreviousMonth_FinishVariance_Ahead_TT_Task (-1) (History)"
           }
         },
         "type": "Advanced"
@@ -624,7 +624,7 @@
                 "Entity": "XER  Counts"
               }
             },
-            "Property": "PreviousMonth_FinishVariance_Ahead_TT_Task"
+            "Property": "PreviousMonth_FinishVariance_Ahead_TT_Task (History)"
           }
         },
         "type": "Advanced"
@@ -638,7 +638,7 @@
                 "Entity": "XER  Counts"
               }
             },
-            "Property": "PreviousMonth_FinishVariance_<1_Month_TT_Task"
+            "Property": "PreviousMonth_FinishVariance_<1_Month_TT_Task (History)"
           }
         },
         "type": "Advanced"
@@ -652,7 +652,7 @@
                 "Entity": "XER  Counts"
               }
             },
-            "Property": "PreviousMonth_FinishVariance_<3_Month_TT_Task"
+            "Property": "PreviousMonth_FinishVariance_<3_Month_TT_Task (History)"
           }
         },
         "type": "Advanced"
@@ -666,7 +666,7 @@
                 "Entity": "XER  Counts"
               }
             },
-            "Property": "PreviousMonth_FinishVariance_<6_Month_TT_Task"
+            "Property": "PreviousMonth_FinishVariance_<6_Month_TT_Task (History)"
           }
         },
         "type": "Advanced"
@@ -680,7 +680,7 @@
                 "Entity": "XER  Counts"
               }
             },
-            "Property": "PreviousMonth_FinishVariance_>6_Month_TT_Task"
+            "Property": "PreviousMonth_FinishVariance_>6_Month_TT_Task (History)"
           }
         },
         "type": "Advanced"

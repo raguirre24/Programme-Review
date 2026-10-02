@@ -3151,7 +3151,7 @@
                           "Entity": "XER Measures"
                         }
                       },
-                      "Property": "Variance to Previous Update"
+                      "Property": "Variance to Previous Update (History)"
                     }
                   },
                   "howCreated": 0
@@ -3163,7 +3163,7 @@
                     "Column": {
                       "Expression": {
                         "SourceRef": {
-                          "Entity": "01 XER_TASK"
+                          "Entity": "UpdateHistory"
                         }
                       },
                       "Property": "UpdateDate"
@@ -3175,18 +3175,13 @@
                   "name": "addab706153524110506",
                   "type": "Advanced",
                   "expression": {
-                    "Aggregation": {
+                    "Measure": {
                       "Expression": {
-                        "Column": {
-                          "Expression": {
-                            "SourceRef": {
-                              "Entity": "01 XER_TASK"
-                            }
-                          },
-                          "Property": "Finish"
+                        "SourceRef": {
+                          "Entity": "XER Measures"
                         }
                       },
-                      "Function": 4
+                      "Property": "Latest Finish (History)"
                     }
                   },
                   "howCreated": 0
@@ -3203,7 +3198,7 @@
                     "Column": {
                       "Expression": {
                         "SourceRef": {
-                          "Entity": "01 XER_TASK"
+                          "Entity": "UpdateHistory"
                         }
                       },
                       "Property": "UpdateDate"
@@ -3217,7 +3212,7 @@
                     "Column": {
                       "Expression": {
                         "SourceRef": {
-                          "Entity": "01 XER_TASK"
+                          "Entity": "UpdateHistory"
                         }
                       },
                       "Property": "UpdateDate"

@@ -1025,6 +1025,785 @@ table 'XER  Counts'
 		displayFolder: Baseline Finish Variance
 		lineageTag: 11f007d0-edeb-4970-94c9-0ed5b9312f27
 
+	measure 'Count_Complete_Tasks (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Count_Complete_Tasks]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: #,0
+		displayFolder: History Trend
+		lineageTag: e691a456-ade2-4607-aa27-2c4321e4f688
+
+	measure 'Count_Tasks (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Count_Tasks]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: #,0
+		displayFolder: History Trend
+		lineageTag: 8eace55e-3e78-4f7b-8b59-7e55b30147ca
+
+	measure 'Count_Remaining_Tasks (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Count_Remaining_Tasks]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: #,0
+		displayFolder: History Trend
+		lineageTag: 1e90fa7f-9ab9-444b-9d52-b419f83f2139
+
+	measure 'Count_Incomplete_Float_Less_50 (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Count_Incomplete_Float_Less_50]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: 0
+		displayFolder: History Trend
+		lineageTag: f54d148a-d937-4530-b659-a8244edb799b
+
+	measure 'Count_Incomplete_Float_Less_30 (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Count_Incomplete_Float_Less_30]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: 0
+		displayFolder: History Trend
+		lineageTag: 7d48b08f-ef97-452c-88b0-2ac2ce22c1f0
+
+	measure 'Count_Incomplete_Float_Less_10 (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Count_Incomplete_Float_Less_10]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: 0
+		displayFolder: History Trend
+		lineageTag: a1c6b04c-d231-4457-b5b4-c467a0c0c396
+
+	measure 'Count_Incomplete_Float_Less_0 (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Count_Incomplete_Float_Less_0]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: 0
+		displayFolder: History Trend
+		lineageTag: a7e4f985-cb38-4311-8185-2302243194c4
+
+	measure 'Count_Incomplete_Float_0_to_10 (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Count_Incomplete_Float_0_to_10]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: #,0
+		displayFolder: History Trend
+		lineageTag: 56373c06-3e06-4acc-a1af-e583a8a1b856
+
+	measure 'Count_Incomplete_Float_10_to_30 (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Count_Incomplete_Float_10_to_30]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: #,0
+		displayFolder: History Trend
+		lineageTag: 1197e960-ef38-40b4-bb3c-337f78963430
+
+	measure 'Count_Incomplete_Float_30_to_50 (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Count_Incomplete_Float_30_to_50]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: #,0
+		displayFolder: History Trend
+		lineageTag: 9c365cef-f741-4d10-88c2-d58283ab62fb
+
+	measure 'Count_Incomplete_Float_More_50 (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Count_Incomplete_Float_More_50]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: 0
+		displayFolder: History Trend
+		lineageTag: 62cbc77f-644d-4bab-9d32-550ce80d0913
+
+	measure 'Count_Rem_Duration_Less_44 (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Count_Rem_Duration_Less_44]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: #,0
+		displayFolder: History Trend
+		lineageTag: b16af9f5-5941-46b1-a8d7-00d4eb846a90
+
+	measure 'Count_Rem_Duration_Less_30 (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Count_Rem_Duration_Less_30]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: #,0
+		displayFolder: History Trend
+		lineageTag: 7a7be5d3-f00c-4ba5-967c-bfbff2892801
+
+	measure 'Count_Rem_Duration_Less_20 (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Count_Rem_Duration_Less_20]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: #,0
+		displayFolder: History Trend
+		lineageTag: b1b2fb8b-1871-4220-a146-dca4abc7e8ab
+
+	measure 'Count_Rem_Duration_Less_10 (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Count_Rem_Duration_Less_10]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: #,0
+		displayFolder: History Trend
+		lineageTag: 48233316-f160-43ef-8d93-f3360cf7e004
+
+	measure 'Count_Rem_Duration_0_to_10 (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Count_Rem_Duration_0_to_10]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: #,0
+		displayFolder: History Trend
+		lineageTag: f6b79d9b-4763-4ca1-a522-095d68ccd598
+
+	measure 'Count_Rem_Duration_10_to_20 (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Count_Rem_Duration_10_to_20]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: #,0
+		displayFolder: History Trend
+		lineageTag: ebd0bf13-cc90-4416-bee5-2ca844da9c16
+
+	measure 'Count_Rem_Duration_20_to_30 (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Count_Rem_Duration_20_to_30]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: #,0
+		displayFolder: History Trend
+		lineageTag: 2f0dda4f-3e74-44ed-99d1-a61926beba6d
+
+	measure 'Count_Rem_Duration_30_to_44 (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Count_Rem_Duration_30_to_44]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: #,0
+		displayFolder: History Trend
+		lineageTag: c7a25816-e0f9-4de3-a3df-5ed44ab27ea2
+
+	measure 'Count_Rem_Duration_>44d (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Count_Rem_Duration_>44d]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: #,0
+		displayFolder: History Trend
+		lineageTag: 4549d516-89b9-4adb-bc0f-8b28290cf815
+
+	measure 'No Constraint % (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [No Constraint %]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: History Trend
+		lineageTag: e11ffbb9-e025-4424-8dc8-53d7de75bfff
+
+	measure 'As Late% (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [As Late%]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: History Trend
+		lineageTag: e61b6d31-8d81-4075-b5ba-dd2f8662db96
+
+	measure 'Fin On % (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Fin On %]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: History Trend
+		lineageTag: 4e1e5c07-e035-4894-910e-9e069cde4a0a
+
+	measure 'Fin On/Aft % (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Fin On/Aft %]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: History Trend
+		lineageTag: b718f4cd-d992-4e1b-ad50-d40b614c8198
+
+	measure 'Fin On/Bef % (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Fin On/Bef %]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: History Trend
+		lineageTag: e6d78abf-4603-4b05-9a91-bf1e69227c73
+
+	measure 'Mand Fin % (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Mand Fin %]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: History Trend
+		lineageTag: 3a60011f-33bc-4b00-889a-a7dc51ddf2c5
+
+	measure 'Mand Start % (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Mand Start %]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: History Trend
+		lineageTag: 0e83c369-0ed0-4712-951c-1139a8c294b0
+
+	measure 'Start On % (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Start On %]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: History Trend
+		lineageTag: 0748efb7-2e4e-4b69-8cce-d1c6f01abe1a
+
+	measure 'Start On/Aft % (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Start On/Aft %]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: History Trend
+		lineageTag: 11deba84-3a97-463e-ba44-f51cd150e7e7
+
+	measure 'Start On/Bef % (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Start On/Bef %]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: History Trend
+		lineageTag: 4d4da35e-8d82-46a0-a66a-89bc39614cc2
+
+	measure 'PreviousMonth_FinishVariance_Ahead_TT_Task (-1) (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [PreviousMonth_FinishVariance_Ahead_TT_Task (-1)]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: 0
+		displayFolder: History Trend
+		lineageTag: 85bf7be2-3080-4d27-af9a-be3bb786bf0f
+
+	measure 'PreviousMonth_FinishVariance_Ahead_TT_Task (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [PreviousMonth_FinishVariance_Ahead_TT_Task]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: #,0
+		displayFolder: History Trend
+		lineageTag: 79047ded-e3e7-4e09-806c-553c8dae9df3
+
+	measure 'PreviousMonth_FinishVariance_<1_Month_TT_Task (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [PreviousMonth_FinishVariance_<1_Month_TT_Task]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: #,0
+		displayFolder: History Trend
+		lineageTag: 23a733eb-b4ca-4b3b-8902-072b897f214d
+
+	measure 'PreviousMonth_FinishVariance_<3_Month_TT_Task (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [PreviousMonth_FinishVariance_<3_Month_TT_Task]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: #,0
+		displayFolder: History Trend
+		lineageTag: d1e648ae-ad4e-4f94-b270-10dd8626c49d
+
+	measure 'PreviousMonth_FinishVariance_<6_Month_TT_Task (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [PreviousMonth_FinishVariance_<6_Month_TT_Task]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: #,0
+		displayFolder: History Trend
+		lineageTag: ca9f5b36-128b-43f2-9ec8-e9f6a54e2c68
+
+	measure 'PreviousMonth_FinishVariance_>6_Month_TT_Task (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [PreviousMonth_FinishVariance_>6_Month_TT_Task]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: #,0
+		displayFolder: History Trend
+		lineageTag: 3e413c33-a596-4b6a-b4b7-cca2c88b08b7
+
+	measure 'Baseline_FinishVariance_<1_Month_TT_Task (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Baseline_FinishVariance_<1_Month_TT_Task]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: 0
+		displayFolder: History Trend
+		lineageTag: 0e435222-6ba5-495d-a634-eac0bf608d8f
+
+	measure 'Baseline_FinishVariance_<3_Month_TT_Task (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Baseline_FinishVariance_<3_Month_TT_Task]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: 0
+		displayFolder: History Trend
+		lineageTag: 92740417-e359-43d1-8235-c44f04c53c44
+
+	measure 'Baseline_FinishVariance_<6_Month_TT_Task (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Baseline_FinishVariance_<6_Month_TT_Task]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: 0
+		displayFolder: History Trend
+		lineageTag: 24f4aad1-fed6-4541-a4f0-3ae22549fccf
+
+	measure 'Baseline_FinishVariance_>6_Month_TT_Task (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Baseline_FinishVariance_>6_Month_TT_Task]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: 0
+		displayFolder: History Trend
+		lineageTag: 7a3cf77b-e2ea-494e-a218-102f8fb1a066
+
+	measure 'Baseline_FinishVariance_All_Other (History)' =
+			
+			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
+			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+			VAR HistoryUpdates =
+			    FILTER(
+			        VALUES(UpdateHistory[UpdateDate]),
+			        UpdateHistory[UpdateDate] <= SelectedUpdate
+			    )
+			RETURN
+			    CALCULATE(
+			        IF(NOT ISEMPTY('01 XER_TASK'), [Baseline_FinishVariance_All_Other]),
+			        REMOVEFILTERS(CurrentDate),
+			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    )
+		formatString: 0
+		displayFolder: History Trend
+		lineageTag: 4074288a-3c75-4468-bcf4-4250065b9923
+
 	partition 'XER  Counts' = m
 		mode: import
 		source =

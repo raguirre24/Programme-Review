@@ -1,6 +1,6 @@
 ---
 name: p6-schedule-data
-description: Understand and correctly analyse Oracle Primavera P6 schedule data — XER file structure, TASK/TASKPRED/PROJWBS/CALENDAR tables, data date semantics, hours-to-days conversion, float, driving logic, relationship free float (aref/arls), percent complete types, unscheduled-task detection, and cross-export key stability. Use this skill whenever the user mentions P6, Primavera, XER files, schedules, activities, CPM, float, data date, baselines, TASK/TASKPRED tables, or is building reports/pipelines (Power BI, SQL, Athena, Python) over scheduling data. Use it before writing ANY query or measure against P6 data — naive treatment of P6 fields produces plausible-looking wrong numbers.
+description: Understand and correctly analyse Oracle Primavera P6 schedule data — XER file structure, TASK/TASKPRED/PROJWBS/CALENDAR tables, data date semantics, hours-to-days conversion, float, driving logic, relationship free float (aref/arls), percent complete types, unscheduled-task detection, cross-export key stability, and trend-by-update visuals that must show history up to the selected update (CurrentDate slicer). Use this skill whenever the user mentions P6, Primavera, XER files, schedules, activities, CPM, float, data date, baselines, TASK/TASKPRED tables, or is building reports/pipelines (Power BI, SQL, Athena, Python) over scheduling data. Use it before writing ANY query or measure against P6 data — naive treatment of P6 fields produces plausible-looking wrong numbers.
 ---
 
 # P6 Schedule Data
@@ -91,6 +91,32 @@ Exclude flagged tasks from float/critical-path visuals and surface them on a QA 
 - Trend analysis (slippage, float erosion): self-join consecutive snapshots on `task_code`; classify added/deleted/renamed activities explicitly (deleted ≠ complete!).
 - Store hours **and** the resolved per-activity `hours_per_day` at ingest so day conversions are stable even if calendars later change.
 - Keep the raw XER (or raw parsed tables) immutable; derive analytics tables from them — scheduling semantics disputes (delay claims!) require going back to source.
+
+### This workspace: trend visuals and the `CurrentDate` slicer
+
+`CurrentDate[UpdateDate]` (single-select slicer) has a **bidirectional** relationship to `'01 XER_TASK'[UpdateDate]`. A trend visual whose axis is either of those columns collapses to the selected month when the slicer filters it — and with the interaction set to `NoFilter` it ignores the selection and shows every update. Neither gives "history up to the selected update", and no measure can restore axis rows a filter has removed.
+
+Pattern for any trend-by-update visual:
+- **Axis and sort:** `UpdateHistory[UpdateDate]` — a disconnected calculated table (`DISTINCT('01 XER_TASK'[UpdateDate])`, no relationships).
+- **Slicer interaction:** `DataFilter` (the slicer must reach the visual so the measure can read the selection).
+- **Measure:** a `'<base> (History)'` wrapper; never edit the base measure (cards, gauges and matrices still need the selected month):
+
+```dax
+VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
+VAR HistoryUpdates =
+    FILTER(VALUES(UpdateHistory[UpdateDate]), UpdateHistory[UpdateDate] <= SelectedUpdate)
+RETURN
+    CALCULATE(
+        IF(NOT ISEMPTY('01 XER_TASK'), [<base>]),   -- blank, not 0, before the project existed
+        REMOVEFILTERS(CurrentDate),
+        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+    )
+```
+
+  Copy the base measure's `formatString`. Wrappers live beside their base measures (`'XER Measures'`, `'Activity Completion'`, `'XER Metrics'` folder *Schedule Quality Trend*, `'XER  Counts'` folder *History Trend*). For a non-additive base such as `Variance to Previous Update`, iterate the axis instead (`SUMX(HistoryUpdates, CALCULATE(..., TREATAS({AxisUpdate}, ...)))`) so each month is evaluated alone.
+- **Every field on the visual** must be history-aware, tooltips included: a plain column aggregation shows the selected month on every point, and any non-blank measure after the cut-off adds extra axis months.
+- **Visual JSON edits:** change only `Entity`/`Property`. Keep each projection's existing `queryRef` — series colours and markers are keyed to it (`"selector": {"metadata": "<queryRef>"}`) — and add `"displayName"` (the old label) where there isn't one, so legends don't read "… (History)". Update any bookmark that stores the visual's state (`grep` the visual id in `definition/bookmarks/`).
+- Calculation groups are not an option while visuals use implicit aggregations (they force `discourageImplicitMeasures`).
 
 ## Quality checks worth automating (DCMA-14 aligned)
 

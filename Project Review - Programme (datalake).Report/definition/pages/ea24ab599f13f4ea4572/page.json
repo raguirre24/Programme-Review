@@ -92,12 +92,12 @@
     {
       "source": "c22b2438bbd9d00fd0e1",
       "target": "a443a42b6ed02244a6dc",
-      "type": "NoFilter"
+      "type": "DataFilter"
     },
     {
       "source": "c22b2438bbd9d00fd0e1",
       "target": "92a3e137070d4b221c37",
-      "type": "NoFilter"
+      "type": "DataFilter"
     },
     {
       "source": "fd85806e21428c03cbe2",
