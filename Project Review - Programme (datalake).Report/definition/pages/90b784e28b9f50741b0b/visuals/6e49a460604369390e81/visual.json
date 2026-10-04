@@ -2,7 +2,7 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "6e49a460604369390e81",
   "position": {
-    "x": 6.0827222059254913,
+    "x": 6.01319882642248,
     "y": 265.12169661028355,
     "z": 1000,
     "height": 431.87327662070993,
@@ -10,10 +10,10 @@
     "tabOrder": 13000
   },
   "visual": {
-    "visualType": "pivotTable",
+    "visualType": "P6WBSMatrix8BDB3B26BB4B497EA3E044ADBDE081D0",
     "query": {
       "queryState": {
-        "Rows": {
+        "WBSLevels": {
           "projections": [
             {
               "field": {
@@ -28,7 +28,6 @@
               },
               "queryRef": "03 XER_PROJWBS.Level_2",
               "nativeQueryRef": "WBS",
-              "active": true,
               "displayName": "WBS"
             },
             {
@@ -43,8 +42,7 @@
                 }
               },
               "queryRef": "03 XER_PROJWBS.Level_3",
-              "nativeQueryRef": "Level_3",
-              "active": true
+              "nativeQueryRef": "Level_3"
             },
             {
               "field": {
@@ -58,8 +56,7 @@
                 }
               },
               "queryRef": "03 XER_PROJWBS.Level_4",
-              "nativeQueryRef": "Level_4",
-              "active": true
+              "nativeQueryRef": "Level_4"
             },
             {
               "field": {
@@ -73,8 +70,7 @@
                 }
               },
               "queryRef": "03 XER_PROJWBS.Level_5",
-              "nativeQueryRef": "Level_5",
-              "active": true
+              "nativeQueryRef": "Level_5"
             },
             {
               "field": {
@@ -88,23 +84,7 @@
                 }
               },
               "queryRef": "03 XER_PROJWBS.Level_6",
-              "nativeQueryRef": "Level_6",
-              "active": true
-            },
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "01 XER_TASK"
-                    }
-                  },
-                  "Property": "task_code"
-                }
-              },
-              "queryRef": "01 XER_TASK.task_code",
-              "nativeQueryRef": "task_code",
-              "active": true
+              "nativeQueryRef": "Level_6"
             }
           ]
         },
@@ -151,23 +131,28 @@
                   "Property": "ShowDuration"
                 }
               },
-              "queryRef": "XER Measures.Remaining Status",
-              "nativeQueryRef": "Remaining Duration",
-              "displayName": "Remaining Duration"
+              "queryRef": "XER Measures.ShowDuration",
+              "nativeQueryRef": "Rem. Duration",
+              "displayName": "Rem. Duration"
             },
             {
               "field": {
-                "Measure": {
+                "Aggregation": {
                   "Expression": {
-                    "SourceRef": {
-                      "Entity": "XER Measures"
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "01 XER_TASK"
+                        }
+                      },
+                      "Property": "total_float"
                     }
                   },
-                  "Property": "ShowFloat"
+                  "Function": 3
                 }
               },
-              "queryRef": "XER Measures.ShowFloat",
-              "nativeQueryRef": "Total Float",
+              "queryRef": "Sum(01 XER_TASK.total_float)",
+              "nativeQueryRef": "Min of total_float",
               "displayName": "Total Float"
             },
             {
@@ -207,7 +192,7 @@
                   "Function": 4
                 }
               },
-              "queryRef": "Min(01 XER_TASK.Baseline Finish)",
+              "queryRef": "Max(01 XER_TASK.Baseline Finish)",
               "nativeQueryRef": "Baseline Finish",
               "displayName": "Baseline Finish",
               "format": "dd/MM/yyyy"
@@ -249,7 +234,7 @@
                   "Function": 4
                 }
               },
-              "queryRef": "Min(01 XER_TASK.Previous Month Finish)",
+              "queryRef": "Max(01 XER_TASK.Previous Month Finish)",
               "nativeQueryRef": "Previous Period Finish",
               "displayName": "Previous Period Finish",
               "format": "dd/MM/yyyy"
@@ -270,9 +255,10 @@
                   "Function": 3
                 }
               },
-              "queryRef": "Min(01 XER_TASK.start)",
-              "nativeQueryRef": "Current Start",
-              "displayName": "Current Start"
+              "queryRef": "Min(01 XER_TASK.Start)",
+              "nativeQueryRef": "Start",
+              "displayName": "Start",
+              "format": "dd/MM/yyyy"
             },
             {
               "field": {
@@ -290,9 +276,10 @@
                   "Function": 4
                 }
               },
-              "queryRef": "Min(01 XER_TASK.finish)",
-              "nativeQueryRef": "Current Finish",
-              "displayName": "Current Finish"
+              "queryRef": "Max(01 XER_TASK.Finish)",
+              "nativeQueryRef": "Finish",
+              "displayName": "Finish",
+              "format": "dd/MM/yyyy"
             },
             {
               "field": {
@@ -325,6 +312,24 @@
               "displayName": "Finish Variance Previous Period"
             }
           ]
+        },
+        "Activity": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "01 XER_TASK"
+                    }
+                  },
+                  "Property": "task_code"
+                }
+              },
+              "queryRef": "01 XER_TASK.task_code",
+              "nativeQueryRef": "task_code"
+            }
+          ]
         }
       },
       "sortDefinition": {
@@ -350,216 +355,21 @@
         ]
       }
     },
-    "expansionStates": [
-      {
-        "roles": [
-          "Rows"
-        ],
-        "levels": [
-          {
-            "queryRefs": [
-              "03 XER_PROJWBS.Level_2"
-            ],
-            "identityKeys": [
-              {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "03 XER_PROJWBS"
-                    }
-                  },
-                  "Property": "Level_2"
-                }
-              }
-            ],
-            "isPinned": true
-          },
-          {
-            "queryRefs": [
-              "03 XER_PROJWBS.Level_3"
-            ],
-            "identityKeys": [
-              {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "03 XER_PROJWBS"
-                    }
-                  },
-                  "Property": "Level_3"
-                }
-              }
-            ],
-            "isPinned": true
-          },
-          {
-            "queryRefs": [
-              "03 XER_PROJWBS.Level_4"
-            ],
-            "identityKeys": [
-              {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "03 XER_PROJWBS"
-                    }
-                  },
-                  "Property": "Level_4"
-                }
-              }
-            ],
-            "isPinned": true
-          },
-          {
-            "queryRefs": [
-              "03 XER_PROJWBS.Level_5"
-            ],
-            "identityKeys": [
-              {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "03 XER_PROJWBS"
-                    }
-                  },
-                  "Property": "Level_5"
-                }
-              }
-            ],
-            "isPinned": true
-          },
-          {
-            "queryRefs": [
-              "03 XER_PROJWBS.Level_6"
-            ],
-            "isPinned": true
-          },
-          {
-            "queryRefs": [
-              "01 XER_TASK.task_code"
-            ],
-            "isCollapsed": true,
-            "identityKeys": [
-              {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "01 XER_TASK"
-                    }
-                  },
-                  "Property": "task_code"
-                }
-              }
-            ],
-            "isPinned": true
-          }
-        ],
-        "root": {}
-      }
-    ],
     "objects": {
       "values": [
         {
           "properties": {
-            "bold": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            },
-            "wordWrap": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
             "fontSize": {
               "expr": {
                 "Literal": {
                   "Value": "10D"
                 }
               }
-            },
-            "bandedRowHeaders": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
             }
           }
         },
         {
-          "properties": {
-            "fontColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Conditional": {
-                      "Cases": [
-                        {
-                          "Condition": {
-                            "Comparison": {
-                              "ComparisonKind": 3,
-                              "Left": {
-                                "Measure": {
-                                  "Expression": {
-                                    "SourceRef": {
-                                      "Entity": "XER Measures"
-                                    }
-                                  },
-                                  "Property": "ShowVariance"
-                                }
-                              },
-                              "Right": {
-                                "Literal": {
-                                  "Value": "0D"
-                                }
-                              }
-                            }
-                          },
-                          "Value": {
-                            "Literal": {
-                              "Value": "'#95C11F'"
-                            }
-                          }
-                        },
-                        {
-                          "Condition": {
-                            "Comparison": {
-                              "ComparisonKind": 1,
-                              "Left": {
-                                "Measure": {
-                                  "Expression": {
-                                    "SourceRef": {
-                                      "Entity": "XER Measures"
-                                    }
-                                  },
-                                  "Property": "ShowVariance"
-                                }
-                              },
-                              "Right": {
-                                "Literal": {
-                                  "Value": "0D"
-                                }
-                              }
-                            }
-                          },
-                          "Value": {
-                            "Literal": {
-                              "Value": "'#D50000'"
-                            }
-                          }
-                        }
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
+          "properties": {},
           "selector": {
             "data": [
               {
@@ -572,74 +382,7 @@
           }
         },
         {
-          "properties": {
-            "fontColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Conditional": {
-                      "Cases": [
-                        {
-                          "Condition": {
-                            "Comparison": {
-                              "ComparisonKind": 3,
-                              "Left": {
-                                "Measure": {
-                                  "Expression": {
-                                    "SourceRef": {
-                                      "Entity": "XER Measures"
-                                    }
-                                  },
-                                  "Property": "ShowVarianceBL"
-                                }
-                              },
-                              "Right": {
-                                "Literal": {
-                                  "Value": "0D"
-                                }
-                              }
-                            }
-                          },
-                          "Value": {
-                            "Literal": {
-                              "Value": "'#95C11F'"
-                            }
-                          }
-                        },
-                        {
-                          "Condition": {
-                            "Comparison": {
-                              "ComparisonKind": 1,
-                              "Left": {
-                                "Measure": {
-                                  "Expression": {
-                                    "SourceRef": {
-                                      "Entity": "XER Measures"
-                                    }
-                                  },
-                                  "Property": "ShowVarianceBL"
-                                }
-                              },
-                              "Right": {
-                                "Literal": {
-                                  "Value": "0D"
-                                }
-                              }
-                            }
-                          },
-                          "Value": {
-                            "Literal": {
-                              "Value": "'#D50000'"
-                            }
-                          }
-                        }
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
+          "properties": {},
           "selector": {
             "data": [
               {
@@ -650,195 +393,111 @@
             ],
             "metadata": "XER Measures.ShowVarianceBL"
           }
-        }
-      ],
-      "columnWidth": [
+        },
         {
           "properties": {
-            "value": {
+            "width": {
               "expr": {
                 "Literal": {
-                  "Value": "81D"
+                  "Value": "84D"
+                }
+              }
+            },
+            "customWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'centre'"
                 }
               }
             }
           },
           "selector": {
-            "metadata": "Min(04 XER_BASELINE.Finish)"
+            "metadata": "XER Measures.ShowVariance"
           }
         },
         {
           "properties": {
-            "value": {
+            "width": {
               "expr": {
                 "Literal": {
-                  "Value": "61D"
+                  "Value": "105D"
+                }
+              }
+            },
+            "customWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'centre'"
                 }
               }
             }
           },
           "selector": {
-            "data": [
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "01 XER_TASK"
-                          }
-                        },
-                        "Property": "ID_Name"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "'126330-1 - EB2 : PSI1 : UTA : CST Trench Type Q-A'"
-                      }
-                    }
-                  }
-                }
-              }
-            ],
-            "metadata": "Min(04 XER_BASELINE.Finish)"
+            "metadata": "Max(01 XER_TASK.Finish)"
           }
         },
         {
           "properties": {
-            "value": {
+            "width": {
               "expr": {
                 "Literal": {
-                  "Value": "61D"
+                  "Value": "97D"
+                }
+              }
+            },
+            "customWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'centre'"
                 }
               }
             }
           },
           "selector": {
-            "data": [
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "01 XER_TASK"
-                          }
-                        },
-                        "Property": "ID_Name"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "'126330-11 - EB2 : PSI1 : UTA : CST Trench Type Q-A ( Part Linked to HLM)'"
-                      }
-                    }
-                  }
-                }
-              }
-            ],
-            "metadata": "Min(04 XER_BASELINE.Finish)"
+            "metadata": "Min(01 XER_TASK.Start)"
           }
         },
         {
           "properties": {
-            "value": {
+            "width": {
               "expr": {
                 "Literal": {
-                  "Value": "61D"
+                  "Value": "70D"
                 }
               }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "01 XER_TASK"
-                          }
-                        },
-                        "Property": "ID_Name"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "'A 10220 - EB3R : TRE3 : UTA : S1 : Transpower'"
-                      }
-                    }
-                  }
-                }
-              }
-            ],
-            "metadata": "Min(04 XER_BASELINE.Finish)"
-          }
-        },
-        {
-          "properties": {
-            "value": {
+            },
+            "customWidth": {
               "expr": {
                 "Literal": {
-                  "Value": "61D"
+                  "Value": "true"
                 }
               }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "01 XER_TASK"
-                          }
-                        },
-                        "Property": "ID_Name"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "'A 10350 - EB2 : WRR1 : UTA : CST Longi (North) - Vector - Power + Permanent Water'"
-                      }
-                    }
-                  }
-                }
-              }
-            ],
-            "metadata": "Min(04 XER_BASELINE.Finish)"
-          }
-        },
-        {
-          "properties": {
-            "value": {
+            },
+            "alignment": {
               "expr": {
                 "Literal": {
-                  "Value": "299.7882861295301D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "03 XER_PROJWBS.Level_2"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "81.99999544513898D"
+                  "Value": "'centre'"
                 }
               }
             }
@@ -849,10 +508,31 @@
         },
         {
           "properties": {
-            "value": {
+            "width": {
               "expr": {
                 "Literal": {
-                  "Value": "575.2527161911469D"
+                  "Value": "249D"
+                }
+              }
+            },
+            "customWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "headerAlignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'left'"
+                }
+              }
+            },
+            "wrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
                 }
               }
             }
@@ -863,217 +543,14 @@
         },
         {
           "properties": {
-            "value": {
+            "rule": {
               "expr": {
                 "Literal": {
-                  "Value": "73.5554191900091D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "XER Measures.ShowVariance"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "80.89571259324788D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "Min(01 XER_TASK.Baseline Start)"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "80.05604146878348D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "Min(01 XER_TASK.Baseline Finish)"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "74.34446580619044D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "XER Measures.ShowVarianceBL"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "86.51367379670447D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "Min(01 XER_TASK.Previous Month Start)"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "87.27184545589903D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "Min(01 XER_TASK.Previous Month Finish)"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "64.9685837275076D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "XER Measures.ShowFloat"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "84.6133822153941D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "XER Measures.Remaining Status"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "87D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "Min(01 XER_TASK.finish)"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "82D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "Min(01 XER_TASK.start)"
-          }
-        }
-      ],
-      "columnFormatting": [
-        {
-          "properties": {
-            "fontColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "ThemeDataColor": {
-                      "ColorId": 2,
-                      "Percent": 0
-                    }
-                  }
+                  "Value": "'sign'"
                 }
               }
             },
-            "styleHeader": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "alignment": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Center'"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "Min(04 XER_BASELINE.Finish)"
-          }
-        },
-        {
-          "properties": {
-            "alignment": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Center'"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "XER Measures.ShowTaskType"
-          }
-        },
-        {
-          "properties": {
-            "alignment": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Center'"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "XER Measures.ShowVariance"
-          }
-        },
-        {
-          "properties": {
-            "alignment": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Center'"
-                }
-              }
-            },
-            "fontColor": {
+            "belowColour": {
               "solid": {
                 "color": {
                   "expr": {
@@ -1085,10 +562,69 @@
                 }
               }
             },
-            "styleHeader": {
+            "aboveColour": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 3,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "ruleApplyTo": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
+                  "Value": "'activity'"
+                }
+              }
+            },
+            "equalColour": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 9,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'centre'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Sum(01 XER_TASK.total_float)"
+          }
+        },
+        {
+          "properties": {
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'centre'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "XER Measures.ShowDuration"
+          }
+        },
+        {
+          "properties": {
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'centre'"
                 }
               }
             }
@@ -1102,32 +638,13 @@
             "alignment": {
               "expr": {
                 "Literal": {
-                  "Value": "'Center'"
-                }
-              }
-            },
-            "fontColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "ThemeDataColor": {
-                      "ColorId": 9,
-                      "Percent": 0
-                    }
-                  }
-                }
-              }
-            },
-            "styleHeader": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
+                  "Value": "'centre'"
                 }
               }
             }
           },
           "selector": {
-            "metadata": "Min(01 XER_TASK.Baseline Finish)"
+            "metadata": "Max(01 XER_TASK.Baseline Finish)"
           }
         },
         {
@@ -1135,79 +652,7 @@
             "alignment": {
               "expr": {
                 "Literal": {
-                  "Value": "'Center'"
-                }
-              }
-            },
-            "styleValues": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "fontColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "ThemeDataColor": {
-                      "ColorId": 1,
-                      "Percent": 0
-                    }
-                  }
-                }
-              }
-            },
-            "styleTotal": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            },
-            "styleHeader": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            },
-            "styleSubtotals": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "XER Measures.ShowVarianceBL"
-          }
-        },
-        {
-          "properties": {
-            "alignment": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Center'"
-                }
-              }
-            },
-            "fontColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Literal": {
-                      "Value": "'#B96F17'"
-                    }
-                  }
-                }
-              }
-            },
-            "styleHeader": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
+                  "Value": "'centre'"
                 }
               }
             }
@@ -1221,23 +666,32 @@
             "alignment": {
               "expr": {
                 "Literal": {
-                  "Value": "'Center'"
+                  "Value": "'centre'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Max(01 XER_TASK.Previous Month Finish)"
+          }
+        },
+        {
+          "properties": {
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'centre'"
                 }
               }
             },
-            "fontColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "ThemeDataColor": {
-                      "ColorId": 5,
-                      "Percent": -0.25
-                    }
-                  }
+            "width": {
+              "expr": {
+                "Literal": {
+                  "Value": "74D"
                 }
               }
             },
-            "styleHeader": {
+            "customWidth": {
               "expr": {
                 "Literal": {
                   "Value": "true"
@@ -1246,35 +700,7 @@
             }
           },
           "selector": {
-            "metadata": "Min(01 XER_TASK.Previous Month Finish)"
-          }
-        },
-        {
-          "properties": {
-            "alignment": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Center'"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "XER Measures.ShowFloat"
-          }
-        },
-        {
-          "properties": {
-            "alignment": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Center'"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "XER Measures.Remaining Status"
+            "metadata": "XER Measures.ShowVarianceBL"
           }
         }
       ],
@@ -1284,7 +710,7 @@
             "alignment": {
               "expr": {
                 "Literal": {
-                  "Value": "'Center'"
+                  "Value": "'centre'"
                 }
               }
             },
@@ -1298,35 +724,14 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "9D"
+                  "Value": "10D"
                 }
               }
             },
-            "autoSizeColumnWidth": {
+            "wrap": {
               "expr": {
                 "Literal": {
                   "Value": "true"
-                }
-              }
-            },
-            "titleAlignment": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Center'"
-                }
-              }
-            },
-            "columnAdjustment": {
-              "expr": {
-                "Literal": {
-                  "Value": "'fixedWidth'"
-                }
-              }
-            },
-            "defaultColumnWidth": {
-              "expr": {
-                "Literal": {
-                  "Value": "90D"
                 }
               }
             }
@@ -1335,166 +740,90 @@
       ],
       "grid": [
         {
-          "properties": {
-            "textSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "10D"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "total": [
-        {
           "properties": {}
         }
       ],
-      "subTotals": [
+      "labelColumn": [
         {
           "properties": {
-            "columnSubtotals": {
+            "width": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "147D"
                 }
               }
             },
-            "rowSubtotals": {
+            "headerAlignment": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "'left'"
                 }
               }
             },
-            "perRowLevel": {
+            "customWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "wrap": {
               "expr": {
                 "Literal": {
                   "Value": "true"
                 }
               }
             }
-          }
-        },
-        {
-          "properties": {
-            "levelSubtotalEnabled": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "03 XER_PROJWBS.Level_2"
-          }
-        },
-        {
-          "properties": {
-            "levelSubtotalEnabled": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "03 XER_PROJWBS.Level_4"
           }
         }
       ],
-      "rowHeaders": [
+      "state": [
         {
           "properties": {
-            "alignment": {
+            "payload": {
               "expr": {
                 "Literal": {
-                  "Value": "'Auto'"
+                  "Value": "'{\"version\":1,\"signature\":\"[[[\\\"03 XER_PROJWBS.Level_2\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_3\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_4\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_5\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_6\\\",true,false]],[[\\\"01 XER_TASK.task_code\\\",false,true]]]\",\"expansion\":{\"level\":-1,\"overrides\":{}},\"sort\":{\"key\":\"Max(01 XER_TASK.Finish)\",\"direction\":\"desc\"},\"widths\":{\"XER Measures.ShowVariance\":84,\"Max(01 XER_TASK.Finish)\":105,\"Min(01 XER_TASK.Start)\":97,\"XER Measures.ShowTaskType\":70,\"XER Measures.ShowTaskName\":249,\"XER Measures.ShowVarianceBL\":74,\"__label__\":147},\"columnOrder\":[\"XER Measures.ShowTaskName\",\"XER Measures.ShowTaskType\",\"XER Measures.ShowDuration\",\"Sum(01 XER_TASK.total_float)\",\"Min(01 XER_TASK.Baseline Start)\",\"Max(01 XER_TASK.Baseline Finish)\",\"Min(01 XER_TASK.Previous Month Start)\",\"Max(01 XER_TASK.Previous Month Finish)\",\"Min(01 XER_TASK.Start)\",\"Max(01 XER_TASK.Finish)\",\"XER Measures.ShowVarianceBL\",\"XER Measures.ShowVariance\"],\"hiddenColumns\":[]}'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "layout": [
+        {
+          "properties": {
+            "customColumnWidths": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
                 }
               }
             },
-            "expandCollapseButtonsSize": {
+            "columnWidthMode": {
               "expr": {
                 "Literal": {
-                  "Value": "8D"
+                  "Value": "'viewport'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "hierarchy": [
+        {
+          "properties": {
+            "showWbsRows": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
                 }
               }
             },
-            "steppedLayoutIndentation": {
+            "indent": {
               "expr": {
                 "Literal": {
                   "Value": "5D"
-                }
-              }
-            },
-            "wordWrap": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            },
-            "backColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Literal": {
-                      "Value": "'#FFFFFF'"
-                    }
-                  }
-                }
-              }
-            },
-            "fontColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "ThemeDataColor": {
-                      "ColorId": 1,
-                      "Percent": 0
-                    }
-                  }
-                }
-              }
-            },
-            "fontSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "9D"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "rowTotal": [
-        {
-          "properties": {
-            "backColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "ThemeDataColor": {
-                      "ColorId": 0,
-                      "Percent": -0.6
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      ],
-      "blankRows": [
-        {
-          "properties": {
-            "showBlankRows": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
                 }
               }
             }
@@ -1509,7 +838,7 @@
             "name": {
               "expr": {
                 "Literal": {
-                  "Value": "'Condensed'"
+                  "Value": "''"
                 }
               }
             }
@@ -1537,11 +866,44 @@
                   }
                 }
               }
+            },
+            "radius": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
             }
           }
         }
       ],
       "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "visualTooltip": [
         {
           "properties": {
             "show": {

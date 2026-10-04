@@ -37,7 +37,7 @@ table '03 XER_PROJWBS'
 			    PATHITEM('03 XER_PROJWBS'[Path], 2)
 			)
 			RETURN
-			    COALESCE(WBS4_Name, '03 XER_PROJWBS'[Level_1])
+			WBS4_Name
 		lineageTag: f4aea9f6-5d2c-4eee-bdb9-f44e82ec3031
 		summarizeBy: none
 
@@ -51,13 +51,13 @@ table '03 XER_PROJWBS'
 			    PATHITEM('03 XER_PROJWBS'[Path], 3)
 			)
 			RETURN
-			    COALESCE(WBS4_Name, '03 XER_PROJWBS'[Level_2])
+			WBS4_Name
 		lineageTag: e4071601-3d94-4cf3-98cf-828ad1e0b751
 		summarizeBy: none
 
 		annotation SummarizationSetBy = Automatic
 
-	column Level_4 = ```
+	column Level_4 =
 			
 			VAR WBS4_Name = LOOKUPVALUE(
 			    '03 XER_PROJWBS'[wbs_name],
@@ -65,15 +65,13 @@ table '03 XER_PROJWBS'
 			    PATHITEM('03 XER_PROJWBS'[Path], 4)
 			)
 			RETURN
-			    COALESCE(WBS4_Name, '03 XER_PROJWBS'[Level_3])
-			
-			```
+			WBS4_Name
 		lineageTag: cebb8249-83df-4e93-8167-01baf851e169
 		summarizeBy: none
 
 		annotation SummarizationSetBy = Automatic
 
-	column Level_5 = ```
+	column Level_5 =
 			
 			VAR WBS4_Name = LOOKUPVALUE(
 			    '03 XER_PROJWBS'[wbs_name],
@@ -81,9 +79,7 @@ table '03 XER_PROJWBS'
 			    PATHITEM('03 XER_PROJWBS'[Path], 5)
 			)
 			RETURN
-			    COALESCE(WBS4_Name, '03 XER_PROJWBS'[Level_4])
-			
-			```
+			WBS4_Name
 		lineageTag: fec92be7-422f-44e9-b0e4-12ef257a6394
 		summarizeBy: none
 
@@ -128,7 +124,7 @@ table '03 XER_PROJWBS'
 
 		annotation SummarizationSetBy = Automatic
 
-	column Level_6 = ```
+	column Level_6 =
 			
 			VAR WBS4_Name = LOOKUPVALUE(
 			    '03 XER_PROJWBS'[wbs_name],
@@ -136,9 +132,7 @@ table '03 XER_PROJWBS'
 			    PATHITEM('03 XER_PROJWBS'[Path], 6)
 			)
 			RETURN
-			    COALESCE(WBS4_Name, '03 XER_PROJWBS'[Level_5])
-			
-			```
+			WBS4_Name
 		lineageTag: 4c8abec1-c403-4130-9749-a941eb968b11
 		summarizeBy: none
 
@@ -152,6 +146,20 @@ table '03 XER_PROJWBS'
 		sourceColumn: ProjectKey
 
 		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Level_7 =
+			
+			VAR WBS4_Name = LOOKUPVALUE(
+			    '03 XER_PROJWBS'[wbs_name],
+			    '03 XER_PROJWBS'[wbs_id_key],
+			    PATHITEM('03 XER_PROJWBS'[Path], 7)
+			)
+			RETURN
+			WBS4_Name
+		lineageTag: b3bb9d0d-3dde-4283-a5a6-55de2d8c80d9
+		summarizeBy: none
 
 		annotation SummarizationSetBy = Automatic
 

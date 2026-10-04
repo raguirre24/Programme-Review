@@ -5,21 +5,8 @@ table 'XER Measures'
 			
 			// Variance slicers select activities in the matrix; they must not reshape history.
 			CALCULATE(
-			    VAR IsTaskSelected = HASONEVALUE('01 XER_TASK'[task_code])
-			
-			    VAR IsWBSSelected =
-			        ISFILTERED('03 XER_PROJWBS'[Level_2]) ||
-			        ISFILTERED('03 XER_PROJWBS'[Level_3]) ||
-			        ISFILTERED('03 XER_PROJWBS'[Level_4]) ||
-			        ISFILTERED('03 XER_PROJWBS'[Level_5]) ||
-			        ISFILTERED('03 XER_PROJWBS'[Level_6])
-			
-			    VAR CurrentTaskCode =
-			        IF(
-			            IsTaskSelected,
-			            SELECTEDVALUE('01 XER_TASK'[task_code]),
-			            BLANK()
-			        )
+			    // Narrowed activities (see 'Is Activity Selection') are traced by task_code.
+			    VAR IsSelection = [Is Activity Selection]
 			
 			    VAR CurrentProject = SELECTEDVALUE('01 XER_TASK'[ProjectName])
 			    VAR CurrentMonthUpdate = SELECTEDVALUE('01 XER_TASK'[UpdateDate])
@@ -38,37 +25,61 @@ table 'XER Measures'
 			
 			    VAR IsFirstMonth = ISBLANK(PreviousMonthUpdate)
 			
+			    // Traced tasks: the selection fixed by 'Variance to Previous Update (History)', in every update.
+			    VAR TracedTaskCodes =
+			        CALCULATETABLE(
+			            VALUES('01 XER_TASK'[task_code]),
+			            REMOVEFILTERS('01 XER_TASK'[UpdateDate])
+			        )
+			
+			    // Each traced task's latest reported update up to (and before) this one, regardless of its WBS or
+			    // status then. A task missing from an update keeps its last reported finish, matching the matrix's
+			    // previous-period variance; tasks new to the selection count from their first appearance.
+			    VAR LastSeenCurrent =
+			        CALCULATETABLE(
+			            ADDCOLUMNS(
+			                VALUES('01 XER_TASK'[task_code]),
+			                "@LastUpdate", CALCULATE(MAX('01 XER_TASK'[UpdateDate]))
+			            ),
+			            REMOVEFILTERS('01 XER_TASK'),
+			            REMOVEFILTERS('03 XER_PROJWBS'),
+			            REMOVEFILTERS('09 XER_TASKACTV'),
+			            TracedTaskCodes,
+			            '01 XER_TASK'[ProjectName] = CurrentProject,
+			            '01 XER_TASK'[UpdateDate] <= CurrentMonthUpdate,
+			            NOT ISBLANK('01 XER_TASK'[Finish])
+			        )
+			    VAR LastSeenPrevious =
+			        CALCULATETABLE(
+			            ADDCOLUMNS(
+			                VALUES('01 XER_TASK'[task_code]),
+			                "@LastUpdate", CALCULATE(MAX('01 XER_TASK'[UpdateDate]))
+			            ),
+			            REMOVEFILTERS('01 XER_TASK'),
+			            REMOVEFILTERS('03 XER_PROJWBS'),
+			            REMOVEFILTERS('09 XER_TASKACTV'),
+			            TracedTaskCodes,
+			            '01 XER_TASK'[ProjectName] = CurrentProject,
+			            '01 XER_TASK'[UpdateDate] < CurrentMonthUpdate,
+			            NOT ISBLANK('01 XER_TASK'[Finish])
+			        )
+			
+			    // The first update any traced task appears in starts the trace at zero (IF keeps the project path lazy).
+			    VAR IsFirstAppearance = IF(IsSelection, ISEMPTY(LastSeenPrevious))
+			
 			    // ============================================
 			    // CURRENT MONTH - MAX FINISH DATE (Original Logic)
 			    // ============================================
 			    VAR FinishCurrent =
-			        SWITCH(
-			            TRUE(),
-			            IsTaskSelected,
+			        IF(
+			            IsSelection,
 			            CALCULATE(
 			                MAX('01 XER_TASK'[Finish]),
-			                FILTER(
-			                    ALL('01 XER_TASK'),
-			                    '01 XER_TASK'[task_code] = CurrentTaskCode &&
-			                    '01 XER_TASK'[UpdateDate] = CurrentMonthUpdate &&
-			                    '01 XER_TASK'[ProjectName] = CurrentProject &&
-			                    (SelectedTaskTypes = "All" || '01 XER_TASK'[TaskType_Classified] = SelectedTaskTypes)
-			                )
-			            ),
-			            IsWBSSelected,
-			            CALCULATE(
-			                MAX('01 XER_TASK'[Finish]),
-			                ALLEXCEPT(
-			                    '03 XER_PROJWBS',
-			                    '03 XER_PROJWBS'[Level_2],
-			                    '03 XER_PROJWBS'[Level_3],
-			                    '03 XER_PROJWBS'[Level_4],
-			                    '03 XER_PROJWBS'[Level_5],
-			                    '03 XER_PROJWBS'[Level_6]
-			                ),
-			                '01 XER_TASK'[UpdateDate] = CurrentMonthUpdate,
-			                '01 XER_TASK'[ProjectName] = CurrentProject,
-			                SelectedTaskTypes = "All" || '01 XER_TASK'[TaskType_Classified] = SelectedTaskTypes
+			                REMOVEFILTERS('01 XER_TASK'),
+			                REMOVEFILTERS('03 XER_PROJWBS'),
+			                REMOVEFILTERS('09 XER_TASKACTV'),
+			                TREATAS(LastSeenCurrent, '01 XER_TASK'[task_code], '01 XER_TASK'[UpdateDate]),
+			                '01 XER_TASK'[ProjectName] = CurrentProject
 			            ),
 			            CALCULATE(
 			                MAX('01 XER_TASK'[Finish]),
@@ -87,33 +98,15 @@ table 'XER Measures'
 			    VAR FinishPrevious =
 			        IF(
 			            NOT(IsFirstMonth),
-			            SWITCH(
-			                TRUE(),
-			                IsTaskSelected,
+			            IF(
+			                IsSelection,
 			                CALCULATE(
 			                    MAX('01 XER_TASK'[Finish]),
-			                    FILTER(
-			                        ALL('01 XER_TASK'),
-			                        '01 XER_TASK'[task_code] = CurrentTaskCode &&
-			                        '01 XER_TASK'[UpdateDate] = PreviousMonthUpdate &&
-			                        '01 XER_TASK'[ProjectName] = CurrentProject &&
-			                        (SelectedTaskTypes = "All" || '01 XER_TASK'[TaskType_Classified] = SelectedTaskTypes)
-			                    )
-			                ),
-			                IsWBSSelected,
-			                CALCULATE(
-			                    MAX('01 XER_TASK'[Finish]),
-			                    ALLEXCEPT(
-			                        '03 XER_PROJWBS',
-			                        '03 XER_PROJWBS'[Level_2],
-			                        '03 XER_PROJWBS'[Level_3],
-			                        '03 XER_PROJWBS'[Level_4],
-			                        '03 XER_PROJWBS'[Level_5],
-			                        '03 XER_PROJWBS'[Level_6]
-			                    ),
-			                    '01 XER_TASK'[UpdateDate] = PreviousMonthUpdate,
-			                    '01 XER_TASK'[ProjectName] = CurrentProject,
-			                    SelectedTaskTypes = "All" || '01 XER_TASK'[TaskType_Classified] = SelectedTaskTypes
+			                    REMOVEFILTERS('01 XER_TASK'),
+			                    REMOVEFILTERS('03 XER_PROJWBS'),
+			                    REMOVEFILTERS('09 XER_TASKACTV'),
+			                    TREATAS(LastSeenPrevious, '01 XER_TASK'[task_code], '01 XER_TASK'[UpdateDate]),
+			                    '01 XER_TASK'[ProjectName] = CurrentProject
 			                ),
 			                CALCULATE(
 			                    MAX('01 XER_TASK'[Finish]),
@@ -161,7 +154,7 @@ table 'XER Measures'
 			
 			    RETURN
 			        IF(
-			            IsFirstMonth,
+			            IsFirstMonth || IsFirstAppearance,
 			            0,
 			            IF(
 			                HasComparableFinishes,
@@ -291,16 +284,39 @@ table 'XER Measures'
 			        VALUES(UpdateHistory[UpdateDate]),
 			        UpdateHistory[UpdateDate] <= SelectedUpdate
 			    )
+			// Narrowed activities (see 'Is Activity Selection') are fixed to those shown for the CurrentDate update, then
+			// traced through every update by task_code, wherever they sat in the WBS and whatever their status at the time.
+			VAR IsSelection = [Is Activity Selection]
+			VAR SelectedTaskCodes = VALUES('01 XER_TASK'[task_code])
+			// The chart follows the single project shown at the CurrentDate update; blank for none or several.
+			VAR SelectedProjects = VALUES('01 XER_TASK'[ProjectName])
 			RETURN
-			    SUMX(
-			        HistoryUpdates,
-			        VAR AxisUpdate = UpdateHistory[UpdateDate]
-			        RETURN
-			            CALCULATE(
-			                IF(NOT ISEMPTY('01 XER_TASK'), [Variance to Previous Update]),
-			                REMOVEFILTERS(CurrentDate),
-			                TREATAS({ AxisUpdate }, '01 XER_TASK'[UpdateDate])
-			            )
+			    IF(
+			        COUNTROWS(SelectedProjects) = 1,
+			        SUMX(
+			            HistoryUpdates,
+			            VAR AxisUpdate = UpdateHistory[UpdateDate]
+			            RETURN
+			                IF(
+			                    IsSelection,
+			                    CALCULATE(
+			                        IF(NOT ISEMPTY('01 XER_TASK'), [Variance to Previous Update]),
+			                        REMOVEFILTERS('01 XER_TASK'),
+			                        REMOVEFILTERS('03 XER_PROJWBS'),
+			                        REMOVEFILTERS('09 XER_TASKACTV'),
+			                        REMOVEFILTERS(CurrentDate),
+			                        SelectedTaskCodes,
+			                        SelectedProjects,
+			                        TREATAS({ AxisUpdate }, '01 XER_TASK'[UpdateDate])
+			                    ),
+			                    CALCULATE(
+			                        IF(NOT ISEMPTY('01 XER_TASK'), [Variance to Previous Update]),
+			                        REMOVEFILTERS(CurrentDate),
+			                        SelectedProjects,
+			                        TREATAS({ AxisUpdate }, '01 XER_TASK'[UpdateDate])
+			                    )
+			                )
+			        )
 			    )
 		formatString: 0
 		lineageTag: 43d29fba-4880-4513-86d4-b34c7a29555a
@@ -314,14 +330,83 @@ table 'XER Measures'
 			        VALUES(UpdateHistory[UpdateDate]),
 			        UpdateHistory[UpdateDate] <= SelectedUpdate
 			    )
+			// Same selection tracing and project rule as 'Variance to Previous Update (History)': each traced task's
+			// last reported finish, shown only for updates that contain at least one traced task.
+			VAR IsSelection = [Is Activity Selection]
+			VAR SelectedTaskCodes = VALUES('01 XER_TASK'[task_code])
+			VAR SelectedProjects = VALUES('01 XER_TASK'[ProjectName])
+			VAR AsOfUpdate = MAXX(HistoryUpdates, UpdateHistory[UpdateDate])
 			RETURN
-			    CALCULATE(
-			        MAX('01 XER_TASK'[Finish]),
-			        REMOVEFILTERS(CurrentDate),
-			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			    IF(
+			        COUNTROWS(SelectedProjects) = 1,
+			        IF(
+			            IsSelection,
+			            CALCULATE(
+			                VAR IsPresent =
+			                    NOT ISEMPTY(
+			                        CALCULATETABLE(
+			                            '01 XER_TASK',
+			                            TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			                        )
+			                    )
+			                VAR LastSeen =
+			                    CALCULATETABLE(
+			                        ADDCOLUMNS(
+			                            VALUES('01 XER_TASK'[task_code]),
+			                            "@LastUpdate", CALCULATE(MAX('01 XER_TASK'[UpdateDate]))
+			                        ),
+			                        '01 XER_TASK'[UpdateDate] <= AsOfUpdate,
+			                        NOT ISBLANK('01 XER_TASK'[Finish])
+			                    )
+			                RETURN
+			                    IF(
+			                        IsPresent,
+			                        CALCULATE(
+			                            MAX('01 XER_TASK'[Finish]),
+			                            TREATAS(LastSeen, '01 XER_TASK'[task_code], '01 XER_TASK'[UpdateDate])
+			                        )
+			                    ),
+			                REMOVEFILTERS('01 XER_TASK'),
+			                REMOVEFILTERS('03 XER_PROJWBS'),
+			                REMOVEFILTERS('09 XER_TASKACTV'),
+			                REMOVEFILTERS(CurrentDate),
+			                SelectedTaskCodes,
+			                SelectedProjects
+			            ),
+			            CALCULATE(
+			                MAX('01 XER_TASK'[Finish]),
+			                REMOVEFILTERS(CurrentDate),
+			                SelectedProjects,
+			                TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
+			            )
+			        )
 			    )
 		formatString: dd/mm/yyyy
 		lineageTag: db31a615-edfe-41c7-929b-f28bac3b90fa
+
+	measure 'Is Activity Selection' =
+			
+			// True when slicers or selections narrow the activities: matrix rows, task code/name searches, WBS,
+			// or the activity slicers (critical, driving, task type, float, duration, constraint, activity codes).
+			// The completion-variance waterfall then traces exactly those activities by task_code. Activity status
+			// and the variance slicers are deliberately excluded; they don't filter the waterfall.
+			ISFILTERED('01 XER_TASK'[task_code]) ||
+			ISFILTERED('01 XER_TASK'[task_name]) ||
+			ISFILTERED('03 XER_PROJWBS'[Level_2]) ||
+			ISFILTERED('03 XER_PROJWBS'[Level_3]) ||
+			ISFILTERED('03 XER_PROJWBS'[Level_4]) ||
+			ISFILTERED('03 XER_PROJWBS'[Level_5]) ||
+			ISFILTERED('03 XER_PROJWBS'[Level_6]) ||
+			ISFILTERED('03 XER_PROJWBS'[Level_7]) ||
+			ISFILTERED(Filter_Critical_Status) ||
+			ISFILTERED(Filter_Driving) ||
+			ISFILTERED(Filter_TaskType) ||
+			ISFILTERED(Filter_Float) ||
+			ISFILTERED(Filter_Duration) ||
+			ISFILTERED(Filter_Constraint_Types) ||
+			ISFILTERED('09 XER_TASKACTV')
+		isHidden
+		lineageTag: 7f9f8a05-f23c-425d-af51-1180591ecc51
 
 	partition 'XER Measures' = m
 		mode: import

@@ -1,0 +1,29 @@
+{
+  "version": "1.1.0.5",
+  "author": {
+    "name": "Ricardo Aguirre",
+    "email": "ricardoaguirregarcia@gmail.com"
+  },
+  "resources": [
+    {
+      "resourceId": "rId0",
+      "sourceType": 5,
+      "file": "resources/P6WBSMatrix8BDB3B26BB4B497EA3E044ADBDE081D0.pbiviz.json"
+    }
+  ],
+  "visual": {
+    "guid": "P6WBSMatrix8BDB3B26BB4B497EA3E044ADBDE081D0",
+    "name": "P6WBSMatrix",
+    "displayName": "P6 WBS Matrix",
+    "version": "1.1.0.5",
+    "description": "Primavera P6 ragged WBS matrix with engine-calculated values, level bands, virtualised rows and native row selections.",
+    "supportUrl": "mailto:ricardoaguirregarcia@gmail.com",
+    "gitHubUrl": "",
+    "visualClassName": "Visual"
+  },
+  "metadata": {
+    "pbivizjson": {
+      "resourceId": "rId0"
+    }
+  }
+}
