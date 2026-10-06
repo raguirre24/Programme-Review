@@ -6,6 +6,8 @@ Athena programme files must first match a named project in `prod_projectcontrols
 
 For each valid project and each programme type (Contract `C`, Target `T`), use the entire J-coded programme series whenever it exists in the eligible Athena project metadata. Use C only when no eligible J series exists for that programme type. A J series does not need to be newer than C and does not need to contain a baseline to take precedence. C-only earlier updates and C baselines are deliberately excluded once J exists. The winning series still uses the report's latest-baseline-plus-later-updates window; this change does not load every historical baseline.
 
+Exception: For project 6012 (`CJ:6012`), when both `C6012` and `J6012` exist for a programme type, `C6012` is preferred over `J6012`. If only `J6012` exists, it is retained; if only `C6012` exists, it is retained. This is the only exception to the J-over-C preference rule.
+
 `J4017-C-2608_20260831.xer` means project J4017, Contract programme, update 2608. Project prefix and programme type are independent. J Contract must not suppress C Target.
 
 Only exact `C<digits>` and `J<digits>` forms are aliases. Preserve leading zeroes: `C04017` and `J04017` match each other, not `C4017`. Bare `4017`, `CNZ01` and underscore-containing codes remain separate exact identities. Filename project codes are trimmed and uppercased; original filenames and snapshot IDs are retained for source joins. Registry keys retain the existing exact native lookup semantics: `dbo_project.projectno` must match the canonical code or its numeric C/J alias. Registry keys are not rewritten or merged, avoiding new duplicate metadata matches.
@@ -63,6 +65,7 @@ For 10,000 baseline activities sharing one project/programme/date, the candidate
 - `KEPT`: included in the selected history window.
 - `NO_NAMED_PROJECT_MATCH`: no named registry entry matches this canonical code or its recognised numeric C/J alias. The preferred project code is null because preference is not evaluated for this family.
 - `J_HISTORY_PREFERRED`: excluded because this project's programme type has a J series.
+- `C_HISTORY_PREFERRED`: excluded because project 6012's programme type has a preferred C series.
 - `OUTSIDE_BASELINE_WINDOW`: belongs to the winning code but is outside the existing baseline/history window.
 
 The audit only sees candidates surviving the parameter filters, exclusions and CSV ownership. It includes candidates rejected by the named-project gate so their original filenames remain reviewable. It does not infer records absent from the queried metadata or grant project access. Previewing it issues a metadata query; it is not a new loaded model table.

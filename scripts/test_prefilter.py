@@ -452,6 +452,25 @@ class ScopeTests(Fixtures):
         self.add("J4017")
         self.assertEqual(self.keep(selected="C9999"), set())
 
+    def test_6012_exception_prefers_c_over_j_when_both_exist(self):
+        c = self.add("C6012", "2609", "2026-09-30")
+        self.add("J6012", "2609", "2026-09-30")
+        self.assertEqual(self.keep(), {c})
+
+    def test_6012_exception_keeps_j_when_only_j_exists(self):
+        j = self.add("J6012", "2609", "2026-09-30")
+        self.assertEqual(self.keep(), {j})
+
+    def test_6012_exception_keeps_c_when_only_c_exists(self):
+        c = self.add("C6012", "2609", "2026-09-30")
+        self.assertEqual(self.keep(), {c})
+
+    def test_6012_exception_contract_and_target_are_independent(self):
+        c_contract = self.add("C6012", "2609", "2026-09-30", programme="C")
+        self.add("J6012", "2609", "2026-09-30", programme="C")
+        j_target = self.add("J6012", "2609", "2026-09-30", programme="T")
+        self.assertEqual(self.keep(), {c_contract, j_target})
+
 
 class ProjectRegistryTests(Fixtures):
     def test_unregistered_example_codes_are_excluded(self):
@@ -564,6 +583,14 @@ class ProjectRegistryTests(Fixtures):
             unknown: "NO_NAMED_PROJECT_MATCH", c: "J_HISTORY_PREFERRED",
             old: "OUTSIDE_BASELINE_WINDOW", baseline: "KEPT", update: "KEPT",
         })
+
+    def test_6012_audit_shows_c_history_preferred(self):
+        c = self.add("C6012", "2609", "2026-09-30")
+        j = self.add("J6012", "2609", "2026-09-30")
+        rows = self.db.execute(duck_sql(audit_sql())).fetchall()
+        reasons = {row[0]: row[-1] for row in rows}
+        self.assertEqual(reasons[c], "KEPT")
+        self.assertEqual(reasons[j], "C_HISTORY_PREFERRED")
 
     def test_blank_j_name_uses_named_c_alias_without_losing_j_preference(self):
         self.register_project("J4017", "   ")
@@ -687,6 +714,16 @@ class TaskTests(Fixtures):
         self.add_task(j, "2026-02-28", "2026-04-01")
         rows = self.db.execute(task_stage_sql("task_joined", "filename, baseline_finish, previous_task_finish")).fetchall()
         self.assertEqual(rows, [(j, dt.date(2026, 4, 1), None)])
+
+    def test_6012_task_named_prefers_c_project_name(self):
+        self.register_project("C6012", "Named C6012")
+        self.register_project("J6012", "Named J6012")
+        c = self.add("C6012", "2609", "2026-09-30", register=False)
+        self.add("J6012", "2609", "2026-09-30", register=False)
+        self.add_task(c)
+        self.assertEqual(self.db.execute(task_stage_sql(
+            "task_named", "filename, project_name"
+        )).fetchall(), [(c, "Named C6012")])
 
 
 class BaselineDateBoundaryTests(unittest.TestCase):

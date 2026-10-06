@@ -848,7 +848,7 @@ table '01 XER_TASK'
 				                    "FROM task_with_filled_update u",
 				                    "), task_named AS (",
 				                    "SELECT b.*,",
-				                    "COALESCE(NULLIF(TRIM(j_proj.""projectname""), ''), NULLIF(TRIM(c_proj.""projectname""), '')) AS project_name,",
+				                    "CASE WHEN b.project_identity = 'CJ:6012' THEN COALESCE(NULLIF(TRIM(c_proj.""projectname""), ''), NULLIF(TRIM(j_proj.""projectname""), '')) ELSE COALESCE(NULLIF(TRIM(j_proj.""projectname""), ''), NULLIF(TRIM(c_proj.""projectname""), '')) END AS project_name,",
 				                    "CONCAT(b.project_identity, ':', b.programme_type) AS project_group_key",
 				                    "FROM task_base b",
 				                    "LEFT JOIN prod_projectcontrols_linkedsitereports.""dbo_project"" j_proj ON j_proj.""projectno"" = b.j_project_code",

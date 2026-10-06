@@ -79,7 +79,12 @@ table Project_Dimension
 				                        && ProjectKey <> ""
 				            ),
 				            '02 XER_PROJECT'[ProjectKey],
-				            "RepresentativeProjectCode", MAX('02 XER_PROJECT'[ProjectCode])
+				            "RepresentativeProjectCode",
+				                IF(
+				                    '02 XER_PROJECT'[ProjectKey] = "CJ:6012",
+				                    MIN('02 XER_PROJECT'[ProjectCode]),
+				                    MAX('02 XER_PROJECT'[ProjectCode])
+				                )
 				        ),
 				        "ProjectKey", '02 XER_PROJECT'[ProjectKey],
 				        "ProjectCode", UPPER(TRIM([RepresentativeProjectCode]))
@@ -90,6 +95,7 @@ table Project_Dimension
 				        "DisplayProjectCode",
 				            SWITCH(
 				                TRUE(),
+				                [ProjectKey] = "CJ:6012", [ProjectCode],
 				                LEFT([ProjectKey], 3) = "CJ:" && LEFT([ProjectCode], 1) = "C", "J" & MID([ProjectCode], 2, LEN([ProjectCode]) - 1),
 				                [ProjectCode]
 				            ),

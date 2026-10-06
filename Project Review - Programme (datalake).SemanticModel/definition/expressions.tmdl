@@ -156,7 +156,9 @@ expression AthenaScopeSql =
 		        "    FROM identified_files f " &
 		        "    INNER JOIN registered_projects r ON r.project_identity = f.project_identity " &
 		        "), preferred_projects AS ( " &
-		        "    SELECT project_identity, programme_type, MAX(project_code) AS preferred_project_code " &
+		        "    SELECT project_identity, programme_type, " &
+		        "        CASE WHEN project_identity = 'CJ:6012' THEN MIN(project_code) " &
+		        "            ELSE MAX(project_code) END AS preferred_project_code " &
 		        "    FROM eligible_files " &
 		        "    GROUP BY project_identity, programme_type " &
 		        "), preferred_files AS ( " &
@@ -1316,7 +1318,8 @@ expression AthenaProgrammeSelectionAudit =
 		        "SELECT DISTINCT f.filename, f.project_code, f.project_identity, f.programme_type, " &
 		        "f.monthupdate, p.preferred_project_code, " &
 		        "CASE WHEN r.project_identity IS NULL THEN 'NO_NAMED_PROJECT_MATCH' " &
-		        "WHEN f.project_code <> p.preferred_project_code THEN 'J_HISTORY_PREFERRED' " &
+		        "WHEN f.project_code <> p.preferred_project_code THEN " &
+		        "    CASE WHEN p.preferred_project_code LIKE 'C%' THEN 'C_HISTORY_PREFERRED' ELSE 'J_HISTORY_PREFERRED' END " &
 		        "WHEN kf.filename IS NOT NULL THEN 'KEPT' ELSE 'OUTSIDE_BASELINE_WINDOW' END AS selection_reason " &
 		        "FROM identified_files f " &
 		        "LEFT JOIN registered_projects r ON f.project_identity = r.project_identity " &
