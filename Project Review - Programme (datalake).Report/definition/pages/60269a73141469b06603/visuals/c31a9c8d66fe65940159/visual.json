@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "c31a9c8d66fe65940159",
   "position": {
     "x": 21.473248187780463,
@@ -952,5 +952,93 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "ac96de5f946e13787c09",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "00 CALENDAR"
+              }
+            },
+            "Property": "Month"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "7351c6961a79074f10f5",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER S-Curve"
+              }
+            },
+            "Property": "Percentage_Cumulative_BL_Late"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "214a3523d571577d162e",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER S-Curve"
+              }
+            },
+            "Property": "Percentage_Cumulative_Late"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "7bd29548dd5abf2a6413",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER S-Curve"
+              }
+            },
+            "Property": "Percentage_Cumulative_BL_Early"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "139425b5d44a52b95a07",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER S-Curve"
+              }
+            },
+            "Property": "Percentage_Cumulative_Early"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "c14aa760fad82de66310",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER S-Curve"
+              }
+            },
+            "Property": "Percentage_Cumulative_Actual_Finish"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

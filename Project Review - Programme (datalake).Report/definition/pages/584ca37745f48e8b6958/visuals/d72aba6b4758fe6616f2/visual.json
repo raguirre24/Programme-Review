@@ -256,34 +256,6 @@
         },
         "type": "Advanced",
         "howCreated": "User"
-      },
-      {
-        "name": "3e9094fe534d0de502dd",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "UpdateHistory"
-              }
-            },
-            "Property": "UpdateDate"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "0eae48066e78d86aabad",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Activity Completion"
-              }
-            },
-            "Property": "Completion Score Previous Date (History)"
-          }
-        },
-        "type": "Advanced"
       }
     ]
   }

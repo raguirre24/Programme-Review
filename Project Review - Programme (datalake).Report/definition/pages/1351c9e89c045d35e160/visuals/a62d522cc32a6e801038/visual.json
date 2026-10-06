@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "a62d522cc32a6e801038",
   "position": {
     "x": 596.05639676044484,
@@ -7,7 +7,7 @@
     "z": 20000,
     "height": 477.71210676835079,
     "width": 587.53098188751187,
-    "tabOrder": 95002
+    "tabOrder": 20000
   },
   "visual": {
     "visualType": "stackedAreaChart",
@@ -510,90 +510,6 @@
         },
         "type": "Advanced",
         "howCreated": "User"
-      },
-      {
-        "name": "d58ed0798719689b099b",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "UpdateHistory"
-              }
-            },
-            "Property": "UpdateDate"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "dd441e98a593bd685173",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER  Counts"
-              }
-            },
-            "Property": "Baseline_FinishVariance_<1_Month_TT_Task (History)"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "11beb798d62825d2d219",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER  Counts"
-              }
-            },
-            "Property": "Baseline_FinishVariance_<3_Month_TT_Task (History)"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "13f355336790543900b7",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER  Counts"
-              }
-            },
-            "Property": "Baseline_FinishVariance_<6_Month_TT_Task (History)"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "4b9ec60588ad116a5ea5",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER  Counts"
-              }
-            },
-            "Property": "Baseline_FinishVariance_>6_Month_TT_Task (History)"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "9e10f622289a1aae1355",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER  Counts"
-              }
-            },
-            "Property": "Baseline_FinishVariance_All_Other (History)"
-          }
-        },
-        "type": "Advanced"
       }
     ]
   },

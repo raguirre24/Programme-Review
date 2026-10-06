@@ -784,6 +784,174 @@
           ]
         },
         "howCreated": "User"
+      },
+      {
+        "name": "464b6331593ee7ec1284",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "01 XER_TASK"
+              }
+            },
+            "Property": "UpdateDate"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "74851fa23a628d108d88",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Metrics"
+              }
+            },
+            "Property": "Task_Count"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "744adfab0a073e848ac6",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Metrics"
+              }
+            },
+            "Property": "Missing Predecessor"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "d6e3d8f19995096883d2",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Metrics"
+              }
+            },
+            "Property": "Missing Successor"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "a109394961936b59c191",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Metrics"
+              }
+            },
+            "Property": "Primary Constraints"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "0904015062bafab259b8",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Metrics"
+              }
+            },
+            "Property": "Leads<0d"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "cc4e55bfd23dedb5b80b",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Metrics"
+              }
+            },
+            "Property": "Lags>5d"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "933014b11ccb3cbe2a87",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Metrics"
+              }
+            },
+            "Property": "Task_Count_Float_0"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "ed33c313c8d7dd450c3d",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Metrics"
+              }
+            },
+            "Property": "Task_Count_Negative_Float"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "d5dd00d61e3afbb1776f",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Metrics"
+              }
+            },
+            "Property": "Float >44"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "f0b38b5eb9b202691cc5",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Metrics"
+              }
+            },
+            "Property": "Dur >44"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "20a9a3032f6970cedf60",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Metrics"
+              }
+            },
+            "Property": "DD Driving"
+          }
+        },
+        "type": "Advanced"
       }
     ]
   }

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "5a895a790b0217498ab6",
   "position": {
     "x": 1187.1528316524436,
@@ -7,7 +7,7 @@
     "z": 8000,
     "height": 477,
     "width": 587,
-    "tabOrder": 9000
+    "tabOrder": 7000
   },
   "visual": {
     "visualType": "lineChart",
@@ -309,34 +309,6 @@
         },
         "type": "Advanced",
         "howCreated": "User"
-      },
-      {
-        "name": "8140700fc84a79561199",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "UpdateHistory"
-              }
-            },
-            "Property": "UpdateDate"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "99175244719012ed3eae",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Activity Completion"
-              }
-            },
-            "Property": "Completion Score Previous Date (History)"
-          }
-        },
-        "type": "Advanced"
       }
     ]
   }

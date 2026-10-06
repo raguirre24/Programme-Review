@@ -89,7 +89,7 @@ last_recalc_date,proj_id_key,monthupdate,ProjectCode,add_date,state,region,tende
 
 ```text
 03_XER_PROJWBS:
-wbs_name,wbs_id_key,parent_wbs_id_key,ProjectCode
+wbs_name,wbs_id_key,parent_wbs_id_key,seq_num,proj_node_flag,ProjectCode
 
 06_XER_PREDECESSOR:
 task_id_key,pred_type,predecessor_status_code,task_type,predecessor_task_type,lag,start,finish,predecessor_start,predecessor_finish,free_float,free_float_status,free_float_basis,free_float_reason,pred_task_id_key,status_code,total_float,task_pred_id_key,ProjectCode

@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "cf0eeaddb7f90594dee2",
   "position": {
     "x": 24,
     "y": 814,
-    "z": 11000,
+    "z": 17000,
     "height": 80,
     "width": 368,
-    "tabOrder": 11
+    "tabOrder": 17000
   },
   "visual": {
     "visualType": "textSlicer",
@@ -235,23 +235,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "5d2c681f9ec06e22a682",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Scenario Target"
-              }
-            },
-            "Property": "Date Input"
-          }
-        },
-        "type": "Categorical"
-      }
-    ]
   }
 }

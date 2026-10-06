@@ -1,16 +1,39 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "72af6b2274a8e97ddc2e",
   "position": {
     "x": 1074,
     "y": 462,
-    "z": 30000,
+    "z": 25000,
     "height": 66,
     "width": 300,
-    "tabOrder": 30
+    "tabOrder": 23000
   },
   "visual": {
     "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Resource Scenario Measures"
+                    }
+                  },
+                  "Property": "Scenario Horizon Remaining"
+                }
+              },
+              "queryRef": "Resource Scenario Measures.Scenario Horizon Remaining",
+              "nativeQueryRef": "Remaining at last known date",
+              "displayName": "Remaining at last known date"
+            }
+          ]
+        }
+      }
+    },
     "objects": {
       "categoryLabels": [
         {
@@ -186,29 +209,6 @@
         }
       ]
     },
-    "drillFilterOtherVisuals": true,
-    "query": {
-      "queryState": {
-        "Values": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Resource Scenario Measures"
-                    }
-                  },
-                  "Property": "Scenario Horizon Remaining"
-                }
-              },
-              "queryRef": "Resource Scenario Measures.Scenario Horizon Remaining",
-              "nativeQueryRef": "Remaining at last known date",
-              "displayName": "Remaining at last known date"
-            }
-          ]
-        }
-      }
-    }
+    "drillFilterOtherVisuals": true
   }
 }

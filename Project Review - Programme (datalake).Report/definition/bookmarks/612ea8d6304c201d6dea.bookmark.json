@@ -16,44 +16,7 @@
     "activeSection": "a794159ef1019ec463e8",
     "sections": {
       "a794159ef1019ec463e8": {
-        "visualContainers": {
-          "7b423029a05ec9087495": {
-            "singleVisual": {
-              "visualType": "shape",
-              "objects": {},
-              "display": {
-                "mode": "hidden"
-              }
-            }
-          },
-          "3825ff4788483f770bf8": {
-            "singleVisual": {
-              "visualType": "advancedSlicerVisual",
-              "objects": {},
-              "display": {
-                "mode": "hidden"
-              }
-            }
-          },
-          "07888c86f4c3c3fdbf49": {
-            "singleVisual": {
-              "visualType": "advancedSlicerVisual",
-              "objects": {},
-              "display": {
-                "mode": "hidden"
-              }
-            }
-          },
-          "df23f1b0f2066e921e1a": {
-            "singleVisual": {
-              "visualType": "actionButton",
-              "objects": {},
-              "display": {
-                "mode": "hidden"
-              }
-            }
-          }
-        }
+        "visualContainers": {}
       }
     }
   }

@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "fa2eaf106e8ead20b935",
   "position": {
     "x": 422,
     "y": 536,
-    "z": 31000,
+    "z": 33000,
     "height": 242,
     "width": 1340,
-    "tabOrder": 31
+    "tabOrder": 31000
   },
   "visual": {
     "visualType": "lineStackedColumnComboChart",
@@ -341,51 +341,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "7fa45304703032b2c501",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Resource Scenario Measures"
-              }
-            },
-            "Property": "Scenario Chart Cumulative Quantity"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "6627b3ff5043e61419d3",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Resource Scenario Measures"
-              }
-            },
-            "Property": "Scenario Chart Quantity"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "838d5a7102a0993687ec",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Scenario Date"
-              }
-            },
-            "Property": "Date"
-          }
-        },
-        "type": "Categorical"
-      }
-    ]
   }
 }

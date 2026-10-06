@@ -334,37 +334,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "baac8af9a20e9e7004ab",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "UpdateHistory"
-              }
-            },
-            "Property": "UpdateDate"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "a0d28352273e045eeed2",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Metrics"
-              }
-            },
-            "Property": "Score (History)"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

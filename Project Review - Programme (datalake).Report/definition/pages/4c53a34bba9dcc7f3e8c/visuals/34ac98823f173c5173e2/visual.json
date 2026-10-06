@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "34ac98823f173c5173e2",
   "position": {
     "x": 24,
     "y": 460,
-    "z": 6000,
+    "z": 12000,
     "height": 80,
     "width": 368,
-    "tabOrder": 6
+    "tabOrder": 12000
   },
   "visual": {
     "visualType": "textSlicer",
@@ -272,23 +272,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "c85d84bdccd289e0e37b",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Scenario Rate"
-              }
-            },
-            "Property": "Value"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

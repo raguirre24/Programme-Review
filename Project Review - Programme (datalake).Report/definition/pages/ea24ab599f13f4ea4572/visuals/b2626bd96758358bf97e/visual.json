@@ -10,10 +10,10 @@
     "tabOrder": 5000
   },
   "visual": {
-    "visualType": "pivotTable",
+    "visualType": "P6WBSMatrix8BDB3B26BB4B497EA3E044ADBDE081D0",
     "query": {
       "queryState": {
-        "Rows": {
+        "WBSLevels": {
           "projections": [
             {
               "field": {
@@ -28,7 +28,6 @@
               },
               "queryRef": "03 XER_PROJWBS.Level_1",
               "nativeQueryRef": "WBS",
-              "active": true,
               "displayName": "WBS"
             },
             {
@@ -44,7 +43,6 @@
               },
               "queryRef": "03 XER_PROJWBS.Level_2",
               "nativeQueryRef": "Level_2",
-              "active": true,
               "displayName": "Level_2"
             },
             {
@@ -59,8 +57,7 @@
                 }
               },
               "queryRef": "03 XER_PROJWBS.Level_3",
-              "nativeQueryRef": "Level_3",
-              "active": true
+              "nativeQueryRef": "Level_3"
             },
             {
               "field": {
@@ -74,8 +71,7 @@
                 }
               },
               "queryRef": "03 XER_PROJWBS.Level_4",
-              "nativeQueryRef": "Level_4",
-              "active": true
+              "nativeQueryRef": "Level_4"
             },
             {
               "field": {
@@ -89,23 +85,7 @@
                 }
               },
               "queryRef": "03 XER_PROJWBS.Level_5",
-              "nativeQueryRef": "Level_5",
-              "active": true
-            },
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "01 XER_TASK"
-                    }
-                  },
-                  "Property": "task_code"
-                }
-              },
-              "queryRef": "01 XER_TASK.task_code",
-              "nativeQueryRef": "task_code",
-              "active": true
+              "nativeQueryRef": "Level_5"
             }
           ]
         },
@@ -138,8 +118,9 @@
                 }
               },
               "queryRef": "XER Measures.ShowDuration",
-              "nativeQueryRef": "Remaining Duration",
-              "displayName": "Remaining Duration"
+              "nativeQueryRef": "Rem. Duration",
+              "displayName": "Rem. Duration",
+              "format": "0"
             },
             {
               "field": {
@@ -154,7 +135,8 @@
               },
               "queryRef": "XER Measures.ShowFloat",
               "nativeQueryRef": "Total Float",
-              "displayName": "Total Float"
+              "displayName": "Total Float",
+              "format": "0"
             },
             {
               "field": {
@@ -172,9 +154,10 @@
                   "Function": 3
                 }
               },
-              "queryRef": "Min(01 XER_TASK.start)",
+              "queryRef": "Min(01 XER_TASK.Start)",
               "nativeQueryRef": "Start",
-              "displayName": "Start"
+              "displayName": "Start",
+              "format": "dd-MMM-yy"
             },
             {
               "field": {
@@ -192,105 +175,17 @@
                   "Function": 4
                 }
               },
-              "queryRef": "Min(01 XER_TASK.finish)",
+              "queryRef": "Max(01 XER_TASK.Finish)",
               "nativeQueryRef": "Finish",
-              "displayName": "Finish"
+              "displayName": "Finish",
+              "format": "dd-MMM-yy"
             }
           ]
-        }
-      }
-    },
-    "expansionStates": [
-      {
-        "roles": [
-          "Rows"
-        ],
-        "levels": [
-          {
-            "queryRefs": [
-              "03 XER_PROJWBS.Level_1"
-            ],
-            "identityKeys": [
-              {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "03 XER_PROJWBS"
-                    }
-                  },
-                  "Property": "Level_1"
-                }
-              }
-            ],
-            "isPinned": true
-          },
-          {
-            "queryRefs": [
-              "03 XER_PROJWBS.Level_2"
-            ],
-            "identityKeys": [
-              {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "03 XER_PROJWBS"
-                    }
-                  },
-                  "Property": "Level_2"
-                }
-              }
-            ],
-            "isPinned": true
-          },
-          {
-            "queryRefs": [
-              "03 XER_PROJWBS.Level_3"
-            ],
-            "identityKeys": [
-              {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "03 XER_PROJWBS"
-                    }
-                  },
-                  "Property": "Level_3"
-                }
-              }
-            ],
-            "isPinned": true
-          },
-          {
-            "queryRefs": [
-              "03 XER_PROJWBS.Level_4"
-            ],
-            "identityKeys": [
-              {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "03 XER_PROJWBS"
-                    }
-                  },
-                  "Property": "Level_4"
-                }
-              }
-            ],
-            "isPinned": true
-          },
-          {
-            "queryRefs": [
-              "03 XER_PROJWBS.Level_5"
-            ],
-            "isPinned": true
-          },
-          {
-            "queryRefs": [
-              "01 XER_TASK.task_code"
-            ],
-            "isCollapsed": true,
-            "identityKeys": [
-              {
+        },
+        "Activity": {
+          "projections": [
+            {
+              "field": {
                 "Column": {
                   "Expression": {
                     "SourceRef": {
@@ -299,70 +194,47 @@
                   },
                   "Property": "task_code"
                 }
-              }
-            ],
-            "isPinned": true
-          }
-        ],
-        "root": {}
+              },
+              "queryRef": "01 XER_TASK.task_code",
+              "nativeQueryRef": "task_code"
+            }
+          ]
+        }
       }
-    ],
+    },
     "objects": {
       "values": [
         {
           "properties": {
-            "bold": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            },
-            "wordWrap": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
             "fontSize": {
               "expr": {
                 "Literal": {
                   "Value": "9D"
                 }
               }
-            },
-            "bandedRowHeaders": {
+            }
+          }
+        },
+        {
+          "properties": {
+            "wrap": {
               "expr": {
                 "Literal": {
                   "Value": "true"
                 }
               }
-            }
-          }
-        }
-      ],
-      "columnWidth": [
-        {
-          "properties": {
-            "value": {
+            },
+            "width": {
               "expr": {
                 "Literal": {
-                  "Value": "117.61593085600526D"
+                  "Value": "276D"
                 }
               }
-            }
-          },
-          "selector": {
-            "metadata": "03 XER_PROJWBS.Level_2"
-          }
-        },
-        {
-          "properties": {
-            "value": {
+            },
+            "customWidth": {
               "expr": {
                 "Literal": {
-                  "Value": "410D"
+                  "Value": "true"
                 }
               }
             }
@@ -373,24 +245,31 @@
         },
         {
           "properties": {
-            "value": {
+            "headerAlignment": {
               "expr": {
                 "Literal": {
-                  "Value": "58.793904489141D"
+                  "Value": "'centre'"
                 }
               }
-            }
-          },
-          "selector": {
-            "metadata": "XER Measures.ShowFloat"
-          }
-        },
-        {
-          "properties": {
-            "value": {
+            },
+            "alignment": {
               "expr": {
                 "Literal": {
-                  "Value": "69.22384982977793D"
+                  "Value": "'centre'"
+                }
+              }
+            },
+            "width": {
+              "expr": {
+                "Literal": {
+                  "Value": "60D"
+                }
+              }
+            },
+            "customWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
                 }
               }
             }
@@ -401,54 +280,74 @@
         },
         {
           "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "175D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "03 XER_PROJWBS.Level_1"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "74D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "Min(01 XER_TASK.start)"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "78D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "Min(01 XER_TASK.finish)"
-          }
-        }
-      ],
-      "columnFormatting": [
-        {
-          "properties": {
             "alignment": {
               "expr": {
                 "Literal": {
-                  "Value": "'Center'"
+                  "Value": "'centre'"
+                }
+              }
+            },
+            "headerAlignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'centre'"
+                }
+              }
+            },
+            "rule": {
+              "expr": {
+                "Literal": {
+                  "Value": "'sign'"
+                }
+              }
+            },
+            "equalColour": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 9,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "belowColour": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 9,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "aboveColour": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "width": {
+              "expr": {
+                "Literal": {
+                  "Value": "46D"
+                }
+              }
+            },
+            "customWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
                 }
               }
             }
@@ -459,16 +358,44 @@
         },
         {
           "properties": {
+            "headerAlignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'centre'"
+                }
+              }
+            },
             "alignment": {
               "expr": {
                 "Literal": {
-                  "Value": "'Center'"
+                  "Value": "'centre'"
                 }
               }
             }
           },
           "selector": {
-            "metadata": "XER Measures.ShowDuration"
+            "metadata": "Min(01 XER_TASK.Start)"
+          }
+        },
+        {
+          "properties": {
+            "headerAlignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'centre'"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'centre'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Max(01 XER_TASK.Finish)"
           }
         }
       ],
@@ -492,35 +419,14 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "8D"
+                  "Value": "10D"
                 }
               }
             },
-            "autoSizeColumnWidth": {
+            "wrap": {
               "expr": {
                 "Literal": {
                   "Value": "true"
-                }
-              }
-            },
-            "titleAlignment": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Center'"
-                }
-              }
-            },
-            "columnAdjustment": {
-              "expr": {
-                "Literal": {
-                  "Value": "'fixedWidth'"
-                }
-              }
-            },
-            "defaultColumnWidth": {
-              "expr": {
-                "Literal": {
-                  "Value": "90D"
                 }
               }
             }
@@ -529,40 +435,20 @@
       ],
       "grid": [
         {
-          "properties": {
-            "textSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "10D"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "total": [
-        {
           "properties": {}
         }
       ],
-      "subTotals": [
+      "layout": [
         {
           "properties": {
-            "columnSubtotals": {
+            "columnWidthMode": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "'viewport'"
                 }
               }
             },
-            "rowSubtotals": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            },
-            "perRowLevel": {
+            "customColumnWidths": {
               "expr": {
                 "Literal": {
                   "Value": "true"
@@ -570,125 +456,55 @@
               }
             }
           }
-        },
+        }
+      ],
+      "state": [
         {
           "properties": {
-            "levelSubtotalEnabled": {
+            "payload": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{\"version\":1,\"signature\":\"[[[\\\"03 XER_PROJWBS.Level_1\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_2\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_3\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_4\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_5\\\",true,false]],[[\\\"01 XER_TASK.task_code\\\",false,true]]]\",\"expansion\":{\"level\":-1,\"overrides\":{}},\"sort\":{\"key\":\"\",\"direction\":\"none\"},\"widths\":{\"__label__\":137,\"XER Measures.ShowTaskName\":276,\"XER Measures.ShowDuration\":60,\"XER Measures.ShowFloat\":46}}'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "labelColumn": [
+        {
+          "properties": {
+            "width": {
+              "expr": {
+                "Literal": {
+                  "Value": "137D"
+                }
+              }
+            },
+            "customWidth": {
               "expr": {
                 "Literal": {
                   "Value": "true"
                 }
               }
-            }
-          },
-          "selector": {
-            "metadata": "03 XER_PROJWBS.Level_2"
-          }
-        },
-        {
-          "properties": {
-            "levelSubtotalEnabled": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "03 XER_PROJWBS.Level_4"
-          }
-        }
-      ],
-      "rowHeaders": [
-        {
-          "properties": {
-            "alignment": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Auto'"
-                }
-              }
             },
-            "expandCollapseButtonsSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "8D"
-                }
-              }
-            },
-            "steppedLayoutIndentation": {
-              "expr": {
-                "Literal": {
-                  "Value": "1D"
-                }
-              }
-            },
-            "wordWrap": {
+            "wrap": {
               "expr": {
                 "Literal": {
                   "Value": "false"
                 }
               }
-            },
-            "backColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Literal": {
-                      "Value": "'#FFFFFF'"
-                    }
-                  }
-                }
-              }
-            },
-            "fontColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "ThemeDataColor": {
-                      "ColorId": 1,
-                      "Percent": 0
-                    }
-                  }
-                }
-              }
-            },
-            "fontSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "8D"
-                }
-              }
             }
           }
         }
       ],
-      "rowTotal": [
+      "hierarchy": [
         {
           "properties": {
-            "backColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "ThemeDataColor": {
-                      "ColorId": 0,
-                      "Percent": -0.6
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      ],
-      "blankRows": [
-        {
-          "properties": {
-            "showBlankRows": {
+            "indent": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "5D"
                 }
               }
             }
@@ -703,7 +519,7 @@
             "name": {
               "expr": {
                 "Literal": {
-                  "Value": "'Condensed'"
+                  "Value": "''"
                 }
               }
             }
@@ -849,81 +665,6 @@
   "filterConfig": {
     "filters": [
       {
-        "name": "9e9d23dd4dcdb0e9aea9",
-        "ordinal": 0,
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "03 XER_PROJWBS"
-              }
-            },
-            "Property": "Level_2"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "dba98ab00bcd475a9c19",
-        "ordinal": 1,
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Measures"
-              }
-            },
-            "Property": "ShowTaskName"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "645e7d5f6ad4806104d3",
-        "ordinal": 2,
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "03 XER_PROJWBS"
-              }
-            },
-            "Property": "Level_3"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "53a06992c051d51cc3c1",
-        "ordinal": 3,
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "03 XER_PROJWBS"
-              }
-            },
-            "Property": "Level_4"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "e19397b170861e60a148",
-        "ordinal": 4,
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "01 XER_TASK"
-              }
-            },
-            "Property": "task_code"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
         "name": "bd44d54ab14d1ba94a22",
         "ordinal": 5,
         "field": {
@@ -945,26 +686,6 @@
         "howCreated": "User"
       },
       {
-        "name": "6cc7d7e24b10cdacbd8d",
-        "ordinal": 6,
-        "field": {
-          "Aggregation": {
-            "Expression": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "01 XER_TASK"
-                  }
-                },
-                "Property": "Finish"
-              }
-            },
-            "Function": 4
-          }
-        },
-        "type": "Advanced"
-      },
-      {
         "name": "f3e653de019bce872347",
         "ordinal": 7,
         "field": {
@@ -979,36 +700,6 @@
         },
         "type": "Advanced",
         "howCreated": "User"
-      },
-      {
-        "name": "2967f5a37fc265fdadaf",
-        "ordinal": 8,
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Measures"
-              }
-            },
-            "Property": "ShowFloat"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "9173b0f07c203301d627",
-        "ordinal": 9,
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Measures"
-              }
-            },
-            "Property": "ShowDuration"
-          }
-        },
-        "type": "Advanced"
       },
       {
         "name": "27aab4d6f2892c78d33b",

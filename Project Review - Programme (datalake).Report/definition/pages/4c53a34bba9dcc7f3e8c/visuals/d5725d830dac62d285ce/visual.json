@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "d5725d830dac62d285ce",
   "position": {
     "x": 422,
     "y": 794,
-    "z": 0,
+    "z": 4000,
     "height": 32,
     "width": 1340,
-    "tabOrder": 0
+    "tabOrder": 5000
   },
   "visual": {
     "visualType": "textbox",

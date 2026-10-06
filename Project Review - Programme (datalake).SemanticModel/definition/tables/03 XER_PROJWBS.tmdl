@@ -163,6 +163,23 @@ table '03 XER_PROJWBS'
 
 		annotation SummarizationSetBy = Automatic
 
+	column seq_num
+		dataType: int64
+		formatString: 0
+		lineageTag: 488d7a4e-37a6-4a3d-bc72-b90b886787c3
+		summarizeBy: none
+		sourceColumn: seq_num
+
+		annotation SummarizationSetBy = Automatic
+
+	column proj_node_flag
+		dataType: string
+		lineageTag: 1c62063d-5964-4f74-a9e0-c11011ad5c80
+		summarizeBy: none
+		sourceColumn: proj_node_flag
+
+		annotation SummarizationSetBy = Automatic
+
 	partition '03 XER_PROJWBS' = m
 		mode: import
 		queryGroup: XER
@@ -176,6 +193,8 @@ table '03 XER_PROJWBS'
 				                    "t.""wbs_name""",
 				                    "t.""wbs_id_key""",
 				                    "t.""parent_wbs_id_key""",
+				                    "TRY_CAST(t.""seq_num"" AS INTEGER) AS ""seq_num""",
+				                    "t.""proj_node_flag""",
 				                    "TRIM(UPPER(SPLIT_PART(t.""filename"", '-', 1))) AS ""ProjectCode"""
 				                },
 				                ", "
@@ -222,13 +241,43 @@ table '03 XER_PROJWBS'
 				            }
 				        ),
 				
+				    CleanFlags =
+				        Table.TransformColumns(
+				            CleanProjectCode,
+				            {
+				                {
+				                    "proj_node_flag",
+				                    each
+				                        if _ = null then
+				                            null
+				                        else if Text.Trim(Text.From(_)) = "" then
+				                            null
+				                        else
+				                            Text.Trim(Text.From(_)),
+				                    type nullable text
+				                }
+				            }
+				        ),
+				
+				    TypedAthena =
+				        Table.TransformColumnTypes(
+				            CleanFlags,
+				            {
+				                {"seq_num", Int64.Type},
+				                {"proj_node_flag", type nullable text}
+				            },
+				            "en-NZ"
+				        ),
+				
 				    AthenaFinal =
 				        Table.SelectColumns(
-				            CleanProjectCode,
+				            TypedAthena,
 				            {
 				                "wbs_name",
 				                "wbs_id_key",
 				                "parent_wbs_id_key",
+				                "seq_num",
+				                "proj_node_flag",
 				                "ProjectCode"
 				            }
 				        ),

@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "43a8c411f9ebd9675ed5",
   "position": {
     "x": 24,
     "y": 78,
-    "z": 30000,
+    "z": 23000,
     "height": 30,
     "width": 1744,
-    "tabOrder": 30
+    "tabOrder": 21000
   },
   "visual": {
     "visualType": "card",
@@ -171,23 +171,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "e31c1f00a8a2d7071c22",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Resource Scenario Measures"
-              }
-            },
-            "Property": "Scenario Evaluation Window"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

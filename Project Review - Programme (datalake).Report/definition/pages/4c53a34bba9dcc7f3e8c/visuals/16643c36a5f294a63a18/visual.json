@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "16643c36a5f294a63a18",
   "position": {
     "x": 24,
     "y": 192,
-    "z": 2000,
+    "z": 8000,
     "height": 90,
     "width": 368,
-    "tabOrder": 2
+    "tabOrder": 8000
   },
   "visual": {
     "visualType": "slicer",
@@ -236,23 +236,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "563b141aea2bc0247a80",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Scenario Calendar"
-              }
-            },
-            "Property": "Calendar"
-          }
-        },
-        "type": "Categorical"
-      }
-    ]
   }
 }

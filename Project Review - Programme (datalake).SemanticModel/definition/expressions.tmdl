@@ -411,12 +411,12 @@ expression XerCsvTableContracts =
 		    ],
 		    #"03_XER_PROJWBS" = [
 		        FileName = "03_XER_PROJWBS.csv",
-		        Columns = {"wbs_name", "wbs_id_key", "parent_wbs_id_key", "ProjectCode"},
-		        Types = {{"wbs_name", type nullable text}, {"wbs_id_key", type nullable text}, {"parent_wbs_id_key", type nullable text}, {"ProjectCode", type nullable text}},
-		        DateColumns = {}, LogicalColumns = {}, IntegerColumns = {}, NumberColumns = {},
+		        Columns = {"wbs_name", "wbs_id_key", "parent_wbs_id_key", "seq_num", "proj_node_flag", "ProjectCode"},
+		        Types = {{"wbs_name", type nullable text}, {"wbs_id_key", type nullable text}, {"parent_wbs_id_key", type nullable text}, {"seq_num", Int64.Type}, {"proj_node_flag", type nullable text}, {"ProjectCode", type nullable text}},
+		        DateColumns = {}, LogicalColumns = {}, IntegerColumns = {"seq_num"}, NumberColumns = {},
 		        RequiredColumns = {"wbs_name", "wbs_id_key", "ProjectCode"},
 		        NamespaceColumns = {"wbs_id_key", "parent_wbs_id_key"},
-		        BlankToNullColumns = {"parent_wbs_id_key"},
+		        BlankToNullColumns = {"parent_wbs_id_key", "proj_node_flag"},
 		        UniqueKeys = {{"wbs_id_key"}},
 		        SourceKeyColumn = "wbs_id_key",
 		        ProjectColumn = "ProjectCode"
@@ -998,10 +998,32 @@ expression fnXerCsvReadBundleTable =
 		                    error Error.Record("XerCsvManifest", "The selected bundle manifest has no rows for the requested table.", [ProjectCode = bundle[ProjectCode], ProgrammeType = bundle[ProgrammeType], BundleId = bundle[BundleId], TableName = tableName]),
 		            FileMatches = Table.SelectRows(bundle[Files], each [Name] = Contract[FileName]),
 		            FileBinary = if Table.RowCount(FileMatches) = 1 then FileMatches{0}[Content] else error Error.Record("XerCsvBundle", "Expected exactly one contract CSV file.", [BundleId = bundle[BundleId], FileName = Contract[FileName]]),
-		            Raw = Csv.Document(FileBinary, [Delimiter = ",", Columns = List.Count(Contract[Columns]), Encoding = 65001, QuoteStyle = QuoteStyle.Csv, ExtraValues = ExtraValues.Error]),
+		            Raw =
+		                if tableName = "03_XER_PROJWBS" then
+		                    Csv.Document(FileBinary, [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv])
+		                else
+		                    Csv.Document(FileBinary, [Delimiter = ",", Columns = List.Count(Contract[Columns]), Encoding = 65001, QuoteStyle = QuoteStyle.Csv, ExtraValues = ExtraValues.Error]),
 		            Promoted = Table.PromoteHeaders(Raw, [PromoteAllScalars = true]),
 		            ActualHeaders = Table.ColumnNames(Promoted),
-		            HeaderChecked = if Text.Combine(ActualHeaders, "|") = Text.Combine(Contract[Columns], "|") then Promoted else error Error.Record("XerCsvSchema", "CSV headers or header order do not match the Programme Review contract.", [BundleId = bundle[BundleId], FileName = Contract[FileName], ActualHeaders = Text.Combine(ActualHeaders, ", ")]),
+		            HeaderChecked =
+		                if tableName = "03_XER_PROJWBS" then
+		                    let
+		                        HasRequired = List.IsEmpty(List.Difference(Contract[RequiredColumns], ActualHeaders)),
+		                        HasOnlyAllowed = List.IsEmpty(List.Difference(ActualHeaders, Contract[Columns])),
+		                        Valid = HasRequired and HasOnlyAllowed,
+		                        WithSeqNum = if Table.HasColumns(Promoted, "seq_num") then Promoted else Table.AddColumn(Promoted, "seq_num", each null, type text),
+		                        WithProjNodeFlag = if Table.HasColumns(WithSeqNum, "proj_node_flag") then WithSeqNum else Table.AddColumn(WithSeqNum, "proj_node_flag", each null, type text),
+		                        Aligned = Table.SelectColumns(WithProjNodeFlag, Contract[Columns])
+		                    in
+		                        if Valid then
+		                            Aligned
+		                        else
+		                            error Error.Record("XerCsvSchema", "CSV headers do not match the Programme Review contract for 03_XER_PROJWBS.", [BundleId = bundle[BundleId], FileName = Contract[FileName], ActualHeaders = Text.Combine(ActualHeaders, ", "), ExpectedHeaders = Text.Combine(Contract[Columns], ", ")])
+		                else
+		                    if Text.Combine(ActualHeaders, "|") = Text.Combine(Contract[Columns], "|") then
+		                        Promoted
+		                    else
+		                        error Error.Record("XerCsvSchema", "CSV headers or header order do not match the Programme Review contract.", [BundleId = bundle[BundleId], FileName = Contract[FileName], ActualHeaders = Text.Combine(ActualHeaders, ", ")]),
 		            ActualRows = Int64.From(Table.RowCount(HeaderChecked)),
 		            RowCountMessage =
 		                "XER CSV row-count mismatch: project=" & bundle[ProjectCode] &

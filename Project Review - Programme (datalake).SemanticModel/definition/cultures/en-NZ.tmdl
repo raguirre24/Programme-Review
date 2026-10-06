@@ -2664,16 +2664,6 @@ cultureInfo en-NZ
 			            },
 			            "Weight": 0.9
 			          }
-			        },
-			        {
-			          "Remaining Duration": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -10994,16 +10984,6 @@ cultureInfo en-NZ
 			        },
 			        {
 			          "Variance": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
-			        },
-			        {
-			          "Finish Variance to Previous Month": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -28136,16 +28116,6 @@ cultureInfo en-NZ
 			            },
 			            "Weight": 0.475
 			          }
-			        },
-			        {
-			          "Reason": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -43213,6 +43183,12 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
+			          "reason": {
+			            "State": "Generated",
+			            "Weight": 0.97
+			          }
+			        },
+			        {
 			          "float reason": {
 			            "State": "Generated",
 			            "Weight": 0.97
@@ -50936,6 +50912,137 @@ cultureInfo en-NZ
 			        }
 			      ],
 			      "SemanticType": "Time"
+			    },
+			    "XER_measure.is_activity_selection": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "Is Activity Selection"
+			        }
+			      },
+			      "State": "Generated",
+			      "Visibility": {
+			        "Value": "Hidden"
+			      },
+			      "Terms": [
+			        {
+			          "is activity selection": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "selection": {
+			            "State": "Generated",
+			            "Weight": 0.97
+			          }
+			        },
+			        {
+			          "activity selection": {
+			            "State": "Generated",
+			            "Weight": 0.97
+			          }
+			        },
+			        {
+			          "is activity assortment": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.508
+			          }
+			        },
+			        {
+			          "is activity collection": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.508
+			          }
+			        },
+			        {
+			          "is activity variety": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.508
+			          }
+			        },
+			        {
+			          "is activity mixture": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.508
+			          }
+			        },
+			        {
+			          "is activity medley": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.508
+			          }
+			        },
+			        {
+			          "is activity miscellany": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.508
+			          }
+			        },
+			        {
+			          "activity assortment": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.5
+			          }
+			        },
+			        {
+			          "activity collection": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.5
+			          }
+			        },
+			        {
+			          "activity variety": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.5
+			          }
+			        },
+			        {
+			          "activity mixture": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.5
+			          }
+			        }
+			      ]
 			    }
 			  },
 			  "Relationships": {
@@ -54913,6 +55020,270 @@ cultureInfo en-NZ
 			          "State": "Generated",
 			          "Weight": 0.99,
 			          "ID": "XER_measures_have_variance_to_previous_update_history"
+			        }
+			      ]
+			    },
+			    "filter_task_type_has_XER_measure_latest_finish_history": {
+			      "Binding": {
+			        "ConceptualEntity": "Filter_TaskType"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "filter_task_type": {
+			          "Target": {
+			            "Entity": "filter_task_type"
+			          }
+			        },
+			        "XER_measure.latest_finish_history": {
+			          "Target": {
+			            "Entity": "XER_measure.latest_finish_history"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "filter_task_type"
+			            },
+			            "Object": {
+			              "Role": "XER_measure.latest_finish_history"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "filter_task_types_have_latest_finish_history"
+			        }
+			      ]
+			    },
+			    "filter_float_has_XER_measure_latest_finish_history": {
+			      "Binding": {
+			        "ConceptualEntity": "Filter_Float"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "filter_float": {
+			          "Target": {
+			            "Entity": "filter_float"
+			          }
+			        },
+			        "XER_measure.latest_finish_history": {
+			          "Target": {
+			            "Entity": "XER_measure.latest_finish_history"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "filter_float"
+			            },
+			            "Object": {
+			              "Role": "XER_measure.latest_finish_history"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "filter_floats_have_latest_finish_history"
+			        }
+			      ]
+			    },
+			    "filter_duration_has_XER_measure_latest_finish_history": {
+			      "Binding": {
+			        "ConceptualEntity": "Filter_Duration"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "filter_duration": {
+			          "Target": {
+			            "Entity": "filter_duration"
+			          }
+			        },
+			        "XER_measure.latest_finish_history": {
+			          "Target": {
+			            "Entity": "XER_measure.latest_finish_history"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "filter_duration"
+			            },
+			            "Object": {
+			              "Role": "XER_measure.latest_finish_history"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "filter_durations_have_latest_finish_history"
+			        }
+			      ]
+			    },
+			    "filter_driving_has_XER_measure_latest_finish_history": {
+			      "Binding": {
+			        "ConceptualEntity": "Filter_Driving"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "filter_driving": {
+			          "Target": {
+			            "Entity": "filter_driving"
+			          }
+			        },
+			        "XER_measure.latest_finish_history": {
+			          "Target": {
+			            "Entity": "XER_measure.latest_finish_history"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "filter_driving"
+			            },
+			            "Object": {
+			              "Role": "XER_measure.latest_finish_history"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "filter_driving_have_latest_finish_history"
+			        }
+			      ]
+			    },
+			    "filter_critical_status_has_XER_measure_latest_finish_history": {
+			      "Binding": {
+			        "ConceptualEntity": "Filter_Critical_Status"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "filter_critical_status": {
+			          "Target": {
+			            "Entity": "filter_critical_status"
+			          }
+			        },
+			        "XER_measure.latest_finish_history": {
+			          "Target": {
+			            "Entity": "XER_measure.latest_finish_history"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "filter_critical_status"
+			            },
+			            "Object": {
+			              "Role": "XER_measure.latest_finish_history"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "filter_critical_statuses_have_latest_finish_history"
+			        }
+			      ]
+			    },
+			    "filter_constraint_type_has_XER_measure_latest_finish_history": {
+			      "Binding": {
+			        "ConceptualEntity": "Filter_Constraint_Types"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "filter_constraint_type": {
+			          "Target": {
+			            "Entity": "filter_constraint_type"
+			          }
+			        },
+			        "XER_measure.latest_finish_history": {
+			          "Target": {
+			            "Entity": "XER_measure.latest_finish_history"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "filter_constraint_type"
+			            },
+			            "Object": {
+			              "Role": "XER_measure.latest_finish_history"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "filter_constraint_types_have_latest_finish_history"
+			        }
+			      ]
+			    },
+			    "entity_09_xer_taskactv_has_XER_measure_latest_finish_history": {
+			      "Binding": {
+			        "ConceptualEntity": "09 XER_TASKACTV"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "entity_09_xer_taskactv": {
+			          "Target": {
+			            "Entity": "entity_09_xer_taskactv"
+			          }
+			        },
+			        "XER_measure.latest_finish_history": {
+			          "Target": {
+			            "Entity": "XER_measure.latest_finish_history"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "entity_09_xer_taskactv"
+			            },
+			            "Object": {
+			              "Role": "XER_measure.latest_finish_history"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "Phrasing09_xer_taskactvs_have_latest_finish_history"
+			        }
+			      ]
+			    },
+			    "entity_03_xer_projwb_has_XER_measure_latest_finish_history": {
+			      "Binding": {
+			        "ConceptualEntity": "03 XER_PROJWBS"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "entity_03_xer_projwb": {
+			          "Target": {
+			            "Entity": "entity_03_xer_projwb"
+			          }
+			        },
+			        "XER_measure.latest_finish_history": {
+			          "Target": {
+			            "Entity": "XER_measure.latest_finish_history"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "entity_03_xer_projwb"
+			            },
+			            "Object": {
+			              "Role": "XER_measure.latest_finish_history"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "Phrasing03_xer_projwbs_have_latest_finish_history"
 			        }
 			      ]
 			    },

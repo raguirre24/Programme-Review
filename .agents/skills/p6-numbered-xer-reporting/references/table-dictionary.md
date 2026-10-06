@@ -12,7 +12,7 @@ If an imported column collides with a reserved derived/provenance column, the En
 | --- | --- | --- |
 | 01_XER_TASK | TASK; one activity per source/snapshot | `task_id_key`; project, WBS and calendar foreign keys. Activity dimension/fact at snapshot grain. |
 | 02_XER_PROJECT | PROJECT; one project per source/snapshot | `proj_id_key`; P6 Data Date and project metadata. Review bundle ProjectCode is governed metadata, not the native ID. |
-| 03_XER_PROJWBS | PROJWBS; one WBS node per source/snapshot | `wbs_id_key`, self-referencing `parent_wbs_id_key`; `01.wbs_id_key` joins here. Duplicate/cyclic/cross-project parent identities are warned; unresolved hierarchy values stay blank while source rows remain. |
+| 03_XER_PROJWBS | PROJWBS; one WBS node per source/snapshot | `wbs_id_key`, self-referencing `parent_wbs_id_key`; `01.wbs_id_key` joins here. Exposes `seq_num` sibling display order and `proj_node_flag` root marker. Duplicate/cyclic/cross-project parent identities are warned; unresolved hierarchy values stay blank while source rows remain. |
 | 04_XER_BASELINE | Filtered legacy 01 | All rows at the global earliest valid filename-derived MonthUpdate. Not an Oracle designated baseline, not independently selected per project. Absent from both review profiles. |
 | 06_XER_PREDECESSOR | TASKPRED; one relationship | `task_id_key` is successor, `pred_task_id_key` is predecessor. Review profiles also supply `task_pred_id_key`. Multiple relationships between an activity pair can be valid. |
 | 07_XER_ACTVTYPE | ACTVTYPE; one code category | `actv_code_type_id_key`; category name, not activity assignment. |
