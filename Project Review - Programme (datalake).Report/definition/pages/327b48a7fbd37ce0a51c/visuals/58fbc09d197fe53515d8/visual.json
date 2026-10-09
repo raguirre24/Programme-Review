@@ -43,7 +43,7 @@
                 }
               },
               "queryRef": "XER Metrics.Task_Count",
-              "nativeQueryRef": "Rem. Activities",
+              "nativeQueryRef": "Task_Count",
               "displayName": "Rem. Activities"
             },
             {
@@ -58,7 +58,7 @@
                 }
               },
               "queryRef": "XER Metrics.Missing Predecessor",
-              "nativeQueryRef": "Missing Pred.",
+              "nativeQueryRef": "Missing Predecessor",
               "displayName": "Missing Pred."
             },
             {
@@ -73,7 +73,7 @@
                 }
               },
               "queryRef": "XER Metrics.Missing Successor",
-              "nativeQueryRef": "Missing Succ.",
+              "nativeQueryRef": "Missing Successor",
               "displayName": "Missing Succ."
             },
             {
@@ -84,11 +84,12 @@
                       "Entity": "XER Metrics"
                     }
                   },
-                  "Property": "Primary Constraints"
+                  "Property": "SM Restrictive Primary Count"
                 }
               },
               "queryRef": "XER Metrics.Primary Constraints",
-              "nativeQueryRef": "Primary Constraints"
+              "nativeQueryRef": "SM Restrictive Primary Count",
+              "displayName": "Restrictive primary"
             },
             {
               "field": {
@@ -102,7 +103,7 @@
                 }
               },
               "queryRef": "XER Metrics.Leads<0d",
-              "nativeQueryRef": "Leads <0d",
+              "nativeQueryRef": "Leads<0d",
               "displayName": "Leads <0d"
             },
             {
@@ -113,12 +114,12 @@
                       "Entity": "XER Metrics"
                     }
                   },
-                  "Property": "Lags>5d"
+                  "Property": "SM Positive Lag Count"
                 }
               },
               "queryRef": "XER Metrics.Lags>5d",
-              "nativeQueryRef": "Lags >5d",
-              "displayName": "Lags >5d"
+              "nativeQueryRef": "SM Positive Lag Count",
+              "displayName": "Positive lags"
             },
             {
               "field": {
@@ -176,7 +177,8 @@
                 }
               },
               "queryRef": "XER Metrics.Dur >44",
-              "nativeQueryRef": "Dur >44"
+              "nativeQueryRef": "Dur >44",
+              "displayName": "Rem. duration >44d"
             },
             {
               "field": {
@@ -186,12 +188,57 @@
                       "Entity": "XER Metrics"
                     }
                   },
-                  "Property": "DD Driving"
+                  "Property": "SM Missing Logic %"
                 }
               },
-              "queryRef": "XER Metrics.DD Driving",
-              "nativeQueryRef": "Driven By Data Date",
-              "displayName": "Driven By Data Date"
+              "queryRef": "XER Metrics.SM Missing Logic %",
+              "nativeQueryRef": "SM Missing Logic %",
+              "displayName": "Missing logic %"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Metrics"
+                    }
+                  },
+                  "Property": "SM FS %"
+                }
+              },
+              "queryRef": "XER Metrics.SM FS %",
+              "nativeQueryRef": "SM FS %",
+              "displayName": "FS %"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Metrics"
+                    }
+                  },
+                  "Property": "SM Invalid Dates %"
+                }
+              },
+              "queryRef": "XER Metrics.SM Invalid Dates %",
+              "nativeQueryRef": "SM Invalid Dates %",
+              "displayName": "Invalid dates %"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Schedule Metric Detail"
+                    }
+                  },
+                  "Property": "SM Baseline Coverage %"
+                }
+              },
+              "queryRef": "Schedule Metric Detail.SM Baseline Coverage %",
+              "nativeQueryRef": "SM Baseline Coverage %",
+              "displayName": "Baseline coverage (project)"
             }
           ]
         }
@@ -297,20 +344,6 @@
           },
           "selector": {
             "metadata": "XER Metrics.Lags>5d"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "73.24484576748259D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "XER Metrics.DD Driving"
           }
         },
         {
@@ -558,20 +591,6 @@
             }
           },
           "selector": {
-            "metadata": "XER Metrics.DD Driving"
-          }
-        },
-        {
-          "properties": {
-            "alignment": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Center'"
-                }
-              }
-            }
-          },
-          "selector": {
             "metadata": "XER Metrics.Missing Successor"
           }
         },
@@ -711,37 +730,15 @@
   "filterConfig": {
     "filters": [
       {
-        "name": "9043c76b8efa431d412e",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "01 XER_TASK"
-              }
-            },
-            "Property": "status_code"
-          }
-        },
-        "type": "Categorical",
-        "howCreated": "User",
-        "objects": {
-          "general": [
-            {
-              "properties": {}
-            }
-          ]
-        }
-      },
-      {
         "name": "f8875d5d351bb9b4e96d",
         "field": {
           "Measure": {
             "Expression": {
               "SourceRef": {
-                "Entity": "XER  Counts"
+                "Entity": "XER Metrics"
               }
             },
-            "Property": "Count_Tasks"
+            "Property": "Task_Count"
           }
         },
         "type": "Advanced",
@@ -750,7 +747,7 @@
           "From": [
             {
               "Name": "x",
-              "Entity": "XER  Counts",
+              "Entity": "XER Metrics",
               "Type": 0
             }
           ],
@@ -768,7 +765,7 @@
                               "Source": "x"
                             }
                           },
-                          "Property": "Count_Tasks"
+                          "Property": "Task_Count"
                         }
                       },
                       "Right": {
@@ -784,174 +781,6 @@
           ]
         },
         "howCreated": "User"
-      },
-      {
-        "name": "464b6331593ee7ec1284",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "01 XER_TASK"
-              }
-            },
-            "Property": "UpdateDate"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "74851fa23a628d108d88",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Metrics"
-              }
-            },
-            "Property": "Task_Count"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "744adfab0a073e848ac6",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Metrics"
-              }
-            },
-            "Property": "Missing Predecessor"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "d6e3d8f19995096883d2",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Metrics"
-              }
-            },
-            "Property": "Missing Successor"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "a109394961936b59c191",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Metrics"
-              }
-            },
-            "Property": "Primary Constraints"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "0904015062bafab259b8",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Metrics"
-              }
-            },
-            "Property": "Leads<0d"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "cc4e55bfd23dedb5b80b",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Metrics"
-              }
-            },
-            "Property": "Lags>5d"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "933014b11ccb3cbe2a87",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Metrics"
-              }
-            },
-            "Property": "Task_Count_Float_0"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "ed33c313c8d7dd450c3d",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Metrics"
-              }
-            },
-            "Property": "Task_Count_Negative_Float"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "d5dd00d61e3afbb1776f",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Metrics"
-              }
-            },
-            "Property": "Float >44"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "f0b38b5eb9b202691cc5",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Metrics"
-              }
-            },
-            "Property": "Dur >44"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "20a9a3032f6970cedf60",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Metrics"
-              }
-            },
-            "Property": "DD Driving"
-          }
-        },
-        "type": "Advanced"
       }
     ]
   }

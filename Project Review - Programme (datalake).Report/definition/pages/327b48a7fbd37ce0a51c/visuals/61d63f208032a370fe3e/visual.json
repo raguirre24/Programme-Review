@@ -3,9 +3,9 @@
   "name": "61d63f208032a370fe3e",
   "position": {
     "x": 441.52149671663983,
-    "y": 499.88353363895425,
+    "y": 518,
     "z": 26000,
-    "height": 129.41147317556684,
+    "height": 111.2950068145211,
     "width": 423.75913765332672,
     "tabOrder": 20000
   },
@@ -20,14 +20,72 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "XER Metrics"
+                      "Entity": "Schedule Metric Detail"
                     }
                   },
-                  "Property": "0Float%"
+                  "Property": "SM Detail Value"
                 }
               },
               "queryRef": "XER Metrics.0Float%",
-              "nativeQueryRef": "0Float%"
+              "nativeQueryRef": "SM Detail Value",
+              "displayName": "Selected detail metric"
+            }
+          ]
+        },
+        "TargetValue": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Schedule Metric Detail"
+                    }
+                  },
+                  "Property": "SM Detail Target"
+                }
+              },
+              "queryRef": "Schedule Metric Detail.SM Detail Target",
+              "nativeQueryRef": "SM Detail Target",
+              "displayName": "Target"
+            }
+          ]
+        },
+        "MaxValue": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Schedule Metric Detail"
+                    }
+                  },
+                  "Property": "SM Detail Maximum"
+                }
+              },
+              "queryRef": "Schedule Metric Detail.SM Detail Maximum",
+              "nativeQueryRef": "SM Detail Maximum",
+              "displayName": "Scale maximum"
+            }
+          ]
+        },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Schedule Metric Detail"
+                    }
+                  },
+                  "Property": "SM Detail Tooltip"
+                }
+              },
+              "queryRef": "Schedule Metric Detail.SM Detail Tooltip",
+              "nativeQueryRef": "SM Detail Tooltip",
+              "displayName": "Scope and coverage"
             }
           ]
         }
@@ -39,10 +97,10 @@
               "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "XER Metrics"
+                    "Entity": "Schedule Metric Detail"
                   }
                 },
-                "Property": "0Float%"
+                "Property": "SM Detail Value"
               }
             },
             "direction": "Descending"
@@ -71,7 +129,7 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
                 }
               }
             }
@@ -101,6 +159,22 @@
                   "Value": "true"
                 }
               }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Schedule Metric Detail"
+                        }
+                      },
+                      "Property": "SM Detail Colour"
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -108,10 +182,10 @@
       "axis": [
         {
           "properties": {
-            "max": {
+            "min": {
               "expr": {
                 "Literal": {
-                  "Value": "1D"
+                  "Value": "0D"
                 }
               }
             }
@@ -125,9 +199,13 @@
               "solid": {
                 "color": {
                   "expr": {
-                    "ThemeDataColor": {
-                      "ColorId": 9,
-                      "Percent": 0
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Schedule Metric Detail"
+                        }
+                      },
+                      "Property": "SM Detail Colour"
                     }
                   }
                 }
@@ -168,8 +246,13 @@
           "properties": {
             "text": {
               "expr": {
-                "Literal": {
-                  "Value": "'Missing Logic'"
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Schedule Metric Detail"
+                    }
+                  },
+                  "Property": "SM Detail Title"
                 }
               }
             },
@@ -181,6 +264,20 @@
               }
             },
             "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "9D"
+                }
+              }
+            },
+            "titleWrap": {
               "expr": {
                 "Literal": {
                   "Value": "false"

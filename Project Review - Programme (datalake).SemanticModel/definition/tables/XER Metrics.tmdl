@@ -1,485 +1,1130 @@
 table 'XER Metrics'
 	lineageTag: 4c90930e-7191-402b-8b10-d92d87090b7d
 
+	/// Eligible work with no predecessor. Diagnostic component of combined missing logic.
 	measure 'Missing Predecessor' =
-			
-			COALESCE(
-			    SUM('01 XER_TASK'[No Predecessor]),
-			    0
-			)
-		formatString: 0
+			VAR N = [Task_Count]
+			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			REMOVEFILTERS ( Filter_Activity_Status ),
+			REMOVEFILTERS ( Filter_TaskType ),
+			REMOVEFILTERS ( '00 CALENDAR' ),
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" }, KEEPFILTERS ( '01 XER_TASK'[No Predecessor] = 1 ) )
+			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
+		formatString: #,0
 		displayFolder: Schedule Quality Table
 		lineageTag: b2f7cb81-8dec-4005-9a48-ad65ebfa34d0
 
-	measure Task_Count = ```
-			
-			CALCULATE(
-			    COUNTA('01 XER_TASK'[task_id_key]),
-			    '01 XER_TASK'[StatusCategory] <> "Complete"
-			)
-			
-			```
+	/// Incomplete discrete work: TT_Task/TT_Rsrc. Includes unscheduled work; preserves datalake exclusions. Not a sum across snapshots.
+	measure Task_Count =
+			VAR N = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			REMOVEFILTERS ( Filter_Activity_Status ),
+			REMOVEFILTERS ( Filter_TaskType ),
+			REMOVEFILTERS ( '00 CALENDAR' ),
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" } )
+			RETURN IF ( [SM Snapshot Valid], N )
 		formatString: #,0
 		displayFolder: Schedule Quality Table
 		lineageTag: a59b8440-c71a-49f5-ac02-82817bf03c64
 
-	measure MissingPredecessor% =
-			
-			IF(
-			    ISBLANK([Missing Predecessor]/[Task_Count]),
-			    blank(),
-			    [Missing Predecessor]/[Task_Count]
-			)
+	measure MissingPredecessor% = DIVIDE ( [Missing Predecessor], [Task_Count] )
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Visuals
 		lineageTag: b10b5f78-5dc1-4c51-b3a0-55f52d133cc1
 
+	/// Float is already in working days; no hours-to-days conversion.
 	measure 'Float >44' =
-			
-			COALESCE(
-			    CALCULATE(
-			        COUNTA('01 XER_TASK'[task_name]),
-			        '01 XER_TASK'[total_float] > 44
-			    ),
-			    0
-			)
+			VAR N = [Task_Count]
+			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			REMOVEFILTERS ( Filter_Activity_Status ),
+			REMOVEFILTERS ( Filter_TaskType ),
+			REMOVEFILTERS ( '00 CALENDAR' ),
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" }, KEEPFILTERS ( '01 XER_TASK'[total_float] > 44 ) )
+			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
 		formatString: #,0
 		displayFolder: Schedule Quality Table
 		lineageTag: f455b06e-fc38-40f8-a1bd-e98e87db351b
 
-	measure HighFloat% =
-			
-			IF(
-			    ISBLANK([Float >44]/[Task_Count]),
-			    blank(),
-			    [Float >44]/[Task_Count]
-			)
+	/// Float >44 working days / work with known float; a context-dependent diagnostic, excluded from the score. Missing inputs are disclosed separately.
+	measure HighFloat% = DIVIDE ( [Float >44], [Task_Count] - [SM Missing Float Count] )
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Visuals
 		lineageTag: b0c84e96-887e-471b-b1d0-f53663d01542
 
+	/// Custom remaining-duration check, not original/baseline duration.
 	measure 'Dur >44' =
-			
-			COALESCE(
-			    CALCULATE(
-			        COUNTA('01 XER_TASK'[task_name]),
-			        '01 XER_TASK'[remaining_duration] > 44
-			    ),
-			    0
-			)
+			VAR N = [Task_Count]
+			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			REMOVEFILTERS ( Filter_Activity_Status ),
+			REMOVEFILTERS ( Filter_TaskType ),
+			REMOVEFILTERS ( '00 CALENDAR' ),
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" }, KEEPFILTERS ( '01 XER_TASK'[remaining_duration] > 44 ) )
+			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
 		formatString: #,0
 		displayFolder: Schedule Quality Table
 		lineageTag: f0c8dee3-9325-44bb-ac70-f3c622aae79a
 
-	measure HighDur% =
-			
-			IF(
-			    ISBLANK([Dur >44]/[Task_Count]),
-			    blank(),
-			    [Dur >44]/[Task_Count]
-			)
+	/// Custom remaining duration >44 working days / work with valid duration; internal benchmark at or below 5%.
+	measure HighDur% = DIVIDE ( [Dur >44], [Task_Count] - [SM Missing Duration Count] )
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Visuals
 		lineageTag: 197e994d-8397-448d-81b5-bd7fc09c90d2
 
+	/// Long-lag diagnostic retained by name. The scored Lags% uses all positive lags.
 	measure Lags>5d =
-			
-			COALESCE(
-			    CALCULATE(
-			        COUNT('06 XER_PREDECESSOR'[Lag]),
-			        '06 XER_PREDECESSOR'[Lag] > 5
-			    ),
-			    0
-			)
-		formatString: 0
+			VAR N = [Task_Count]
+			VAR WorkKeys = CALCULATETABLE ( VALUES ( '01 XER_TASK'[task_id_key] ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			REMOVEFILTERS ( Filter_Activity_Status ),
+			REMOVEFILTERS ( Filter_TaskType ),
+			REMOVEFILTERS ( '00 CALENDAR' ),
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" } )
+			VAR Result = CALCULATE ( COUNTROWS ( '06 XER_PREDECESSOR' ),
+			    REMOVEFILTERS ( '01 XER_TASK' ),
+			    TREATAS ( WorkKeys, '06 XER_PREDECESSOR'[task_id_key] ),
+			    KEEPFILTERS ( '06 XER_PREDECESSOR'[lag] > 5 ) )
+			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
+		formatString: #,0
 		displayFolder: Schedule Quality Table
 		lineageTag: aebdccda-d216-44b1-a7ab-769cdc91a580
 
-	measure Lags% =
-			
-			IF(
-			    ISBLANK([Lags>5d]/COUNTROWS('06 XER_PREDECESSOR')),
-			    blank(),
-			    [Lags>5d]/COUNTROWS('06 XER_PREDECESSOR')
-			)
+	/// Positive lag relationships / relationships with known lag. Pass at or below 5%.
+	measure Lags% = DIVIDE ( [SM Positive Lag Count], [SM Eligible Relationship Count] - [SM Missing Lag Count] )
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Visuals
 		lineageTag: 0b9d0cbd-83a4-4567-9276-c9e312b19b1d
 
+	/// Average of eight assessed internal review grades: within=1, review=0.5, priority=0. High float is diagnostic only; coverage is separate.
 	measure Score =
-			
-			VAR HighDurPercent = [HighDur%]
-			VAR HighFloatPercent = [HighFloat%]
-			VAR LagsPercent = [Lags%]
-			VAR MissingPred = [MissingPredecessor%]
-			VAR DataDatePercent = [DataDate%]
-			VAR ZeroFLoat = [0Float%]
-			VAR NegativeFLoat = [<0Float%]
-			VAR NegativeLead = [<0Lead%]
-			VAR Constraints = [Constraint%]
-			VAR MissingSucc = [MissingSuccessor%]
-			
-			VAR TotalComponents = HighDurPercent + HighFloatPercent + LagsPercent + MissingPred + DataDatePercent + ZeroFLoat + NegativeFLoat + NegativeLead + Constraints + MissingSucc
-			
-			RETURN
-			IF(
-			    ISBLANK(SELECTEDVALUE('01 XER_TASK'[UpdateDate])),
-			    BLANK(),
-			    IF(
-			        ISBLANK(TotalComponents),
-			        BLANK(),
-			        1 - TotalComponents / 10
-			    )
-			)
+			VAR CheckPoints =
+			{
+			    [SM Missing Logic Points],
+			    [SM Leads Points],
+			    [SM Lags Points],
+			    [SM FS Points],
+			    [SM Constraints Points],
+			    [SM Negative Float Points],
+			    [SM High Duration Points],
+			    [SM Invalid Dates Points]
+			}
+			VAR AssessedPoints = FILTER ( CheckPoints, NOT ISBLANK ( [Value] ) )
+			RETURN IF ( [Task_Count] > 0, AVERAGEX ( AssessedPoints, [Value] ) )
 		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Schedule Quality Score
 		lineageTag: 91a728f9-6f81-400e-a5e1-e9f966f407af
 
-	measure Task_Count_Negative_Float = ```
-			
-			IF(
-			    CALCULATE(COUNTA('01 XER_TASK'[task_id_key]), '01 XER_TASK'[total_float] < 0) > 0,
-			    CALCULATE(COUNTA('01 XER_TASK'[task_id_key]), '01 XER_TASK'[total_float] < 0),
-			    0
-			)
-			
-			```
-		formatString: 0
+	measure Task_Count_Negative_Float =
+			VAR N = [Task_Count]
+			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			REMOVEFILTERS ( Filter_Activity_Status ),
+			REMOVEFILTERS ( Filter_TaskType ),
+			REMOVEFILTERS ( '00 CALENDAR' ),
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" }, KEEPFILTERS ( '01 XER_TASK'[total_float] < 0 ) )
+			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
+		formatString: #,0
 		displayFolder: Schedule Quality Table
 		lineageTag: 84f80f9d-6679-44c8-9967-879cefb38790
 
+	/// All primary constraints; retained for existing diagnostic consumers. Score uses restrictive primary constraints instead.
 	measure 'Primary Constraints' =
-			
-			VAR CountValue = CALCULATE(COUNTA('01 XER_TASK'[task_id_key]), '01 XER_TASK'[cstr_type] <> BLANK())
-			RETURN
-			IF(
-			    ISBLANK(CountValue) || CountValue = 0,
-			    0,
-			    CountValue
-			)
-		formatString: 0
+			VAR N = [Task_Count]
+			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			REMOVEFILTERS ( Filter_Activity_Status ),
+			REMOVEFILTERS ( Filter_TaskType ),
+			REMOVEFILTERS ( '00 CALENDAR' ),
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" }, KEEPFILTERS ( NOT ISBLANK ( '01 XER_TASK'[cstr_type] ) && '01 XER_TASK'[cstr_type] <> "" ) )
+			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
+		formatString: #,0
 		displayFolder: Schedule Quality Table
 		lineageTag: a30c0519-b72a-480b-8510-a3d929447144
 
 	measure Leads<0d =
-			
-			COALESCE(
-			    CALCULATE(
-			        COUNT('06 XER_PREDECESSOR'[Lag]),
-			        '06 XER_PREDECESSOR'[Lag] < 0
-			    ),
-			    0
-			)
-		formatString: 0
+			VAR N = [Task_Count]
+			VAR WorkKeys = CALCULATETABLE ( VALUES ( '01 XER_TASK'[task_id_key] ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			REMOVEFILTERS ( Filter_Activity_Status ),
+			REMOVEFILTERS ( Filter_TaskType ),
+			REMOVEFILTERS ( '00 CALENDAR' ),
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" } )
+			VAR Result = CALCULATE ( COUNTROWS ( '06 XER_PREDECESSOR' ),
+			    REMOVEFILTERS ( '01 XER_TASK' ),
+			    TREATAS ( WorkKeys, '06 XER_PREDECESSOR'[task_id_key] ),
+			    KEEPFILTERS ( '06 XER_PREDECESSOR'[lag] < 0 ) )
+			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
+		formatString: #,0
 		displayFolder: Schedule Quality Table
 		lineageTag: bd7bae77-005f-45cb-b795-11d1bc91c490
 
-	measure Task_Count_Float_0 = CALCULATE(counta('01 XER_TASK'[task_id_key]),filter('01 XER_TASK','01 XER_TASK'[status_code]<>"Complete"&&'01 XER_TASK'[total_float]=0))
-		formatString: 0
+	/// Strict equality excludes missing float. Diagnostic only, not longest path or a scored defect.
+	measure Task_Count_Float_0 =
+			VAR N = [Task_Count]
+			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			REMOVEFILTERS ( Filter_Activity_Status ),
+			REMOVEFILTERS ( Filter_TaskType ),
+			REMOVEFILTERS ( '00 CALENDAR' ),
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" }, KEEPFILTERS ( '01 XER_TASK'[total_float] == 0 ) )
+			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
+		formatString: #,0
 		displayFolder: Schedule Quality Table
 		lineageTag: f23dbffe-c081-4eae-8448-8886f89d6cb0
 
-	measure 'DD Driving' =
-			
-			COALESCE(
-			    CALCULATE(
-			        COUNTROWS('01 XER_TASK'),
-			        '01 XER_TASK'[Driven_DataDate] <> "Not Driven",
-			        '01 XER_TASK'[status_code] <> "Complete",
-			        '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }
-			    ),
-			    0
-			)
-		formatString: #,0
-		displayFolder: Schedule Quality Table
-		lineageTag: 0639f5b7-2b37-4234-ab71-b64effa3eb55
-
-	measure DataDate% =
-			
-			VAR EligibleTaskCount =
-			    CALCULATE(
-			        COUNTROWS('01 XER_TASK'),
-			        '01 XER_TASK'[status_code] <> "Complete",
-			        '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }
-			    )
-			RETURN
-			    DIVIDE([DD Driving], EligibleTaskCount)
-		formatString: 0.00%;-0.00%;0.00%
-		displayFolder: Schedule Quality Visuals
-		lineageTag: 57cf7730-c8f5-4aba-851f-73bf91b44bf9
-
-	measure 0Float% =
-			
-			IF(
-			    ISBLANK([Task_Count_Float_0]/[Task_Count]),
-			    blank(),
-			    [Task_Count_Float_0]/[Task_Count]
-			)
+	/// Diagnostic only; neither longest-path membership nor a scored defect.
+	measure 0Float% = DIVIDE ( [Task_Count_Float_0], [Task_Count] - [SM Missing Float Count] )
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Visuals
 		lineageTag: a831311e-8b1d-4ec8-b39f-dccb280d63ff
 
-	measure <0Float% =
-			
-			IF(
-			    ISBLANK([Task_Count_Negative_Float]/[Task_Count]),
-			    blank(),
-			    [Task_Count_Negative_Float]/[Task_Count]
-			)
+	/// Negative total float / work with known float. Pass only at zero; missing inputs are disclosed separately.
+	measure <0Float% = DIVIDE ( [Task_Count_Negative_Float], [Task_Count] - [SM Missing Float Count] )
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Visuals
 		lineageTag: f2302477-2578-475c-a8c0-6c00a2b9dd98
 
-	measure <0Lead% =
-			
-			IF(
-			    ISBLANK([Leads<0d]/[Task_Count]),
-			    blank(),
-			    [Leads<0d]/[Task_Count]
-			)
+	/// Negative lag relationships / relationships with known lag. Pass only at zero.
+	measure <0Lead% = DIVIDE ( [Leads<0d], [SM Eligible Relationship Count] - [SM Missing Lag Count] )
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Visuals
 		lineageTag: 491fc125-f8aa-4e36-878d-89d555bf390c
 
-	measure Constraint% =
-			
-			IF(
-			    ISBLANK([Primary Constraints]/[Task_Count]),
-			    blank(),
-			    [Primary Constraints]/[Task_Count]
-			)
+	/// Primary restrictive constraints only; at or below 5%. Secondary constraints are not available.
+	measure Constraint% = DIVIDE ( [SM Restrictive Primary Count], [Task_Count] - [SM Unknown Constraint Count] )
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Visuals
 		lineageTag: 2ad2059f-95e3-418a-9e3e-4a2659f6bb8c
 
+	/// Eligible work with no successor. Diagnostic component of combined missing logic.
 	measure 'Missing Successor' =
-			
-			COALESCE(
-			    SUM('01 XER_TASK'[No Successor]),
-			    0
-			)
-		formatString: 0
+			VAR N = [Task_Count]
+			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			REMOVEFILTERS ( Filter_Activity_Status ),
+			REMOVEFILTERS ( Filter_TaskType ),
+			REMOVEFILTERS ( '00 CALENDAR' ),
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" }, KEEPFILTERS ( '01 XER_TASK'[No Successor] = 1 ) )
+			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
+		formatString: #,0
 		displayFolder: Schedule Quality Table
 		lineageTag: 72da43b9-9740-4e17-9d42-0d75e5d8d035
 
-	measure MissingSuccessor% =
-			
-			IF(
-			    ISBLANK([Missing Successor]/[Task_Count]),
-			    blank(),
-			    [Missing Successor]/[Task_Count]
-			)
+	measure MissingSuccessor% = DIVIDE ( [Missing Successor], [Task_Count] )
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Visuals
 		lineageTag: aa2548ee-cb2f-4bfe-9f84-8449da03dafe
 
+	/// History up to the selected update, evaluated at one disconnected UpdateHistory axis point.
 	measure 'Score (History)' =
-			
-			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
-			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
-			VAR HistoryUpdates =
-			    FILTER(
-			        VALUES(UpdateHistory[UpdateDate]),
-			        UpdateHistory[UpdateDate] <= SelectedUpdate
-			    )
-			RETURN
-			    CALCULATE(
-			        IF(NOT ISEMPTY('01 XER_TASK'), [Score]),
-			        REMOVEFILTERS(CurrentDate),
-			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
-			    )
+			VAR SelectedUpdate = [SM Selected History Cutoff]
+			VAR AxisUpdate = SELECTEDVALUE ( UpdateHistory[UpdateDate] )
+			RETURN IF ( NOT ISBLANK ( AxisUpdate ) && AxisUpdate <= SelectedUpdate,
+			    CALCULATE ( [Score], REMOVEFILTERS ( CurrentDate ),
+			        TREATAS ( { AxisUpdate }, '01 XER_TASK'[UpdateDate] ) )
+			)
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Trend
 		lineageTag: 2e2f3c32-9116-4175-bc7c-39d3f92856c7
 
+	/// History up to the selected update, evaluated at one disconnected UpdateHistory axis point.
 	measure 'HighDur% (History)' =
-			
-			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
-			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
-			VAR HistoryUpdates =
-			    FILTER(
-			        VALUES(UpdateHistory[UpdateDate]),
-			        UpdateHistory[UpdateDate] <= SelectedUpdate
-			    )
-			RETURN
-			    CALCULATE(
-			        IF(NOT ISEMPTY('01 XER_TASK'), [HighDur%]),
-			        REMOVEFILTERS(CurrentDate),
-			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
-			    )
+			VAR SelectedUpdate = [SM Selected History Cutoff]
+			VAR AxisUpdate = SELECTEDVALUE ( UpdateHistory[UpdateDate] )
+			RETURN IF ( NOT ISBLANK ( AxisUpdate ) && AxisUpdate <= SelectedUpdate,
+			    CALCULATE ( [HighDur%], REMOVEFILTERS ( CurrentDate ),
+			        TREATAS ( { AxisUpdate }, '01 XER_TASK'[UpdateDate] ) )
+			)
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Trend
 		lineageTag: 718a571f-8715-4cc1-ac9c-4217052ed4b2
 
+	/// History up to the selected update, evaluated at one disconnected UpdateHistory axis point.
 	measure 'HighFloat% (History)' =
-			
-			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
-			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
-			VAR HistoryUpdates =
-			    FILTER(
-			        VALUES(UpdateHistory[UpdateDate]),
-			        UpdateHistory[UpdateDate] <= SelectedUpdate
-			    )
-			RETURN
-			    CALCULATE(
-			        IF(NOT ISEMPTY('01 XER_TASK'), [HighFloat%]),
-			        REMOVEFILTERS(CurrentDate),
-			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
-			    )
+			VAR SelectedUpdate = [SM Selected History Cutoff]
+			VAR AxisUpdate = SELECTEDVALUE ( UpdateHistory[UpdateDate] )
+			RETURN IF ( NOT ISBLANK ( AxisUpdate ) && AxisUpdate <= SelectedUpdate,
+			    CALCULATE ( [HighFloat%], REMOVEFILTERS ( CurrentDate ),
+			        TREATAS ( { AxisUpdate }, '01 XER_TASK'[UpdateDate] ) )
+			)
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Trend
 		lineageTag: b82c651f-8143-46de-be30-ac0cf105e7bd
 
+	/// History up to the selected update, evaluated at one disconnected UpdateHistory axis point.
 	measure 'Lags% (History)' =
-			
-			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
-			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
-			VAR HistoryUpdates =
-			    FILTER(
-			        VALUES(UpdateHistory[UpdateDate]),
-			        UpdateHistory[UpdateDate] <= SelectedUpdate
-			    )
-			RETURN
-			    CALCULATE(
-			        IF(NOT ISEMPTY('01 XER_TASK'), [Lags%]),
-			        REMOVEFILTERS(CurrentDate),
-			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
-			    )
+			VAR SelectedUpdate = [SM Selected History Cutoff]
+			VAR AxisUpdate = SELECTEDVALUE ( UpdateHistory[UpdateDate] )
+			RETURN IF ( NOT ISBLANK ( AxisUpdate ) && AxisUpdate <= SelectedUpdate,
+			    CALCULATE ( [Lags%], REMOVEFILTERS ( CurrentDate ),
+			        TREATAS ( { AxisUpdate }, '01 XER_TASK'[UpdateDate] ) )
+			)
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Trend
 		lineageTag: 9a1ac5a0-2b88-4386-bea1-d194ab4d14bc
 
-	measure 'DataDate% (History)' =
-			
-			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
-			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
-			VAR HistoryUpdates =
-			    FILTER(
-			        VALUES(UpdateHistory[UpdateDate]),
-			        UpdateHistory[UpdateDate] <= SelectedUpdate
-			    )
-			RETURN
-			    CALCULATE(
-			        IF(NOT ISEMPTY('01 XER_TASK'), [DataDate%]),
-			        REMOVEFILTERS(CurrentDate),
-			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
-			    )
-		formatString: 0.00%;-0.00%;0.00%
-		displayFolder: Schedule Quality Trend
-		lineageTag: d48a81ae-8a39-44aa-a89d-6d8aa15d4c11
-
+	/// History up to the selected update, evaluated at one disconnected UpdateHistory axis point.
 	measure '0Float% (History)' =
-			
-			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
-			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
-			VAR HistoryUpdates =
-			    FILTER(
-			        VALUES(UpdateHistory[UpdateDate]),
-			        UpdateHistory[UpdateDate] <= SelectedUpdate
-			    )
-			RETURN
-			    CALCULATE(
-			        IF(NOT ISEMPTY('01 XER_TASK'), [0Float%]),
-			        REMOVEFILTERS(CurrentDate),
-			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
-			    )
+			VAR SelectedUpdate = [SM Selected History Cutoff]
+			VAR AxisUpdate = SELECTEDVALUE ( UpdateHistory[UpdateDate] )
+			RETURN IF ( NOT ISBLANK ( AxisUpdate ) && AxisUpdate <= SelectedUpdate,
+			    CALCULATE ( [0Float%], REMOVEFILTERS ( CurrentDate ),
+			        TREATAS ( { AxisUpdate }, '01 XER_TASK'[UpdateDate] ) )
+			)
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Trend
 		lineageTag: e0134715-0330-4c27-b393-7198e2071804
 
+	/// History up to the selected update, evaluated at one disconnected UpdateHistory axis point.
 	measure '<0Float% (History)' =
-			
-			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
-			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
-			VAR HistoryUpdates =
-			    FILTER(
-			        VALUES(UpdateHistory[UpdateDate]),
-			        UpdateHistory[UpdateDate] <= SelectedUpdate
-			    )
-			RETURN
-			    CALCULATE(
-			        IF(NOT ISEMPTY('01 XER_TASK'), [<0Float%]),
-			        REMOVEFILTERS(CurrentDate),
-			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
-			    )
+			VAR SelectedUpdate = [SM Selected History Cutoff]
+			VAR AxisUpdate = SELECTEDVALUE ( UpdateHistory[UpdateDate] )
+			RETURN IF ( NOT ISBLANK ( AxisUpdate ) && AxisUpdate <= SelectedUpdate,
+			    CALCULATE ( [<0Float%], REMOVEFILTERS ( CurrentDate ),
+			        TREATAS ( { AxisUpdate }, '01 XER_TASK'[UpdateDate] ) )
+			)
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Trend
 		lineageTag: c9860371-7bc6-4585-955c-dc4278807e80
 
+	/// History up to the selected update, evaluated at one disconnected UpdateHistory axis point.
 	measure '<0Lead% (History)' =
-			
-			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
-			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
-			VAR HistoryUpdates =
-			    FILTER(
-			        VALUES(UpdateHistory[UpdateDate]),
-			        UpdateHistory[UpdateDate] <= SelectedUpdate
-			    )
-			RETURN
-			    CALCULATE(
-			        IF(NOT ISEMPTY('01 XER_TASK'), [<0Lead%]),
-			        REMOVEFILTERS(CurrentDate),
-			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
-			    )
+			VAR SelectedUpdate = [SM Selected History Cutoff]
+			VAR AxisUpdate = SELECTEDVALUE ( UpdateHistory[UpdateDate] )
+			RETURN IF ( NOT ISBLANK ( AxisUpdate ) && AxisUpdate <= SelectedUpdate,
+			    CALCULATE ( [<0Lead%], REMOVEFILTERS ( CurrentDate ),
+			        TREATAS ( { AxisUpdate }, '01 XER_TASK'[UpdateDate] ) )
+			)
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Trend
 		lineageTag: 8b4b4864-3d6e-407a-859a-6549637370b2
 
+	/// History up to the selected update, evaluated at one disconnected UpdateHistory axis point.
 	measure 'Constraint% (History)' =
-			
-			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
-			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
-			VAR HistoryUpdates =
-			    FILTER(
-			        VALUES(UpdateHistory[UpdateDate]),
-			        UpdateHistory[UpdateDate] <= SelectedUpdate
-			    )
-			RETURN
-			    CALCULATE(
-			        IF(NOT ISEMPTY('01 XER_TASK'), [Constraint%]),
-			        REMOVEFILTERS(CurrentDate),
-			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
-			    )
+			VAR SelectedUpdate = [SM Selected History Cutoff]
+			VAR AxisUpdate = SELECTEDVALUE ( UpdateHistory[UpdateDate] )
+			RETURN IF ( NOT ISBLANK ( AxisUpdate ) && AxisUpdate <= SelectedUpdate,
+			    CALCULATE ( [Constraint%], REMOVEFILTERS ( CurrentDate ),
+			        TREATAS ( { AxisUpdate }, '01 XER_TASK'[UpdateDate] ) )
+			)
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Trend
 		lineageTag: 6de16914-add8-4676-8dc5-44bd159fdc60
 
+	/// History up to the selected update, evaluated at one disconnected UpdateHistory axis point.
 	measure 'MissingPredecessor% (History)' =
-			
-			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
-			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
-			VAR HistoryUpdates =
-			    FILTER(
-			        VALUES(UpdateHistory[UpdateDate]),
-			        UpdateHistory[UpdateDate] <= SelectedUpdate
-			    )
-			RETURN
-			    CALCULATE(
-			        IF(NOT ISEMPTY('01 XER_TASK'), [MissingPredecessor%]),
-			        REMOVEFILTERS(CurrentDate),
-			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
-			    )
+			VAR SelectedUpdate = [SM Selected History Cutoff]
+			VAR AxisUpdate = SELECTEDVALUE ( UpdateHistory[UpdateDate] )
+			RETURN IF ( NOT ISBLANK ( AxisUpdate ) && AxisUpdate <= SelectedUpdate,
+			    CALCULATE ( [MissingPredecessor%], REMOVEFILTERS ( CurrentDate ),
+			        TREATAS ( { AxisUpdate }, '01 XER_TASK'[UpdateDate] ) )
+			)
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Trend
 		lineageTag: ab03040a-11e4-4d1b-b1cc-f747fd49910e
 
+	/// History up to the selected update, evaluated at one disconnected UpdateHistory axis point.
 	measure 'MissingSuccessor% (History)' =
-			
-			// CurrentDate sets the last update shown; earlier updates stay on the disconnected UpdateHistory axis.
-			VAR SelectedUpdate = MAX(CurrentDate[UpdateDate])
-			VAR HistoryUpdates =
-			    FILTER(
-			        VALUES(UpdateHistory[UpdateDate]),
-			        UpdateHistory[UpdateDate] <= SelectedUpdate
-			    )
-			RETURN
-			    CALCULATE(
-			        IF(NOT ISEMPTY('01 XER_TASK'), [MissingSuccessor%]),
-			        REMOVEFILTERS(CurrentDate),
-			        TREATAS(HistoryUpdates, '01 XER_TASK'[UpdateDate])
-			    )
+			VAR SelectedUpdate = [SM Selected History Cutoff]
+			VAR AxisUpdate = SELECTEDVALUE ( UpdateHistory[UpdateDate] )
+			RETURN IF ( NOT ISBLANK ( AxisUpdate ) && AxisUpdate <= SelectedUpdate,
+			    CALCULATE ( [MissingSuccessor%], REMOVEFILTERS ( CurrentDate ),
+			        TREATAS ( { AxisUpdate }, '01 XER_TASK'[UpdateDate] ) )
+			)
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Trend
 		lineageTag: 5b9091f0-61b8-4dde-ac05-8acf4eb1c168
+
+	/// One project/programme/update and unique activity codes are required. Clears health population filters, preserving project/WBS scope and RLS.
+	measure 'SM Snapshot Valid' =
+			VAR ScopeRows = CALCULATETABLE ( '01 XER_TASK', REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			REMOVEFILTERS ( Filter_Activity_Status ),
+			REMOVEFILTERS ( Filter_TaskType ),
+			REMOVEFILTERS ( '00 CALENDAR' ),
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) )
+			VAR SnapshotCount = COUNTROWS ( SUMMARIZE ( ScopeRows,
+			    '01 XER_TASK'[ProjectCode], '01 XER_TASK'[ProgrammeType], '01 XER_TASK'[UpdateDate] ) )
+			VAR MissingKeys = COUNTROWS ( FILTER ( ScopeRows,
+			    ISBLANK ( '01 XER_TASK'[ProjectCode] ) || ISBLANK ( '01 XER_TASK'[ProgrammeType] )
+			    || ISBLANK ( '01 XER_TASK'[UpdateDate] ) || ISBLANK ( '01 XER_TASK'[task_code] )
+			    || ISBLANK ( '01 XER_TASK'[task_id_key] ) ) )
+			RETURN SnapshotCount = 1 && MissingKeys = 0
+			    && COUNTROWS ( ScopeRows ) = COUNTROWS ( SUMMARIZE ( ScopeRows, '01 XER_TASK'[task_code] ) )
+		formatString: 0
+		displayFolder: Schedule Quality Support
+		lineageTag: 6528d2a9-effa-4624-beb0-5d7827bc57c3
+
+	/// Counts each activity once even when both ends are missing.
+	measure 'SM Missing Logic Count' =
+			VAR N = [Task_Count]
+			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			REMOVEFILTERS ( Filter_Activity_Status ),
+			REMOVEFILTERS ( Filter_TaskType ),
+			REMOVEFILTERS ( '00 CALENDAR' ),
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" }, KEEPFILTERS ( '01 XER_TASK'[No Predecessor] = 1 || '01 XER_TASK'[No Successor] = 1 ) )
+			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
+		formatString: #,0
+		displayFolder: Schedule Quality Table
+		lineageTag: 2c6b3d25-2ffa-4bf2-8974-5b92acd86f7a
+
+	/// DCMA restrictive fixed/latest-date mapping. Secondary constraints and constraint dates are unavailable.
+	measure 'SM Restrictive Primary Count' =
+			VAR N = [Task_Count]
+			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			REMOVEFILTERS ( Filter_Activity_Status ),
+			REMOVEFILTERS ( Filter_TaskType ),
+			REMOVEFILTERS ( '00 CALENDAR' ),
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" }, KEEPFILTERS ( '01 XER_TASK'[cstr_type] IN { "CS_MSO", "CS_MSOB", "CS_MEO", "CS_MEOB", "CS_MANDSTART", "CS_MANDFIN" } ) )
+			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
+		formatString: #,0
+		displayFolder: Schedule Quality Table
+		lineageTag: e1da95cb-45c5-4410-bf79-3f32fc1b4d4d
+
+	measure 'SM Missing Float Count' =
+			VAR N = [Task_Count]
+			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			REMOVEFILTERS ( Filter_Activity_Status ),
+			REMOVEFILTERS ( Filter_TaskType ),
+			REMOVEFILTERS ( '00 CALENDAR' ),
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" }, KEEPFILTERS ( ISBLANK ( '01 XER_TASK'[total_float] ) ) )
+			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
+		formatString: #,0
+		displayFolder: Schedule Quality Coverage
+		lineageTag: 76510ce3-8c69-4d31-a7d2-3896a8016a34
+
+	measure 'SM Missing Duration Count' =
+			VAR N = [Task_Count]
+			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			REMOVEFILTERS ( Filter_Activity_Status ),
+			REMOVEFILTERS ( Filter_TaskType ),
+			REMOVEFILTERS ( '00 CALENDAR' ),
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" }, KEEPFILTERS ( ISBLANK ( '01 XER_TASK'[remaining_duration] ) || '01 XER_TASK'[remaining_duration] < 0 ) )
+			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
+		formatString: #,0
+		displayFolder: Schedule Quality Coverage
+		lineageTag: 462df94a-7c94-45fb-8e2e-6a2e9224f6fa
+
+	measure 'SM Unknown Constraint Count' =
+			VAR N = [Task_Count]
+			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			REMOVEFILTERS ( Filter_Activity_Status ),
+			REMOVEFILTERS ( Filter_TaskType ),
+			REMOVEFILTERS ( '00 CALENDAR' ),
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" }, KEEPFILTERS ( NOT ISBLANK ( '01 XER_TASK'[cstr_type] ) && '01 XER_TASK'[cstr_type] <> "" && NOT ( '01 XER_TASK'[cstr_type] IN { "CS_ALAP", "CS_MSO", "CS_MSOA", "CS_MSOB", "CS_MEO", "CS_MEOA", "CS_MEOB", "CS_MANDSTART", "CS_MANDFIN" } ) ) )
+			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
+		formatString: #,0
+		displayFolder: Schedule Quality Coverage
+		lineageTag: e3c5bc37-6d28-4038-bcf2-8fbe0acccf5a
+
+	/// Relationships into eligible incomplete discrete successor activities; predecessors need not themselves be incomplete.
+	measure 'SM Eligible Relationship Count' =
+			VAR N = [Task_Count]
+			VAR WorkKeys = CALCULATETABLE ( VALUES ( '01 XER_TASK'[task_id_key] ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			REMOVEFILTERS ( Filter_Activity_Status ),
+			REMOVEFILTERS ( Filter_TaskType ),
+			REMOVEFILTERS ( '00 CALENDAR' ),
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" } )
+			VAR Result = CALCULATE ( COUNTROWS ( '06 XER_PREDECESSOR' ),
+			    REMOVEFILTERS ( '01 XER_TASK' ),
+			    TREATAS ( WorkKeys, '06 XER_PREDECESSOR'[task_id_key] ) )
+			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
+		formatString: #,0
+		displayFolder: Schedule Quality Table
+		lineageTag: 5dae7311-cc09-4a20-a90e-a98e2af44ed5
+
+	/// All positive lags, including those of five days or less.
+	measure 'SM Positive Lag Count' =
+			VAR N = [Task_Count]
+			VAR WorkKeys = CALCULATETABLE ( VALUES ( '01 XER_TASK'[task_id_key] ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			REMOVEFILTERS ( Filter_Activity_Status ),
+			REMOVEFILTERS ( Filter_TaskType ),
+			REMOVEFILTERS ( '00 CALENDAR' ),
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" } )
+			VAR Result = CALCULATE ( COUNTROWS ( '06 XER_PREDECESSOR' ),
+			    REMOVEFILTERS ( '01 XER_TASK' ),
+			    TREATAS ( WorkKeys, '06 XER_PREDECESSOR'[task_id_key] ),
+			    KEEPFILTERS ( '06 XER_PREDECESSOR'[lag] > 0 ) )
+			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
+		formatString: #,0
+		displayFolder: Schedule Quality Table
+		lineageTag: 26b0c0c4-7880-4cdb-ad0d-df995069e994
+
+	measure 'SM FS Count' =
+			VAR N = [Task_Count]
+			VAR WorkKeys = CALCULATETABLE ( VALUES ( '01 XER_TASK'[task_id_key] ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			REMOVEFILTERS ( Filter_Activity_Status ),
+			REMOVEFILTERS ( Filter_TaskType ),
+			REMOVEFILTERS ( '00 CALENDAR' ),
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" } )
+			VAR Result = CALCULATE ( COUNTROWS ( '06 XER_PREDECESSOR' ),
+			    REMOVEFILTERS ( '01 XER_TASK' ),
+			    TREATAS ( WorkKeys, '06 XER_PREDECESSOR'[task_id_key] ),
+			    KEEPFILTERS ( '06 XER_PREDECESSOR'[pred_type] IN { "PR_FS", "PR_FS1" } ) )
+			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
+		formatString: #,0
+		displayFolder: Schedule Quality Table
+		lineageTag: 2842dfde-0096-425a-9858-fde30ef00f65
+
+	measure 'SM Missing Lag Count' =
+			VAR N = [Task_Count]
+			VAR WorkKeys = CALCULATETABLE ( VALUES ( '01 XER_TASK'[task_id_key] ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			REMOVEFILTERS ( Filter_Activity_Status ),
+			REMOVEFILTERS ( Filter_TaskType ),
+			REMOVEFILTERS ( '00 CALENDAR' ),
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" } )
+			VAR Result = CALCULATE ( COUNTROWS ( '06 XER_PREDECESSOR' ),
+			    REMOVEFILTERS ( '01 XER_TASK' ),
+			    TREATAS ( WorkKeys, '06 XER_PREDECESSOR'[task_id_key] ),
+			    KEEPFILTERS ( ISBLANK ( '06 XER_PREDECESSOR'[lag] ) ) )
+			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
+		formatString: #,0
+		displayFolder: Schedule Quality Coverage
+		lineageTag: 250767c4-aff7-4c9a-b950-0fdada40588b
+
+	/// PR_FS1 is an explicitly accepted FS alias. Other unknown encodings are excluded from the FS denominator and disclosed.
+	measure 'SM Unknown Relationship Type Count' =
+			VAR N = [Task_Count]
+			VAR WorkKeys = CALCULATETABLE ( VALUES ( '01 XER_TASK'[task_id_key] ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			REMOVEFILTERS ( Filter_Activity_Status ),
+			REMOVEFILTERS ( Filter_TaskType ),
+			REMOVEFILTERS ( '00 CALENDAR' ),
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" } )
+			VAR Result = CALCULATE ( COUNTROWS ( '06 XER_PREDECESSOR' ),
+			    REMOVEFILTERS ( '01 XER_TASK' ),
+			    TREATAS ( WorkKeys, '06 XER_PREDECESSOR'[task_id_key] ),
+			    KEEPFILTERS ( NOT ( '06 XER_PREDECESSOR'[pred_type] IN { "PR_FS", "PR_FS1", "PR_SS", "PR_FF", "PR_SF" } ) ) )
+			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
+		formatString: #,0
+		displayFolder: Schedule Quality Coverage
+		lineageTag: 092ffb29-33ea-49f0-926e-ba5016931867
+
+	/// Union of missing predecessor/successor activities. Pass at or below 5%.
+	measure 'SM Missing Logic %' = DIVIDE ( [SM Missing Logic Count], [Task_Count] )
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Schedule Quality Visuals
+		lineageTag: 7fbffa3b-6c57-47cd-8d7b-f253602f23e9
+
+	/// Finish-to-start share of relationships with recognised types; PR_FS1 counts as FS. Pass at or above 90%.
+	measure 'SM FS %' = DIVIDE ( [SM FS Count], [SM Eligible Relationship Count] - [SM Unknown Relationship Type Count] )
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Schedule Quality Visuals
+		lineageTag: ccac7e63-2a44-4d12-935d-0027049761dc
+
+	/// Discrete activities and milestones in all statuses, including unscheduled activities.
+	measure 'SM Date Eligible Count' =
+			VAR ScopeRows = CALCULATETABLE ( '01 XER_TASK', REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			REMOVEFILTERS ( Filter_Activity_Status ),
+			REMOVEFILTERS ( Filter_TaskType ),
+			REMOVEFILTERS ( '00 CALENDAR' ),
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) )
+			VAR Events = FILTER ( ScopeRows, '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" } )
+			RETURN IF ( [SM Snapshot Valid], COUNTROWS ( Events ) )
+		formatString: #,0
+		displayFolder: Schedule Quality Support
+		lineageTag: bc4f8db4-6dcf-4b46-824a-edc500ea26d4
+
+	/// Custom extension of DCMA invalid dates: missing required dates, future actuals, overdue forecasts, inconsistent finish status and reversed intervals. Milestones require only their meaningful endpoint.
+	measure 'SM Invalid Dates Count' =
+			VAR ScopeRows = CALCULATETABLE ( '01 XER_TASK', REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			REMOVEFILTERS ( Filter_Activity_Status ),
+			REMOVEFILTERS ( Filter_TaskType ),
+			REMOVEFILTERS ( '00 CALENDAR' ),
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) )
+			VAR Events = FILTER ( ScopeRows, '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" } )
+			VAR Bad = FILTER ( Events,
+			    VAR S = '01 XER_TASK'[status_code]
+			    VAR T = '01 XER_TASK'[task_type]
+			    VAR DD = '01 XER_TASK'[data_date]
+			    VAR StartDate = '01 XER_TASK'[Start]
+			    VAR FinishDate = '01 XER_TASK'[Finish]
+			    VAR ActualFinish = '01 XER_TASK'[act_end_date]
+			    VAR NeedsStart = T <> "TT_FinMile"
+			    VAR NeedsFinish = T <> "TT_Mile"
+			    VAR IsOpen = S IN { "Not Started", "In Progress" }
+			    RETURN ISBLANK ( DD )
+			        || NOT ( S IN { "Not Started", "In Progress", "Complete" } )
+			        || ( NeedsStart && ISBLANK ( StartDate ) )
+			        || ( NeedsFinish && ISBLANK ( FinishDate ) )
+			        || ( NeedsStart && S = "Not Started" && NOT ISBLANK ( StartDate ) && StartDate < DD )
+			        || ( NeedsStart && S IN { "In Progress", "Complete" } && NOT ISBLANK ( StartDate ) && StartDate > DD )
+			        || ( NeedsFinish && IsOpen && NOT ISBLANK ( FinishDate ) && FinishDate < DD )
+			        || ( NeedsFinish && S = "Complete" && ISBLANK ( ActualFinish ) )
+			        || ( NOT ISBLANK ( ActualFinish ) && ActualFinish > DD )
+			        || ( IsOpen && NOT ISBLANK ( ActualFinish ) )
+			        || ( NeedsStart && NeedsFinish && NOT ISBLANK ( StartDate ) && NOT ISBLANK ( FinishDate ) && FinishDate < StartDate )
+			)
+			RETURN IF ( [SM Snapshot Valid] && COUNTROWS ( Events ) > 0, COALESCE ( COUNTROWS ( Bad ), 0 ) )
+		formatString: #,0
+		displayFolder: Schedule Quality Table
+		lineageTag: 5c1ed009-c35f-43bc-ac32-2efaf1c3ba06
+
+	/// Zero target with frequency-based review bands; every defect still requires correction. Includes complete activities and milestones. Start is the imported status-aware actual/forecast field, not a raw actual-start field.
+	measure 'SM Invalid Dates %' = DIVIDE ( [SM Invalid Dates Count], [SM Date Eligible Count] )
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Schedule Quality Visuals
+		lineageTag: 7dcee22c-29a3-4eb4-bd50-d5cf6fbe4705
+
+	measure 'SM Applicable Checks' =
+			// Four work checks, three relationship checks and one date-integrity check. High float is diagnostic only.
+			VAR HasWork = [Task_Count] > 0
+			VAR HasLinks = [SM Eligible Relationship Count] > 0
+			VAR HasEvents = [SM Date Eligible Count] > 0
+			RETURN IF ( HasWork, 4 + IF ( HasLinks, 3, 0 ) + IF ( HasEvents, 1, 0 ) )
+		formatString: #,0
+		displayFolder: Schedule Quality Score
+		lineageTag: 7d854546-5c7d-4099-8c23-a17b162501ff
+
+	measure 'SM Assessed Checks' =
+			VAR CheckPoints =
+			{
+			    [SM Missing Logic Points],
+			    [SM Leads Points],
+			    [SM Lags Points],
+			    [SM FS Points],
+			    [SM Constraints Points],
+			    [SM Negative Float Points],
+			    [SM High Duration Points],
+			    [SM Invalid Dates Points]
+			}
+			RETURN IF ( [Task_Count] > 0, COALESCE ( COUNTROWS ( FILTER ( CheckPoints, NOT ISBLANK ( [Value] ) ) ), 0 ) )
+		formatString: #,0
+		displayFolder: Schedule Quality Score
+		lineageTag: 30414e55-4374-43b0-939e-ebbea5f5f8bb
+
+	measure 'SM Passed Checks' =
+			VAR CheckPoints =
+			{
+			    [SM Missing Logic Points],
+			    [SM Leads Points],
+			    [SM Lags Points],
+			    [SM FS Points],
+			    [SM Constraints Points],
+			    [SM Negative Float Points],
+			    [SM High Duration Points],
+			    [SM Invalid Dates Points]
+			}
+			RETURN IF ( [Task_Count] > 0, COALESCE ( COUNTROWS ( FILTER ( CheckPoints,
+			    NOT ISBLANK ( [Value] ) && [Value] == 1 ) ), 0 ) )
+		formatString: #,0
+		displayFolder: Schedule Quality Score
+		lineageTag: 015c536c-722f-4768-90af-6a2940133c8e
+
+	/// Assessed checks whose usable records cover only part of the eligible population. Unassessed checks are reported separately.
+	measure 'SM Partial Checks' =
+			VAR N = [Task_Count]
+			VAR R = [SM Eligible Relationship Count]
+			VAR MissingFloat = [SM Missing Float Count]
+			VAR MissingDuration = [SM Missing Duration Count]
+			VAR MissingLag = [SM Missing Lag Count]
+			VAR UnknownType = [SM Unknown Relationship Type Count]
+			VAR UnknownConstraint = [SM Unknown Constraint Count]
+			RETURN IF ( N > 0,
+			    IF ( MissingFloat > 0 && MissingFloat < N, 1, 0 )
+			    + IF ( MissingDuration > 0 && MissingDuration < N, 1, 0 )
+			    + IF ( MissingLag > 0 && MissingLag < R, 2, 0 )
+			    + IF ( UnknownType > 0 && UnknownType < R, 1, 0 )
+			    + IF ( UnknownConstraint > 0 && UnknownConstraint < N, 1, 0 ) )
+		formatString: #,0
+		displayFolder: Schedule Quality Score
+		lineageTag: 7998cad8-780d-4054-b9cf-366f29d2a759
+
+	measure 'SM Score Status' =
+			VAR AssessedChecks = [SM Assessed Checks]
+			VAR SeverityLabel = FORMAT ( [SM Passed Checks], "0" ) & " within | "
+			    & FORMAT ( [SM Review Checks], "0" ) & " review | "
+			    & FORMAT ( [SM Priority Checks], "0" ) & " priority"
+			RETURN SWITCH ( TRUE (),
+			    NOT [SM Snapshot Valid], "Select one project/programme and an available update",
+			    NOT ( [Task_Count] > 0 ), "N/A - no incomplete discrete work",
+			    NOT ( AssessedChecks > 0 ), "N/A - no checks assessable" & " | " & [SM Score Coverage],
+			    SeverityLabel & " | " & [SM Score Coverage]
+			)
+		formatString: @
+		displayFolder: Schedule Quality Score
+		lineageTag: 3f46da93-c566-4335-8c80-9fff3f75134a
+
+	measure 'SM High Float Colour' = IF ( ISBLANK ( [HighFloat%] ), "#687078", "#3979A6" )
+		formatString: @
+		displayFolder: Schedule Quality Formatting
+		lineageTag: ce57a426-7400-4545-a84c-bcaa06e189ef
+
+	measure 'SM High Duration Colour' =
+			VAR GradeValue = [SM High Duration Points]
+			RETURN SWITCH ( TRUE (), ISBLANK ( GradeValue ), "#687078",
+			    GradeValue = 1, "#4b6110", GradeValue = 0.5, "#9C6500", "#6f0516" )
+		formatString: @
+		displayFolder: Schedule Quality Formatting
+		lineageTag: 6d26e6fa-59f2-4b58-931f-f2cdbdc06105
+
+	measure 'SM Leads Colour' =
+			VAR GradeValue = [SM Leads Points]
+			RETURN SWITCH ( TRUE (), ISBLANK ( GradeValue ), "#687078",
+			    GradeValue = 1, "#4b6110", GradeValue = 0.5, "#9C6500", "#6f0516" )
+		formatString: @
+		displayFolder: Schedule Quality Formatting
+		lineageTag: 8d110e18-8f1f-4086-8a7e-21c67e2932be
+
+	measure 'SM Lags Colour' =
+			VAR GradeValue = [SM Lags Points]
+			RETURN SWITCH ( TRUE (), ISBLANK ( GradeValue ), "#687078",
+			    GradeValue = 1, "#4b6110", GradeValue = 0.5, "#9C6500", "#6f0516" )
+		formatString: @
+		displayFolder: Schedule Quality Formatting
+		lineageTag: 3f08e482-48c9-4eb7-93aa-e8806e70d768
+
+	measure 'SM Missing Logic Colour' =
+			VAR GradeValue = [SM Missing Logic Points]
+			RETURN SWITCH ( TRUE (), ISBLANK ( GradeValue ), "#687078",
+			    GradeValue = 1, "#4b6110", GradeValue = 0.5, "#9C6500", "#6f0516" )
+		formatString: @
+		displayFolder: Schedule Quality Formatting
+		lineageTag: 577216d6-a0ce-402a-9cf4-784233e67ca4
+
+	measure 'SM FS Colour' =
+			VAR GradeValue = [SM FS Points]
+			RETURN SWITCH ( TRUE (), ISBLANK ( GradeValue ), "#687078",
+			    GradeValue = 1, "#4b6110", GradeValue = 0.5, "#9C6500", "#6f0516" )
+		formatString: @
+		displayFolder: Schedule Quality Formatting
+		lineageTag: 09283ee4-08ed-4cd3-b649-c6641827ac41
+
+	measure 'SM Negative Float Colour' =
+			VAR GradeValue = [SM Negative Float Points]
+			RETURN SWITCH ( TRUE (), ISBLANK ( GradeValue ), "#687078",
+			    GradeValue = 1, "#4b6110", GradeValue = 0.5, "#9C6500", "#6f0516" )
+		formatString: @
+		displayFolder: Schedule Quality Formatting
+		lineageTag: d4ce2a65-2fbc-4e37-92c7-1b4b4b65e7ed
+
+	measure 'SM Constraints Colour' =
+			VAR GradeValue = [SM Constraints Points]
+			RETURN SWITCH ( TRUE (), ISBLANK ( GradeValue ), "#687078",
+			    GradeValue = 1, "#4b6110", GradeValue = 0.5, "#9C6500", "#6f0516" )
+		formatString: @
+		displayFolder: Schedule Quality Formatting
+		lineageTag: 1b9a485e-6758-492d-b59a-ef8a4dc334f0
+
+	measure 'SM Invalid Dates Colour' =
+			VAR GradeValue = [SM Invalid Dates Points]
+			RETURN SWITCH ( TRUE (), ISBLANK ( GradeValue ), "#687078",
+			    GradeValue = 1, "#4b6110", GradeValue = 0.5, "#9C6500", "#6f0516" )
+		formatString: @
+		displayFolder: Schedule Quality Formatting
+		lineageTag: d33bc63c-5252-4869-bd63-80ad0e9f0250
+
+	measure 'SM Score Colour' =
+			VAR MetricValue = [Score]
+			RETURN SWITCH ( TRUE (), ISBLANK ( MetricValue ), "#687078",
+			    [SM Priority Checks] > 0, "#6f0516",
+			    [SM Review Checks] > 0, "#9C6500", "#4b6110" )
+		formatString: @
+		displayFolder: Schedule Quality Formatting
+		lineageTag: 1b430a82-d792-4e24-9408-3562bbcdf5bb
+
+	measure 'SM Coverage Tooltip' =
+			VAR N = [Task_Count]
+			VAR R = [SM Eligible Relationship Count]
+			VAR MissingFloat = [SM Missing Float Count]
+			VAR MissingDuration = [SM Missing Duration Count]
+			VAR MissingLag = [SM Missing Lag Count]
+			VAR UnknownType = [SM Unknown Relationship Type Count]
+			VAR UnknownConstraint = [SM Unknown Constraint Count]
+			VAR KnownFloat = N - MissingFloat
+			VAR KnownDuration = N - MissingDuration
+			VAR KnownLag = R - MissingLag
+			VAR KnownType = R - UnknownType
+			VAR KnownConstraint = N - UnknownConstraint
+			RETURN IF ( [SM Snapshot Valid],
+			    "Incomplete discrete work: " & FORMAT ( N, "#,0" )
+			    & " | Relationships: " & FORMAT ( R, "#,0" )
+			    & UNICHAR ( 10 ) & "Known-input ratios: green = within target; amber = review; red = priority. Input coverage is separate; no usable inputs = N/A."
+			    & UNICHAR ( 10 ) & "Missing logic: " & FORMAT ( [SM Missing Logic Count], "#,0" ) & "/" & FORMAT ( N, "#,0" )
+			    & " | High float (diagnostic): " & FORMAT ( [Float >44], "#,0" ) & "/" & FORMAT ( KnownFloat, "#,0" )
+			    & " | Long remaining duration: " & FORMAT ( [Dur >44], "#,0" ) & "/" & FORMAT ( KnownDuration, "#,0" )
+			    & UNICHAR ( 10 ) & "Positive lags: " & FORMAT ( [SM Positive Lag Count], "#,0" ) & "/" & FORMAT ( KnownLag, "#,0" )
+			    & " | Leads: " & FORMAT ( [Leads<0d], "#,0" ) & "/" & FORMAT ( KnownLag, "#,0" )
+			    & " | FS (including PR_FS1): " & FORMAT ( [SM FS Count], "#,0" ) & "/" & FORMAT ( KnownType, "#,0" )
+			    & UNICHAR ( 10 ) & "Negative float: " & FORMAT ( [Task_Count_Negative_Float], "#,0" ) & "/" & FORMAT ( KnownFloat, "#,0" )
+			    & " | Restrictive primary constraints: " & FORMAT ( [SM Restrictive Primary Count], "#,0" ) & "/" & FORMAT ( KnownConstraint, "#,0" )
+			    & " (secondary constraints unavailable)"
+			    & UNICHAR ( 10 ) & "Invalid/missing dates: " & FORMAT ( [SM Invalid Dates Count], "#,0" ) & "/" & FORMAT ( [SM Date Eligible Count], "#,0" )
+			    & " (all statuses; includes milestones; nonzero defects require correction)"
+			    & UNICHAR ( 10 ) & "Input coverage (usable/eligible; excluded) - float: " & FORMAT ( KnownFloat, "#,0" ) & "/" & FORMAT ( N, "#,0" ) & "; " & FORMAT ( MissingFloat, "0" ) & " excluded"
+			    & " | duration: " & FORMAT ( KnownDuration, "#,0" ) & "/" & FORMAT ( N, "#,0" ) & "; " & FORMAT ( MissingDuration, "0" ) & " excluded"
+			    & UNICHAR ( 10 ) & "Lag coverage: " & FORMAT ( KnownLag, "#,0" ) & "/" & FORMAT ( R, "#,0" ) & "; " & FORMAT ( MissingLag, "0" ) & " excluded"
+			    & " | relationship type: " & FORMAT ( KnownType, "#,0" ) & "/" & FORMAT ( R, "#,0" ) & "; " & FORMAT ( UnknownType, "0" ) & " excluded"
+			    & " | constraint type: " & FORMAT ( KnownConstraint, "#,0" ) & "/" & FORMAT ( N, "#,0" ) & "; " & FORMAT ( UnknownConstraint, "0" ) & " excluded"
+			    & UNICHAR ( 10 ) & "Internal review bands: logic/lags/constraints/duration <=5% within, >5-10% review, >10% priority; FS >=90% within, 80-<90% review, <80% priority. Leads/negative float: 0 within, >0-1% review, >1% priority. Dates: 0 within, >0-0.1% review, >0.1% priority."
+			    & UNICHAR ( 10 ) & "Definition v3: score averages eight assessed grades (within=1, review=0.5, priority=0). High float >44 working days is diagnostic only. Any priority check makes the score red; otherwise review is amber and all within is green. Coverage is reported separately; missing inputs are not passes. These are provisional internal review bands. Unscheduled work is included; datalake exclusions are retained.",
+			    "Unavailable - select one project/programme and an available update with unique activity codes."
+			)
+		formatString: @
+		displayFolder: Schedule Quality Coverage
+		lineageTag: dd92ee78-ea4e-4030-aea9-bf79cf0dd198
+
+	/// History up to the selected update, evaluated at one disconnected UpdateHistory axis point.
+	measure 'SM Missing Logic % (History)' =
+			VAR SelectedUpdate = [SM Selected History Cutoff]
+			VAR AxisUpdate = SELECTEDVALUE ( UpdateHistory[UpdateDate] )
+			RETURN IF ( NOT ISBLANK ( AxisUpdate ) && AxisUpdate <= SelectedUpdate,
+			    CALCULATE ( [SM Missing Logic %], REMOVEFILTERS ( CurrentDate ),
+			        TREATAS ( { AxisUpdate }, '01 XER_TASK'[UpdateDate] ) )
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Schedule Quality Trend
+		lineageTag: 955d188e-949c-4e61-9335-963cc299e199
+
+	/// History up to the selected update, evaluated at one disconnected UpdateHistory axis point.
+	measure 'SM FS % (History)' =
+			VAR SelectedUpdate = [SM Selected History Cutoff]
+			VAR AxisUpdate = SELECTEDVALUE ( UpdateHistory[UpdateDate] )
+			RETURN IF ( NOT ISBLANK ( AxisUpdate ) && AxisUpdate <= SelectedUpdate,
+			    CALCULATE ( [SM FS %], REMOVEFILTERS ( CurrentDate ),
+			        TREATAS ( { AxisUpdate }, '01 XER_TASK'[UpdateDate] ) )
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Schedule Quality Trend
+		lineageTag: 39e3eaca-ecf5-49ab-ab23-f0cf533ebc4f
+
+	/// History up to the selected update, evaluated at one disconnected UpdateHistory axis point.
+	measure 'SM Invalid Dates % (History)' =
+			VAR SelectedUpdate = [SM Selected History Cutoff]
+			VAR AxisUpdate = SELECTEDVALUE ( UpdateHistory[UpdateDate] )
+			RETURN IF ( NOT ISBLANK ( AxisUpdate ) && AxisUpdate <= SelectedUpdate,
+			    CALCULATE ( [SM Invalid Dates %], REMOVEFILTERS ( CurrentDate ),
+			        TREATAS ( { AxisUpdate }, '01 XER_TASK'[UpdateDate] ) )
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Schedule Quality Trend
+		lineageTag: 461ddefe-6520-435f-8408-2e61df65dbe3
+
+	/// History up to the selected update, evaluated at one disconnected UpdateHistory axis point.
+	measure 'SM Coverage Tooltip (History)' =
+			VAR SelectedUpdate = [SM Selected History Cutoff]
+			VAR AxisUpdate = SELECTEDVALUE ( UpdateHistory[UpdateDate] )
+			RETURN IF ( NOT ISBLANK ( AxisUpdate ) && AxisUpdate <= SelectedUpdate,
+			    CALCULATE ( IF ( [SM Snapshot Valid], [SM Coverage Tooltip] ), REMOVEFILTERS ( CurrentDate ),
+			        TREATAS ( { AxisUpdate }, '01 XER_TASK'[UpdateDate] ) )
+			)
+		formatString: @
+		displayFolder: Schedule Quality Trend
+		lineageTag: 6d2c58da-317d-4332-a5e7-b6168cae8c46
+
+	/// Keeps genuine snapshot months on categorical trends, including unassessed metrics, without exposing future dates.
+	measure 'SM History In Scope' =
+			VAR SelectedUpdate = [SM Selected History Cutoff]
+			VAR AxisUpdate = SELECTEDVALUE ( UpdateHistory[UpdateDate] )
+			RETURN IF ( NOT ISBLANK ( AxisUpdate ) && AxisUpdate <= SelectedUpdate,
+			    IF ( CALCULATE (
+			        NOT ISBLANK ( SELECTEDVALUE ( '01 XER_TASK'[ProjectCode] ) )
+			        && NOT ISBLANK ( SELECTEDVALUE ( '01 XER_TASK'[ProgrammeType] ) )
+			        && COUNTROWS ( '01 XER_TASK' ) > 0,
+			        REMOVEFILTERS ( CurrentDate ),
+			        REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			            '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			        REMOVEFILTERS ( Filter_Activity_Status ), REMOVEFILTERS ( Filter_TaskType ),
+			        REMOVEFILTERS ( '00 CALENDAR' ), REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			        TREATAS ( { AxisUpdate }, '01 XER_TASK'[UpdateDate] ) ), 1 ) )
+		formatString: 0
+		displayFolder: Schedule Quality Support
+		lineageTag: 46c1a3e9-12c0-4cd2-8ba1-9a52c685f42a
+
+	/// Preserve the explicit latest selected cutoff when bidirectional filtering removes an unavailable project snapshot. Gauge snapshot guards remain unchanged.
+	measure 'SM Selected History Cutoff' =
+			VAR DirectUpdates = FILTERS ( CurrentDate[UpdateDate] )
+			RETURN IF ( ISFILTERED ( CurrentDate[UpdateDate] ),
+			    MAXX ( DirectUpdates, CurrentDate[UpdateDate] ),
+			    MAX ( CurrentDate[UpdateDate] ) )
+		formatString: dd mmm yyyy
+		isHidden
+		displayFolder: Schedule Quality Support
+		lineageTag: 496cf7fa-08af-4e94-b250-d87495ea1902
+
+	/// Project and clicked update for drill-through labels, including a zero-match result.
+	measure 'SM Drill Context' =
+			CALCULATE (
+			    VAR ProjectLabel = COALESCE ( SELECTEDVALUE ( '01 XER_TASK'[ProjectName] ),
+			        SELECTEDVALUE ( Project_Dimension[Project] ), "Multiple projects" )
+			    VAR Snapshot = COALESCE ( SELECTEDVALUE ( '01 XER_TASK'[UpdateDate] ),
+			        SELECTEDVALUE ( CurrentDate[UpdateDate] ) )
+			    RETURN ProjectLabel & " | " & IF ( ISBLANK ( Snapshot ), "Select one update", FORMAT ( Snapshot, "MMMM yyyy" ) ),
+			    REMOVEFILTERS ( '01 XER_TASK'[No Predecessor], '01 XER_TASK'[No Successor],
+			        '01 XER_TASK'[Driven_DataDate], '01 XER_TASK'[status_code],
+			        '01 XER_TASK'[StatusCategory], '01 XER_TASK'[task_type],
+			        '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			    REMOVEFILTERS ( Filter_Activity_Status ), REMOVEFILTERS ( Filter_TaskType ),
+			    REMOVEFILTERS ( '00 CALENDAR' ), REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' )
+			)
+		formatString: @
+		displayFolder: Schedule Quality Drill-through
+		lineageTag: b3ca21a9-8b66-5eb1-82d9-21b7487248d0
+
+	/// Actual source data date for the clicked snapshot, rather than the export/update timestamp.
+	measure 'SM Drill Data Date' =
+			VAR SourceDate = CALCULATE ( SELECTEDVALUE ( '01 XER_TASK'[data_date] ), REMOVEFILTERS ( '01 XER_TASK'[No Predecessor], '01 XER_TASK'[No Successor],
+			        '01 XER_TASK'[Driven_DataDate], '01 XER_TASK'[status_code],
+			        '01 XER_TASK'[StatusCategory], '01 XER_TASK'[task_type],
+			        '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			    REMOVEFILTERS ( Filter_Activity_Status ), REMOVEFILTERS ( Filter_TaskType ),
+			    REMOVEFILTERS ( '00 CALENDAR' ), REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) )
+			RETURN "Data date: " & IF ( ISBLANK ( SourceDate ), "Unavailable or multiple", FORMAT ( SourceDate, "dd MMM yyyy" ) )
+		formatString: @
+		displayFolder: Schedule Quality Drill-through
+		lineageTag: 1c17ce62-b25e-5e5d-9d4f-fb36110e24f1
+
+	/// Selected source filename retained when the diagnostic has no matching activities.
+	measure 'SM Drill Source File' =
+			CALCULATE ( SELECTEDVALUE ( '01 XER_TASK'[FileName], "Multiple or unavailable source files" ), REMOVEFILTERS ( '01 XER_TASK'[No Predecessor], '01 XER_TASK'[No Successor],
+			        '01 XER_TASK'[Driven_DataDate], '01 XER_TASK'[status_code],
+			        '01 XER_TASK'[StatusCategory], '01 XER_TASK'[task_type],
+			        '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			    REMOVEFILTERS ( Filter_Activity_Status ), REMOVEFILTERS ( Filter_TaskType ),
+			    REMOVEFILTERS ( '00 CALENDAR' ), REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) )
+		formatString: @
+		displayFolder: Schedule Quality Drill-through
+		lineageTag: b167361a-f559-5971-87c8-a94d5aa04241
+
+	/// Diagnostic activity count and snapshot context; WBS grouping rows are not counted.
+	measure 'SM Drill Missing Predecessor Header' =
+			VAR Matches = COALESCE ( [Missing Predecessor], 0 )
+			RETURN IF ( NOT [SM Drill Snapshot Available], "Select one project and available update",
+			    "Missing Predecessor: " & FORMAT ( Matches, "#,0" ) &
+			    IF ( Matches = 1, " matching activity", " matching activities" ) & " | " & [SM Drill Context] )
+		formatString: @
+		displayFolder: Schedule Quality Drill-through
+		lineageTag: 4bcaf9b5-851d-5d0f-962c-0d7c6b9b859c
+
+	/// Diagnostic activity count and snapshot context; WBS grouping rows are not counted.
+	measure 'SM Drill Missing Successor Header' =
+			VAR Matches = COALESCE ( [Missing Successor], 0 )
+			RETURN IF ( NOT [SM Drill Snapshot Available], "Select one project and available update",
+			    "Missing Successor: " & FORMAT ( Matches, "#,0" ) &
+			    IF ( Matches = 1, " matching activity", " matching activities" ) & " | " & [SM Drill Context] )
+		formatString: @
+		displayFolder: Schedule Quality Drill-through
+		lineageTag: 7c8fd2d3-25d6-54f3-80f0-0978ccd69440
+
+	/// Source diagnostic evidence at the activity row; blank at WBS summary levels.
+	measure 'SM Drill Status' = IF ( ISINSCOPE ( '01 XER_TASK'[task_code] ), SELECTEDVALUE ( '01 XER_TASK'[status_code] ) )
+		formatString: @
+		displayFolder: Schedule Quality Drill-through
+		lineageTag: ffd9a65e-fa77-54b7-b554-2d64dc5cba2f
+
+	/// Source diagnostic evidence at the activity row; blank at WBS summary levels.
+	measure 'SM Drill Missing Predecessor Flag' = IF ( ISINSCOPE ( '01 XER_TASK'[task_code] ), SELECTEDVALUE ( '01 XER_TASK'[No Predecessor] ) )
+		formatString: 0
+		displayFolder: Schedule Quality Drill-through
+		lineageTag: b7f6241a-8f7b-5395-9d88-d87dfec04909
+
+	/// Source diagnostic evidence at the activity row; blank at WBS summary levels.
+	measure 'SM Drill Missing Successor Flag' = IF ( ISINSCOPE ( '01 XER_TASK'[task_code] ), SELECTEDVALUE ( '01 XER_TASK'[No Successor] ) )
+		formatString: 0
+		displayFolder: Schedule Quality Drill-through
+		lineageTag: 0aaa2c05-2d8d-5b3b-82e8-fdba7b94fbd2
+
+	/// True only for one available project snapshot, including a valid snapshot with zero diagnostic matches.
+	measure 'SM Drill Snapshot Available' =
+			CALCULATE (
+			    [SM Snapshot Valid],
+			    REMOVEFILTERS ( '01 XER_TASK'[No Predecessor], '01 XER_TASK'[No Successor],
+			        '01 XER_TASK'[Driven_DataDate], '01 XER_TASK'[status_code],
+			        '01 XER_TASK'[StatusCategory], '01 XER_TASK'[task_type],
+			        '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			    REMOVEFILTERS ( Filter_Activity_Status ), REMOVEFILTERS ( Filter_TaskType ),
+			    REMOVEFILTERS ( '00 CALENDAR' ), REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' )
+			)
+		formatString: @
+		displayFolder: Schedule Quality Drill-through
+		lineageTag: 83d3c473-d268-5a30-91b7-7640ba209d03
+
+	measure 'SM Missing Logic Points' =
+			VAR MetricValue = [SM Missing Logic %]
+			RETURN IF ( NOT ISBLANK ( MetricValue ),
+			    SWITCH ( TRUE (), MetricValue <= 0.05, 1, MetricValue <= 0.10, 0.5, 0 )
+			)
+		formatString: 0.0
+		isHidden
+		displayFolder: Schedule Quality Score\Internal bands
+		lineageTag: c2dcb778-9118-5d31-a86d-e0ffde8b064f
+
+	measure 'SM Leads Points' =
+			VAR MetricValue = [<0Lead%]
+			RETURN IF ( NOT ISBLANK ( MetricValue ),
+			    SWITCH ( TRUE (), MetricValue <= 0, 1, MetricValue <= 0.01, 0.5, 0 )
+			)
+		formatString: 0.0
+		isHidden
+		displayFolder: Schedule Quality Score\Internal bands
+		lineageTag: 17507a89-463e-5935-bab5-98810f41a41f
+
+	measure 'SM Lags Points' =
+			VAR MetricValue = [Lags%]
+			RETURN IF ( NOT ISBLANK ( MetricValue ),
+			    SWITCH ( TRUE (), MetricValue <= 0.05, 1, MetricValue <= 0.10, 0.5, 0 )
+			)
+		formatString: 0.0
+		isHidden
+		displayFolder: Schedule Quality Score\Internal bands
+		lineageTag: bd12dee0-b112-560c-ab6c-a6b786b4b3f8
+
+	measure 'SM FS Points' =
+			VAR MetricValue = [SM FS %]
+			RETURN IF ( NOT ISBLANK ( MetricValue ),
+			    SWITCH ( TRUE (), MetricValue >= 0.90, 1, MetricValue >= 0.80, 0.5, 0 )
+			)
+		formatString: 0.0
+		isHidden
+		displayFolder: Schedule Quality Score\Internal bands
+		lineageTag: 107640e5-9570-5aac-b666-4934663ed668
+
+	measure 'SM Constraints Points' =
+			VAR MetricValue = [Constraint%]
+			RETURN IF ( NOT ISBLANK ( MetricValue ),
+			    SWITCH ( TRUE (), MetricValue <= 0.05, 1, MetricValue <= 0.10, 0.5, 0 )
+			)
+		formatString: 0.0
+		isHidden
+		displayFolder: Schedule Quality Score\Internal bands
+		lineageTag: 265693d8-6230-5247-b9b6-29c5219ce82b
+
+	measure 'SM Negative Float Points' =
+			VAR MetricValue = [<0Float%]
+			RETURN IF ( NOT ISBLANK ( MetricValue ),
+			    SWITCH ( TRUE (), MetricValue <= 0, 1, MetricValue <= 0.01, 0.5, 0 )
+			)
+		formatString: 0.0
+		isHidden
+		displayFolder: Schedule Quality Score\Internal bands
+		lineageTag: caa5f73e-ab1f-574e-a3f4-de87ad277abd
+
+	measure 'SM High Duration Points' =
+			VAR MetricValue = [HighDur%]
+			RETURN IF ( NOT ISBLANK ( MetricValue ),
+			    SWITCH ( TRUE (), MetricValue <= 0.05, 1, MetricValue <= 0.10, 0.5, 0 )
+			)
+		formatString: 0.0
+		isHidden
+		displayFolder: Schedule Quality Score\Internal bands
+		lineageTag: 3a92454e-0ad5-577b-be15-0149c22c27ad
+
+	measure 'SM Invalid Dates Points' =
+			VAR MetricValue = [SM Invalid Dates %]
+			RETURN IF ( NOT ISBLANK ( MetricValue ),
+			    SWITCH ( TRUE (), MetricValue <= 0, 1, MetricValue <= 0.001, 0.5, 0 )
+			)
+		formatString: 0.0
+		isHidden
+		displayFolder: Schedule Quality Score\Internal bands
+		lineageTag: ad669110-2f27-5fb9-8aed-97922e4c3e27
+
+	measure 'SM Review Checks' =
+			VAR CheckPoints =
+			{
+			    [SM Missing Logic Points],
+			    [SM Leads Points],
+			    [SM Lags Points],
+			    [SM FS Points],
+			    [SM Constraints Points],
+			    [SM Negative Float Points],
+			    [SM High Duration Points],
+			    [SM Invalid Dates Points]
+			}
+			RETURN IF ( [Task_Count] > 0, COALESCE ( COUNTROWS ( FILTER ( CheckPoints,
+			    NOT ISBLANK ( [Value] ) && [Value] == 0.5 ) ), 0 ) )
+		formatString: #,0
+		displayFolder: Schedule Quality Score
+		lineageTag: 32d91495-d09d-598d-bacc-5c63ae381210
+
+	measure 'SM Priority Checks' =
+			VAR CheckPoints =
+			{
+			    [SM Missing Logic Points],
+			    [SM Leads Points],
+			    [SM Lags Points],
+			    [SM FS Points],
+			    [SM Constraints Points],
+			    [SM Negative Float Points],
+			    [SM High Duration Points],
+			    [SM Invalid Dates Points]
+			}
+			RETURN IF ( [Task_Count] > 0, COALESCE ( COUNTROWS ( FILTER ( CheckPoints,
+			    NOT ISBLANK ( [Value] ) && [Value] == 0 ) ), 0 ) )
+		formatString: #,0
+		displayFolder: Schedule Quality Score
+		lineageTag: 17b9491c-18f4-5112-a1b6-063e86789512
+
+	measure 'SM Score Coverage' =
+			VAR ApplicableChecks = [SM Applicable Checks]
+			VAR AssessedChecks = [SM Assessed Checks]
+			VAR PartialChecks = [SM Partial Checks]
+			VAR UnassessedChecks = ApplicableChecks - AssessedChecks
+			VAR CoverageLabel = FORMAT ( AssessedChecks, "0" ) & "/" & FORMAT ( ApplicableChecks, "0" ) & " assessed"
+			RETURN SWITCH ( TRUE (),
+			    NOT [SM Snapshot Valid], "Input coverage unavailable",
+			    NOT ( [Task_Count] > 0 ), "N/A - no incomplete discrete work",
+			    CoverageLabel
+			        & IF ( UnassessedChecks > 0, " | " & FORMAT ( UnassessedChecks, "0" ) & " unassessed", "" )
+			        & IF ( PartialChecks > 0, " | " & FORMAT ( PartialChecks, "0" ) & " partial inputs", "" )
+			        & IF ( UnassessedChecks = 0 && PartialChecks = 0, " | complete inputs", "" )
+			)
+		formatString: @
+		displayFolder: Schedule Quality Coverage
+		lineageTag: 9e3aa57d-5300-5ffc-9025-0769345fe721
 
 	partition 'XER Metrics' = m
 		mode: import

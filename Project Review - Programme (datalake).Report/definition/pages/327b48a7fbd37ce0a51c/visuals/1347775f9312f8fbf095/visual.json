@@ -30,7 +30,8 @@
               "nativeQueryRef": "UpdateDate",
               "active": true
             }
-          ]
+          ],
+          "showAll": true
         },
         "Y": {
           "projections": [
@@ -39,15 +40,34 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "XER Metrics"
+                      "Entity": "Schedule Metric Detail"
                     }
                   },
-                  "Property": "0Float% (History)"
+                  "Property": "SM Detail History"
                 }
               },
               "queryRef": "XER Metrics.0Float%",
-              "nativeQueryRef": "0Float% (History)",
-              "displayName": "0Float%"
+              "nativeQueryRef": "SM Detail History",
+              "displayName": "Selected detail metric"
+            }
+          ]
+        },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Schedule Metric Detail"
+                    }
+                  },
+                  "Property": "SM Detail Tooltip (History)"
+                }
+              },
+              "queryRef": "Schedule Metric Detail.SM Detail Tooltip (History)",
+              "nativeQueryRef": "SM Detail Tooltip (History)",
+              "displayName": "Scope and coverage"
             }
           ]
         }
@@ -156,6 +176,13 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            },
+            "axisType": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Categorical'"
                 }
               }
             }
@@ -280,13 +307,6 @@
                 }
               }
             },
-            "labelPrecision": {
-              "expr": {
-                "Literal": {
-                  "Value": "1L"
-                }
-              }
-            },
             "bold": {
               "expr": {
                 "Literal": {
@@ -321,6 +341,18 @@
                   "Value": "false"
                 }
               }
+            },
+            "text": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Schedule Metric Detail"
+                    }
+                  },
+                  "Property": "SM Detail Title"
+                }
+              }
             }
           }
         }
@@ -352,5 +384,58 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "3a39ea8be3994cdf8d3a",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Schedule Metric Detail"
+              }
+            },
+            "Property": "SM Detail History In Scope"
+          }
+        },
+        "type": "Advanced",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "x",
+              "Entity": "Schedule Metric Detail",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "Comparison": {
+                  "ComparisonKind": 0,
+                  "Left": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Source": "x"
+                        }
+                      },
+                      "Property": "SM Detail History In Scope"
+                    }
+                  },
+                  "Right": {
+                    "Literal": {
+                      "Value": "1L"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "howCreated": "User"
+      }
+    ]
   }
 }

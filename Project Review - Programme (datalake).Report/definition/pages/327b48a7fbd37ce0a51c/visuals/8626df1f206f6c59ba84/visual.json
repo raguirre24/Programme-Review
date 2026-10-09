@@ -96,7 +96,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Float <0d'"
+                  "Value": "'Negative float | 0% / ≤1%'"
                 }
               }
             },

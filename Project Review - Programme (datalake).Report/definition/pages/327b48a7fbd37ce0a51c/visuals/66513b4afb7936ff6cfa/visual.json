@@ -27,7 +27,27 @@
                 }
               },
               "queryRef": "XER Metrics.Lags%",
-              "nativeQueryRef": "Lags%"
+              "nativeQueryRef": "Lags%",
+              "displayName": "Positive lags | ≤5% / ≤10%"
+            }
+          ]
+        },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Metrics"
+                    }
+                  },
+                  "Property": "SM Coverage Tooltip"
+                }
+              },
+              "queryRef": "XER Metrics.SM Coverage Tooltip",
+              "nativeQueryRef": "SM Coverage Tooltip",
+              "displayName": "Scope and coverage"
             }
           ]
         }
@@ -71,7 +91,7 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
                 }
               }
             }
@@ -99,63 +119,13 @@
               "solid": {
                 "color": {
                   "expr": {
-                    "Conditional": {
-                      "Cases": [
-                        {
-                          "Condition": {
-                            "Comparison": {
-                              "ComparisonKind": 3,
-                              "Left": {
-                                "Measure": {
-                                  "Expression": {
-                                    "SourceRef": {
-                                      "Entity": "XER Metrics"
-                                    }
-                                  },
-                                  "Property": "Lags%"
-                                }
-                              },
-                              "Right": {
-                                "Literal": {
-                                  "Value": "0.05D"
-                                }
-                              }
-                            }
-                          },
-                          "Value": {
-                            "Literal": {
-                              "Value": "'#4b6110'"
-                            }
-                          }
-                        },
-                        {
-                          "Condition": {
-                            "Comparison": {
-                              "ComparisonKind": 1,
-                              "Left": {
-                                "Measure": {
-                                  "Expression": {
-                                    "SourceRef": {
-                                      "Entity": "XER Metrics"
-                                    }
-                                  },
-                                  "Property": "Lags%"
-                                }
-                              },
-                              "Right": {
-                                "Literal": {
-                                  "Value": "0.05D"
-                                }
-                              }
-                            }
-                          },
-                          "Value": {
-                            "Literal": {
-                              "Value": "'#6f0516'"
-                            }
-                          }
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "XER Metrics"
                         }
-                      ]
+                      },
+                      "Property": "SM Lags Colour"
                     }
                   }
                 }
@@ -187,6 +157,13 @@
                   "Value": "0.05D"
                 }
               }
+            },
+            "min": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
             }
           }
         }
@@ -198,9 +175,13 @@
               "solid": {
                 "color": {
                   "expr": {
-                    "ThemeDataColor": {
-                      "ColorId": 9,
-                      "Percent": 0
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "XER Metrics"
+                        }
+                      },
+                      "Property": "SM Lags Colour"
                     }
                   }
                 }
@@ -242,7 +223,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Lag >5d'"
+                  "Value": "'Positive lags | ≤5% / ≤10%'"
                 }
               }
             },

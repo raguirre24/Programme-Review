@@ -12,60 +12,6 @@
     "filters": {
       "byExpr": [
         {
-          "name": "20f6fe27ae5c561674b6",
-          "type": "Categorical",
-          "filter": {
-            "Version": 2,
-            "From": [
-              {
-                "Name": "0",
-                "Entity": "01 XER_TASK",
-                "Type": 0
-              }
-            ],
-            "Where": [
-              {
-                "Condition": {
-                  "In": {
-                    "Expressions": [
-                      {
-                        "Column": {
-                          "Expression": {
-                            "SourceRef": {
-                              "Source": "0"
-                            }
-                          },
-                          "Property": "Is Unscheduled"
-                        }
-                      }
-                    ],
-                    "Values": [
-                      [
-                        {
-                          "Literal": {
-                            "Value": "false"
-                          }
-                        }
-                      ]
-                    ]
-                  }
-                }
-              }
-            ]
-          },
-          "expression": {
-            "Column": {
-              "Expression": {
-                "SourceRef": {
-                  "Entity": "01 XER_TASK"
-                }
-              },
-              "Property": "Is Unscheduled"
-            }
-          },
-          "howCreated": 1
-        },
-        {
           "name": "adf145333090dd095a53",
           "type": "Categorical",
           "filter": {
@@ -175,6 +121,60 @@
                     }
                   },
                   "Property": "TaskType_Classified"
+                }
+              },
+              "howCreated": 1
+            },
+            {
+              "name": "20f6fe27ae5c561674b6",
+              "type": "Categorical",
+              "filter": {
+                "Version": 2,
+                "From": [
+                  {
+                    "Name": "0",
+                    "Entity": "01 XER_TASK",
+                    "Type": 0
+                  }
+                ],
+                "Where": [
+                  {
+                    "Condition": {
+                      "In": {
+                        "Expressions": [
+                          {
+                            "Column": {
+                              "Expression": {
+                                "SourceRef": {
+                                  "Source": "0"
+                                }
+                              },
+                              "Property": "Is Unscheduled"
+                            }
+                          }
+                        ],
+                        "Values": [
+                          [
+                            {
+                              "Literal": {
+                                "Value": "false"
+                              }
+                            }
+                          ]
+                        ]
+                      }
+                    }
+                  }
+                ]
+              },
+              "expression": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "01 XER_TASK"
+                    }
+                  },
+                  "Property": "Is Unscheduled"
                 }
               },
               "howCreated": 1

@@ -108,7 +108,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Lag >5d'"
+                  "Value": "'Positive lags | ≤5% / ≤10%'"
                 }
               }
             },

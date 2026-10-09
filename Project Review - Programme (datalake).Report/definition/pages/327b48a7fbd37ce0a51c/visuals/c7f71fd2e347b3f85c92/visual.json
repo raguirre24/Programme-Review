@@ -30,7 +30,8 @@
               "nativeQueryRef": "UpdateDate",
               "active": true
             }
-          ]
+          ],
+          "showAll": true
         },
         "Y": {
           "projections": [
@@ -47,7 +48,26 @@
               },
               "queryRef": "XER Metrics.Score",
               "nativeQueryRef": "Score (History)",
-              "displayName": "Score"
+              "displayName": "Schedule health score"
+            }
+          ]
+        },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Metrics"
+                    }
+                  },
+                  "Property": "SM Coverage Tooltip (History)"
+                }
+              },
+              "queryRef": "XER Metrics.SM Coverage Tooltip (History)",
+              "nativeQueryRef": "SM Coverage Tooltip (History)",
+              "displayName": "Scope and coverage"
             }
           ]
         }
@@ -157,6 +177,13 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            },
+            "axisType": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Categorical'"
                 }
               }
             }
@@ -303,6 +330,13 @@
                   "Value": "false"
                 }
               }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Schedule health score history'"
+                }
+              }
             }
           }
         }
@@ -334,5 +368,58 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "435a71b2c9e74004a11c",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Metrics"
+              }
+            },
+            "Property": "SM History In Scope"
+          }
+        },
+        "type": "Advanced",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "x",
+              "Entity": "XER Metrics",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "Comparison": {
+                  "ComparisonKind": 0,
+                  "Left": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Source": "x"
+                        }
+                      },
+                      "Property": "SM History In Scope"
+                    }
+                  },
+                  "Right": {
+                    "Literal": {
+                      "Value": "1L"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "howCreated": "User"
+      }
+    ]
   }
 }

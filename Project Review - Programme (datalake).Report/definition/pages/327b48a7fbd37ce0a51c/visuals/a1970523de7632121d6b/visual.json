@@ -6,7 +6,7 @@
     "y": 132.5,
     "z": 38000,
     "height": 27.5,
-    "width": 507.5,
+    "width": 810,
     "tabOrder": 36000
   },
   "visual": {
@@ -81,7 +81,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'RIGHT CLICK ON DESIRED MONTHLY UPDATE FOR DRILL THORUGH'"
+                  "Value": "'Bands: see titles | Hover: coverage | Right-click an update → Drill through → choose a detail view.'"
                 }
               }
             },
@@ -107,7 +107,7 @@
             "fontFamily": {
               "expr": {
                 "Literal": {
-                  "Value": "'''Arial Black'''"
+                  "Value": "'Segoe UI'"
                 }
               }
             }

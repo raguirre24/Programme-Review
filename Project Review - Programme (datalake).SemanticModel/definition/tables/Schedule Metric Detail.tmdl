@@ -1,0 +1,964 @@
+table 'Schedule Metric Detail'
+	lineageTag: 66946229-5cce-42b7-91f2-6e1e8943ccda
+
+	measure 'SM Detail Project' =
+			VAR ProjectKeys = VALUES(Project_Dimension[ProjectKey])
+			VAR ProjectCodes = FILTERS('01 XER_TASK'[ProjectCode])
+			VAR ProgrammeTypes = FILTERS('01 XER_TASK'[ProgrammeType])
+			RETURN CALCULATE(SELECTEDVALUE('01 XER_TASK'[ProjectCode]),
+			    REMOVEFILTERS(),
+			    TREATAS(ProjectKeys, Project_Dimension[ProjectKey]),
+			    TREATAS(ProjectCodes, '01 XER_TASK'[ProjectCode]),
+			    TREATAS(ProgrammeTypes, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE())
+		isHidden
+		displayFolder: Detail diagnostics\Internal
+		lineageTag: e79e9889-9391-44bf-ac62-ae86b3f1202f
+
+	measure 'SM Detail Programme' =
+			VAR ProjectKeys = VALUES(Project_Dimension[ProjectKey])
+			VAR ProjectCodes = FILTERS('01 XER_TASK'[ProjectCode])
+			VAR ProgrammeTypes = FILTERS('01 XER_TASK'[ProgrammeType])
+			RETURN CALCULATE(SELECTEDVALUE('01 XER_TASK'[ProgrammeType]),
+			    REMOVEFILTERS(),
+			    TREATAS(ProjectKeys, Project_Dimension[ProjectKey]),
+			    TREATAS(ProjectCodes, '01 XER_TASK'[ProjectCode]),
+			    TREATAS(ProgrammeTypes, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE())
+		isHidden
+		displayFolder: Detail diagnostics\Internal
+		lineageTag: 1883987b-3e06-4967-a02d-1be5609179c1
+
+	/// Read the explicit selected update before bidirectional filtering can hide a missing project snapshot; require one selected date.
+	measure 'SM Detail Snapshot' =
+			VAR SlicerUpdates = FILTERS(CurrentDate[UpdateDate])
+			VAR TaskUpdates = FILTERS('01 XER_TASK'[UpdateDate])
+			RETURN SWITCH(TRUE(),
+			    ISFILTERED(CurrentDate[UpdateDate]), IF(COUNTROWS(SlicerUpdates) = 1, MAXX(SlicerUpdates, CurrentDate[UpdateDate])),
+			    ISFILTERED('01 XER_TASK'[UpdateDate]), IF(COUNTROWS(TaskUpdates) = 1, MAXX(TaskUpdates, '01 XER_TASK'[UpdateDate])),
+			    SELECTEDVALUE(CurrentDate[UpdateDate]))
+		formatString: dd mmm yyyy
+		isHidden
+		displayFolder: Detail diagnostics\Internal
+		lineageTag: b351b74d-561a-48cd-9e4e-abb1da5ff840
+
+	measure 'SM Detail Data Date' =
+			VAR ProjectCode = [SM Detail Project]
+			VAR ProgrammeType = [SM Detail Programme]
+			VAR SnapshotDate = [SM Detail Snapshot]
+			RETURN CALCULATE(SELECTEDVALUE('01 XER_TASK'[data_date]),
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]))
+		formatString: dd mmm yyyy
+		isHidden
+		displayFolder: Detail diagnostics\Internal
+		lineageTag: 8d89784c-670f-449b-98d9-0994d6263f3c
+
+	measure 'SM Detail Baseline Date' =
+			VAR ProjectCode = [SM Detail Project]
+			VAR ProgrammeType = [SM Detail Programme]
+			VAR SnapshotDate = [SM Detail Snapshot]
+			RETURN CALCULATE(MIN('01 XER_TASK'[UpdateDate]),
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE())
+		formatString: dd mmm yyyy
+		isHidden
+		displayFolder: Detail diagnostics\Internal
+		lineageTag: 2225f371-903f-4f9b-93ca-04d606346580
+
+	measure 'SM Detail Baseline File' =
+			VAR ProjectCode = [SM Detail Project]
+			VAR ProgrammeType = [SM Detail Programme]
+			VAR SnapshotDate = [SM Detail Snapshot]
+			VAR BaselineDate = [SM Detail Baseline Date]
+			RETURN CALCULATE(SELECTEDVALUE('01 XER_TASK'[filename]),
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({BaselineDate}, '01 XER_TASK'[UpdateDate]))
+		isHidden
+		displayFolder: Detail diagnostics\Internal
+		lineageTag: fbb2cf11-9203-4695-b702-d77c549d82ad
+
+	measure 'SM Detail Baseline Provenance' =
+			VAR FileName = UPPER([SM Detail Baseline File])
+			VAR TagStart = SEARCH("-BL", FileName, 1, 0)
+			VAR TagEnd = IF(TagStart > 0, SEARCH("_", FileName, TagStart + 3, 0), 0)
+			VAR Tag = IF(TagEnd > TagStart + 3, MID(FileName, TagStart + 3, TagEnd - TagStart - 3), "")
+			VAR RevisionAt = SEARCH("-", Tag, 1, 0)
+			VAR NumberText = IF(RevisionAt > 0, LEFT(Tag, RevisionAt - 1), Tag)
+			VAR Revision = IF(RevisionAt > 0, MID(Tag, RevisionAt + 1, LEN(Tag)), "")
+			VAR BaselineNumber = IFERROR(VALUE(NumberText), BLANK())
+			VAR DigitsOnly = LEN(NumberText) > 0 && LEN(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(NumberText, "0", ""), "1", ""), "2", ""), "3", ""), "4", ""), "5", ""), "6", ""), "7", ""), "8", ""), "9", "")) = 0
+			RETURN NOT ISBLANK([SM Detail Baseline Date]) && TagStart > 0 && TagEnd > 0 && DigitsOnly && NOT ISBLANK(BaselineNumber) && (RevisionAt = 0 || (LEN(Revision) = 1 && Revision >= "A" && Revision <= "Z"))
+		isHidden
+		displayFolder: Detail diagnostics\Internal
+		lineageTag: ff74e339-576f-46af-9e8c-4279e1945573
+
+	measure 'SM Detail Scope Message' =
+			SWITCH(TRUE(),
+			    ISBLANK([SM Detail Project]), "Select one project.",
+			    ISBLANK([SM Detail Programme]), "Select one programme type.",
+			    ISBLANK([SM Detail Snapshot]), "Select one update.",
+			    ISBLANK([SM Detail Data Date]), "No snapshot with one valid data date is available for this selection.",
+			    "")
+		isHidden
+		displayFolder: Detail diagnostics\Internal
+		lineageTag: 6a72dd18-6ab7-43a9-86f5-d6f79a37c30d
+
+	measure 'SM Detail Baseline Activities' =
+			VAR ProjectCode = [SM Detail Project]
+			VAR ProgrammeType = [SM Detail Programme]
+			VAR SnapshotDate = [SM Detail Snapshot]
+			VAR BaselineDate = [SM Detail Baseline Date]
+			VAR StatusDate = [SM Detail Data Date]
+			VAR BaselineRows = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({BaselineDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			VAR CurrentRows = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			VAR BaselineActivities = SELECTCOLUMNS(BaselineRows,
+			    "ActivityCode", '01 XER_TASK'[task_code], "BaselineFinish", '01 XER_TASK'[Finish])
+			VAR CurrentActivities = SELECTCOLUMNS(CurrentRows,
+			    "ActivityCode", '01 XER_TASK'[task_code], "CurrentFinish", '01 XER_TASK'[Finish], "CurrentStart", '01 XER_TASK'[Start],
+			    "ActualFinish", '01 XER_TASK'[act_end_date], "ActivityStatus", '01 XER_TASK'[status_code])
+			VAR MatchedActivities = NATURALINNERJOIN(BaselineActivities, CurrentActivities)
+			RETURN COALESCE(COUNTROWS(BaselineRows), 0)
+		formatString: #,0
+		isHidden
+		displayFolder: Detail diagnostics\Internal
+		lineageTag: fe975d36-9bbc-47e4-9fbb-1e0381e88003
+
+	measure 'SM Detail Current Activities' =
+			VAR ProjectCode = [SM Detail Project]
+			VAR ProgrammeType = [SM Detail Programme]
+			VAR SnapshotDate = [SM Detail Snapshot]
+			VAR BaselineDate = [SM Detail Baseline Date]
+			VAR StatusDate = [SM Detail Data Date]
+			VAR BaselineRows = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({BaselineDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			VAR CurrentRows = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			VAR BaselineActivities = SELECTCOLUMNS(BaselineRows,
+			    "ActivityCode", '01 XER_TASK'[task_code], "BaselineFinish", '01 XER_TASK'[Finish])
+			VAR CurrentActivities = SELECTCOLUMNS(CurrentRows,
+			    "ActivityCode", '01 XER_TASK'[task_code], "CurrentFinish", '01 XER_TASK'[Finish], "CurrentStart", '01 XER_TASK'[Start],
+			    "ActualFinish", '01 XER_TASK'[act_end_date], "ActivityStatus", '01 XER_TASK'[status_code])
+			VAR MatchedActivities = NATURALINNERJOIN(BaselineActivities, CurrentActivities)
+			RETURN COALESCE(COUNTROWS(CurrentRows), 0)
+		formatString: #,0
+		isHidden
+		displayFolder: Detail diagnostics\Internal
+		lineageTag: 829ad88e-3906-4f0d-81a4-c619db915549
+
+	measure 'SM Detail Matched Activities' =
+			VAR ProjectCode = [SM Detail Project]
+			VAR ProgrammeType = [SM Detail Programme]
+			VAR SnapshotDate = [SM Detail Snapshot]
+			VAR BaselineDate = [SM Detail Baseline Date]
+			VAR StatusDate = [SM Detail Data Date]
+			VAR BaselineRows = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({BaselineDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			VAR CurrentRows = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			VAR BaselineActivities = SELECTCOLUMNS(BaselineRows,
+			    "ActivityCode", '01 XER_TASK'[task_code], "BaselineFinish", '01 XER_TASK'[Finish])
+			VAR CurrentActivities = SELECTCOLUMNS(CurrentRows,
+			    "ActivityCode", '01 XER_TASK'[task_code], "CurrentFinish", '01 XER_TASK'[Finish], "CurrentStart", '01 XER_TASK'[Start],
+			    "ActualFinish", '01 XER_TASK'[act_end_date], "ActivityStatus", '01 XER_TASK'[status_code])
+			VAR MatchedActivities = NATURALINNERJOIN(BaselineActivities, CurrentActivities)
+			RETURN COALESCE(COUNTROWS(MatchedActivities), 0)
+		formatString: #,0
+		isHidden
+		displayFolder: Detail diagnostics\Internal
+		lineageTag: 73854494-b615-4f1e-a633-0e2a74800d1c
+
+	measure 'SM Detail Dated Matches' =
+			VAR ProjectCode = [SM Detail Project]
+			VAR ProgrammeType = [SM Detail Programme]
+			VAR SnapshotDate = [SM Detail Snapshot]
+			VAR BaselineDate = [SM Detail Baseline Date]
+			VAR StatusDate = [SM Detail Data Date]
+			VAR BaselineRows = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({BaselineDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			VAR CurrentRows = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			VAR BaselineActivities = SELECTCOLUMNS(BaselineRows,
+			    "ActivityCode", '01 XER_TASK'[task_code], "BaselineFinish", '01 XER_TASK'[Finish])
+			VAR CurrentActivities = SELECTCOLUMNS(CurrentRows,
+			    "ActivityCode", '01 XER_TASK'[task_code], "CurrentFinish", '01 XER_TASK'[Finish], "CurrentStart", '01 XER_TASK'[Start],
+			    "ActualFinish", '01 XER_TASK'[act_end_date], "ActivityStatus", '01 XER_TASK'[status_code])
+			VAR MatchedActivities = NATURALINNERJOIN(BaselineActivities, CurrentActivities)
+			RETURN COALESCE(COUNTROWS(FILTER(MatchedActivities, NOT ISBLANK([BaselineFinish]))), 0)
+		formatString: #,0
+		isHidden
+		displayFolder: Detail diagnostics\Internal
+		lineageTag: 7e2764d1-16be-4020-ab8b-d2955b138fef
+
+	measure 'SM Detail Missing Baseline Dates' =
+			VAR ProjectCode = [SM Detail Project]
+			VAR ProgrammeType = [SM Detail Programme]
+			VAR SnapshotDate = [SM Detail Snapshot]
+			VAR BaselineDate = [SM Detail Baseline Date]
+			VAR StatusDate = [SM Detail Data Date]
+			VAR BaselineRows = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({BaselineDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			VAR CurrentRows = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			VAR BaselineActivities = SELECTCOLUMNS(BaselineRows,
+			    "ActivityCode", '01 XER_TASK'[task_code], "BaselineFinish", '01 XER_TASK'[Finish])
+			VAR CurrentActivities = SELECTCOLUMNS(CurrentRows,
+			    "ActivityCode", '01 XER_TASK'[task_code], "CurrentFinish", '01 XER_TASK'[Finish], "CurrentStart", '01 XER_TASK'[Start],
+			    "ActualFinish", '01 XER_TASK'[act_end_date], "ActivityStatus", '01 XER_TASK'[status_code])
+			VAR MatchedActivities = NATURALINNERJOIN(BaselineActivities, CurrentActivities)
+			RETURN COALESCE(COUNTROWS(FILTER(BaselineActivities, ISBLANK([BaselineFinish]))), 0)
+		formatString: #,0
+		isHidden
+		displayFolder: Detail diagnostics\Internal
+		lineageTag: d63263d8-5b5b-4135-b2ec-ff41729cee59
+
+	measure 'SM Detail Invalid Matched Records' =
+			VAR ProjectCode = [SM Detail Project]
+			VAR ProgrammeType = [SM Detail Programme]
+			VAR SnapshotDate = [SM Detail Snapshot]
+			VAR BaselineDate = [SM Detail Baseline Date]
+			VAR StatusDate = [SM Detail Data Date]
+			VAR BaselineRows = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({BaselineDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			VAR CurrentRows = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			VAR BaselineActivities = SELECTCOLUMNS(BaselineRows,
+			    "ActivityCode", '01 XER_TASK'[task_code], "BaselineFinish", '01 XER_TASK'[Finish])
+			VAR CurrentActivities = SELECTCOLUMNS(CurrentRows,
+			    "ActivityCode", '01 XER_TASK'[task_code], "CurrentFinish", '01 XER_TASK'[Finish], "CurrentStart", '01 XER_TASK'[Start],
+			    "ActualFinish", '01 XER_TASK'[act_end_date], "ActivityStatus", '01 XER_TASK'[status_code])
+			VAR MatchedActivities = NATURALINNERJOIN(BaselineActivities, CurrentActivities)
+			RETURN COALESCE(COUNTROWS(FILTER(MatchedActivities, ISBLANK([BaselineFinish]) || ISBLANK([CurrentFinish]) || NOT ([ActivityStatus] IN {"Not Started", "In Progress", "Complete"}) || ([ActivityStatus] = "Complete" && (ISBLANK([ActualFinish]) || [ActualFinish] > StatusDate || NOT ([CurrentFinish] == [ActualFinish]))) || ([ActivityStatus] <> "Complete" && NOT ISBLANK([ActualFinish])) || ([ActivityStatus] IN {"In Progress", "Complete"} && (ISBLANK([CurrentStart]) || [CurrentStart] > StatusDate)))), 0)
+		formatString: #,0
+		isHidden
+		displayFolder: Detail diagnostics\Internal
+		lineageTag: ee913d8f-d4c8-481f-91bd-ba6a61d6c090
+
+	measure 'SM Detail Baseline Due' =
+			VAR ProjectCode = [SM Detail Project]
+			VAR ProgrammeType = [SM Detail Programme]
+			VAR SnapshotDate = [SM Detail Snapshot]
+			VAR BaselineDate = [SM Detail Baseline Date]
+			VAR StatusDate = [SM Detail Data Date]
+			VAR BaselineRows = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({BaselineDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			VAR CurrentRows = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			VAR BaselineActivities = SELECTCOLUMNS(BaselineRows,
+			    "ActivityCode", '01 XER_TASK'[task_code], "BaselineFinish", '01 XER_TASK'[Finish])
+			VAR CurrentActivities = SELECTCOLUMNS(CurrentRows,
+			    "ActivityCode", '01 XER_TASK'[task_code], "CurrentFinish", '01 XER_TASK'[Finish], "CurrentStart", '01 XER_TASK'[Start],
+			    "ActualFinish", '01 XER_TASK'[act_end_date], "ActivityStatus", '01 XER_TASK'[status_code])
+			VAR MatchedActivities = NATURALINNERJOIN(BaselineActivities, CurrentActivities)
+			RETURN COALESCE(COUNTROWS(FILTER(MatchedActivities, NOT ISBLANK([BaselineFinish]) && [BaselineFinish] <= StatusDate)), 0)
+		formatString: #,0
+		isHidden
+		displayFolder: Detail diagnostics\Internal
+		lineageTag: 6168ad81-e061-4195-9a12-b211de924f46
+
+	measure 'SM Detail Missed Assessable Due' =
+			VAR ProjectCode = [SM Detail Project]
+			VAR ProgrammeType = [SM Detail Programme]
+			VAR SnapshotDate = [SM Detail Snapshot]
+			VAR BaselineDate = [SM Detail Baseline Date]
+			VAR StatusDate = [SM Detail Data Date]
+			VAR BaselineRows = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({BaselineDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			VAR CurrentRows = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			VAR BaselineActivities = SELECTCOLUMNS(BaselineRows,
+			    "ActivityCode", '01 XER_TASK'[task_code], "BaselineFinish", '01 XER_TASK'[Finish])
+			VAR CurrentActivities = SELECTCOLUMNS(CurrentRows,
+			    "ActivityCode", '01 XER_TASK'[task_code], "CurrentFinish", '01 XER_TASK'[Finish], "CurrentStart", '01 XER_TASK'[Start],
+			    "ActualFinish", '01 XER_TASK'[act_end_date], "ActivityStatus", '01 XER_TASK'[status_code])
+			VAR MatchedActivities = NATURALINNERJOIN(BaselineActivities, CurrentActivities)
+			RETURN COALESCE(COUNTROWS(FILTER(MatchedActivities, NOT ISBLANK([BaselineFinish]) && [BaselineFinish] <= StatusDate && NOT ISBLANK([CurrentFinish]))), 0)
+		formatString: #,0
+		isHidden
+		displayFolder: Detail diagnostics\Internal
+		lineageTag: b9699f9d-5708-49df-a1b8-51d430c7c9f4
+
+	measure 'SM Detail Execution Activities' =
+			VAR ProjectCode = [SM Detail Project]
+			VAR ProgrammeType = [SM Detail Programme]
+			VAR SnapshotDate = [SM Detail Snapshot]
+			VAR BaselineDate = [SM Detail Baseline Date]
+			VAR StatusDate = [SM Detail Data Date]
+			VAR BaselineRows = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({BaselineDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			VAR CurrentRows = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			VAR BaselineActivities = SELECTCOLUMNS(BaselineRows,
+			    "ActivityCode", '01 XER_TASK'[task_code], "BaselineFinish", '01 XER_TASK'[Finish])
+			VAR CurrentActivities = SELECTCOLUMNS(CurrentRows,
+			    "ActivityCode", '01 XER_TASK'[task_code], "CurrentFinish", '01 XER_TASK'[Finish], "CurrentStart", '01 XER_TASK'[Start],
+			    "ActualFinish", '01 XER_TASK'[act_end_date], "ActivityStatus", '01 XER_TASK'[status_code])
+			VAR MatchedActivities = NATURALINNERJOIN(BaselineActivities, CurrentActivities)
+			VAR ExecutionActivities = FILTER(MatchedActivities, NOT ISBLANK([BaselineFinish]) && (([ActivityStatus] = "Complete" && NOT ISBLANK([ActualFinish]) && [ActualFinish] <= StatusDate) || ([ActivityStatus] IN {"Not Started", "In Progress"} && ISBLANK([ActualFinish]))))
+			RETURN COALESCE(COUNTROWS(ExecutionActivities), 0)
+		formatString: #,0
+		isHidden
+		displayFolder: Detail diagnostics\Internal
+		lineageTag: 5a10a512-bc44-4ce1-836a-44cd9df89f19
+
+	measure 'SM Detail Execution Due' =
+			VAR ProjectCode = [SM Detail Project]
+			VAR ProgrammeType = [SM Detail Programme]
+			VAR SnapshotDate = [SM Detail Snapshot]
+			VAR BaselineDate = [SM Detail Baseline Date]
+			VAR StatusDate = [SM Detail Data Date]
+			VAR BaselineRows = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({BaselineDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			VAR CurrentRows = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			VAR BaselineActivities = SELECTCOLUMNS(BaselineRows,
+			    "ActivityCode", '01 XER_TASK'[task_code], "BaselineFinish", '01 XER_TASK'[Finish])
+			VAR CurrentActivities = SELECTCOLUMNS(CurrentRows,
+			    "ActivityCode", '01 XER_TASK'[task_code], "CurrentFinish", '01 XER_TASK'[Finish], "CurrentStart", '01 XER_TASK'[Start],
+			    "ActualFinish", '01 XER_TASK'[act_end_date], "ActivityStatus", '01 XER_TASK'[status_code])
+			VAR MatchedActivities = NATURALINNERJOIN(BaselineActivities, CurrentActivities)
+			VAR ExecutionActivities = FILTER(MatchedActivities, NOT ISBLANK([BaselineFinish]) && (([ActivityStatus] = "Complete" && NOT ISBLANK([ActualFinish]) && [ActualFinish] <= StatusDate) || ([ActivityStatus] IN {"Not Started", "In Progress"} && ISBLANK([ActualFinish]))))
+			RETURN COALESCE(COUNTROWS(FILTER(ExecutionActivities, [BaselineFinish] <= StatusDate)), 0)
+		formatString: #,0
+		isHidden
+		displayFolder: Detail diagnostics\Internal
+		lineageTag: e7ae10d8-d362-4729-a7de-583f0a32d43b
+
+	measure 'SM Detail Missed Due' =
+			VAR ProjectCode = [SM Detail Project]
+			VAR ProgrammeType = [SM Detail Programme]
+			VAR SnapshotDate = [SM Detail Snapshot]
+			VAR BaselineDate = [SM Detail Baseline Date]
+			VAR StatusDate = [SM Detail Data Date]
+			VAR BaselineRows = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({BaselineDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			VAR CurrentRows = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			VAR BaselineActivities = SELECTCOLUMNS(BaselineRows,
+			    "ActivityCode", '01 XER_TASK'[task_code], "BaselineFinish", '01 XER_TASK'[Finish])
+			VAR CurrentActivities = SELECTCOLUMNS(CurrentRows,
+			    "ActivityCode", '01 XER_TASK'[task_code], "CurrentFinish", '01 XER_TASK'[Finish], "CurrentStart", '01 XER_TASK'[Start],
+			    "ActualFinish", '01 XER_TASK'[act_end_date], "ActivityStatus", '01 XER_TASK'[status_code])
+			VAR MatchedActivities = NATURALINNERJOIN(BaselineActivities, CurrentActivities)
+			RETURN COALESCE(COUNTROWS(FILTER(MatchedActivities, NOT ISBLANK([BaselineFinish]) && [BaselineFinish] <= StatusDate && NOT ISBLANK([CurrentFinish]) && [CurrentFinish] > [BaselineFinish])), 0)
+		formatString: #,0
+		isHidden
+		displayFolder: Detail diagnostics\Internal
+		lineageTag: c7bdc4b3-8dfc-43b5-9636-dd633f423181
+
+	measure 'SM Detail Matched Completed' =
+			VAR ProjectCode = [SM Detail Project]
+			VAR ProgrammeType = [SM Detail Programme]
+			VAR SnapshotDate = [SM Detail Snapshot]
+			VAR BaselineDate = [SM Detail Baseline Date]
+			VAR StatusDate = [SM Detail Data Date]
+			VAR BaselineRows = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({BaselineDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			VAR CurrentRows = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			VAR BaselineActivities = SELECTCOLUMNS(BaselineRows,
+			    "ActivityCode", '01 XER_TASK'[task_code], "BaselineFinish", '01 XER_TASK'[Finish])
+			VAR CurrentActivities = SELECTCOLUMNS(CurrentRows,
+			    "ActivityCode", '01 XER_TASK'[task_code], "CurrentFinish", '01 XER_TASK'[Finish], "CurrentStart", '01 XER_TASK'[Start],
+			    "ActualFinish", '01 XER_TASK'[act_end_date], "ActivityStatus", '01 XER_TASK'[status_code])
+			VAR MatchedActivities = NATURALINNERJOIN(BaselineActivities, CurrentActivities)
+			VAR ExecutionActivities = FILTER(MatchedActivities, NOT ISBLANK([BaselineFinish]) && (([ActivityStatus] = "Complete" && NOT ISBLANK([ActualFinish]) && [ActualFinish] <= StatusDate) || ([ActivityStatus] IN {"Not Started", "In Progress"} && ISBLANK([ActualFinish]))))
+			RETURN COALESCE(COUNTROWS(FILTER(ExecutionActivities, [ActivityStatus] = "Complete")), 0)
+		formatString: #,0
+		isHidden
+		displayFolder: Detail diagnostics\Internal
+		lineageTag: c32dae67-0fc6-48f2-aea7-8cf860f59f08
+
+	measure 'SM Detail Added Activities' = [SM Detail Current Activities] - [SM Detail Matched Activities]
+		formatString: #,0
+		isHidden
+		displayFolder: Detail diagnostics\Internal
+		lineageTag: b1539693-8282-4941-87fe-235effc851ff
+
+	measure 'SM Detail Absent Activities' = [SM Detail Baseline Activities] - [SM Detail Matched Activities]
+		formatString: #,0
+		isHidden
+		displayFolder: Detail diagnostics\Internal
+		lineageTag: eb1b8d69-280c-400e-a49d-4bbbeb53bd70
+
+	measure 'SM Detail Invalid Activity Codes' =
+			VAR ProjectCode = [SM Detail Project]
+			VAR ProgrammeType = [SM Detail Programme]
+			VAR SnapshotDate = [SM Detail Snapshot]
+			VAR BaselineDate = [SM Detail Baseline Date]
+			VAR StatusDate = [SM Detail Data Date]
+			VAR BaselineRows = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({BaselineDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			VAR CurrentRows = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			VAR BaselineActivities = SELECTCOLUMNS(BaselineRows,
+			    "ActivityCode", '01 XER_TASK'[task_code], "BaselineFinish", '01 XER_TASK'[Finish])
+			VAR CurrentActivities = SELECTCOLUMNS(CurrentRows,
+			    "ActivityCode", '01 XER_TASK'[task_code], "CurrentFinish", '01 XER_TASK'[Finish], "CurrentStart", '01 XER_TASK'[Start],
+			    "ActualFinish", '01 XER_TASK'[act_end_date], "ActivityStatus", '01 XER_TASK'[status_code])
+			VAR MatchedActivities = NATURALINNERJOIN(BaselineActivities, CurrentActivities)
+			RETURN COALESCE(COUNTROWS(BaselineRows), 0) - COALESCE(COUNTROWS(SUMMARIZE(BaselineRows, '01 XER_TASK'[task_code])), 0) + COALESCE(COUNTROWS(CurrentRows), 0) - COALESCE(COUNTROWS(SUMMARIZE(CurrentRows, '01 XER_TASK'[task_code])), 0) + COALESCE(COUNTROWS(FILTER(BaselineRows, ISBLANK('01 XER_TASK'[task_code]) || TRIM('01 XER_TASK'[task_code]) = "")), 0) + COALESCE(COUNTROWS(FILTER(CurrentRows, ISBLANK('01 XER_TASK'[task_code]) || TRIM('01 XER_TASK'[task_code]) = "")), 0)
+		formatString: #,0
+		isHidden
+		displayFolder: Detail diagnostics\Internal
+		lineageTag: f2454ced-4095-4421-9cdc-7b4a84309a86
+
+	measure 'SM Detail Baseline Message' =
+			SWITCH(TRUE(),
+			    [SM Detail Scope Message] <> "", [SM Detail Scope Message],
+			    NOT [SM Detail Baseline Provenance], "N/A: the earliest snapshot is not one verified BL-tagged file.",
+			    [SM Detail Current Activities] = 0, "N/A: no task-dependent or resource-dependent activities in this snapshot.",
+			    [SM Detail Invalid Activity Codes] > 0, "N/A: blank or duplicate activity codes in the baseline or current snapshot.",
+			    [SM Detail Matched Activities] = 0, "N/A: no current activities match the baseline.",
+			    [SM Detail Baseline Due] = 0, "N/A: no matched baseline activities are due by the data date.",
+			    "")
+		isHidden
+		displayFolder: Detail diagnostics\Internal
+		lineageTag: 664b9c1a-6ea4-4ecc-a270-22bafae41fd3
+
+	/// Custom matched-scope missed-date ratio. Uses matched baseline-due rows with known baseline/current Finish; unrelated Start/status warnings do not exclude usable finishes. Tooltip discloses excluded rows.
+	measure 'SM Matched Baseline Missed %' =
+			IF([SM Detail Baseline Message] = "",
+			    DIVIDE([SM Detail Missed Due], [SM Detail Missed Assessable Due]))
+		formatString: 0.0%
+		displayFolder: Detail diagnostics
+		lineageTag: bb08aa7b-48b3-47e8-94dc-475a51cb916c
+
+	/// Custom matched-scope execution index. Uses dated baseline matches with known completion state in both cohorts; missing/conflicting completion inputs are excluded and disclosed. Early completions can exceed one.
+	measure 'SM Matched Baseline Execution Index' =
+			IF([SM Detail Baseline Message] = "",
+			    DIVIDE([SM Detail Matched Completed], [SM Detail Execution Due]))
+		formatString: 0.00
+		displayFolder: Detail diagnostics
+		lineageTag: 787ed098-aa82-4416-b764-d289c01d73b8
+
+	/// Current task-dependent/resource-dependent activities with a matching, dated original baseline divided by all current activities in that population.
+	measure 'SM Baseline Coverage %' =
+			IF([SM Detail Scope Message] = "" && [SM Detail Baseline Provenance] && [SM Detail Invalid Activity Codes] = 0,
+			    DIVIDE([SM Detail Dated Matches], [SM Detail Current Activities]))
+		formatString: 0.0%
+		displayFolder: Detail diagnostics
+		lineageTag: a90a90f9-c697-483c-87c9-cdca333bec9b
+
+	measure 'SM Detail Open Activities' =
+			VAR ProjectCode = [SM Detail Project]
+			VAR ProgrammeType = [SM Detail Programme]
+			VAR SnapshotDate = [SM Detail Snapshot]
+			VAR OpenActivities = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile"},
+			    '01 XER_TASK'[status_code] IN {"Not Started", "In Progress"})
+			RETURN COALESCE(COUNTROWS(OpenActivities), 0)
+		formatString: #,0
+		isHidden
+		displayFolder: Detail diagnostics\Internal
+		lineageTag: 4377c82e-6022-495c-88ef-5c62af125110
+
+	measure 'SM Detail Longest Path Activities' =
+			VAR ProjectCode = [SM Detail Project]
+			VAR ProgrammeType = [SM Detail Programme]
+			VAR SnapshotDate = [SM Detail Snapshot]
+			VAR OpenActivities = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile"},
+			    '01 XER_TASK'[status_code] IN {"Not Started", "In Progress"})
+			RETURN COALESCE(COUNTROWS(FILTER(OpenActivities, '01 XER_TASK'[driving_path_flag] = "Y")), 0)
+		formatString: #,0
+		isHidden
+		displayFolder: Detail diagnostics\Internal
+		lineageTag: e3c67a3c-1be2-46af-b1bd-db6190446f8d
+
+	/// Share of incomplete task-dependent/resource-dependent activities and milestones flagged driving_path_flag=Y. Diagnostic only; not a critical-path test.
+	measure 'SM Longest Path %' = IF([SM Detail Scope Message] = "", DIVIDE([SM Detail Longest Path Activities], [SM Detail Open Activities]))
+		formatString: 0.0%
+		displayFolder: Detail diagnostics
+		lineageTag: e19f09f4-adcf-4ee0-b5ec-aef604cd3460
+
+	measure 'SM Detail Value' =
+			VAR MetricID = SELECTEDVALUE('Schedule Metric Detail'[Metric ID], 1)
+			VAR ProjectCode = [SM Detail Project]
+			VAR ProgrammeType = [SM Detail Programme]
+			VAR SnapshotDate = [SM Detail Snapshot]
+			VAR BaselineDate = CALCULATE(MIN('01 XER_TASK'[UpdateDate]),
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE())
+			VAR StatusDate = CALCULATE(SELECTEDVALUE('01 XER_TASK'[data_date]),
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]))
+			VAR BaselineRows = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({BaselineDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			VAR CurrentRows = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			VAR BaselineActivities = SELECTCOLUMNS(BaselineRows,
+			    "ActivityCode", '01 XER_TASK'[task_code], "BaselineFinish", '01 XER_TASK'[Finish])
+			VAR CurrentActivities = SELECTCOLUMNS(CurrentRows,
+			    "ActivityCode", '01 XER_TASK'[task_code], "CurrentFinish", '01 XER_TASK'[Finish], "CurrentStart", '01 XER_TASK'[Start],
+			    "ActualFinish", '01 XER_TASK'[act_end_date], "ActivityStatus", '01 XER_TASK'[status_code])
+			VAR MatchedActivities = NATURALINNERJOIN(BaselineActivities, CurrentActivities)
+			
+			VAR ScopeMessage = SWITCH(TRUE(),
+			    ISBLANK(ProjectCode), "Select one project.",
+			    ISBLANK(ProgrammeType), "Select one programme type.",
+			    ISBLANK(SnapshotDate), "Select one update.",
+			    ISBLANK(StatusDate), "No snapshot with one valid data date is available for this selection.",
+			    "")
+			VAR BaselineFile = CALCULATE(SELECTEDVALUE('01 XER_TASK'[filename]),
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({BaselineDate}, '01 XER_TASK'[UpdateDate]))
+			VAR FileName = UPPER(BaselineFile)
+			VAR TagStart = SEARCH("-BL", FileName, 1, 0)
+			VAR TagEnd = IF(TagStart > 0, SEARCH("_", FileName, TagStart + 3, 0), 0)
+			VAR Tag = IF(TagEnd > TagStart + 3, MID(FileName, TagStart + 3, TagEnd - TagStart - 3), "")
+			VAR RevisionAt = SEARCH("-", Tag, 1, 0)
+			VAR NumberText = IF(RevisionAt > 0, LEFT(Tag, RevisionAt - 1), Tag)
+			VAR Revision = IF(RevisionAt > 0, MID(Tag, RevisionAt + 1, LEN(Tag)), "")
+			VAR BaselineNumber = IFERROR(VALUE(NumberText), BLANK())
+			VAR DigitsOnly = LEN(NumberText) > 0 && LEN(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(NumberText, "0", ""), "1", ""), "2", ""), "3", ""), "4", ""), "5", ""), "6", ""), "7", ""), "8", ""), "9", "")) = 0
+			VAR HasBaselineProvenance = NOT ISBLANK(BaselineDate) && TagStart > 0 && TagEnd > 0 && DigitsOnly && NOT ISBLANK(BaselineNumber) && (RevisionAt = 0 || (LEN(Revision) = 1 && Revision >= "A" && Revision <= "Z"))
+			VAR BaselineCount = COALESCE(COUNTROWS(BaselineRows), 0)
+			VAR CurrentCount = COALESCE(COUNTROWS(CurrentRows), 0)
+			VAR MatchedCount = COALESCE(COUNTROWS(MatchedActivities), 0)
+			VAR DatedCount = COALESCE(COUNTROWS(FILTER(MatchedActivities, NOT ISBLANK([BaselineFinish]))), 0)
+			VAR MissingBaselineCount = COALESCE(COUNTROWS(FILTER(BaselineActivities, ISBLANK([BaselineFinish]))), 0)
+			VAR InvalidMatchedCount = COALESCE(COUNTROWS(FILTER(MatchedActivities, ISBLANK([BaselineFinish]) || ISBLANK([CurrentFinish]) || NOT ([ActivityStatus] IN {"Not Started", "In Progress", "Complete"}) || ([ActivityStatus] = "Complete" && (ISBLANK([ActualFinish]) || [ActualFinish] > StatusDate || NOT ([CurrentFinish] == [ActualFinish]))) || ([ActivityStatus] <> "Complete" && NOT ISBLANK([ActualFinish])) || ([ActivityStatus] IN {"In Progress", "Complete"} && (ISBLANK([CurrentStart]) || [CurrentStart] > StatusDate)))), 0)
+			VAR DueCount = COALESCE(COUNTROWS(FILTER(MatchedActivities, NOT ISBLANK([BaselineFinish]) && [BaselineFinish] <= StatusDate)), 0)
+			VAR MissedCount = COALESCE(COUNTROWS(FILTER(MatchedActivities, NOT ISBLANK([BaselineFinish]) && [BaselineFinish] <= StatusDate && NOT ISBLANK([CurrentFinish]) && [CurrentFinish] > [BaselineFinish])), 0)
+			VAR MissedActivities = FILTER(MatchedActivities, NOT ISBLANK([BaselineFinish]) && [BaselineFinish] <= StatusDate && NOT ISBLANK([CurrentFinish]))
+			VAR AssessedDueCount = COALESCE(COUNTROWS(MissedActivities), 0)
+			VAR ExecutionActivities = FILTER(MatchedActivities, NOT ISBLANK([BaselineFinish]) && (([ActivityStatus] = "Complete" && NOT ISBLANK([ActualFinish]) && [ActualFinish] <= StatusDate) || ([ActivityStatus] IN {"Not Started", "In Progress"} && ISBLANK([ActualFinish]))))
+			VAR ExecutionCount = COALESCE(COUNTROWS(ExecutionActivities), 0)
+			VAR ExecutionDueCount = COALESCE(COUNTROWS(FILTER(ExecutionActivities, [BaselineFinish] <= StatusDate)), 0)
+			VAR CompletedCount = COALESCE(COUNTROWS(FILTER(ExecutionActivities, [ActivityStatus] = "Complete")), 0)
+			VAR InvalidCodeCount = COALESCE(COUNTROWS(BaselineRows), 0) - COALESCE(COUNTROWS(SUMMARIZE(BaselineRows, '01 XER_TASK'[task_code])), 0) + COALESCE(COUNTROWS(CurrentRows), 0) - COALESCE(COUNTROWS(SUMMARIZE(CurrentRows, '01 XER_TASK'[task_code])), 0) + COALESCE(COUNTROWS(FILTER(BaselineRows, ISBLANK('01 XER_TASK'[task_code]) || TRIM('01 XER_TASK'[task_code]) = "")), 0) + COALESCE(COUNTROWS(FILTER(CurrentRows, ISBLANK('01 XER_TASK'[task_code]) || TRIM('01 XER_TASK'[task_code]) = "")), 0)
+			VAR AddedCount = CurrentCount - MatchedCount
+			VAR AbsentCount = BaselineCount - MatchedCount
+			VAR BaselineMessage = SWITCH(TRUE(),
+			    ScopeMessage <> "", ScopeMessage,
+			    NOT HasBaselineProvenance, "N/A: the earliest snapshot is not one verified BL-tagged file.",
+			    CurrentCount = 0, "N/A: no task-dependent or resource-dependent activities in this snapshot.",
+			    InvalidCodeCount > 0, "N/A: blank or duplicate activity codes in the baseline or current snapshot.",
+			    MatchedCount = 0, "N/A: no current activities match the baseline.",
+			    DueCount = 0, "N/A: no matched baseline activities are due by the data date.",
+			    "")
+			VAR OpenActivities = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile"},
+			    '01 XER_TASK'[status_code] IN {"Not Started", "In Progress"})
+			VAR OpenCount = COALESCE(COUNTROWS(OpenActivities), 0)
+			VAR LongestPathCount = COALESCE(COUNTROWS(FILTER(OpenActivities, '01 XER_TASK'[driving_path_flag] = "Y")), 0)
+			
+			RETURN SWITCH(MetricID,
+			    1, IF(BaselineMessage = "", DIVIDE(MissedCount, AssessedDueCount)),
+			    2, IF(BaselineMessage = "", DIVIDE(CompletedCount, ExecutionDueCount)),
+			    3, IF(ScopeMessage = "" && HasBaselineProvenance && InvalidCodeCount = 0, DIVIDE(DatedCount, CurrentCount)),
+			    4, IF(ScopeMessage = "", DIVIDE(LongestPathCount, OpenCount)))
+		displayFolder: Detail diagnostics
+		lineageTag: 710f3f9b-3a3d-4637-834c-c590faf753d0
+
+		formatStringDefinition = [SM Detail Format]
+
+	measure 'SM Detail Format' = IF(SELECTEDVALUE('Schedule Metric Detail'[Metric ID], 1) = 2, "0.00", "0.0%")
+		isHidden
+		displayFolder: Detail diagnostics\Internal
+		lineageTag: 48eb68f6-89b8-4acb-a710-1eaacdf5318e
+
+	measure 'SM Detail Title' = SELECTEDVALUE('Schedule Metric Detail'[Metric], "Missed dates (matched)")
+		displayFolder: Detail diagnostics
+		lineageTag: 8b5af4fb-b090-4228-8ade-9be7c8b991ff
+
+	measure 'SM Detail Target' = SWITCH(SELECTEDVALUE('Schedule Metric Detail'[Metric ID], 1), 1, 0.05, 2, 0.95, 3, 1, BLANK())
+		displayFolder: Detail diagnostics
+		lineageTag: 97a867b0-4606-468c-a566-3edb834a9609
+
+		formatStringDefinition = [SM Detail Format]
+
+	measure 'SM Detail Maximum' =
+			VAR MetricID = SELECTEDVALUE('Schedule Metric Detail'[Metric ID], 1)
+			RETURN IF(MetricID = 2, MAX(1, COALESCE([SM Detail Value], 1)), 1)
+		displayFolder: Detail diagnostics
+		lineageTag: 393588c3-5884-4530-b72c-7651fc44faba
+
+		formatStringDefinition = [SM Detail Format]
+
+	/// Partial means rows required by the selected metric were excluded; unrelated source warnings do not downgrade usable inputs.
+	measure 'SM Detail Partial Inputs' =
+			VAR MetricID = SELECTEDVALUE('Schedule Metric Detail'[Metric ID], 1)
+			RETURN SWITCH(MetricID,
+			    1, [SM Detail Missed Assessable Due] < [SM Detail Baseline Due] || [SM Detail Dated Matches] < [SM Detail Matched Activities],
+			    2, [SM Detail Execution Activities] < [SM Detail Matched Activities],
+			    FALSE())
+		isHidden
+		displayFolder: Detail diagnostics\Internal
+		lineageTag: 7ecdd09b-5a59-43c5-a518-a21c2e25b650
+
+	measure 'SM Detail Status' =
+			VAR MetricID = SELECTEDVALUE('Schedule Metric Detail'[Metric ID], 1)
+			VAR MetricValue = [SM Detail Value]
+			RETURN SWITCH(TRUE(),
+			    ISBLANK(MetricValue), "N/A",
+			    MetricID = 4, "Diagnostic",
+			    MetricID = 3, IF(MetricValue >= 1, "Full dated coverage", "Partial dated coverage"),
+			    MetricID = 1, IF([SM Detail Partial Inputs], "Partial inputs; ", "") & IF(MetricValue <= 0.05, "Within target", "Above target"),
+			    MetricID = 2, IF([SM Detail Partial Inputs], "Partial inputs; ", "") & IF(MetricValue >= 0.95, "Within target", "Below target"))
+		displayFolder: Detail diagnostics
+		lineageTag: fb7fca6a-cd91-4ed8-91cc-30fb28f85995
+
+	measure 'SM Detail Colour' =
+			VAR MetricID = SELECTEDVALUE('Schedule Metric Detail'[Metric ID], 1)
+			VAR MetricValue = [SM Detail Value]
+			RETURN SWITCH(TRUE(),
+			    ISBLANK(MetricValue), "#687078",
+			    MetricID = 4, "#3979A6",
+			    MetricID = 3, IF(MetricValue >= 1, "#4b6110", "#B7791F"),
+			    MetricID = 1, IF(MetricValue <= 0.05, "#4b6110", "#6f0516"),
+			    MetricID = 2, IF(MetricValue >= 0.95, "#4b6110", "#6f0516"))
+		displayFolder: Detail diagnostics
+		lineageTag: 05782dec-18b4-42d0-a38e-84950c4e34aa
+
+	measure 'SM Detail Tooltip' =
+			VAR MetricID = SELECTEDVALUE('Schedule Metric Detail'[Metric ID], 1)
+			VAR ProjectCode = [SM Detail Project]
+			VAR ProgrammeType = [SM Detail Programme]
+			VAR SnapshotDate = [SM Detail Snapshot]
+			VAR BaselineDate = CALCULATE(MIN('01 XER_TASK'[UpdateDate]),
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE())
+			VAR StatusDate = CALCULATE(SELECTEDVALUE('01 XER_TASK'[data_date]),
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]))
+			VAR BaselineRows = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({BaselineDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			VAR CurrentRows = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			VAR BaselineActivities = SELECTCOLUMNS(BaselineRows,
+			    "ActivityCode", '01 XER_TASK'[task_code], "BaselineFinish", '01 XER_TASK'[Finish])
+			VAR CurrentActivities = SELECTCOLUMNS(CurrentRows,
+			    "ActivityCode", '01 XER_TASK'[task_code], "CurrentFinish", '01 XER_TASK'[Finish], "CurrentStart", '01 XER_TASK'[Start],
+			    "ActualFinish", '01 XER_TASK'[act_end_date], "ActivityStatus", '01 XER_TASK'[status_code])
+			VAR MatchedActivities = NATURALINNERJOIN(BaselineActivities, CurrentActivities)
+			
+			VAR ScopeMessage = SWITCH(TRUE(),
+			    ISBLANK(ProjectCode), "Select one project.",
+			    ISBLANK(ProgrammeType), "Select one programme type.",
+			    ISBLANK(SnapshotDate), "Select one update.",
+			    ISBLANK(StatusDate), "No snapshot with one valid data date is available for this selection.",
+			    "")
+			VAR BaselineFile = CALCULATE(SELECTEDVALUE('01 XER_TASK'[filename]),
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({BaselineDate}, '01 XER_TASK'[UpdateDate]))
+			VAR FileName = UPPER(BaselineFile)
+			VAR TagStart = SEARCH("-BL", FileName, 1, 0)
+			VAR TagEnd = IF(TagStart > 0, SEARCH("_", FileName, TagStart + 3, 0), 0)
+			VAR Tag = IF(TagEnd > TagStart + 3, MID(FileName, TagStart + 3, TagEnd - TagStart - 3), "")
+			VAR RevisionAt = SEARCH("-", Tag, 1, 0)
+			VAR NumberText = IF(RevisionAt > 0, LEFT(Tag, RevisionAt - 1), Tag)
+			VAR Revision = IF(RevisionAt > 0, MID(Tag, RevisionAt + 1, LEN(Tag)), "")
+			VAR BaselineNumber = IFERROR(VALUE(NumberText), BLANK())
+			VAR DigitsOnly = LEN(NumberText) > 0 && LEN(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(NumberText, "0", ""), "1", ""), "2", ""), "3", ""), "4", ""), "5", ""), "6", ""), "7", ""), "8", ""), "9", "")) = 0
+			VAR HasBaselineProvenance = NOT ISBLANK(BaselineDate) && TagStart > 0 && TagEnd > 0 && DigitsOnly && NOT ISBLANK(BaselineNumber) && (RevisionAt = 0 || (LEN(Revision) = 1 && Revision >= "A" && Revision <= "Z"))
+			VAR BaselineCount = COALESCE(COUNTROWS(BaselineRows), 0)
+			VAR CurrentCount = COALESCE(COUNTROWS(CurrentRows), 0)
+			VAR MatchedCount = COALESCE(COUNTROWS(MatchedActivities), 0)
+			VAR DatedCount = COALESCE(COUNTROWS(FILTER(MatchedActivities, NOT ISBLANK([BaselineFinish]))), 0)
+			VAR MissingBaselineCount = COALESCE(COUNTROWS(FILTER(BaselineActivities, ISBLANK([BaselineFinish]))), 0)
+			VAR InvalidMatchedCount = COALESCE(COUNTROWS(FILTER(MatchedActivities, ISBLANK([BaselineFinish]) || ISBLANK([CurrentFinish]) || NOT ([ActivityStatus] IN {"Not Started", "In Progress", "Complete"}) || ([ActivityStatus] = "Complete" && (ISBLANK([ActualFinish]) || [ActualFinish] > StatusDate || NOT ([CurrentFinish] == [ActualFinish]))) || ([ActivityStatus] <> "Complete" && NOT ISBLANK([ActualFinish])) || ([ActivityStatus] IN {"In Progress", "Complete"} && (ISBLANK([CurrentStart]) || [CurrentStart] > StatusDate)))), 0)
+			VAR DueCount = COALESCE(COUNTROWS(FILTER(MatchedActivities, NOT ISBLANK([BaselineFinish]) && [BaselineFinish] <= StatusDate)), 0)
+			VAR MissedCount = COALESCE(COUNTROWS(FILTER(MatchedActivities, NOT ISBLANK([BaselineFinish]) && [BaselineFinish] <= StatusDate && NOT ISBLANK([CurrentFinish]) && [CurrentFinish] > [BaselineFinish])), 0)
+			VAR MissedActivities = FILTER(MatchedActivities, NOT ISBLANK([BaselineFinish]) && [BaselineFinish] <= StatusDate && NOT ISBLANK([CurrentFinish]))
+			VAR AssessedDueCount = COALESCE(COUNTROWS(MissedActivities), 0)
+			VAR ExecutionActivities = FILTER(MatchedActivities, NOT ISBLANK([BaselineFinish]) && (([ActivityStatus] = "Complete" && NOT ISBLANK([ActualFinish]) && [ActualFinish] <= StatusDate) || ([ActivityStatus] IN {"Not Started", "In Progress"} && ISBLANK([ActualFinish]))))
+			VAR ExecutionCount = COALESCE(COUNTROWS(ExecutionActivities), 0)
+			VAR ExecutionDueCount = COALESCE(COUNTROWS(FILTER(ExecutionActivities, [BaselineFinish] <= StatusDate)), 0)
+			VAR CompletedCount = COALESCE(COUNTROWS(FILTER(ExecutionActivities, [ActivityStatus] = "Complete")), 0)
+			VAR InvalidCodeCount = COALESCE(COUNTROWS(BaselineRows), 0) - COALESCE(COUNTROWS(SUMMARIZE(BaselineRows, '01 XER_TASK'[task_code])), 0) + COALESCE(COUNTROWS(CurrentRows), 0) - COALESCE(COUNTROWS(SUMMARIZE(CurrentRows, '01 XER_TASK'[task_code])), 0) + COALESCE(COUNTROWS(FILTER(BaselineRows, ISBLANK('01 XER_TASK'[task_code]) || TRIM('01 XER_TASK'[task_code]) = "")), 0) + COALESCE(COUNTROWS(FILTER(CurrentRows, ISBLANK('01 XER_TASK'[task_code]) || TRIM('01 XER_TASK'[task_code]) = "")), 0)
+			VAR AddedCount = CurrentCount - MatchedCount
+			VAR AbsentCount = BaselineCount - MatchedCount
+			VAR BaselineMessage = SWITCH(TRUE(),
+			    ScopeMessage <> "", ScopeMessage,
+			    NOT HasBaselineProvenance, "N/A: the earliest snapshot is not one verified BL-tagged file.",
+			    CurrentCount = 0, "N/A: no task-dependent or resource-dependent activities in this snapshot.",
+			    InvalidCodeCount > 0, "N/A: blank or duplicate activity codes in the baseline or current snapshot.",
+			    MatchedCount = 0, "N/A: no current activities match the baseline.",
+			    DueCount = 0, "N/A: no matched baseline activities are due by the data date.",
+			    "")
+			VAR OpenActivities = CALCULATETABLE('01 XER_TASK',
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]),
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile"},
+			    '01 XER_TASK'[status_code] IN {"Not Started", "In Progress"})
+			VAR OpenCount = COALESCE(COUNTROWS(OpenActivities), 0)
+			VAR LongestPathCount = COALESCE(COUNTROWS(FILTER(OpenActivities, '01 XER_TASK'[driving_path_flag] = "Y")), 0)
+			
+			VAR SnapshotLabel = "Data date " & FORMAT(StatusDate, "dd mmm yyyy") & "; update " & FORMAT(SnapshotDate, "dd mmm yyyy") & ". "
+			VAR Population = "Whole project/programme; WBS, task, status, finish-calendar and unscheduled filters do not reduce this diagnostic. Data-lake exclusions and model security remain in force. "
+			VAR BaselineCoverage = "Baseline " & FORMAT(BaselineDate, "dd mmm yyyy") & ": " & BaselineFile & ". " &
+			    FORMAT(MatchedCount, "#,0") & " matched / " & FORMAT(CurrentCount, "#,0") & " current activities; " &
+			    FORMAT(DatedCount, "#,0") & " have baseline finish dates. Added: " & FORMAT(AddedCount, "#,0") &
+			    "; baseline codes absent: " & FORMAT(AbsentCount, "#,0") & "; baseline missing finish: " & FORMAT(MissingBaselineCount, "#,0") &
+			    "; invalid activity codes (blank/duplicate): " & FORMAT(InvalidCodeCount, "#,0") & "; matched source/date/status warnings: " & FORMAT(InvalidMatchedCount, "#,0") & " (only inputs needed by the selected metric affect its cohort). "
+			VAR Explanation = SWITCH(MetricID,
+			    1, FORMAT(MissedCount, "#,0") & " matched due activities have current actual/forecast finish later than baseline finish / " & FORMAT(AssessedDueCount, "#,0") & " assessable matched due activities. Assessed " & FORMAT(AssessedDueCount, "#,0") & " / " & FORMAT(DueCount, "#,0") & " dated baseline-due matches; excluded " & FORMAT(DueCount - AssessedDueCount, "#,0") & " due matches with missing current Finish. Missing baseline Finish: " & FORMAT(MatchedCount - DatedCount, "#,0") & " matches (due status unknown). " & IF(AssessedDueCount < DueCount || DatedCount < MatchedCount, "Partial input coverage. ", "Full required-input coverage within dated matches. ") & IF(AssessedDueCount = 0 && DueCount > 0, "N/A: no due matches have a usable current Finish. ", "") & "Start/status warnings do not suppress known finish comparisons. Target <= 5%. ",
+			    2, FORMAT(CompletedCount, "#,0") & " assessable matched activities actually completed by the data date / " & FORMAT(ExecutionDueCount, "#,0") & " assessable matched activities due by the data date. Known completion state and baseline Finish: " & FORMAT(ExecutionCount, "#,0") & " / " & FORMAT(MatchedCount, "#,0") & " matches; excluded " & FORMAT(MatchedCount - ExecutionCount, "#,0") & " matches with unknown baseline Finish or unusable completion status/actual Finish, including " & FORMAT(DueCount - ExecutionDueCount, "#,0") & " of " & FORMAT(DueCount, "#,0") & " known due matches. " & IF(ExecutionCount < MatchedCount, "Partial input coverage. ", "Full required-input coverage within matches. ") & IF(ExecutionDueCount = 0 && DueCount > 0, "N/A: no due matches have a known completion state. ", "") & "Start and forecast Finish are not completion inputs. Target >= 0.95; early completions can exceed 1.00. ",
+			    3, FORMAT(DatedCount, "#,0") & " current activities with a matching, dated baseline / " & FORMAT(CurrentCount, "#,0") & " current activities. Coverage target 100%; additions and missing dates reduce coverage. ",
+			    4, FORMAT(LongestPathCount, "#,0") & " incomplete activities/milestones with driving_path_flag=Y / " & FORMAT(OpenCount, "#,0") & " incomplete activities/milestones. No pass threshold; this is not the critical-path test. ")
+			RETURN IF(ScopeMessage <> "", ScopeMessage & " " & Population,
+			    SnapshotLabel & Explanation & IF(MetricID <> 4, BaselineCoverage &
+			        IF(MetricID IN {1, 2} && BaselineMessage <> "", BaselineMessage & " ",
+			            IF(NOT HasBaselineProvenance, "N/A: a verified BL-tagged earliest snapshot is required. ", "")) &
+			        "Baseline metrics use task-dependent/resource-dependent activities of all statuses, matched by project/programme/activity code; added and absent activities are excluded from matched rates, never assumed complete. Custom matched-scope indicators, not full DCMA compliance. ", "") & Population)
+		displayFolder: Detail diagnostics
+		lineageTag: f26a0624-348f-4443-824a-9c571adfd34f
+
+	/// Evaluate the selected detail measure independently at each disconnected UpdateHistory date, up to the selected update.
+	measure 'SM Detail History' =
+			VAR SelectedUpdate = [SM Detail Snapshot]
+			VAR AxisUpdate = SELECTEDVALUE(UpdateHistory[UpdateDate])
+			RETURN IF(NOT ISBLANK(SelectedUpdate) && NOT ISBLANK(AxisUpdate) && AxisUpdate <= SelectedUpdate,
+			    CALCULATE([SM Detail Value], REMOVEFILTERS(CurrentDate), REMOVEFILTERS('01 XER_TASK'[UpdateDate]),
+			        TREATAS({AxisUpdate}, '01 XER_TASK'[UpdateDate])))
+		displayFolder: Detail diagnostics
+		lineageTag: d8dfc452-b85e-4db6-b0cc-26ffbc9055ec
+
+		formatStringDefinition = [SM Detail Format]
+
+	/// Keep valid snapshot categories visible even when the selected diagnostic is unavailable; later periods and missing snapshots remain hidden.
+	measure 'SM Detail History In Scope' =
+			VAR SelectedUpdate = [SM Detail Snapshot]
+			VAR AxisUpdate = SELECTEDVALUE(UpdateHistory[UpdateDate])
+			VAR ProjectCode = [SM Detail Project]
+			VAR ProgrammeType = [SM Detail Programme]
+			VAR AxisRows = IF(NOT ISBLANK(AxisUpdate) && NOT ISBLANK(ProjectCode) && NOT ISBLANK(ProgrammeType),
+			    CALCULATE(COUNTROWS('01 XER_TASK'), REMOVEFILTERS(),
+			        TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			        TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			        TREATAS({AxisUpdate}, '01 XER_TASK'[UpdateDate]),
+			        '01 XER_TASK'[IsExcludedFromDataLake] = FALSE()))
+			RETURN IF(NOT ISBLANK(SelectedUpdate) && NOT ISBLANK(AxisUpdate) && AxisUpdate <= SelectedUpdate && AxisRows > 0, 1)
+		formatString: 0
+		displayFolder: Detail diagnostics
+		lineageTag: 2b366f18-aa3e-44c5-8dce-2be31079b77c
+
+	measure 'SM Detail Tooltip (History)' =
+			VAR AxisUpdate = SELECTEDVALUE(UpdateHistory[UpdateDate])
+			RETURN IF([SM Detail History In Scope] = 1,
+			    CALCULATE([SM Detail Tooltip], REMOVEFILTERS(CurrentDate), REMOVEFILTERS('01 XER_TASK'[UpdateDate]),
+			        TREATAS({AxisUpdate}, '01 XER_TASK'[UpdateDate])))
+		displayFolder: Detail diagnostics
+		lineageTag: e5aa932f-5f0f-4e5b-a60d-2b0785da7195
+
+	column Metric
+		dataType: string
+		lineageTag: 1d44e636-a66e-4fd8-a946-6c61c130d220
+		summarizeBy: none
+		sourceColumn: [Metric]
+		sortByColumn: 'Metric ID'
+
+	column 'Metric ID'
+		dataType: int64
+		isHidden
+		lineageTag: 793e047c-700b-4d07-aa3c-6d735b43674c
+		summarizeBy: none
+		sourceColumn: [Metric ID]
+
+	partition 'Schedule Metric Detail' = calculated
+		mode: import
+		source =
+				DATATABLE("Metric", STRING, "Metric ID", INTEGER,
+				    {
+				        {"Missed dates (matched)", 1},
+				        {"Execution index (matched)", 2},
+				        {"Baseline coverage", 3},
+				        {"Longest-path share", 4}
+				    })
+

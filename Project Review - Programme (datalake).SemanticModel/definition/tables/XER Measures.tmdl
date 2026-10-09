@@ -256,15 +256,6 @@ table 'XER Measures'
 			)
 		lineageTag: 99664ae0-37b8-4094-9cc5-91f464074fbb
 
-	measure ShowDriven =
-			
-			IF(
-			    ISINSCOPE('01 XER_TASK'[task_code]),
-			    SELECTEDVALUE('01 XER_TASK'[Driven_DataDate]),
-			    BLANK()
-			)
-		lineageTag: 8f33bfca-85e0-436a-9eb3-90a800f64948
-
 	measure ShowVarianceAdjustedBL =
 			
 			IF(

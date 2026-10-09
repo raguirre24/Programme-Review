@@ -83,6 +83,8 @@ ref table 'Scenario Unit'
 ref table 'Scenario Period'
 ref table 'Resource Scenario Measures'
 ref table UpdateHistory
+ref table 'Schedule Metric Detail'
+ref table 'Schedule Metric Guide'
 
 ref role 'Project Access'
 

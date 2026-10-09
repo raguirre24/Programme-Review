@@ -538,6 +538,7 @@ table '01 XER_TASK'
 
 	column Driven_DataDate
 		dataType: string
+		isHidden
 		lineageTag: 94225685-becc-4744-a625-f9973e146094
 		summarizeBy: none
 		sourceColumn: Driven_DataDate

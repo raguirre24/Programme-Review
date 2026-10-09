@@ -85,7 +85,7 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
+                  "Value": "false"
                 }
               }
             }
@@ -96,7 +96,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Float =0d'"
+                  "Value": "'Schedule metric detail'"
                 }
               }
             },

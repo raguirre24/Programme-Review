@@ -96,7 +96,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Leads <0d'"
+                  "Value": "'Leads | 0% / ≤1%'"
                 }
               }
             },

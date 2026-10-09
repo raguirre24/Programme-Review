@@ -103,7 +103,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Float >44d'"
+                  "Value": "'High float >44d | review indicator'"
                 }
               }
             },

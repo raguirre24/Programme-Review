@@ -675,6 +675,26 @@
             "width": 234
           },
           "zIndex": 0
+        },
+        {
+          "location": {},
+          "nodeIndex": "Schedule Metric Detail",
+          "nodeLineageTag": "66946229-5cce-42b7-91f2-6e1e8943ccda",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {},
+          "nodeIndex": "Schedule Metric Guide",
+          "nodeLineageTag": "d3d3a63c-d103-5b94-849e-5435f7617888",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
         }
       ],
       "name": "All tables",
@@ -688,7 +708,7 @@
       "ordinal": 1,
       "scrollPosition": {
         "x": 0,
-        "y": 468.0378775394235
+        "y": 0
       },
       "nodes": [
         {

@@ -82,6 +82,36 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
+                      "Entity": "XER Metrics"
+                    }
+                  },
+                  "Property": "SM Drill Status"
+                }
+              },
+              "queryRef": "XER Metrics.SM Drill Status",
+              "nativeQueryRef": "Status",
+              "displayName": "Status"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Metrics"
+                    }
+                  },
+                  "Property": "SM Drill Missing Predecessor Flag"
+                }
+              },
+              "queryRef": "XER Metrics.SM Drill Missing Predecessor Flag",
+              "nativeQueryRef": "Missing predecessor",
+              "displayName": "Missing predecessor"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
                       "Entity": "XER Measures"
                     }
                   },
@@ -554,6 +584,48 @@
           },
           "selector": {
             "metadata": "XER Measures.ShowDuration"
+          }
+        },
+        {
+          "properties": {
+            "width": {
+              "expr": {
+                "Literal": {
+                  "Value": "100D"
+                }
+              }
+            },
+            "customWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "XER Metrics.SM Drill Status"
+          }
+        },
+        {
+          "properties": {
+            "width": {
+              "expr": {
+                "Literal": {
+                  "Value": "90D"
+                }
+              }
+            },
+            "customWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "XER Metrics.SM Drill Missing Predecessor Flag"
           }
         }
       ],

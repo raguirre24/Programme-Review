@@ -96,7 +96,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Driven by Data Date'"
+                  "Value": "'Date integrity (custom) | 0% / ≤0.1%'"
                 }
               }
             },

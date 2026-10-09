@@ -96,7 +96,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Duration >44d'"
+                  "Value": "'Remaining duration >44d (custom) | ≤5% / ≤10%'"
                 }
               }
             },

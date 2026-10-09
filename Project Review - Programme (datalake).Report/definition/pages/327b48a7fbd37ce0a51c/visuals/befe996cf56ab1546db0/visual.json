@@ -30,7 +30,8 @@
               "nativeQueryRef": "UpdateDate",
               "active": true
             }
-          ]
+          ],
+          "showAll": true
         },
         "Y": {
           "projections": [
@@ -42,12 +43,31 @@
                       "Entity": "XER Metrics"
                     }
                   },
-                  "Property": "MissingPredecessor% (History)"
+                  "Property": "SM Missing Logic % (History)"
                 }
               },
               "queryRef": "XER Metrics.MissingLogic%",
-              "nativeQueryRef": "MissingPredecessor% (History)",
-              "displayName": "MissingLogic%"
+              "nativeQueryRef": "SM Missing Logic % (History)",
+              "displayName": "Missing logic | ≤5% / ≤10%"
+            }
+          ]
+        },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Metrics"
+                    }
+                  },
+                  "Property": "SM Coverage Tooltip (History)"
+                }
+              },
+              "queryRef": "XER Metrics.SM Coverage Tooltip (History)",
+              "nativeQueryRef": "SM Coverage Tooltip (History)",
+              "displayName": "Scope and coverage"
             }
           ]
         }
@@ -156,6 +176,13 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            },
+            "axisType": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Categorical'"
                 }
               }
             }
@@ -321,6 +348,13 @@
                   "Value": "false"
                 }
               }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Missing logic | ≤5% / ≤10% history'"
+                }
+              }
             }
           }
         }
@@ -352,5 +386,58 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "7693f3033d1c4c5fa94d",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Metrics"
+              }
+            },
+            "Property": "SM History In Scope"
+          }
+        },
+        "type": "Advanced",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "x",
+              "Entity": "XER Metrics",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "Comparison": {
+                  "ComparisonKind": 0,
+                  "Left": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Source": "x"
+                        }
+                      },
+                      "Property": "SM History In Scope"
+                    }
+                  },
+                  "Right": {
+                    "Literal": {
+                      "Value": "1L"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "howCreated": "User"
+      }
+    ]
   }
 }

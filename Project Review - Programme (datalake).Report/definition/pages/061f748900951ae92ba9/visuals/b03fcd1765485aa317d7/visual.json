@@ -83,10 +83,10 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Dynamic Titles & Formatting"
+                      "Entity": "XER Metrics"
                     }
                   },
-                  "Property": "SelectedTitle"
+                  "Property": "SM Drill Context"
                 }
               }
             },

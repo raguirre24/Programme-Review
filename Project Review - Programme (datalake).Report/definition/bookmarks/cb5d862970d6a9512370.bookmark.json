@@ -4,12 +4,65 @@
   "name": "cb5d862970d6a9512370",
   "options": {
     "targetVisualNames": [
-      "9003403baa60d58e5d3b",
-      "d778f258649d6153fd4c",
+      "065aedc35dcac483ea63",
+      "11d0ac2398a5f654bee5",
+      "1347775f9312f8fbf095",
+      "1cf588a229dd59ca0e55",
+      "272d935767d0a0cc930b",
+      "2795d4a9d1fa42ede388",
+      "27a3320fc07793cec13a",
+      "29dd3e330552106c9b85",
+      "2db34fa48df200c3d587",
+      "34f41c0fc9ff2dbff1cc",
       "39bf0f694c30cb5529b0",
-      "e417356479b02aac4464"
+      "3c70c887f7bcbb43ccd3",
+      "4ffd94cf285c31985cba",
+      "58fbc09d197fe53515d8",
+      "5a2ca16ab3096b524ccb",
+      "5d4f7a931da26bc6e9cd",
+      "61d63f208032a370fe3e",
+      "64e14883854f7dfd70e3",
+      "66513b4afb7936ff6cfa",
+      "6ec723c640b6070ba15c",
+      "6f630afca7b80ce0a026",
+      "702daf49280b8a448783",
+      "70df662118bf4276a18e",
+      "73113836ca69a3aba1a0",
+      "7430c5bc4cbe2ea53c87",
+      "75e5b6a1363cfb051068",
+      "79bb4d5993a6dc7f341d",
+      "7a3cbe2060125ac64c5c",
+      "81ad6771956ff5d1741f",
+      "8626df1f206f6c59ba84",
+      "9003403baa60d58e5d3b",
+      "919fb0fbb7f910fb47b9",
+      "92f6f22e7132b588160e",
+      "9fd4722f71ef2ac31205",
+      "a1970523de7632121d6b",
+      "ae06bd72d522fde5d7e0",
+      "b07222b4891891cf9403",
+      "b472a4a2b0c50d6843ad",
+      "b619bdaf7bac4917bfef",
+      "befe996cf56ab1546db0",
+      "c7f71fd2e347b3f85c92",
+      "ce14589ca97dacfb8ed1",
+      "d6e060209ec3bec10758",
+      "d778f258649d6153fd4c",
+      "d83c275a893591ff2744",
+      "e417356479b02aac4464",
+      "e4ac7038c18417cc04e2",
+      "f87943c254f5cb251cb1",
+      "fc91b5bc44861bc3d9f6",
+      "e71eb4152395599d98d2",
+      "5fbf6bb45a3959aca15a",
+      "d6730e81cc2759769303",
+      "c8cc0477639e5511b87f",
+      "6857152451b45c128976",
+      "3417fca7eb12552c805f",
+      "1493a602e8915d90b8c0"
     ],
-    "suppressData": true
+    "suppressData": true,
+    "applyOnlyToTargetVisuals": true
   },
   "explorationState": {
     "version": "1.0",
@@ -17,22 +70,64 @@
     "sections": {
       "327b48a7fbd37ce0a51c": {
         "visualContainers": {
-          "9003403baa60d58e5d3b": {
+          "065aedc35dcac483ea63": {
             "singleVisual": {
-              "visualType": "shape",
-              "objects": {},
-              "display": {
-                "mode": "hidden"
-              }
+              "visualType": "lineChart",
+              "objects": {}
             }
           },
-          "d778f258649d6153fd4c": {
+          "11d0ac2398a5f654bee5": {
             "singleVisual": {
-              "visualType": "advancedSlicerVisual",
-              "objects": {},
-              "display": {
-                "mode": "hidden"
-              }
+              "visualType": "shape",
+              "objects": {}
+            }
+          },
+          "1347775f9312f8fbf095": {
+            "singleVisual": {
+              "visualType": "lineChart",
+              "objects": {}
+            }
+          },
+          "1cf588a229dd59ca0e55": {
+            "singleVisual": {
+              "visualType": "lineChart",
+              "objects": {}
+            }
+          },
+          "272d935767d0a0cc930b": {
+            "singleVisual": {
+              "visualType": "gauge",
+              "objects": {}
+            }
+          },
+          "2795d4a9d1fa42ede388": {
+            "singleVisual": {
+              "visualType": "image",
+              "objects": {}
+            }
+          },
+          "27a3320fc07793cec13a": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "objects": {}
+            }
+          },
+          "29dd3e330552106c9b85": {
+            "singleVisual": {
+              "visualType": "gauge",
+              "objects": {}
+            }
+          },
+          "2db34fa48df200c3d587": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {}
+            }
+          },
+          "34f41c0fc9ff2dbff1cc": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {}
             }
           },
           "39bf0f694c30cb5529b0": {
@@ -44,9 +139,297 @@
               }
             }
           },
+          "3c70c887f7bcbb43ccd3": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {}
+            }
+          },
+          "4ffd94cf285c31985cba": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {}
+            }
+          },
+          "58fbc09d197fe53515d8": {
+            "singleVisual": {
+              "visualType": "tableEx",
+              "objects": {}
+            }
+          },
+          "5a2ca16ab3096b524ccb": {
+            "singleVisual": {
+              "visualType": "lineChart",
+              "objects": {}
+            }
+          },
+          "5d4f7a931da26bc6e9cd": {
+            "singleVisual": {
+              "visualType": "gauge",
+              "objects": {}
+            }
+          },
+          "61d63f208032a370fe3e": {
+            "singleVisual": {
+              "visualType": "gauge",
+              "objects": {}
+            }
+          },
+          "64e14883854f7dfd70e3": {
+            "singleVisual": {
+              "visualType": "gauge",
+              "objects": {}
+            }
+          },
+          "66513b4afb7936ff6cfa": {
+            "singleVisual": {
+              "visualType": "gauge",
+              "objects": {}
+            }
+          },
+          "6ec723c640b6070ba15c": {
+            "singleVisual": {
+              "visualType": "lineChart",
+              "objects": {}
+            }
+          },
+          "6f630afca7b80ce0a026": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {}
+            }
+          },
+          "702daf49280b8a448783": {
+            "singleVisual": {
+              "visualType": "pageNavigator",
+              "objects": {}
+            }
+          },
+          "70df662118bf4276a18e": {
+            "singleVisual": {
+              "visualType": "card",
+              "objects": {}
+            }
+          },
+          "73113836ca69a3aba1a0": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {}
+            }
+          },
+          "7430c5bc4cbe2ea53c87": {
+            "singleVisual": {
+              "visualType": "gauge",
+              "objects": {}
+            }
+          },
+          "75e5b6a1363cfb051068": {
+            "singleVisual": {
+              "visualType": "lineChart",
+              "objects": {}
+            }
+          },
+          "79bb4d5993a6dc7f341d": {
+            "singleVisual": {
+              "visualType": "lineChart",
+              "objects": {}
+            }
+          },
+          "7a3cbe2060125ac64c5c": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {}
+            }
+          },
+          "81ad6771956ff5d1741f": {
+            "singleVisual": {
+              "visualType": "card",
+              "objects": {}
+            }
+          },
+          "8626df1f206f6c59ba84": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {}
+            }
+          },
+          "9003403baa60d58e5d3b": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "919fb0fbb7f910fb47b9": {
+            "singleVisual": {
+              "visualType": "lineChart",
+              "objects": {}
+            }
+          },
+          "92f6f22e7132b588160e": {
+            "singleVisual": {
+              "visualType": "slicer",
+              "objects": {}
+            }
+          },
+          "9fd4722f71ef2ac31205": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {}
+            }
+          },
+          "a1970523de7632121d6b": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {}
+            }
+          },
+          "ae06bd72d522fde5d7e0": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {}
+            }
+          },
+          "b07222b4891891cf9403": {
+            "singleVisual": {
+              "visualType": "lineChart",
+              "objects": {}
+            }
+          },
+          "b472a4a2b0c50d6843ad": {
+            "singleVisual": {
+              "visualType": "gauge",
+              "objects": {}
+            }
+          },
+          "b619bdaf7bac4917bfef": {
+            "singleVisual": {
+              "visualType": "slicer",
+              "objects": {}
+            }
+          },
+          "befe996cf56ab1546db0": {
+            "singleVisual": {
+              "visualType": "lineChart",
+              "objects": {}
+            }
+          },
+          "c7f71fd2e347b3f85c92": {
+            "singleVisual": {
+              "visualType": "lineChart",
+              "objects": {}
+            }
+          },
+          "ce14589ca97dacfb8ed1": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {}
+            }
+          },
+          "d6e060209ec3bec10758": {
+            "singleVisual": {
+              "visualType": "slicer",
+              "objects": {}
+            }
+          },
+          "d778f258649d6153fd4c": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "d83c275a893591ff2744": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {}
+            }
+          },
           "e417356479b02aac4464": {
             "singleVisual": {
               "visualType": "actionButton",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "e4ac7038c18417cc04e2": {
+            "singleVisual": {
+              "visualType": "pageNavigator",
+              "objects": {}
+            }
+          },
+          "f87943c254f5cb251cb1": {
+            "singleVisual": {
+              "visualType": "gauge",
+              "objects": {}
+            }
+          },
+          "fc91b5bc44861bc3d9f6": {
+            "singleVisual": {
+              "visualType": "gauge",
+              "objects": {}
+            }
+          },
+          "e71eb4152395599d98d2": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "objects": {}
+            }
+          },
+          "5fbf6bb45a3959aca15a": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "d6730e81cc2759769303": {
+            "singleVisual": {
+              "visualType": "textbox",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "c8cc0477639e5511b87f": {
+            "singleVisual": {
+              "visualType": "textbox",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "6857152451b45c128976": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "3417fca7eb12552c805f": {
+            "singleVisual": {
+              "visualType": "tableEx",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "1493a602e8915d90b8c0": {
+            "singleVisual": {
+              "visualType": "textbox",
               "objects": {},
               "display": {
                 "mode": "hidden"

@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.6.0/schema.json",
   "name": "c5503be9b5b38bcb7462",
   "position": {
-    "x": 500.60732984293196,
-    "y": 37.193717277486911,
+    "x": 115,
+    "y": 84,
     "z": 0,
-    "height": 48.251308900523561,
-    "width": 916.77486910994764,
+    "height": 46,
+    "width": 1785,
     "tabOrder": 0
   },
   "visual": {
@@ -83,10 +83,10 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Dynamic Titles & Formatting"
+                      "Entity": "XER Metrics"
                     }
                   },
-                  "Property": "ProjectTitle"
+                  "Property": "SM Drill Missing Successor Header"
                 }
               }
             },
@@ -94,9 +94,8 @@
               "solid": {
                 "color": {
                   "expr": {
-                    "ThemeDataColor": {
-                      "ColorId": 0,
-                      "Percent": 0
+                    "Literal": {
+                      "Value": "'#252525'"
                     }
                   }
                 }
@@ -105,7 +104,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "18D"
+                  "Value": "17D"
                 }
               }
             },

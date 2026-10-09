@@ -96,7 +96,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Missing Predecessor'"
+                  "Value": "'Missing logic | ≤5% / ≤10%'"
                 }
               }
             },

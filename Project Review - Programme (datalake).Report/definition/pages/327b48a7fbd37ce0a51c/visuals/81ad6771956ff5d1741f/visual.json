@@ -5,7 +5,7 @@
     "x": 0,
     "y": 160,
     "z": 20000,
-    "height": 160,
+    "height": 125,
     "width": 425,
     "tabOrder": 18000
   },
@@ -27,7 +27,8 @@
                 }
               },
               "queryRef": "XER Metrics.Score",
-              "nativeQueryRef": "Score"
+              "nativeQueryRef": "Score",
+              "displayName": "Schedule health score"
             }
           ]
         }
@@ -59,9 +60,13 @@
               "solid": {
                 "color": {
                   "expr": {
-                    "ThemeDataColor": {
-                      "ColorId": 9,
-                      "Percent": 0
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "XER Metrics"
+                        }
+                      },
+                      "Property": "SM Score Colour"
                     }
                   }
                 }
@@ -91,6 +96,13 @@
                   }
                 }
               }
+            },
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
             }
           }
         }
@@ -104,6 +116,40 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Schedule health score'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "11D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
                 }
               }
             }

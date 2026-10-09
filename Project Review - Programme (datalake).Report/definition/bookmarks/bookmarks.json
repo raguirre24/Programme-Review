@@ -85,12 +85,6 @@
       "name": "612ea8d6304c201d6dea"
     },
     {
-      "name": "1fbeccc3e2b7a3722c9b"
-    },
-    {
-      "name": "cb27d954c331d701683a"
-    },
-    {
       "name": "9218d93701ca451431aa"
     },
     {
@@ -112,6 +106,14 @@
     },
     {
       "name": "e899bf3a9c2d243f33bf"
+    },
+    {
+      "name": "a45e3b6089dd5003b072",
+      "displayName": "Schedule metric guide",
+      "children": [
+        "2fd7cfa3db915ff3b54e",
+        "909e6c8546c6587d82b9"
+      ]
     }
   ]
 }

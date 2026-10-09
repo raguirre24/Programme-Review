@@ -23,11 +23,31 @@
                       "Entity": "XER Metrics"
                     }
                   },
-                  "Property": "DataDate%"
+                  "Property": "SM Invalid Dates %"
                 }
               },
               "queryRef": "XER Metrics.DataDate%",
-              "nativeQueryRef": "DataDate%"
+              "nativeQueryRef": "SM Invalid Dates %",
+              "displayName": "Date integrity (custom) | 0% / ≤0.1%"
+            }
+          ]
+        },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Metrics"
+                    }
+                  },
+                  "Property": "SM Coverage Tooltip"
+                }
+              },
+              "queryRef": "XER Metrics.SM Coverage Tooltip",
+              "nativeQueryRef": "SM Coverage Tooltip",
+              "displayName": "Scope and coverage"
             }
           ]
         }
@@ -42,7 +62,7 @@
                     "Entity": "XER Metrics"
                   }
                 },
-                "Property": "DataDate%"
+                "Property": "SM Invalid Dates %"
               }
             },
             "direction": "Descending"
@@ -71,7 +91,7 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
                 }
               }
             }
@@ -101,6 +121,22 @@
                   "Value": "true"
                 }
               }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "XER Metrics"
+                        }
+                      },
+                      "Property": "SM Invalid Dates Colour"
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -112,6 +148,20 @@
               "expr": {
                 "Literal": {
                   "Value": "1D"
+                }
+              }
+            },
+            "min": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            },
+            "target": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
                 }
               }
             }
@@ -137,9 +187,13 @@
               "solid": {
                 "color": {
                   "expr": {
-                    "ThemeDataColor": {
-                      "ColorId": 9,
-                      "Percent": 0
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "XER Metrics"
+                        }
+                      },
+                      "Property": "SM Invalid Dates Colour"
                     }
                   }
                 }
@@ -169,7 +223,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Driven By Data Date'"
+                  "Value": "'Date integrity (custom) | 0% / ≤0.1%'"
                 }
               }
             },
