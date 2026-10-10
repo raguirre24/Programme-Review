@@ -41,6 +41,20 @@ table '01 XER_TASK'
 
 		annotation SummarizationSetBy = Automatic
 
+	/// Primary P6 constraint date supplied by Athena or the CSV bundle; blank when unavailable.
+	column cstr_date
+		dataType: dateTime
+		formatString: dd/mm/yy
+		lineageTag: 06ca842e-22e0-4e53-a02d-2416f23b34f2
+		summarizeBy: none
+		sourceColumn: cstr_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+		annotation UnderlyingDateTimeDataType = Date
+
 	column driving_path_flag
 		dataType: string
 		lineageTag: df8c5746-e757-44e2-a1bd-1d48af8bc8d3
@@ -811,7 +825,7 @@ table '01 XER_TASK'
 				                    "t.""driving_path_flag"" AS driving_path_flag, TRY_CAST(t.""remainingduration"" AS DOUBLE) AS remainingduration, TRY_CAST(SUBSTR(CAST(t.""early_end_date"" AS VARCHAR), 1, 10) AS DATE) AS early_end_date,",
 				                    "TRY_CAST(SUBSTR(CAST(t.""monthupdate"" AS VARCHAR), 1, 10) AS DATE) AS monthupdate,",
 				                    "t.""task_name"" AS task_name, TRY_CAST(SUBSTR(CAST(t.""data_date"" AS VARCHAR), 1, 10) AS DATE) AS data_date, TRY_CAST(SUBSTR(CAST(t.""act_end_date"" AS VARCHAR), 1, 10) AS DATE) AS act_end_date, TRY_CAST(SUBSTR(CAST(t.""finish"" AS VARCHAR), 1, 10) AS DATE) AS finish,",
-				                    "t.""proj_id_key"" AS proj_id_key, t.""wbs_id_key"" AS wbs_id_key, TRY_CAST(t.""free_float"" AS DOUBLE) AS free_float, t.""cstr_type"" AS cstr_type,",
+				                    "t.""proj_id_key"" AS proj_id_key, t.""wbs_id_key"" AS wbs_id_key, TRY_CAST(t.""free_float"" AS DOUBLE) AS free_float, t.""cstr_type"" AS cstr_type, TRY_CAST(SUBSTR(CAST(t.""cstr_date"" AS VARCHAR), 1, 10) AS DATE) AS cstr_date,",
 				                    "TRY_CAST(SUBSTR(CAST(t.""start"" AS VARCHAR), 1, 10) AS DATE) AS start, t.""filename"" AS filename, TRY_CAST(SUBSTR(CAST(t.""late_end_date"" AS VARCHAR), 1, 10) AS DATE) AS late_end_date,",
 				                    "kf.project_code AS raw_project_code,",
 				                    "CASE WHEN REGEXP_LIKE(kf.project_code, '^C[0-9]+$') THEN CONCAT('J', SUBSTR(kf.project_code, 2)) ELSE kf.project_code END AS j_project_code,",
@@ -968,7 +982,7 @@ table '01 XER_TASK'
 				                    "FROM network_parts",
 				                    ")",
 				                    "SELECT status_code, task_code, total_float, task_type, id_name, early_start_date, calendar_id_key, task_id_key, driving_path_flag, remainingduration,",
-				                    "early_end_date, monthupdate, task_name, data_date, act_end_date, finish, proj_id_key, wbs_id_key, free_float, cstr_type, start, filename, late_end_date,",
+				                    "early_end_date, monthupdate, task_name, data_date, act_end_date, finish, proj_id_key, wbs_id_key, free_float, cstr_type, cstr_date, start, filename, late_end_date,",
 				                    "raw_project_code AS ""ProjectCode"", update_date AS ""UpdateDate"", project_name AS ""ProjectName"",",
 				                    "CASE WHEN finish_var_start_date IS NULL OR finish_var_end_date IS NULL THEN 0 WHEN finish_var_start_date = finish_var_end_date THEN 0 ELSE (CASE WHEN finish_var_end_date >= finish_var_start_date THEN 1 ELSE -1 END) * (finish_var_full_weeks * 5 + GREATEST(0, LEAST(finish_var_remainder, 6 - finish_var_dow)) + GREATEST(0, finish_var_remainder - (8 - finish_var_dow))) END AS ""Finish_Variance_Previous_Month"",",
 				                    "CASE WHEN NOT (task_type IN ('TT_Task', 'TT_Rsrc', 'TT_Mile', 'TT_FinMile') AND task_code IS NOT NULL AND project_group_key IS NOT NULL AND COALESCE(status_code, '') <> 'Complete' AND data_date IS NOT NULL AND update_date IS NOT NULL) THEN 'Not Driven' WHEN status_code = 'Not Started' AND previous_task_update_date IS NOT NULL AND previous_task_data_date IS NOT NULL AND previous_task_status = 'Not Started' AND date_diff('day', CAST(previous_task_data_date AS DATE), CAST(data_date AS DATE)) > 0 AND date_diff('day', CAST(previous_task_effective_start AS DATE), CAST(COALESCE(early_start_date, start) AS DATE)) > 0 AND ABS(date_diff('day', CAST(previous_task_effective_start AS DATE), CAST(COALESCE(early_start_date, start) AS DATE)) - date_diff('day', CAST(previous_task_data_date AS DATE), CAST(data_date AS DATE))) <= 1 AND COALESCE(early_start_date, start) IS NOT NULL AND COALESCE(early_end_date, finish) IS NOT NULL AND previous_task_effective_start IS NOT NULL AND previous_task_effective_finish IS NOT NULL AND ABS(date_diff('day', CAST(COALESCE(early_start_date, start) AS DATE), CAST(COALESCE(early_end_date, finish) AS DATE)) - date_diff('day', CAST(previous_task_effective_start AS DATE), CAST(previous_task_effective_finish AS DATE))) <= 1 THEN 'Not Started - Slippage Matches Update Period' WHEN status_code = 'In Progress' AND previous_task_update_date IS NOT NULL AND previous_task_data_date IS NOT NULL AND previous_task_status = 'In Progress' AND date_diff('day', CAST(previous_task_data_date AS DATE), CAST(data_date AS DATE)) > 0 AND remainingduration IS NOT NULL AND previous_task_remainingduration IS NOT NULL AND remainingduration >= previous_task_remainingduration - 1 AND date_diff('day', CAST(previous_task_effective_finish AS DATE), CAST(COALESCE(early_end_date, finish) AS DATE)) > 0 AND ABS(date_diff('day', CAST(previous_task_effective_finish AS DATE), CAST(COALESCE(early_end_date, finish) AS DATE)) - date_diff('day', CAST(previous_task_data_date AS DATE), CAST(data_date AS DATE))) <= 1 THEN 'In Progress - Stagnating Progress' WHEN status_code = 'Not Started' AND COALESCE(early_start_date, start) IS NOT NULL AND CAST(COALESCE(early_start_date, start) AS DATE) = CAST(data_date AS DATE) THEN 'Not Started - Early Start Sitting on Data Date' WHEN status_code = 'In Progress' AND early_start_date IS NOT NULL AND remainingduration IS NOT NULL AND remainingduration > 0 AND CAST(COALESCE(early_start_date, start) AS DATE) = CAST(data_date AS DATE) THEN 'In Progress - Remaining Work Sitting on Data Date' ELSE 'Not Driven' END AS ""Driven_DataDate"",",
@@ -996,6 +1010,7 @@ table '01 XER_TASK'
 				            SourceRaw,
 				            {
 				                {"act_end_date", type date},
+				                {"cstr_date", type nullable date},
 				                {"UpdateDate", type date},
 				                {"early_start_date", type date},
 				                {"early_end_date", type date},

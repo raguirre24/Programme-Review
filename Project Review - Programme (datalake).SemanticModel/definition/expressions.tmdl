@@ -359,7 +359,7 @@ expression XerCsvTableContracts =
 		        Columns = {
 		            "status_code", "task_code", "total_float", "task_type", "id_name", "early_start_date", "calendar_id_key",
 		            "task_id_key", "driving_path_flag", "remaining_duration", "early_end_date", "monthupdate", "task_name",
-		            "data_date", "act_end_date", "Finish", "proj_id_key", "wbs_id_key", "free_float", "cstr_type", "Start",
+		            "data_date", "act_end_date", "Finish", "proj_id_key", "wbs_id_key", "free_float", "cstr_type", "cstr_date", "Start",
 		            "filename", "late_end_date", "ProjectCode", "UpdateDate", "ProjectName", "Finish_Variance_Previous_Month",
 		            "Driven_DataDate", "Variance_Finish_BL", "Variance_Finish_Adjusted_BL", "Baseline Finish", "Baseline Start",
 		            "Previous Month Start", "Previous Month Finish", "Planned Not Completed Last Period",
@@ -375,7 +375,7 @@ expression XerCsvTableContracts =
 		            {"remaining_duration", type nullable number}, {"early_end_date", type nullable date}, {"monthupdate", type nullable date},
 		            {"task_name", type nullable text}, {"data_date", type nullable date}, {"act_end_date", type nullable date},
 		            {"Finish", type nullable date}, {"proj_id_key", type nullable text}, {"wbs_id_key", type nullable text},
-		            {"free_float", type nullable number}, {"cstr_type", type nullable text}, {"Start", type nullable date},
+		            {"free_float", type nullable number}, {"cstr_type", type nullable text}, {"cstr_date", type nullable date}, {"Start", type nullable date},
 		            {"filename", type nullable text}, {"late_end_date", type nullable date}, {"ProjectCode", type nullable text},
 		            {"UpdateDate", type nullable date}, {"ProjectName", type nullable text},
 		            {"Finish_Variance_Previous_Month", Int64.Type}, {"Driven_DataDate", type nullable text},
@@ -390,7 +390,7 @@ expression XerCsvTableContracts =
 		            {"Adjusted Baseline Start", type nullable date}, {"Adjusted Baseline Source Month", type nullable date},
 		            {"Adjusted Baseline Source", type nullable text}
 		        },
-		        DateColumns = {"early_start_date", "early_end_date", "monthupdate", "data_date", "act_end_date", "Finish", "Start", "late_end_date", "UpdateDate", "Baseline Finish", "Baseline Start", "Previous Month Start", "Previous Month Finish", "PreviousDataDate", "Baseline Effective_Early_End", "Baseline Effective_Late_End", "Adjusted Baseline Finish", "Adjusted Baseline Start", "Adjusted Baseline Source Month"},
+		        DateColumns = {"early_start_date", "early_end_date", "monthupdate", "data_date", "act_end_date", "Finish", "cstr_date", "Start", "late_end_date", "UpdateDate", "Baseline Finish", "Baseline Start", "Previous Month Start", "Previous Month Finish", "PreviousDataDate", "Baseline Effective_Early_End", "Baseline Effective_Late_End", "Adjusted Baseline Finish", "Adjusted Baseline Start", "Adjusted Baseline Source Month"},
 		        LogicalColumns = {},
 		        IntegerColumns = {"Finish_Variance_Previous_Month", "Variance_Finish_BL", "Variance_Finish_Adjusted_BL", "Planned Not Completed Last Period", "Start_Variance_Previous_Month", "Planned Last Period", "Completed Last Period", "Completed of Planned Last Period"},
 		        NumberColumns = {"total_float", "remaining_duration", "free_float", "Previous Remaining Working Days"},
@@ -1000,11 +1000,22 @@ expression fnXerCsvReadBundleTable =
 		                    error Error.Record("XerCsvManifest", "The selected bundle manifest has no rows for the requested table.", [ProjectCode = bundle[ProjectCode], ProgrammeType = bundle[ProgrammeType], BundleId = bundle[BundleId], TableName = tableName]),
 		            FileMatches = Table.SelectRows(bundle[Files], each [Name] = Contract[FileName]),
 		            FileBinary = if Table.RowCount(FileMatches) = 1 then FileMatches{0}[Content] else error Error.Record("XerCsvBundle", "Expected exactly one contract CSV file.", [BundleId = bundle[BundleId], FileName = Contract[FileName]]),
+		            // Table 01 accepts the original same-version header and the added primary constraint date only.
+		            TaskHeaderRows = if tableName = "01_XER_TASK" then Table.ToRows(Table.FirstN(Csv.Document(FileBinary, [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]), 1)) else {},
+		            TaskHeaders = if tableName <> "01_XER_TASK" then Contract[Columns] else if List.Count(TaskHeaderRows) = 1 then TaskHeaderRows{0} else {},
+		            LegacyTaskColumns = List.RemoveItems(Contract[Columns], {"cstr_date"}),
+		            AcceptedColumns =
+		                if tableName <> "01_XER_TASK" or TaskHeaders = Contract[Columns] then
+		                    Contract[Columns]
+		                else if TaskHeaders = LegacyTaskColumns then
+		                    LegacyTaskColumns
+		                else
+		                    error Error.Record("XerCsvSchema", "CSV headers or header order do not match the Programme Review contract.", [BundleId = bundle[BundleId], FileName = Contract[FileName], ActualHeaders = Text.Combine(TaskHeaders, ", ")]),
 		            Raw =
 		                if tableName = "03_XER_PROJWBS" then
 		                    Csv.Document(FileBinary, [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv])
 		                else
-		                    Csv.Document(FileBinary, [Delimiter = ",", Columns = List.Count(Contract[Columns]), Encoding = 65001, QuoteStyle = QuoteStyle.Csv, ExtraValues = ExtraValues.Error]),
+		                    Csv.Document(FileBinary, [Delimiter = ",", Columns = List.Count(AcceptedColumns), Encoding = 65001, QuoteStyle = QuoteStyle.Csv, ExtraValues = ExtraValues.Error]),
 		            Promoted = Table.PromoteHeaders(Raw, [PromoteAllScalars = true]),
 		            ActualHeaders = Table.ColumnNames(Promoted),
 		            HeaderChecked =
@@ -1022,8 +1033,11 @@ expression fnXerCsvReadBundleTable =
 		                        else
 		                            error Error.Record("XerCsvSchema", "CSV headers do not match the Programme Review contract for 03_XER_PROJWBS.", [BundleId = bundle[BundleId], FileName = Contract[FileName], ActualHeaders = Text.Combine(ActualHeaders, ", "), ExpectedHeaders = Text.Combine(Contract[Columns], ", ")])
 		                else
-		                    if Text.Combine(ActualHeaders, "|") = Text.Combine(Contract[Columns], "|") then
-		                        Promoted
+		                    if ActualHeaders = AcceptedColumns then
+		                        if tableName = "01_XER_TASK" and AcceptedColumns = LegacyTaskColumns then
+		                            Table.SelectColumns(Table.AddColumn(Promoted, "cstr_date", each null, type nullable date), Contract[Columns], MissingField.Error)
+		                        else
+		                            Promoted
 		                    else
 		                        error Error.Record("XerCsvSchema", "CSV headers or header order do not match the Programme Review contract.", [BundleId = bundle[BundleId], FileName = Contract[FileName], ActualHeaders = Text.Combine(ActualHeaders, ", ")]),
 		            ActualRows = Int64.From(Table.RowCount(HeaderChecked)),
