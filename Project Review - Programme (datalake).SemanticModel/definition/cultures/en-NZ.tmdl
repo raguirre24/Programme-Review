@@ -61275,6 +61275,195 @@ cultureInfo en-NZ
 			          }
 			        }
 			      ]
+			    },
+			    "resource_scenario_measures.comparison_required_rate": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Comparison Required Rate"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Required rate": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.comparison_target_remaining": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Comparison Target Remaining"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Remaining at target": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.comparison_validation": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Comparison Validation"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Calculation status": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.comparison_status": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Comparison Status"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Inspected calendar status": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.comparison_chart_quantity": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Comparison Chart Quantity"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Allocated quantity": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.comparison_calendar_identity": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Comparison Calendar Identity"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Calendar source identity": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.comparison_selection_summary": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Comparison Selection Summary"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Comparison selection": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.comparison_finish_date": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Comparison Finish Date"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Inspected calendar finish": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "scenario_comparison_calendar.inspection_calendar": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Scenario Comparison Calendar",
+			          "ConceptualProperty": "Inspection Calendar"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Calendar": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
 			    }
 			  },
 			  "Relationships": {

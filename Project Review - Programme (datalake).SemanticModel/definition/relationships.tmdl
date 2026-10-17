@@ -175,3 +175,11 @@ relationship a0f40ec2-e2b0-54a3-ba7e-6975e796a745
 	fromColumn: 'Scenario Calendar'.'Report Update Date'
 	toColumn: CurrentDate.UpdateDate
 
+relationship e5d5d130-7dab-5b60-8ce5-87b64effe410
+	fromColumn: 'Scenario Comparison Calendar'.ProjectKey
+	toColumn: Project_Dimension.ProjectKey
+
+relationship 46eb0db7-d182-58a1-a0bc-03bc05562e7e
+	fromColumn: 'Scenario Comparison Calendar'.'Report Update Date'
+	toColumn: CurrentDate.UpdateDate
+

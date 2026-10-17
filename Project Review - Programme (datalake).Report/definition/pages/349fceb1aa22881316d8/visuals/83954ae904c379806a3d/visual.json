@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "83954ae904c379806a3d",
   "position": {
     "x": 0,
@@ -46,11 +46,11 @@
                       "Property": "remaining_duration"
                     }
                   },
-                  "Function": 4
+                  "Function": 3
                 }
               },
               "queryRef": "Sum(06 XER_PREDECESSOR.Remaining Working Days)",
-              "nativeQueryRef": "Max of remaining_duration"
+              "nativeQueryRef": "Min of remaining_duration"
             }
           ]
         },
@@ -90,24 +90,6 @@
             }
           ]
         },
-        "tooltip": {
-          "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "01 XER_TASK"
-                    }
-                  },
-                  "Property": "cstr_type"
-                }
-              },
-              "queryRef": "01 XER_TASK.cstr_type",
-              "nativeQueryRef": "cstr_type"
-            }
-          ]
-        },
         "startDate": {
           "projections": [
             {
@@ -122,7 +104,7 @@
                 }
               },
               "queryRef": "06 XER_PREDECESSOR.early_start_date",
-              "nativeQueryRef": "Start",
+              "nativeQueryRef": "early_start_date",
               "displayName": "Start"
             }
           ]
@@ -141,7 +123,7 @@
                 }
               },
               "queryRef": "06 XER_PREDECESSOR.early_end_date",
-              "nativeQueryRef": "Finish",
+              "nativeQueryRef": "early_end_date",
               "displayName": "Finish"
             }
           ]
@@ -160,7 +142,7 @@
                 }
               },
               "queryRef": "01 XER_TASK.start",
-              "nativeQueryRef": "start"
+              "nativeQueryRef": "Start"
             }
           ]
         },
@@ -178,7 +160,7 @@
                 }
               },
               "queryRef": "01 XER_TASK.finish",
-              "nativeQueryRef": "finish"
+              "nativeQueryRef": "Finish"
             }
           ]
         },
@@ -375,11 +357,11 @@
                       "Property": "total_float"
                     }
                   },
-                  "Function": 4
+                  "Function": 3
                 }
               },
               "queryRef": "Sum(06 XER_PREDECESSOR.total_float)",
-              "nativeQueryRef": "Max of total_float"
+              "nativeQueryRef": "Min of total_float"
             }
           ]
         },
@@ -398,29 +380,11 @@
                       "Property": "lag"
                     }
                   },
-                  "Function": 4
+                  "Function": 3
                 }
               },
               "queryRef": "Sum(06 XER_PREDECESSOR.lag)",
-              "nativeQueryRef": "Max of lag"
-            }
-          ]
-        },
-        "dataDate": {
-          "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "01 XER_TASK"
-                    }
-                  },
-                  "Property": "monthupdate"
-                }
-              },
-              "queryRef": "01 XER_TASK.monthupdate",
-              "nativeQueryRef": "monthupdate"
+              "nativeQueryRef": "Min of lag"
             }
           ]
         },
@@ -475,11 +439,11 @@
                       "Property": "free_float"
                     }
                   },
-                  "Function": 4
+                  "Function": 3
                 }
               },
               "queryRef": "Sum(06 XER_PREDECESSOR.free_float)",
-              "nativeQueryRef": "Max of free_float"
+              "nativeQueryRef": "Min of free_float"
             }
           ]
         },
@@ -498,6 +462,78 @@
               },
               "queryRef": "01 XER_TASK.driving_path_flag",
               "nativeQueryRef": "driving_path_flag"
+            }
+          ]
+        },
+        "dataDate": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "01 XER_TASK"
+                    }
+                  },
+                  "Property": "data_date"
+                }
+              },
+              "queryRef": "01 XER_TASK.data_date",
+              "nativeQueryRef": "data_date"
+            }
+          ]
+        },
+        "primaryConstraintType": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "01 XER_TASK"
+                    }
+                  },
+                  "Property": "cstr_type"
+                }
+              },
+              "queryRef": "01 XER_TASK.cstr_type",
+              "nativeQueryRef": "cstr_type"
+            }
+          ]
+        },
+        "primaryConstraintDate": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "01 XER_TASK"
+                    }
+                  },
+                  "Property": "cstr_date"
+                }
+              },
+              "queryRef": "01 XER_TASK.cstr_date",
+              "nativeQueryRef": "cstr_date"
+            }
+          ]
+        },
+        "lateFinishDate": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "01 XER_TASK"
+                    }
+                  },
+                  "Property": "late_end_date"
+                }
+              },
+              "queryRef": "01 XER_TASK.late_end_date",
+              "nativeQueryRef": "late_end_date"
             }
           ]
         }
@@ -1558,6 +1594,32 @@
             }
           }
         }
+      ],
+      "constraintMarkers": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "floatBars": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
       ]
     },
     "visualContainerObjects": {
@@ -1620,25 +1682,6 @@
         "type": "Categorical"
       },
       {
-        "name": "9180c582e54a9d0f310e",
-        "field": {
-          "Aggregation": {
-            "Expression": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "06 XER_PREDECESSOR"
-                  }
-                },
-                "Property": "remaining_duration"
-              }
-            },
-            "Function": 4
-          }
-        },
-        "type": "Advanced"
-      },
-      {
         "name": "9151ccb7738596fb7409",
         "field": {
           "Column": {
@@ -1662,76 +1705,6 @@
               }
             },
             "Property": "predecessor_task_code"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "8bd66bade1cc70a30706",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "01 XER_TASK"
-              }
-            },
-            "Property": "cstr_type"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "2d262ef5d7cd38545012",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "06 XER_PREDECESSOR"
-              }
-            },
-            "Property": "early_start_date"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "a7ccaf350542435d7648",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "06 XER_PREDECESSOR"
-              }
-            },
-            "Property": "early_end_date"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "6798ea8d31b6e7efa4aa",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "01 XER_TASK"
-              }
-            },
-            "Property": "Start"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "6604906cdf49d36491f6",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "01 XER_TASK"
-              }
-            },
-            "Property": "Finish"
           }
         },
         "type": "Categorical"
@@ -1891,58 +1864,6 @@
         "type": "Categorical"
       },
       {
-        "name": "c9b16f884d2f7b130918",
-        "field": {
-          "Aggregation": {
-            "Expression": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "06 XER_PREDECESSOR"
-                  }
-                },
-                "Property": "total_float"
-              }
-            },
-            "Function": 4
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "c68c0f60a4134a7dcef7",
-        "field": {
-          "Aggregation": {
-            "Expression": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "06 XER_PREDECESSOR"
-                  }
-                },
-                "Property": "lag"
-              }
-            },
-            "Function": 4
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "3601e0f93a504e197524",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "01 XER_TASK"
-              }
-            },
-            "Property": "monthupdate"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
         "name": "ba8ff5a77d703e505cbc",
         "field": {
           "Column": {
@@ -1969,25 +1890,6 @@
           }
         },
         "type": "Categorical"
-      },
-      {
-        "name": "62950675487744655029",
-        "field": {
-          "Aggregation": {
-            "Expression": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "06 XER_PREDECESSOR"
-                  }
-                },
-                "Property": "free_float"
-              }
-            },
-            "Function": 4
-          }
-        },
-        "type": "Advanced"
       }
     ]
   }

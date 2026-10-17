@@ -44,9 +44,12 @@ foreach ($name in @('Microsoft.AnalysisServices.Core.dll','Microsoft.AnalysisSer
 $model = [Microsoft.AnalysisServices.Tabular.TmdlSerializer]::DeserializeModelFromFolder($ModelRoot)
 $scenarioTables = @($model.Tables | Where-Object { $_.Name -like 'Scenario *' -or $_.Name -eq 'Resource Scenario Measures' })
 $scenarioMeasures = $model.Tables.Find('Resource Scenario Measures')
-$expectedScenarioMeasures = 48
+$expectedScenarioMeasures = 56
 if ($null -eq $scenarioMeasures -or $scenarioMeasures.Measures.Count -ne $expectedScenarioMeasures) { throw "Expected all $expectedScenarioMeasures Resource Scenario Measures, including the two chart and five daily display measures." }
-if ($scenarioTables.Count -ne 14) { throw "Expected 14 bounded scenario tables; found $($scenarioTables.Count)." }
+if ($scenarioTables.Count -ne 15) { throw "Expected 15 bounded scenario tables; found $($scenarioTables.Count)." }
+$expectedComparisonMeasures = @('Comparison Chart Quantity','Comparison Required Rate','Comparison Target Remaining','Comparison Validation','Comparison Finish Date','Comparison Status','Comparison Selection Summary','Comparison Calendar Identity')
+$actualComparisonMeasures = @($scenarioMeasures.Measures | Where-Object Name -like 'Comparison *' | ForEach-Object Name)
+if (@(Compare-Object @($expectedComparisonMeasures | Sort-Object) @($actualComparisonMeasures | Sort-Object)).Count) { throw 'Comparison measure inventory mismatch.' }
 
 $allMeasures = @{}
 foreach ($table in $model.Tables) {
@@ -75,12 +78,12 @@ foreach ($table in $scenarioTables) {
     }
     if ($hasCalculatedPartition) { $calculatedTableCount++ }
 }
-if ($calculatedTableCount -ne 13 -or $calculatedPartitionCount -ne 13 -or $daxExpressions.Count -ne (13 + $expectedScenarioMeasures)) {
-    throw "Incomplete expression coverage: expected 13 calculated tables/partitions and $expectedScenarioMeasures measures; found $calculatedTableCount tables, $calculatedPartitionCount partitions and $($daxExpressions.Count) expressions."
+if ($calculatedTableCount -ne 14 -or $calculatedPartitionCount -ne 14 -or $daxExpressions.Count -ne (14 + $expectedScenarioMeasures)) {
+    throw "Incomplete expression coverage: expected 14 calculated tables/partitions and $expectedScenarioMeasures measures; found $calculatedTableCount tables, $calculatedPartitionCount partitions and $($daxExpressions.Count) expressions."
 }
 # These identifiers were rejected by the installed DAX engine during the repair
 # investigation. This is a regression list, not a complete DAX parser/denylist.
-$knownRejectedVariables = @('FirstDate', 'LastDate', 'Updates', 'Key')
+$knownRejectedVariables = @('FirstDate', 'LastDate', 'Updates', 'Key', 'Ordinal')
 foreach ($item in $daxExpressions) {
     $code = [regex]::Replace($item.expression, '(?s)/\*.*?\*/|(?m)//[^\r\n]*|--[^\r\n]*|"(?:[^"]|"")*"', ' ')
     if ($code -match '(?i)\bCROSSJOIN\s*\(') { throw "Calendar-by-date CROSSJOIN found in $($item.name)." }
@@ -119,20 +122,22 @@ foreach ($name in $edges.Keys) { Test-DependencyPath $name @() }
 $scenarioRelations = @($model.Relationships | Where-Object {
     $_.FromTable.Name -like 'Scenario *' -or $_.ToTable.Name -like 'Scenario *'
 })
-if ($scenarioRelations.Count -ne 2) { throw 'Scenario tables must have exactly the project and report-update selector relationships.' }
+if ($scenarioRelations.Count -ne 4) { throw 'Scenario tables must have exactly four project and report-update selector relationships.' }
+foreach ($selectorTable in @('Scenario Calendar', 'Scenario Comparison Calendar')) {
 foreach ($expected in @(
     @{FromColumn='ProjectKey';ToTable='Project_Dimension';ToColumn='ProjectKey'},
     @{FromColumn='Report Update Date';ToTable='CurrentDate';ToColumn='UpdateDate'}
 )) {
     $matches = @($scenarioRelations | Where-Object {
-        $_.FromTable.Name -eq 'Scenario Calendar' -and $_.FromColumn.Name -eq $expected.FromColumn -and
+        $_.FromTable.Name -eq $selectorTable -and $_.FromColumn.Name -eq $expected.FromColumn -and
         $_.ToTable.Name -eq $expected.ToTable -and $_.ToColumn.Name -eq $expected.ToColumn
     })
     if ($matches.Count -ne 1 -or -not $matches[0].IsActive -or
         $matches[0].CrossFilteringBehavior.ToString() -ne 'OneDirection' -or
         $matches[0].SecurityFilteringBehavior.ToString() -ne 'OneDirection') {
-        throw "Scenario Calendar direct $($expected.ToTable) filtering metadata is incorrect."
+        throw "$selectorTable direct $($expected.ToTable) filtering metadata is incorrect."
     }
+}
 }
 if (($model.Tables.Find('Scenario Date').Columns.Name -join '|') -ne 'Date|Week|Month') {
     throw 'Scenario Date must remain one shared axis, without project, update or calendar identity.'
@@ -185,7 +190,7 @@ $newErrors = @($newDiagnostics | Where-Object { $_.severity -eq 'error' })
 $result = [ordered]@{
     result=if($newErrors.Count -eq 0){'PASS'}else{'FAIL'}
     tom=@{result='PASS';tables=$model.Tables.Count;relationships=$model.Relationships.Count;scenarioTables=$scenarioTables.Count;scenarioMeasures=$scenarioMeasures.Measures.Count;calculatedTables=$calculatedTableCount;calculatedPartitions=$calculatedPartitionCount}
-    daxMetadata=@{result='PASS';expressionsChecked=$daxExpressions.Count;qualifiedReferences=$references;variableTableNameChecks=$variableChecks;knownRejectedVariableRegressionChecks=$true;acyclicScenarioMeasureGraph=$true;scope='Complete expression extraction plus field-name, known variable-name and dependency checks only. No DAX compilation or execution.'}
+    daxMetadata=@{result='PASS';expressionsChecked=$daxExpressions.Count;qualifiedReferences=$references;variableTableNameChecks=$variableChecks;knownRejectedVariableRegressionChecks=$true;knownRejectedVariables=$knownRejectedVariables;acyclicScenarioMeasureGraph=$true;scope='Complete expression extraction plus field-name, known variable-name and dependency checks only. No DAX compilation or execution.'}
     mSyntax=$mResult
     report=@{errors=$reportResult.errorCount;warnings=$reportResult.warningCount;baseline=$baselineCounts;newDiagnostics=$newDiagnostics}
     engine=@{status='NOT_RUN';scope='No DAX compilation, execution, table processing or source refresh.'}

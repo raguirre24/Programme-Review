@@ -1609,6 +1609,223 @@ table 'Resource Scenario Measures'
 		displayFolder: Display
 		lineageTag: 5e43ba7f-4150-5823-a4d2-0382e1e5b383
 
+	/// One calendar's complete scenario per shared week/month bucket. Multiple-calendar totals remain blank.
+	measure 'Comparison Chart Quantity' =
+			VAR CalendarKey = SELECTEDVALUE('Scenario Comparison Calendar'[clndr_id_key])
+			VAR ProjectKey = SELECTEDVALUE('Scenario Comparison Calendar'[ProjectKey])
+			VAR CsvSource = SELECTEDVALUE('Scenario Comparison Calendar'[IsCsvSource])
+			VAR Eligible = HASONEVALUE('Project_Dimension'[ProjectKey])
+			    && HASONEVALUE('CurrentDate'[UpdateDate])
+			    && NOT ISBLANK(SELECTEDVALUE('CurrentDate'[UpdateDate]))
+			    && COUNTROWS('Scenario Comparison Calendar') = 1
+			    && NOT ISBLANK(CalendarKey) && NOT ISBLANK(ProjectKey) && NOT ISBLANK(CsvSource)
+			RETURN IF(Eligible,
+			    CALCULATE([Scenario Chart Quantity],
+			    REMOVEFILTERS(
+			        'Scenario Calendar'[Calendar], 'Scenario Calendar'[Calendar Name],
+			        'Scenario Calendar'[ProjectKey], 'Scenario Calendar'[clndr_id_key],
+			        'Scenario Calendar'[IsCsvSource], 'Scenario Calendar'[MonthUpdate],
+			        'Scenario Calendar'[Report Update Date]),
+			    KEEPFILTERS(TREATAS({ProjectKey}, 'Scenario Calendar'[ProjectKey])),
+			    KEEPFILTERS(TREATAS({CalendarKey}, 'Scenario Calendar'[clndr_id_key])),
+			    KEEPFILTERS(TREATAS({CsvSource}, 'Scenario Calendar'[IsCsvSource]))))
+		formatString: #,0.########
+		displayFolder: Comparison
+		lineageTag: 0f5a06a7-ca96-5a74-bca2-dbafde2ce637
+
+	/// Required production calculated independently for the current comparison calendar and shared target date.
+	measure 'Comparison Required Rate' =
+			VAR CalendarKey = SELECTEDVALUE('Scenario Comparison Calendar'[clndr_id_key])
+			VAR ProjectKey = SELECTEDVALUE('Scenario Comparison Calendar'[ProjectKey])
+			VAR CsvSource = SELECTEDVALUE('Scenario Comparison Calendar'[IsCsvSource])
+			VAR Eligible = HASONEVALUE('Project_Dimension'[ProjectKey])
+			    && HASONEVALUE('CurrentDate'[UpdateDate])
+			    && NOT ISBLANK(SELECTEDVALUE('CurrentDate'[UpdateDate]))
+			    && COUNTROWS('Scenario Comparison Calendar') = 1
+			    && NOT ISBLANK(CalendarKey) && NOT ISBLANK(ProjectKey) && NOT ISBLANK(CsvSource)
+			RETURN IF(Eligible,
+			    CALCULATE([Scenario Required Rate],
+			    REMOVEFILTERS(
+			        'Scenario Calendar'[Calendar], 'Scenario Calendar'[Calendar Name],
+			        'Scenario Calendar'[ProjectKey], 'Scenario Calendar'[clndr_id_key],
+			        'Scenario Calendar'[IsCsvSource], 'Scenario Calendar'[MonthUpdate],
+			        'Scenario Calendar'[Report Update Date]),
+			    KEEPFILTERS(TREATAS({ProjectKey}, 'Scenario Calendar'[ProjectKey])),
+			    KEEPFILTERS(TREATAS({CalendarKey}, 'Scenario Calendar'[clndr_id_key])),
+			    KEEPFILTERS(TREATAS({CsvSource}, 'Scenario Calendar'[IsCsvSource]))))
+		formatString: #,0.########
+		displayFolder: Comparison
+		lineageTag: da09d07b-4214-5a42-b358-e63359db836a
+
+	/// Quantity remaining at the shared target for this calendar only; scenarios are never added together.
+	measure 'Comparison Target Remaining' =
+			VAR CalendarKey = SELECTEDVALUE('Scenario Comparison Calendar'[clndr_id_key])
+			VAR ProjectKey = SELECTEDVALUE('Scenario Comparison Calendar'[ProjectKey])
+			VAR CsvSource = SELECTEDVALUE('Scenario Comparison Calendar'[IsCsvSource])
+			VAR Eligible = HASONEVALUE('Project_Dimension'[ProjectKey])
+			    && HASONEVALUE('CurrentDate'[UpdateDate])
+			    && NOT ISBLANK(SELECTEDVALUE('CurrentDate'[UpdateDate]))
+			    && COUNTROWS('Scenario Comparison Calendar') = 1
+			    && NOT ISBLANK(CalendarKey) && NOT ISBLANK(ProjectKey) && NOT ISBLANK(CsvSource)
+			RETURN IF(Eligible,
+			    CALCULATE([Scenario Target Remaining],
+			    REMOVEFILTERS(
+			        'Scenario Calendar'[Calendar], 'Scenario Calendar'[Calendar Name],
+			        'Scenario Calendar'[ProjectKey], 'Scenario Calendar'[clndr_id_key],
+			        'Scenario Calendar'[IsCsvSource], 'Scenario Calendar'[MonthUpdate],
+			        'Scenario Calendar'[Report Update Date]),
+			    KEEPFILTERS(TREATAS({ProjectKey}, 'Scenario Calendar'[ProjectKey])),
+			    KEEPFILTERS(TREATAS({CalendarKey}, 'Scenario Calendar'[clndr_id_key])),
+			    KEEPFILTERS(TREATAS({CsvSource}, 'Scenario Calendar'[IsCsvSource]))))
+		formatString: #,0.########
+		displayFolder: Comparison
+		lineageTag: ce8e51ac-116e-5d29-90e1-57da0a5813dd
+
+	/// Scalar completion inspection; requires a selected Inspection Calendar row, never just a single selector choice.
+	measure 'Comparison Finish Date' =
+			VAR CalendarKey = SELECTEDVALUE('Scenario Comparison Calendar'[clndr_id_key])
+			VAR ProjectKey = SELECTEDVALUE('Scenario Comparison Calendar'[ProjectKey])
+			VAR CsvSource = SELECTEDVALUE('Scenario Comparison Calendar'[IsCsvSource])
+			VAR Eligible = HASONEVALUE('Project_Dimension'[ProjectKey])
+			    && HASONEVALUE('CurrentDate'[UpdateDate])
+			    && NOT ISBLANK(SELECTEDVALUE('CurrentDate'[UpdateDate]))
+			    && COUNTROWS('Scenario Comparison Calendar') = 1
+			    && NOT ISBLANK(CalendarKey) && NOT ISBLANK(ProjectKey) && NOT ISBLANK(CsvSource)
+			RETURN IF(Eligible && ISFILTERED('Scenario Comparison Calendar'[Inspection Calendar]),
+			    CALCULATE([Scenario Finish Date],
+			    REMOVEFILTERS(
+			        'Scenario Calendar'[Calendar], 'Scenario Calendar'[Calendar Name],
+			        'Scenario Calendar'[ProjectKey], 'Scenario Calendar'[clndr_id_key],
+			        'Scenario Calendar'[IsCsvSource], 'Scenario Calendar'[MonthUpdate],
+			        'Scenario Calendar'[Report Update Date]),
+			    KEEPFILTERS(TREATAS({ProjectKey}, 'Scenario Calendar'[ProjectKey])),
+			    KEEPFILTERS(TREATAS({CalendarKey}, 'Scenario Calendar'[clndr_id_key])),
+			    KEEPFILTERS(TREATAS({CsvSource}, 'Scenario Calendar'[IsCsvSource]))))
+		formatString: dd-MM-yyyy
+		displayFolder: Comparison
+		lineageTag: bcec0983-e763-5c85-9ba7-f27493f13585
+
+	/// Bounded per-calendar input, source and target validation. Never evaluates the finish solver or full scenario status.
+	measure 'Comparison Validation' =
+			VAR CalendarKey = SELECTEDVALUE('Scenario Comparison Calendar'[clndr_id_key])
+			VAR ProjectKey = SELECTEDVALUE('Scenario Comparison Calendar'[ProjectKey])
+			VAR CsvSource = SELECTEDVALUE('Scenario Comparison Calendar'[IsCsvSource])
+			VAR Eligible = HASONEVALUE('Project_Dimension'[ProjectKey])
+			    && HASONEVALUE('CurrentDate'[UpdateDate])
+			    && NOT ISBLANK(SELECTEDVALUE('CurrentDate'[UpdateDate]))
+			    && COUNTROWS('Scenario Comparison Calendar') = 1
+			    && NOT ISBLANK(CalendarKey) && NOT ISBLANK(ProjectKey) && NOT ISBLANK(CsvSource)
+			RETURN IF(Eligible,
+			    CALCULATE(
+			VAR InputIssue = [Scenario Input Validation]
+			VAR CalendarIssue = [Scenario Calendar Validation]
+			VAR Quantity = [Scenario Selected Quantity]
+			VAR Mode = [Scenario Selected Mode]
+			VAR Basis = [Scenario Selected Basis]
+			VAR LimitEnabled = [Scenario Selected Limit Mode] = "Daily limit"
+			VAR DailyLimit = [Scenario Selected Limit]
+			VAR TargetDate = [Scenario Selected Target]
+			VAR UnknownDate = [Scenario First Unknown Date]
+			VAR RequiredRate = [Scenario Required Rate]
+			VAR Rate = [Scenario Applied Rate]
+			VAR CompleteBeforeUnknown = IF(Mode = "Find finish date"
+			    && NOT ISBLANK(UnknownDate),
+			    VAR Remaining = [Scenario Target Remaining]
+			    RETURN NOT ISBLANK(Remaining) && Remaining <= [Scenario Quantity Tolerance])
+			RETURN SWITCH(TRUE(),
+			    InputIssue <> "", InputIssue,
+			    CalendarIssue <> "", CalendarIssue,
+			    Quantity = 0, "No work to distribute.",
+			    Mode = "Meet target date" && Basis = "Per working hour" && LimitEnabled,
+			        "Hourly target mode with a daily cap is not supported.",
+			    CompleteBeforeUnknown, "Quantity complete before unknown data; select row for finish.",
+			    NOT ISBLANK(UnknownDate) && (Mode = "Find finish date" || TargetDate >= UnknownDate),
+			        "Calendar data is unknown from " & FORMAT(UnknownDate, "dd-MM-yyyy") & "; select row for completion details.",
+			    Mode = "Meet target date" && ISBLANK(RequiredRate), "No working time in the target interval.",
+			    LimitEnabled && DailyLimit = 0, "Daily limit is zero.",
+			    NOT ISBLANK(Rate) && Rate = 0, "Production rate is zero.",
+			    Mode = "Meet target date" && LimitEnabled && RequiredRate > DailyLimit,
+			        "Target is infeasible at the daily limit.",
+			    "Ready; select this row for completion details."),
+			REMOVEFILTERS(
+			        'Scenario Calendar'[Calendar], 'Scenario Calendar'[Calendar Name],
+			        'Scenario Calendar'[ProjectKey], 'Scenario Calendar'[clndr_id_key],
+			        'Scenario Calendar'[IsCsvSource], 'Scenario Calendar'[MonthUpdate],
+			        'Scenario Calendar'[Report Update Date]),
+			    KEEPFILTERS(TREATAS({ProjectKey}, 'Scenario Calendar'[ProjectKey])),
+			    KEEPFILTERS(TREATAS({CalendarKey}, 'Scenario Calendar'[clndr_id_key])),
+			    KEEPFILTERS(TREATAS({CsvSource}, 'Scenario Calendar'[IsCsvSource]))))
+		formatString: @
+		displayFolder: Comparison
+		lineageTag: 227aa702-4f61-5617-9820-44fc3bc7dc8d
+
+	/// Full scalar status only after explicit results-row inspection; selector-only choices do not run the finish solver.
+	measure 'Comparison Status' =
+			VAR CalendarKey = SELECTEDVALUE('Scenario Comparison Calendar'[clndr_id_key])
+			VAR ProjectKey = SELECTEDVALUE('Scenario Comparison Calendar'[ProjectKey])
+			VAR CsvSource = SELECTEDVALUE('Scenario Comparison Calendar'[IsCsvSource])
+			VAR Eligible = HASONEVALUE('Project_Dimension'[ProjectKey])
+			    && HASONEVALUE('CurrentDate'[UpdateDate])
+			    && NOT ISBLANK(SELECTEDVALUE('CurrentDate'[UpdateDate]))
+			    && COUNTROWS('Scenario Comparison Calendar') = 1
+			    && NOT ISBLANK(CalendarKey) && NOT ISBLANK(ProjectKey) && NOT ISBLANK(CsvSource)
+			RETURN IF(
+			    Eligible && ISFILTERED('Scenario Comparison Calendar'[Inspection Calendar]),
+			    CALCULATE([Scenario Status],
+			    REMOVEFILTERS(
+			        'Scenario Calendar'[Calendar], 'Scenario Calendar'[Calendar Name],
+			        'Scenario Calendar'[ProjectKey], 'Scenario Calendar'[clndr_id_key],
+			        'Scenario Calendar'[IsCsvSource], 'Scenario Calendar'[MonthUpdate],
+			        'Scenario Calendar'[Report Update Date]),
+			    KEEPFILTERS(TREATAS({ProjectKey}, 'Scenario Calendar'[ProjectKey])),
+			    KEEPFILTERS(TREATAS({CalendarKey}, 'Scenario Calendar'[clndr_id_key])),
+			    KEEPFILTERS(TREATAS({CsvSource}, 'Scenario Calendar'[IsCsvSource]))),
+			    "Select one calendar row to inspect its finish and status.")
+		formatString: @
+		displayFolder: Comparison
+		lineageTag: 808ca183-fb25-5c29-bd43-0cb091169b97
+
+	/// Selection count inside the secured project/update; a clear selector includes every eligible calendar.
+	measure 'Comparison Selection Summary' =
+			VAR ValidProject = HASONEVALUE('Project_Dimension'[ProjectKey])
+			VAR ValidUpdate = HASONEVALUE('CurrentDate'[UpdateDate])
+			    && NOT ISBLANK(SELECTEDVALUE('CurrentDate'[UpdateDate]))
+			VAR SelectedCount = CALCULATE(COUNTROWS('Scenario Comparison Calendar'),
+			    REMOVEFILTERS('Scenario Comparison Calendar'[Inspection Calendar]))
+			VAR AvailableCount = CALCULATE(COUNTROWS('Scenario Comparison Calendar'),
+			    REMOVEFILTERS('Scenario Comparison Calendar'[Calendar],
+			        'Scenario Comparison Calendar'[Inspection Calendar]))
+			RETURN SWITCH(TRUE(),
+			    NOT ValidProject, "Select one project to compare calendars.",
+			    NOT ValidUpdate, "Select one report update month to compare calendars.",
+			    SelectedCount = 0, "No selected calendars are available for this project and update.",
+			    FORMAT(SelectedCount, "0") & " of " & FORMAT(AvailableCount, "0")
+			        & " calendars. Each calendar receives the full quantity independently.")
+		formatString: @
+		displayFolder: Comparison
+		lineageTag: f66258bb-c93f-5352-82db-8660942e5cce
+
+	/// Full project, calendar key and source for one eligible comparison chart point; empty periods, invalid and ambiguous selections remain blank.
+	measure 'Comparison Calendar Identity' =
+			VAR CalendarKey = SELECTEDVALUE('Scenario Comparison Calendar'[clndr_id_key])
+			VAR ProjectKey = SELECTEDVALUE('Scenario Comparison Calendar'[ProjectKey])
+			VAR CsvSource = SELECTEDVALUE('Scenario Comparison Calendar'[IsCsvSource])
+			VAR Eligible = HASONEVALUE('Project_Dimension'[ProjectKey])
+			    && HASONEVALUE('CurrentDate'[UpdateDate])
+			    && NOT ISBLANK(SELECTEDVALUE('CurrentDate'[UpdateDate]))
+			    && COUNTROWS('Scenario Comparison Calendar') = 1
+			    && NOT ISBLANK(CalendarKey) && NOT ISBLANK(ProjectKey) && NOT ISBLANK(CsvSource)
+			VAR UnsupportedMode = [Scenario Selected Mode] = "Meet target date"
+			    && [Scenario Selected Basis] = "Per working hour"
+			    && [Scenario Selected Limit Mode] = "Daily limit"
+			RETURN IF(Eligible && NOT UnsupportedMode,
+			    IF(NOT ISBLANK([Comparison Chart Quantity]),
+			        "Project: " & ProjectKey & " | Calendar key: " & CalendarKey
+			            & " | Source: " & IF(CsvSource, "CSV", "Athena")))
+		formatString: @
+		displayFolder: Comparison
+		lineageTag: cf0d5fa5-9fb8-59d0-a0df-d389ea49a377
+
 	partition 'Resource Scenario Measures' = m
 		mode: import
 		source = #table(type table [], {})

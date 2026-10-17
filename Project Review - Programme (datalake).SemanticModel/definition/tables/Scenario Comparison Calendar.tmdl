@@ -1,0 +1,99 @@
+/// Independent comparison selection over governed calendar identities; secured by project and report update.
+table 'Scenario Comparison Calendar'
+	lineageTag: a07726b7-629b-579c-ad97-c82f1b95b191
+
+	column ProjectKey
+		dataType: string
+		isHidden
+		lineageTag: ed2826fb-8566-5b93-8f7f-408c0a89cb27
+		summarizeBy: none
+		sourceColumn: [ProjectKey]
+
+		annotation SummarizationSetBy = Automatic
+
+	column clndr_id_key
+		dataType: string
+		isHidden
+		lineageTag: 34c46256-2cc3-51a6-aa59-26f83c4b9cbe
+		summarizeBy: none
+		sourceColumn: [clndr_id_key]
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsCsvSource
+		dataType: boolean
+		isHidden
+		lineageTag: ff1bc9b8-4603-5715-bcf2-f10ce7880aa2
+		summarizeBy: none
+		sourceColumn: [IsCsvSource]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Calendar Name'
+		dataType: string
+		isHidden
+		lineageTag: da3c4159-014d-59f2-a6a4-0e86cd4b9c34
+		summarizeBy: none
+		sourceColumn: [Calendar Name]
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthUpdate
+		dataType: dateTime
+		isHidden
+		formatString: dd-MM-yyyy
+		lineageTag: 9f738c19-921f-57cb-ae4d-b9cd11150e75
+		summarizeBy: none
+		sourceColumn: [MonthUpdate]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Report Update Date'
+		dataType: dateTime
+		isHidden
+		formatString: dd-MM-yyyy
+		lineageTag: 43a89f39-f534-5e35-9c99-1f5afa47d1aa
+		summarizeBy: none
+		sourceColumn: [Report Update Date]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Calendar
+		dataType: string
+		lineageTag: 282f858a-1487-5386-a30e-64cc5b17efbc
+		summarizeBy: none
+		sourceColumn: [Calendar]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Inspection Calendar'
+		dataType: string
+		lineageTag: 969a4718-9e7c-5eb2-8db5-41fa73338b91
+		summarizeBy: none
+		sourceColumn: [Inspection Calendar]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Scenario Comparison Calendar' = calculated
+		mode: import
+		source =
+				SELECTCOLUMNS (
+				    'Scenario Calendar',
+				    "ProjectKey", 'Scenario Calendar'[ProjectKey],
+				    "clndr_id_key", 'Scenario Calendar'[clndr_id_key],
+				    "IsCsvSource", 'Scenario Calendar'[IsCsvSource],
+				    "Calendar Name", 'Scenario Calendar'[Calendar Name],
+				    "MonthUpdate", 'Scenario Calendar'[MonthUpdate],
+				    "Report Update Date", 'Scenario Calendar'[Report Update Date],
+				    "Calendar", 'Scenario Calendar'[Calendar],
+				    "Inspection Calendar", 'Scenario Calendar'[Calendar]
+				)
+
+	annotation ResourcePlaygroundScaffold = 1
+
+	annotation PBI_Id = c1f6faf5c5f859da867e56290e700acb
+

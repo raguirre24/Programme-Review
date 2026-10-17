@@ -3,6 +3,7 @@
   "displayName": "Reset Resource Playground",
   "name": "e899bf3a9c2d243f33bf",
   "options": {
+    "applyOnlyToTargetVisuals": true,
     "targetVisualNames": [
       "a47a28f5f6803a0bd238",
       "16643c36a5f294a63a18",
@@ -15,14 +16,15 @@
       "c3f32af88a59421d9975",
       "5b3c0db966d719181dd4",
       "cf0eeaddb7f90594dee2",
-      "5f5e832a845f69b11b99"
+      "5f5e832a845f69b11b99",
+      "385d6b9651949eee2c43",
+      "13675cfdfe89b2fc33d2"
     ],
     "suppressActiveSection": true,
-    "suppressDisplay": true,
-    "applyOnlyToTargetVisuals": true
+    "suppressDisplay": true
   },
   "explorationState": {
-    "version": "1.0",
+    "version": "1.1",
     "activeSection": "4c53a34bba9dcc7f3e8c",
     "sections": {
       "4c53a34bba9dcc7f3e8c": {
@@ -1630,6 +1632,97 @@
                   }
                 ]
               }
+            }
+          },
+          "385d6b9651949eee2c43": {
+            "filters": {
+              "byExpr": [
+                {
+                  "name": "fbf7ccc0e7592492193f",
+                  "type": "Categorical",
+                  "expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Scenario Comparison Calendar"
+                        }
+                      },
+                      "Property": "Calendar"
+                    }
+                  },
+                  "howCreated": 0
+                }
+              ]
+            },
+            "singleVisual": {
+              "visualType": "slicer",
+              "objects": {
+                "merge": {
+                  "data": [
+                    {
+                      "properties": {
+                        "mode": {
+                          "expr": {
+                            "Literal": {
+                              "Value": "'Dropdown'"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "selection": [
+                    {
+                      "properties": {
+                        "strictSingleSelect": {
+                          "expr": {
+                            "Literal": {
+                              "Value": "false"
+                            }
+                          }
+                        },
+                        "singleSelect": {
+                          "expr": {
+                            "Literal": {
+                              "Value": "false"
+                            }
+                          }
+                        },
+                        "selectAllCheckboxEnabled": {
+                          "expr": {
+                            "Literal": {
+                              "Value": "true"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "activeProjections": {
+                "Values": [
+                  {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Scenario Comparison Calendar"
+                        }
+                      },
+                      "Property": "Calendar"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "13675cfdfe89b2fc33d2": {
+            "singleVisual": {
+              "visualType": "tableEx",
+              "objects": {}
+            },
+            "highlight": {
+              "selection": []
             }
           }
         }

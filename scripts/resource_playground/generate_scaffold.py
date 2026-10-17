@@ -205,10 +205,56 @@ VAR WithMetadata =
             RETURN IF ( NOT ISBLANK ( Namespace ) && ConflictingNamespaces = 0
                 && COUNTROWS ( UpdateDates ) = 1 && NOT ISBLANK ( ReportDate ), ReportDate )
     )
-VAR __ScenarioWithLabel =
+VAR __ScenarioWithCandidates =
     ADDCOLUMNS (
         WithMetadata,
-        "Calendar", COALESCE ( [Calendar Name], "Unnamed calendar" )
+        "__CalendarCandidate",
+            VAR CalendarName = COALESCE ( [Calendar Name], "Unnamed calendar" )
+            VAR ProjectKey = [ProjectKey]
+            VAR ReportDate = [Report Update Date]
+            VAR CalendarKey = [clndr_id_key]
+            VAR CsvSource = [IsCsvSource]
+            VAR Delimiter = IF ( CsvSource, "::", "." )
+            VAR NativeId = PATHITEMREVERSE ( SUBSTITUTE ( CalendarKey, Delimiter, "|" ), 1 )
+            VAR NamePeers = FILTER ( WithMetadata,
+                [ProjectKey] == ProjectKey && [Report Update Date] == ReportDate
+                    && COALESCE ( [Calendar Name], "Unnamed calendar" ) == CalendarName )
+            VAR IdPeers = FILTER ( NamePeers,
+                PATHITEMREVERSE ( SUBSTITUTE ( [clndr_id_key], IF ( [IsCsvSource], "::", "." ), "|" ), 1 ) == NativeId )
+            RETURN CalendarName & IF ( COUNTROWS ( NamePeers ) > 1,
+                " [" & NativeId & IF ( COUNTROWS ( IdPeers ) > 1,
+                    " | " & CalendarKey & IF ( CsvSource, " | CSV", " | Athena" ), "" ) & "]", "" )
+    )
+VAR __ScenarioWithResolvedLabels =
+    ADDCOLUMNS (
+        __ScenarioWithCandidates,
+        "__ResolvedCalendar",
+            VAR Candidate = [__CalendarCandidate]
+            VAR ProjectKey = [ProjectKey]
+            VAR ReportDate = [Report Update Date]
+            VAR CandidatePeers = FILTER ( __ScenarioWithCandidates,
+                [ProjectKey] == ProjectKey && [Report Update Date] == ReportDate
+                    && [__CalendarCandidate] == Candidate )
+            RETURN IF ( COUNTROWS ( CandidatePeers ) > 1,
+                COALESCE ( [Calendar Name], "Unnamed calendar" ) & " [" & [clndr_id_key]
+                    & IF ( [IsCsvSource], " | CSV", " | Athena" ) & "]",
+                Candidate )
+    )
+VAR __ScenarioWithLabel =
+    ADDCOLUMNS (
+        __ScenarioWithResolvedLabels,
+        "Calendar",
+            VAR ProjectKey = [ProjectKey]
+            VAR ReportDate = [Report Update Date]
+            VAR IdentityToken = IF ( [IsCsvSource], "1|", "0|" ) & [clndr_id_key]
+            VAR ScopeRows = FILTER ( __ScenarioWithResolvedLabels,
+                [ProjectKey] == ProjectKey && [Report Update Date] == ReportDate )
+            VAR Labels = DISTINCT ( SELECTCOLUMNS ( ScopeRows, "__Label", [__ResolvedCalendar] ) )
+            VAR HasCollision = COUNTROWS ( Labels ) <> COUNTROWS ( ScopeRows )
+            VAR CalendarOrdinal = 1 + COUNTROWS ( FILTER ( ScopeRows,
+                ( IF ( [IsCsvSource], "1|", "0|" ) & [clndr_id_key] ) < IdentityToken ) )
+            RETURN [__ResolvedCalendar] & IF ( HasCollision,
+                " [#" & FORMAT ( CalendarOrdinal, "0" ) & "]", "" )
     )
 RETURN
     SELECTCOLUMNS (
@@ -221,6 +267,27 @@ RETURN
         "Report Update Date", [Report Update Date],
         "Calendar", [Calendar]
     )'''))
+    name = "Scenario Comparison Calendar"
+    names.append(table(name, "Independent comparison selection over governed calendar identities; secured by project and report update.",
+        [column(name, "ProjectKey", "string", hidden=True),
+         column(name, "clndr_id_key", "string", hidden=True),
+         column(name, "IsCsvSource", "boolean", hidden=True),
+         column(name, "Calendar Name", "string", hidden=True),
+         column(name, "MonthUpdate", "dateTime", fmt="dd-MM-yyyy", hidden=True),
+         column(name, "Report Update Date", "dateTime", fmt="dd-MM-yyyy", hidden=True),
+         column(name, "Calendar", "string"),
+         column(name, "Inspection Calendar", "string")],
+        '''SELECTCOLUMNS (
+    'Scenario Calendar',
+    "ProjectKey", 'Scenario Calendar'[ProjectKey],
+    "clndr_id_key", 'Scenario Calendar'[clndr_id_key],
+    "IsCsvSource", 'Scenario Calendar'[IsCsvSource],
+    "Calendar Name", 'Scenario Calendar'[Calendar Name],
+    "MonthUpdate", 'Scenario Calendar'[MonthUpdate],
+    "Report Update Date", 'Scenario Calendar'[Report Update Date],
+    "Calendar", 'Scenario Calendar'[Calendar],
+    "Inspection Calendar", 'Scenario Calendar'[Calendar]
+)'''))
     for name, maximum, divisor in [("Scenario Quantity", 100000, 1),
                                     ("Scenario Rate", 100000, 10),
                                     ("Scenario Limit", 100000, 10)]:
@@ -283,6 +350,15 @@ RETURN
             text = text.rstrip() + f"\n\nrelationship {update_relation_id}\n" + (
                 "\tfromColumn: 'Scenario Calendar'.'Report Update Date'\n"
                 "\ttoColumn: CurrentDate.UpdateDate\n")
+        for key, field, target in [
+            ("comparison-project-relationship", "ProjectKey", "Project_Dimension.ProjectKey"),
+            ("comparison-update-relationship", "'Report Update Date'", "CurrentDate.UpdateDate"),
+        ]:
+            comparison_id = identity(key)
+            if f"relationship {comparison_id}" not in text:
+                text = text.rstrip() + f"\n\nrelationship {comparison_id}\n" + (
+                    f"\tfromColumn: 'Scenario Comparison Calendar'.{field}\n"
+                    f"\ttoColumn: {target}\n")
         return text
     extend(DEFINITION / "relationships.tmdl", relationships)
     print(json.dumps({"tables": names, "selectorRelationship": relation_id, "updateSelectorRelationship": update_relation_id,

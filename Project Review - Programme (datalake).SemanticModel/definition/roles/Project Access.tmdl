@@ -5,63 +5,70 @@ role 'Project Access'
 			VAR RawUPN =
 			    LOWER ( USERPRINCIPALNAME () )
 			
+			-- 1. Strip #ext# and tenant suffix (e.g., @acciona365.onmicrosoft.com)
 			VAR ExtTagPos =
 			    SEARCH ( "#ext#", RawUPN, 1, 0 )
 			
+			VAR PreExtString =
+			    IF ( ExtTagPos > 0, LEFT ( RawUPN, ExtTagPos - 1 ), RawUPN )
+			
+			-- 2. Safely recover email for ANY guest by replacing the LAST underscore with "@"
+			VAR UnderscoreCount =
+			    LEN ( PreExtString ) - LEN ( SUBSTITUTE ( PreExtString, "_", "" ) )
+			
 			VAR RecoveredEmail =
 			    IF (
-			        ExtTagPos > 0,
-			        SUBSTITUTE ( LEFT ( RawUPN, ExtTagPos - 1 ), "_", "@", 1 ),
-			        RawUPN
+			        ExtTagPos > 0 && UnderscoreCount > 0,
+			        SUBSTITUTE ( PreExtString, "_", "@", UnderscoreCount ),
+			        PreExtString
 			    )
 			
+			-- 3. Split RecoveredEmail into LocalPart and DomainPart
 			VAR AtPos =
 			    SEARCH ( "@", RecoveredEmail, 1, 0 )
 			
 			VAR LocalPart =
-			    IF ( AtPos > 0, LEFT ( RecoveredEmail, AtPos - 1 ), "" )
+			    IF ( AtPos > 0, LEFT ( RecoveredEmail, AtPos - 1 ), RecoveredEmail )
 			
 			VAR DomainPart =
 			    IF ( AtPos > 0, MID ( RecoveredEmail, AtPos, LEN ( RecoveredEmail ) ), "" )
 			
-			VAR EmailNoExt =
+			VAR LocalPartNoExt =
 			    IF (
-			        AtPos > 4
-			            && RIGHT ( LocalPart, 4 ) = ".ext",
-			        LEFT ( LocalPart, LEN ( LocalPart ) - 4 ) & DomainPart,
-			        RecoveredEmail
+			        RIGHT ( LocalPart, 4 ) = ".ext",
+			        LEFT ( LocalPart, LEN ( LocalPart ) - 4 ),
+			        LocalPart
 			    )
 			
-			VAR RecoveredDomainSwap =
-			    IF (
-			        RIGHT ( RecoveredEmail, 15 ) = "@acciona.com.au",
-			        LEFT ( RecoveredEmail, LEN ( RecoveredEmail ) - 15 )
-			            & "@acciona.com",
-			        IF (
-			            RIGHT ( RecoveredEmail, 12 ) = "@acciona.com",
-			            LEFT ( RecoveredEmail, LEN ( RecoveredEmail ) - 12 )
-			                & "@acciona.com.au"
-			        )
-			    )
+			-- 4. Check if the recovered domain belongs to Acciona
+			VAR IsAcciona =
+			    DomainPart IN {
+			        "@acciona.com",
+			        "@acciona.com.au",
+			        "@acciona.co.nz",
+			        "@acciona365.onmicrosoft.com"
+			    }
 			
-			VAR EmailNoExtDomainSwap =
-			    IF (
-			        RIGHT ( EmailNoExt, 15 ) = "@acciona.com.au",
-			        LEFT ( EmailNoExt, LEN ( EmailNoExt ) - 15 )
-			            & "@acciona.com",
-			        IF (
-			            RIGHT ( EmailNoExt, 12 ) = "@acciona.com",
-			            LEFT ( EmailNoExt, LEN ( EmailNoExt ) - 12 )
-			                & "@acciona.com.au"
-			        )
-			    )
-			
+			-- 5. Generate all possible identity combinations
 			VAR UserIdentifiers =
 			    FILTER (
-			        { RawUPN, RecoveredEmail, EmailNoExt, RecoveredDomainSwap, EmailNoExtDomainSwap },
+			        {
+			            RawUPN,
+			            RecoveredEmail,
+			            LocalPartNoExt & DomainPart,
+			            IF ( IsAcciona, LocalPart & "@acciona.com", BLANK () ),
+			            IF ( IsAcciona, LocalPart & "@acciona.com.au", BLANK () ),
+			            IF ( IsAcciona, LocalPart & "@acciona.co.nz", BLANK () ),
+			            IF ( IsAcciona, LocalPart & "@acciona365.onmicrosoft.com", BLANK () ),
+			            IF ( IsAcciona, LocalPartNoExt & "@acciona.com", BLANK () ),
+			            IF ( IsAcciona, LocalPartNoExt & "@acciona.com.au", BLANK () ),
+			            IF ( IsAcciona, LocalPartNoExt & "@acciona.co.nz", BLANK () ),
+			            IF ( IsAcciona, LocalPartNoExt & "@acciona365.onmicrosoft.com", BLANK () )
+			        },
 			        NOT ISBLANK ( [Value] ) && [Value] <> ""
 			    )
 			
+			-- 6. Match permissions from dbo_userpermission
 			VAR CurrentProjectState =
 			    LOWER ( 'Project_Dimension'[State] )
 			
@@ -72,6 +79,7 @@ role 'Project Access'
 			            || LOWER ( 'dbo_userpermission'[userprincipalname] ) IN UserIdentifiers
 			    )
 			
+			-- 7. Evaluate access tiers
 			VAR HasAllAccess =
 			    COUNTROWS (
 			        FILTER (

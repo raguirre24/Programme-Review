@@ -12,6 +12,16 @@ The new **Resource Playground** page follows **Resources**. It distributes a hyp
 
 The finish card reports a day, not a time within a shift. A partial final day receives only the remaining quantity. **Per working day** assigns the same quantity to every positive-hour working date; use **Per working hour** when shorter shifts must reduce production. Units are labels; no implicit labour-hour, currency or material conversion is performed.
 
+## Comparing calendars
+
+Use **Single** and **Compare** on the same page. Both views retain the shared quantity, unit, dates, rate, production basis, daily cap, Project and Monthly update. The view buttons change visibility only; they do not restore saved input values.
+
+In Compare, clear **Calendars to compare** to include every available calendar in the selected project/update, or select a subset. Each calendar receives the **full scenario quantity independently**. The clustered columns show that calendar's allocation by the existing Week/Month selection; columns across calendars are alternatives and must not be summed as one resource demand. The original Single calendar selection does not restrict comparison calculations.
+
+The results table shows each calendar's required rate, remaining quantity at the target and a bounded validation message. Invalid calendars remain visible with their own explanation while valid calendars continue to calculate. Select one results-table row to inspect its finish and full status in the two cards. Selecting a calendar in the slicer alone does not run the finish solver, and results-table selection does not filter the comparison chart. Clear the row selection to clear completion inspection.
+
+**Reset scenario** also clears the comparison selection and inspected row. It preserves Project, State, Monthly update and the current Single/Compare view. Duplicate calendar names receive an ID or source qualifier. If an original name also matches a generated label, an additional uniqueness check resolves the collision; unusually conflicting contexts receive a numbered suffix. Calendar identities, not display names, drive the calculation.
+
 If the daily cap makes a target infeasible, the page shows the required rate and the attainable forecast under the cap. Known allocation is retained when later calendar data becomes unresolved. Remaining quantity at the last known date can therefore refer to a date earlier than the planning horizon. An explicitly invalid start or target blocks the scenario and displays a validation message.
 
 ## Inputs and bounds
@@ -60,7 +70,7 @@ Storage added by the playground is independent of project or update counts excep
 
 The selector has direct, one-way relationships from `Project_Dimension` and `CurrentDate`. It inherits the existing Project Access role through the project relationship. Its hidden Report Update Date is resolved from the existing Task source-to-UpdateDate mapping, not from the calendar's source date or a guessed month end. A compact grouping is built before source-key parsing, and calendars unused by tasks remain available when their source snapshot is mapped. Missing or conflicting mappings remain unresolved. Measures apply the selected project/key/source tuple to table 11 with `KEEPFILTERS` and `TREATAS`.
 
-Calendar names may repeat across projects and updates; the shared context resolves those versions. If multiple calendar identities still share a name inside one selected project/update, calculation is blocked instead of choosing an arbitrary calendar. RLS must still be checked with **View as** and a restricted Service account before release.
+Calendar names may repeat across projects and updates; the shared context resolves those versions. Names repeated inside one project/update are disambiguated with their native ID and, only when needed, source identity. An unresolved or ambiguous identity still blocks calculation instead of choosing an arbitrary calendar. RLS must still be checked with **View as** and a restricted Service account before release.
 
 The physical shared date tables run from the beginning of the previous year through the end of the refresh year plus ten. Measures calculate `TODAY()` at query time and use the full, unfiltered shared date-axis maximum for the upper bound. A Week, Month or sparse-date selection cannot shorten that bound. Longer scenarios add query work without multiplying calendar rows by projects or updates. A scenario that cannot finish within the available range reports the unallocated quantity; it never invents a finish beyond that range.
 
@@ -68,7 +78,7 @@ Invalid or duplicate weekday rules, unresolved undated markers and ambiguous cal
 
 ## Files and regeneration
 
-The 13 `Scenario ...` tables and `Resource Scenario Measures` are registered in the semantic model. Report page ID is `4c53a34bba9dcc7f3e8c`; reset bookmark ID is `e899bf3a9c2d243f33bf`. Existing Resources visuals are unchanged.
+The 14 `Scenario ...` tables and the `Resource Scenario Measures` measure carrier are registered in the semantic model. Report page ID is `4c53a34bba9dcc7f3e8c`; reset bookmark ID is `e899bf3a9c2d243f33bf`. Existing Resources visuals are unchanged.
 
 The source generators under `scripts/resource_playground/` are:
 
@@ -77,6 +87,18 @@ The source generators under `scripts/resource_playground/` are:
 - `generate_page.py`: the native page and its reset bookmark.
 
 Keep generators and deployed files together when changing this feature. Once production files exist, generators require an explicit `--output-dir` for review drafts and refuse to overwrite the deployed feature. Compare the draft expressions using TOM, then apply targeted changes that preserve Desktop's metadata, lineage tags and visual IDs. Native input capability and serialisation evidence is in [INPUT_CONTROL_EVIDENCE.md](scripts/resource_playground/INPUT_CONTROL_EVIDENCE.md).
+
+## Calendar comparison validation — 17 October 2026
+
+The addition retains all 48 existing single-calendar measure expressions and adds one calendar selector dimension plus eight comparison measures. The model keeps sparse table-11 rules and exceptions; it does not create calendar-by-date rows. Both selectors have direct one-way Project and Monthly update relationships. The native comparison table avoids the finish solver; completion details are evaluated only for an explicitly inspected row. Each chart tooltip exposes the full project, calendar key and source through a guarded text measure; invalid calendars and empty chart periods remain blank.
+
+Fresh static checks pass for the 56 measures, 14 calculated partitions, four selector relationships, 43 visuals, display-only view bookmarks and the exact 14-target Reset scope. The optional `filterConfig` omission saved by Desktop is accepted by the integration checker while a mismatched retained native filter identity still fails. Eight focused checker/oracle regressions pass, including the engine-rejected `Ordinal` variable and correct handling of `RETURN [virtual column]`. The existing independent exact-rational suite passes 3,000 random scenarios, ten deterministic scenarios and three invalid-calendar checks. Offline TOM and all 60 M syntax checks pass; report diagnostics retain the complete baseline's 31 errors and 67 warnings after the final report validation. These are static and mathematical results, distinct from DAX execution and rendering.
+
+The current-date comparison fixture copies production expressions into a source-free 21-table model with 24 synthetic calendar identities, 21 eligible in its principal project/update. Its final engine run passes **56 cases and 8,076 assertions**, including 24 grouped Week/Month chart cases, a mixed-calendar results-table query and all eight new measures. Coverage includes generated-versus-original label collisions, case-only names, calendar identity, independent allocation, invalid-calendar isolation, capped/hourly/inverse modes, unknown data and a restricted fixture role. Every grouped chart query includes the real identity tooltip and checks the entire expected row set. Forward scenarios warn about future unknown calendar data even when it falls after the target, unless completion is already proven; inverse scenarios ending before unknown data remain valid. The fixture matches all 70 final scenario expressions and has no non-Ready objects.
+
+Separate native Desktop checks pass Single/Compare switching, 1/2/5/all calendar selections, Week/Month, target mode, row inspection limited to the two cards, and Reset. After final native Apply in the owned test session, the loaded model matches all 70 source expressions, with 61 tables and all partitions Ready. Native weekly scrolling issued continuation queries and reached the week of 29 December 2036 with all 11 project calendars. Captured visual timings and query replay are recorded separately. Service behaviour, production-role policy and raw-XER calendar decoding remain outside these checks. See [VALIDATION.md](scripts/resource_playground/VALIDATION.md) and [test_COMPARISON_README.md](scripts/resource_playground/test_COMPARISON_README.md).
+
+Final captured-native-chart regression adds **55 successful replays and 929 assertions**, preserving each calendar's buckets and quantity across 1/2/5/all selections and Week/Month. The three exact native paging queries reconcile 534 weeks, 5,874 calendar/week points and all 44 overlapping points through 29 December 2036; full-horizon Week/Month totals agree per calendar. Final native Refresh visuals medians for all 11 calendars in forward Month are 1,078 ms DAX / 1,719 ms lifecycle for the chart and 2,759 / 3,110 ms for comparison results. These are local observations, separate from captured-query replay and the different Single-view workload.
 
 ## Open-horizon validation — 11 September 2026
 

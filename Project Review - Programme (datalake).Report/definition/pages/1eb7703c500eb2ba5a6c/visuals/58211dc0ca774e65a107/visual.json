@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "58211dc0ca774e65a107",
   "position": {
     "x": 887.5,
@@ -27,8 +27,7 @@
                 }
               },
               "queryRef": "03 XER_PROJWBS.Level_1",
-              "nativeQueryRef": "WBS",
-              "displayName": "WBS"
+              "nativeQueryRef": "Level_1"
             },
             {
               "field": {
@@ -263,6 +262,121 @@
               "expr": {
                 "Literal": {
                   "Value": "'viewport'"
+                }
+              }
+            },
+            "customColumnWidths": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "wbsBands": [
+        {
+          "properties": {
+            "level0Background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#2B2E34'"
+                    }
+                  }
+                }
+              }
+            },
+            "level1Background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#7A1008'"
+                    }
+                  }
+                }
+              }
+            },
+            "level2Background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#636975'"
+                    }
+                  }
+                }
+              }
+            },
+            "level0Colour": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "level1Colour": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "level2Colour": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "state": [
+        {
+          "properties": {
+            "payload": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{\"version\":1,\"signature\":\"[[[\\\"03 XER_PROJWBS.Level_1\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_2\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_3\\\",true,false]]]\",\"expansion\":{\"level\":-1,\"overrides\":{}},\"sort\":{\"key\":\"\",\"direction\":\"none\"},\"widths\":{\"__label__\":282}}'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "labelColumn": [
+        {
+          "properties": {
+            "width": {
+              "expr": {
+                "Literal": {
+                  "Value": "282D"
+                }
+              }
+            },
+            "customWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
                 }
               }
             }

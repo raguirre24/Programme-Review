@@ -114,6 +114,14 @@
         "2fd7cfa3db915ff3b54e",
         "909e6c8546c6587d82b9"
       ]
+    },
+    {
+      "name": "c4ae381d0adac7597341",
+      "displayName": "Resource Playground view",
+      "children": [
+        "3fc3d41f00865b324fc4",
+        "e1c605698b0ada439b54"
+      ]
     }
   ]
 }

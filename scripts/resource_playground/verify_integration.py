@@ -13,10 +13,13 @@ ROOT = Path(__file__).resolve().parents[2]
 MODEL = ROOT / "Project Review - Programme (datalake).SemanticModel/definition"
 REPORT = ROOT / "Project Review - Programme (datalake).Report/definition"
 # Confirmed by the installed engine; this is not a complete DAX keyword list.
-KNOWN_REJECTED_VARIABLES = {"firstdate", "lastdate", "updates", "key"}
+KNOWN_REJECTED_VARIABLES = {"firstdate", "lastdate", "updates", "key", "ordinal"}
 DAILY_VISUAL_ID = "c4762ffe207ce780fc4d"
 CHART_VISUAL_ID = "fa2eaf106e8ead20b935"
 EXPECTED_SCENARIO_MEASURES = 48
+COMPARISON_MEASURES = {"Comparison " + suffix for suffix in (
+    "Chart Quantity", "Required Rate", "Target Remaining", "Validation",
+    "Finish Date", "Status", "Selection Summary", "Calendar Identity")}
 PERIOD_VISUAL_ID = "5f5e832a845f69b11b99"
 RESET_BOOKMARK_ID = "e899bf3a9c2d243f33bf"
 CALENDAR_VISUAL_ID = "16643c36a5f294a63a18"
@@ -87,17 +90,29 @@ def validate_period_reset(bookmark):
     assert metadata["valueMap"] == [{"0": "Month"}], "Reset must display Month for its field key."
 
 
-def validate_calendar_reset(bookmark, calendar_visual):
+def validate_native_clear_identity(calendar_visual, entry, expression):
+    # Desktop may omit filterConfig entirely for an unfiltered slicer. When it
+    # retains one, require the captured identity to match; never ignore a real
+    # selected filter just because the optional container is absent elsewhere.
+    native_filters = calendar_visual.get("filterConfig", {}).get("filters", [])
+    if native_filters:
+        assert any(item["name"] == entry["name"] and item.get("field") == expression for item in native_filters), \
+            "Calendar Reset filter identity must match its visual."
+
+
+def validate_calendar_reset(bookmark, calendar_visual, additional_targets=()):
     options = bookmark["options"]
     assert options.get("applyOnlyToTargetVisuals") is True, \
         "Target IDs are ignored without applyOnlyToTargetVisuals; Reset could clear report/page filters."
-    assert len(options["targetVisualNames"]) == 12 and set(options["targetVisualNames"]) == RESET_TARGET_IDS
+    expected_targets = RESET_TARGET_IDS | set(additional_targets)
+    assert set(options["targetVisualNames"]) == expected_targets
+    assert len(options["targetVisualNames"]) == len(expected_targets)
     state = bookmark["explorationState"]
     assert set(state) == {"version", "activeSection", "sections"}, "Reset must not capture report filter state."
     assert set(state["sections"]) == {"4c53a34bba9dcc7f3e8c"}
     section = state["sections"]["4c53a34bba9dcc7f3e8c"]
     assert set(section) == {"visualContainers"}, "Reset must not capture page filter state."
-    assert set(section["visualContainers"]) == RESET_TARGET_IDS
+    assert set(section["visualContainers"]) == expected_targets
     calendar_state = section["visualContainers"][CALENDAR_VISUAL_ID]
     for objects in (calendar_visual["visual"]["objects"], calendar_state["singleVisual"]["objects"]["merge"]):
         selection = objects["selection"][0]["properties"]
@@ -112,9 +127,7 @@ def validate_calendar_reset(bookmark, calendar_visual):
     assert entry["type"] == "Categorical" and entry["howCreated"] == 0
     expression = {"Column": {"Expression": {"SourceRef": {"Entity": "Scenario Calendar"}}, "Property": "Calendar"}}
     assert entry["expression"] == expression
-    native_filters = calendar_visual["filterConfig"]["filters"]
-    assert any(item["name"] == entry["name"] and item.get("field") == expression for item in native_filters), \
-        "Calendar Reset filter identity must match its visual."
+    validate_native_clear_identity(calendar_visual, entry, expression)
     general = calendar_state["singleVisual"]["objects"]["merge"].get("general", [])
     assert all("filter" not in item.get("properties", {}) for item in general), "Calendar Reset must not retain a selected value."
 
@@ -137,7 +150,10 @@ def validate_window_and_calendar_contract(tables, measures):
     assert not re.search(r"\bEOMONTH\s*\(", dax_code(source), re.I), "Calendar source dates cannot approximate report update dates."
     assert not re.search(r"\bSELECTCOLUMNS\s*\(\s*'01 XER_TASK'\s*,", source, re.I), \
         "Group source snapshots before parsing key namespaces; do not parse every activity key."
-    assert '& " | "' not in source, "Calendar choices must show calendar names without appended source identities."
+    if "Scenario Comparison Calendar" in tables:
+        assert 'COUNTROWS ( NamePeers ) > 1' in source, "Identity suffixes must be limited to colliding calendar names."
+    else:
+        assert '& " | "' not in source, "Calendar choices must show names without appended source identities."
 
 
 def validate_open_horizon_contract(measures):
@@ -183,6 +199,10 @@ def validate_qualified_dax_references(expressions, tables):
     references = 0
     for name, source in expressions:
         for match in pattern.finditer(dax_code(source)):
+            # A return/operator followed by an unqualified virtual column is
+            # not a qualified table reference (for example RETURN [__Label]).
+            if match["bare"] and match["bare"].casefold() in {"return", "not"}:
+                continue
             table = (match["quoted"] or match["bare"]).replace("''", "'")
             field = match["field"].replace("]]", "]")
             assert table.casefold() in model_fields, ("unknown qualified DAX table", name, table)
@@ -232,16 +252,19 @@ def main():
             assert measure["name"] not in measures, ("ambiguous measure", measure["name"])
             measures[measure["name"]] = measure["expression"]
     added = [name for name in tables if name.startswith("Scenario ") or name == "Resource Scenario Measures"]
-    assert len(added) == 14, ("scenario table coverage", len(added))
+    comparison = "Scenario Comparison Calendar" in tables
+    assert len(added) == 14 + int(comparison), ("scenario table coverage", len(added))
     scenario_measures = tables["Resource Scenario Measures"]["measures"]
-    assert len(scenario_measures) == EXPECTED_SCENARIO_MEASURES, ("scenario measure coverage", len(scenario_measures))
+    expected_measure_count = EXPECTED_SCENARIO_MEASURES + (len(COMPARISON_MEASURES) if comparison else 0)
+    assert len(scenario_measures) == expected_measure_count, ("scenario measure coverage", len(scenario_measures))
+    assert {m["name"] for m in scenario_measures if m["name"].startswith("Comparison ")} == (COMPARISON_MEASURES if comparison else set())
     calculated_tables = [name for name in added if tables[name]["calculatedPartitions"]]
-    assert len(calculated_tables) == 13, ("calculated table coverage", len(calculated_tables))
+    assert len(calculated_tables) == 13 + int(comparison), ("calculated table coverage", len(calculated_tables))
     expressions = [(f"{table_name}/{partition['name']}", partition["expression"])
                    for table_name in added for partition in tables[table_name]["calculatedPartitions"]]
-    assert len(expressions) == 13, ("calculated partition coverage", len(expressions))
+    assert len(expressions) == 13 + int(comparison), ("calculated partition coverage", len(expressions))
     expressions += [(measure["name"], measure["expression"]) for measure in scenario_measures]
-    assert len(expressions) == 13 + EXPECTED_SCENARIO_MEASURES, ("DAX expression coverage", len(expressions))
+    assert len(expressions) == 13 + int(comparison) + expected_measure_count, ("DAX expression coverage", len(expressions))
     qualified_references = validate_qualified_dax_references(expressions, tables)
     validate_window_and_calendar_contract(tables, measures)
     model = (args.model_root / "model.tmdl").read_text(encoding="utf-8-sig")
@@ -249,12 +272,16 @@ def main():
         assert model.count("ref table '" + name + "'\n") == 1, ("registration", name)
     relations = (args.model_root / "relationships.tmdl").read_text(encoding="utf-8-sig")
     scenario_relations = [block for block in relations.split("\nrelationship ") if "'Scenario " in block]
-    assert len(scenario_relations) == 2, "Scenario calendars require project and report-update filter paths."
+    assert len(scenario_relations) == (4 if comparison else 2), "Each scenario selector requires exactly project and report-update filter paths."
     project_paths = [block for block in scenario_relations if "fromColumn: 'Scenario Calendar'.ProjectKey" in block]
     update_paths = [block for block in scenario_relations if "fromColumn: 'Scenario Calendar'.'Report Update Date'" in block]
     assert len(project_paths) == len(update_paths) == 1
     assert "toColumn: Project_Dimension.ProjectKey" in project_paths[0]
     assert "toColumn: CurrentDate.UpdateDate" in update_paths[0]
+    if comparison:
+        for source, target in (("ProjectKey", "Project_Dimension.ProjectKey"), ("'Report Update Date'", "CurrentDate.UpdateDate")):
+            matches = [block for block in scenario_relations if "fromColumn: 'Scenario Comparison Calendar'." + source in block]
+            assert len(matches) == 1 and "toColumn: " + target in matches[0], ("comparison context relationship", source)
     for block in scenario_relations:
         assert "bothDirections" not in block and not re.search(r"isActive:\s*false", block), \
             "Both scenario context relationships must be active and single direction."
@@ -321,14 +348,19 @@ def main():
         inspect(visual)
         visuals.append(visual["name"])
     assert len(visuals) == len(set(visuals))
-    assert len(visuals) == 35, ("playground visual coverage including shared context", len(visuals))
+    if comparison:
+        from verify_comparison_integration import validate_report
+        comparison_report = validate_report(args.report_root)
+        assert len(visuals) == comparison_report["visuals"], "Comparison visual inventory mismatch."
+    else:
+        assert len(visuals) == 35, ("playground visual coverage including shared context", len(visuals))
     assert set(context_visuals) == set(CONTEXT_GROUPS), "All three existing shared context groups must reach the playground."
     assert visuals.count(DAILY_VISUAL_ID) == 1, "The daily detail visual is missing or duplicated."
     assert visuals.count(CHART_VISUAL_ID) == 1, "The distribution chart is missing or duplicated."
     reset_bookmark = json.loads((args.report_root / "bookmarks" / (RESET_BOOKMARK_ID + ".bookmark.json")).read_text(encoding="utf-8-sig"))
     validate_period_reset(reset_bookmark)
     assert calendar_visual is not None, "The calendar input visual is missing."
-    validate_calendar_reset(reset_bookmark, calendar_visual)
+    validate_calendar_reset(reset_bookmark, calendar_visual, [comparison_report["selector"], comparison_report["results"]] if comparison else [])
     preserved = []
     if args.baseline:
         for entry in json.loads((args.baseline / "files.json").read_text(encoding="utf-8-sig")):
@@ -348,7 +380,7 @@ def main():
               "page_visuals": len(visuals), "preserved_baseline_files": preserved,
               "active_daily_fields": 6,
               "reset_period": "Month (canonical field-parameter identity)",
-              "reset_scope": "12 input visuals only; report/page filters excluded",
+              "reset_scope": f"{14 if comparison else 12} scenario input/inspection visuals only; report/page filters excluded",
               "reset_calendar": "Cleared native filter identity; ordinary single selection allows empty",
               "shared_context_groups": context_visuals,
               "display_periods": ["Week", "Month"],
@@ -359,7 +391,7 @@ def main():
                          "DAX variable table-name collisions", "qualified DAX field references", "measure dependency cycles", "report field references",
                          "six active daily detail fields without native row measure filter or totals",
                          "chart display measures without native row measure filter",
-                         "canonical Month reset identity and display metadata", "calendar clear-state and 12-target Reset scope",
+                         "canonical Month reset identity and display metadata", "calendar clear-state and exact scenario Reset scope",
                          "three shared context groups outside Reset",
                          "Week/Month periods, DD-MM-YYYY date inputs, today lower bound and full axis coverage independent of bucket filters",
                          "calendar-name labels and compact resolved snapshot-date mapping",

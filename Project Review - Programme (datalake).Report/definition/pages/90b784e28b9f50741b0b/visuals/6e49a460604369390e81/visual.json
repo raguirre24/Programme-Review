@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "6e49a460604369390e81",
   "position": {
     "x": 0,
@@ -23,12 +23,25 @@
                       "Entity": "03 XER_PROJWBS"
                     }
                   },
+                  "Property": "Level_1"
+                }
+              },
+              "queryRef": "03 XER_PROJWBS.Level_1",
+              "nativeQueryRef": "Level_1"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "03 XER_PROJWBS"
+                    }
+                  },
                   "Property": "Level_2"
                 }
               },
               "queryRef": "03 XER_PROJWBS.Level_2",
-              "nativeQueryRef": "WBS",
-              "displayName": "WBS"
+              "nativeQueryRef": "Level_2"
             },
             {
               "field": {
@@ -85,6 +98,20 @@
               },
               "queryRef": "03 XER_PROJWBS.Level_6",
               "nativeQueryRef": "Level_6"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "03 XER_PROJWBS"
+                    }
+                  },
+                  "Property": "Level_7"
+                }
+              },
+              "queryRef": "03 XER_PROJWBS.Level_7",
+              "nativeQueryRef": "Level_7"
             }
           ]
         },
@@ -363,7 +390,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "10D"
+                  "Value": "11D"
                 }
               }
             }
@@ -428,7 +455,7 @@
             "width": {
               "expr": {
                 "Literal": {
-                  "Value": "100D"
+                  "Value": "80D"
                 }
               }
             },
@@ -456,7 +483,7 @@
             "width": {
               "expr": {
                 "Literal": {
-                  "Value": "100D"
+                  "Value": "80D"
                 }
               }
             },
@@ -646,7 +673,7 @@
             "width": {
               "expr": {
                 "Literal": {
-                  "Value": "100D"
+                  "Value": "80D"
                 }
               }
             }
@@ -667,7 +694,7 @@
             "width": {
               "expr": {
                 "Literal": {
-                  "Value": "100D"
+                  "Value": "80D"
                 }
               }
             }
@@ -688,7 +715,7 @@
             "width": {
               "expr": {
                 "Literal": {
-                  "Value": "100D"
+                  "Value": "80D"
                 }
               }
             }
@@ -709,7 +736,7 @@
             "width": {
               "expr": {
                 "Literal": {
-                  "Value": "100D"
+                  "Value": "80D"
                 }
               }
             }
@@ -767,7 +794,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "10D"
+                  "Value": "11D"
                 }
               }
             },
@@ -792,7 +819,7 @@
             "width": {
               "expr": {
                 "Literal": {
-                  "Value": "150D"
+                  "Value": "125D"
                 }
               }
             },
@@ -826,7 +853,7 @@
             "payload": {
               "expr": {
                 "Literal": {
-                  "Value": "'{\"version\":1,\"signature\":\"[[[\\\"03 XER_PROJWBS.Level_2\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_3\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_4\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_5\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_6\\\",true,false]],[[\\\"01 XER_TASK.task_code\\\",false,true]]]\",\"expansion\":{\"level\":-1,\"overrides\":{}},\"sort\":{\"key\":\"Max(01 XER_TASK.Finish)\",\"direction\":\"none\"},\"widths\":{\"XER Measures.ShowTaskType\":70},\"columnOrder\":[\"XER Measures.ShowTaskName\",\"XER Measures.ShowTaskType\",\"XER Measures.ShowDuration\",\"Sum(01 XER_TASK.total_float)\",\"Min(01 XER_TASK.Baseline Start)\",\"Max(01 XER_TASK.Baseline Finish)\",\"Min(01 XER_TASK.Previous Month Start)\",\"Max(01 XER_TASK.Previous Month Finish)\",\"Min(01 XER_TASK.Start)\",\"Max(01 XER_TASK.Finish)\",\"XER Measures.ShowVarianceBL\",\"XER Measures.ShowVariance\"],\"hiddenColumns\":[]}'"
+                  "Value": "'{\"version\":1,\"signature\":\"[[[\\\"03 XER_PROJWBS.Level_1\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_2\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_3\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_4\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_5\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_6\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_7\\\",true,false]],[[\\\"01 XER_TASK.task_code\\\",false,true]]]\",\"expansion\":{\"level\":-1,\"overrides\":{}},\"sort\":{\"key\":\"\",\"direction\":\"none\"},\"widths\":{}}'"
                 }
               }
             }
@@ -867,6 +894,136 @@
               "expr": {
                 "Literal": {
                   "Value": "5D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "wbsBands": [
+        {
+          "properties": {
+            "level0Background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#2B2E34'"
+                    }
+                  }
+                }
+              }
+            },
+            "level1Background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#7A1008'"
+                    }
+                  }
+                }
+              }
+            },
+            "level2Background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#636975'"
+                    }
+                  }
+                }
+              }
+            },
+            "level3Background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#DE2E21'"
+                    }
+                  }
+                }
+              }
+            },
+            "level4Background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FF5A47'"
+                    }
+                  }
+                }
+              }
+            },
+            "level5Background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#ABB1BD'"
+                    }
+                  }
+                }
+              }
+            },
+            "level6Background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#F3F4F6'"
+                    }
+                  }
+                }
+              }
+            },
+            "level0Colour": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "level1Colour": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "level2Colour": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "level5Colour": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#000000'"
+                    }
+                  }
                 }
               }
             }
@@ -965,20 +1122,6 @@
   "parentGroupName": "5d39ae0c29e4e310905e",
   "filterConfig": {
     "filters": [
-      {
-        "name": "44f69fdd28f92c4ad70d",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "03 XER_PROJWBS"
-              }
-            },
-            "Property": "Level_2"
-          }
-        },
-        "type": "Categorical"
-      },
       {
         "name": "f044902d05c20d32bdcb",
         "field": {

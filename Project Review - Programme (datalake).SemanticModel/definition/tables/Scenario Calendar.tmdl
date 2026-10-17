@@ -154,10 +154,56 @@ table 'Scenario Calendar'
 				            RETURN IF ( NOT ISBLANK ( Namespace ) && ConflictingNamespaces = 0
 				                && COUNTROWS ( UpdateDates ) = 1 && NOT ISBLANK ( ReportDate ), ReportDate )
 				    )
-				VAR __ScenarioWithLabel =
+				VAR __ScenarioWithCandidates =
 				    ADDCOLUMNS (
 				        WithMetadata,
-				        "Calendar", COALESCE ( [Calendar Name], "Unnamed calendar" )
+				        "__CalendarCandidate",
+				            VAR CalendarName = COALESCE ( [Calendar Name], "Unnamed calendar" )
+				            VAR ProjectKey = [ProjectKey]
+				            VAR ReportDate = [Report Update Date]
+				            VAR CalendarKey = [clndr_id_key]
+				            VAR CsvSource = [IsCsvSource]
+				            VAR Delimiter = IF ( CsvSource, "::", "." )
+				            VAR NativeId = PATHITEMREVERSE ( SUBSTITUTE ( CalendarKey, Delimiter, "|" ), 1 )
+				            VAR NamePeers = FILTER ( WithMetadata,
+				                [ProjectKey] == ProjectKey && [Report Update Date] == ReportDate
+				                    && COALESCE ( [Calendar Name], "Unnamed calendar" ) == CalendarName )
+				            VAR IdPeers = FILTER ( NamePeers,
+				                PATHITEMREVERSE ( SUBSTITUTE ( [clndr_id_key], IF ( [IsCsvSource], "::", "." ), "|" ), 1 ) == NativeId )
+				            RETURN CalendarName & IF ( COUNTROWS ( NamePeers ) > 1,
+				                " [" & NativeId & IF ( COUNTROWS ( IdPeers ) > 1,
+				                    " | " & CalendarKey & IF ( CsvSource, " | CSV", " | Athena" ), "" ) & "]", "" )
+				    )
+				VAR __ScenarioWithResolvedLabels =
+				    ADDCOLUMNS (
+				        __ScenarioWithCandidates,
+				        "__ResolvedCalendar",
+				            VAR Candidate = [__CalendarCandidate]
+				            VAR ProjectKey = [ProjectKey]
+				            VAR ReportDate = [Report Update Date]
+				            VAR CandidatePeers = FILTER ( __ScenarioWithCandidates,
+				                [ProjectKey] == ProjectKey && [Report Update Date] == ReportDate
+				                    && [__CalendarCandidate] == Candidate )
+				            RETURN IF ( COUNTROWS ( CandidatePeers ) > 1,
+				                COALESCE ( [Calendar Name], "Unnamed calendar" ) & " [" & [clndr_id_key]
+				                    & IF ( [IsCsvSource], " | CSV", " | Athena" ) & "]",
+				                Candidate )
+				    )
+				VAR __ScenarioWithLabel =
+				    ADDCOLUMNS (
+				        __ScenarioWithResolvedLabels,
+				        "Calendar",
+				            VAR ProjectKey = [ProjectKey]
+				            VAR ReportDate = [Report Update Date]
+				            VAR IdentityToken = IF ( [IsCsvSource], "1|", "0|" ) & [clndr_id_key]
+				            VAR ScopeRows = FILTER ( __ScenarioWithResolvedLabels,
+				                [ProjectKey] == ProjectKey && [Report Update Date] == ReportDate )
+				            VAR Labels = DISTINCT ( SELECTCOLUMNS ( ScopeRows, "__Label", [__ResolvedCalendar] ) )
+				            VAR HasCollision = COUNTROWS ( Labels ) <> COUNTROWS ( ScopeRows )
+				            VAR CalendarOrdinal = 1 + COUNTROWS ( FILTER ( ScopeRows,
+				                ( IF ( [IsCsvSource], "1|", "0|" ) & [clndr_id_key] ) < IdentityToken ) )
+				            RETURN [__ResolvedCalendar] & IF ( HasCollision,
+				                " [#" & FORMAT ( CalendarOrdinal, "0" ) & "]", "" )
 				    )
 				RETURN
 				    SELECTCOLUMNS (
