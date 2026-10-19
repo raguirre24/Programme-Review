@@ -72,7 +72,7 @@ def build(output: Path, today: dt.date):
     literal_data = [
         ("11 XER_CALENDAR_DETAILED", support.NAMES, support.TYPES, rows),
         ("Project_Dimension", ["ProjectKey", "Project"], ["string", "string"], [["P1", "Project one"], ["P2", "Project two"]]),
-        ("01 XER_TASK", ["filename", "ProjectCode", "IsCsvSource", "UpdateDate", "task_id_key", "wbs_id_key"], ["string", "string", "boolean", "dateTime", "string", "string"], tasks),
+        ("01 XER_TASK", ["filename", "ProjectCode", "IsCsvSource", "UpdateDate", "task_id_key", "wbs_id_key", "data_date"], ["string", "string", "boolean", "dateTime", "string", "string", "dateTime"], tasks),
         ("03 XER_PROJWBS", ["wbs_id_key", "ProjectKey"], ["string", "string"], wbs),
         ("Fixture Identity", ["Marker", "AnchorDate"], ["string", "dateTime"], [[MARKER, today]]),
     ]

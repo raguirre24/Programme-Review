@@ -2,7 +2,7 @@
   "schema_version": 1,
   "title": "Schedule metrics guide",
   "purpose": "Explain the practical review bands, calculations, evidence coverage and score used by the Schedule Metrics tab.",
-  "introduction": "Score = (green checks + 0.5 × amber checks) / assessed checks × 100. Each check has equal weight; red earns 0.\nStart with Schedule health score below for an example, score colours and missing-input rules. Scroll for each metric's review bands and scope.\nActivity lists: right-click an update in the counts table > Drill through > Missing Predecessor or Missing Successor.",
+  "introduction": "Score = average of the ten checks' points × 100. Each check earns 1 point at its target, falling evenly to 0 at its limit; all checks weigh the same.\nScore colour: green ≥95%, amber ≥75%, red <75%. Scroll for each metric's target, limit and scope.\nActivity lists: right-click an update in the counts table > Drill through > Missing Predecessor or Missing Successor.",
   "reading_notes": [
     {
       "title": "Core activity population",
@@ -10,7 +10,7 @@
     },
     {
       "title": "Review bands and evidence coverage",
-      "text": "For the eight scored checks, green is within the accepted band, amber needs review and red is a priority. Percentages use records with usable inputs; excluded inputs and unassessed checks are disclosed separately, so a priority result stays red when evidence is partial. Grey or N/A means no usable result. High float and longest-path share are blue diagnostics. Missing required dates count as defects. Matched missed dates and execution use their stated red/green benchmarks; baseline coverage uses green for complete and amber for incomplete coverage, not performance."
+      "text": "For the ten scored checks, green is at target, amber is between target and limit and red is at or past the limit; points fall evenly between target and limit. Percentages use records with usable inputs; excluded inputs are disclosed separately, so a priority result stays red when evidence is partial. A check with nothing to count shows 0%; grey means no valid project and update is selected. Missing required dates count as defects."
     },
     {
       "title": "Updates and trend lines",
@@ -18,7 +18,7 @@
     },
     {
       "title": "Baseline and detail scope",
-      "text": "Detail options use the whole selected project and programme, including its completed activities where relevant, independently of the WBS and activity-status selections. Baseline comparisons match activity codes to the earliest loaded snapshot, which must have one recognised BL-tagged source file. Table 04 is a derived earliest-snapshot subset, not an independent baseline. Blank/duplicate activity codes or missing baseline provenance can make baseline comparisons unavailable."
+      "text": "Baseline coverage uses the whole selected project and programme, including its completed activities, independently of the WBS and activity-status selections. Baseline coverage matches activity codes to the latest BL-tagged snapshot on or before the selected update. Table 04 is a derived earliest-snapshot subset, not an independent baseline. Missing baseline provenance makes baseline coverage 0%; repeated or blank activity codes are disclosed in its tooltip, not penalised."
     },
     {
       "title": "Reading counts beside percentages",
@@ -39,15 +39,14 @@
       "sort_order": 10,
       "section": "Scored checks",
       "metric": "Missing logic",
-      "meaning": "Work that has no recorded predecessor, no recorded successor, or both.",
-      "rationale": "Missing links can leave work disconnected from the sequence used to forecast delivery. Review whether each open end is intentional or needs a relationship.",
-      "calculation": "Incomplete discrete activities missing either end / all incomplete discrete activities. Each activity is counted once.",
-      "threshold": "Green: <=5%; amber: >5% to 10%; red: >10%.",
-      "population": "Core activity population; recorded relationships in the selected snapshot.",
-      "limitations": "The separate Missing Pred. and Missing Succ. counts overlap when an activity has neither. The check assesses recorded links; it does not prove that the linked sequence is correct. Review the separate components through the Missing Predecessor and Missing Successor drill-through pages, available from an update in the counts table.",
+      "meaning": "Activities with no predecessor, no successor, or neither.",
+      "calculation": "Activities missing either end / core activities. Each activity counted once.",
+      "threshold": "Green ≤5%; amber >5% to <10%; red ≥10%.",
+      "population": "Core activities: incomplete task- and resource-dependent activities. Excludes milestones, LOE, WBS summaries and completed work.",
+      "limitations": "Pred. and Succ. counts overlap. Drill through from the counts table to list activities.",
       "classification": "Network logic",
       "scored": true,
-      "score_note": "Equal weight: green 1 point; amber 0.5; red 0.",
+      "score_note": "1 point at ≤5%, falling evenly to 0 at 10%.",
       "source_measure": "XER Metrics[SM Missing Logic %]",
       "source_columns": [
         "01 XER_TASK[No Predecessor]",
@@ -58,8 +57,8 @@
       "related_grid_counts": [],
       "review_bands": {
         "direction": "lower",
-        "green_max": 0.05,
-        "amber_max": 0.1
+        "target": 0.05,
+        "limit": 0.1
       }
     },
     {
@@ -67,15 +66,14 @@
       "sort_order": 20,
       "section": "Scored checks",
       "metric": "Leads",
-      "meaning": "Relationships with negative lag, allowing the successor event to occur earlier than the relationship would otherwise allow.",
-      "rationale": "Negative lag can make the intended overlap difficult to explain or monitor. Review whether the sequence is clearer when the overlap is represented explicitly.",
-      "calculation": "Eligible relationships with lag below zero / eligible relationships with a known lag.",
-      "threshold": "Green: 0%; amber: >0% to 1%; red: >1%.",
-      "population": "Links into incomplete discrete successor activities; the predecessor can be complete.",
-      "limitations": "Missing lag is excluded and disclosed. The denominator counts relationships, not activities.",
+      "meaning": "Relationships with negative lag.",
+      "calculation": "Relationships with lag < 0 / relationships with a known lag.",
+      "threshold": "Green 0%; amber >0% to <1%; red ≥1%.",
+      "population": "Links into incomplete discrete successors.",
+      "limitations": "Counts relationships, not activities. Missing lag excluded.",
       "classification": "Network logic",
       "scored": true,
-      "score_note": "Equal weight: green 1 point; amber 0.5; red 0.",
+      "score_note": "1 point at 0%, falling evenly to 0 at 1%.",
       "source_measure": "XER Metrics[<0Lead%]",
       "source_columns": [
         "06 XER_PREDECESSOR[task_id_key]",
@@ -93,24 +91,23 @@
       ],
       "review_bands": {
         "direction": "lower",
-        "green_max": 0,
-        "amber_max": 0.01
+        "target": 0,
+        "limit": 0.01
       }
     },
     {
       "id": "positive_lags",
       "sort_order": 30,
       "section": "Scored checks",
-      "metric": "Positive lags",
-      "meaning": "Relationships containing a waiting period between their linked events.",
-      "rationale": "Waiting time inside a relationship has no separate activity to track. Review whether each lag represents a justified wait or work that needs its own duration and progress record.",
-      "calculation": "Eligible relationships with lag above zero / eligible relationships with a known lag.",
-      "threshold": "Green: <=5%; amber: >5% to 10%; red: >10%.",
-      "population": "Links into incomplete discrete successor activities; the predecessor can be complete.",
-      "limitations": "All positive lags count, including those of five days or less. Missing lag is excluded and disclosed.",
+      "metric": "Lags over 5 days",
+      "meaning": "Relationships with a waiting period of more than 5 working days.",
+      "calculation": "Relationships with lag > 5 days / relationships with a known lag.",
+      "threshold": "Green ≤5%; amber >5% to <10%; red ≥10%.",
+      "population": "Links into incomplete discrete successors.",
+      "limitations": "Short lags (5 days or less), mostly on SS/FF overlap pairs, are not counted; overlap use is assessed through FS relationships. Missing lag excluded.",
       "classification": "Network logic",
       "scored": true,
-      "score_note": "Equal weight: green 1 point; amber 0.5; red 0.",
+      "score_note": "1 point at ≤5%, falling evenly to 0 at 10%.",
       "source_measure": "XER Metrics[Lags%]",
       "source_columns": [
         "06 XER_PREDECESSOR[task_id_key]",
@@ -121,15 +118,15 @@
       ],
       "related_grid_counts": [
         {
-          "label": "Positive lags",
-          "measure": "XER Metrics[SM Positive Lag Count]",
-          "meaning": "Number of eligible relationships with any positive lag."
+          "label": "Lags >5d",
+          "measure": "XER Metrics[Lags>5d]",
+          "meaning": "Number of eligible relationships with lag over 5 working days."
         }
       ],
       "review_bands": {
         "direction": "lower",
-        "green_max": 0.05,
-        "amber_max": 0.1
+        "target": 0.05,
+        "limit": 0.1
       }
     },
     {
@@ -137,15 +134,14 @@
       "sort_order": 40,
       "section": "Scored checks",
       "metric": "Finish-to-start relationships",
-      "meaning": "The share of recognised relationships requiring a predecessor finish before a successor start.",
-      "rationale": "A clear finish-to-start sequence is usually easier to follow. A lower share prompts a review of whether overlapping or finish-linked relationships reflect the intended delivery sequence.",
-      "calculation": "Eligible PR_FS or PR_FS1 relationships / eligible relationships with a recognised FS, SS, FF or SF type.",
-      "threshold": "Green: >=90%; amber: 80% to <90%; red: <80%.",
-      "population": "Links into incomplete discrete successor activities; the predecessor can be complete.",
-      "limitations": "PR_FS1 is a user-confirmed FS alias. Other unknown types are excluded and disclosed. Imported rows are counted without deduplicating FS and FS1 records.",
+      "meaning": "Share of relationships that are finish-to-start.",
+      "calculation": "FS relationships (incl. PR_FS1) / relationships with a recognised FS, SS, FF or SF type.",
+      "threshold": "Green ≥90%; amber >80% to <90%; red ≤80%.",
+      "population": "Links into incomplete discrete successors.",
+      "limitations": "Unknown types excluded. FS and FS1 rows are not deduplicated.",
       "classification": "Network logic",
       "scored": true,
-      "score_note": "Equal weight: green 1 point; amber 0.5; red 0.",
+      "score_note": "1 point at ≥90%, falling evenly to 0 at 80%.",
       "source_measure": "XER Metrics[SM FS %]",
       "source_columns": [
         "06 XER_PREDECESSOR[task_id_key]",
@@ -157,8 +153,8 @@
       "related_grid_counts": [],
       "review_bands": {
         "direction": "higher",
-        "green_min": 0.9,
-        "amber_min": 0.8
+        "target": 0.9,
+        "limit": 0.8
       }
     },
     {
@@ -166,15 +162,14 @@
       "sort_order": 50,
       "section": "Scored checks",
       "metric": "Restrictive primary constraints",
-      "meaning": "Work with a fixed or latest-date primary constraint that restricts normal logic-driven scheduling.",
-      "rationale": "Restrictive dates can limit how the forecast responds to changes in preceding work. Review whether each constraint reflects a real commitment and remains appropriate.",
-      "calculation": "Activities with a recognised restrictive primary constraint / core activities with a recognised constraint code or no constraint.",
-      "threshold": "Green: <=5%; amber: >5% to 10%; red: >10%.",
-      "population": "Core activity population; primary constraint only.",
-      "limitations": "Blank means no primary constraint. Unknown codes are excluded and disclosed. Secondary constraints are not available. Counted codes: CS_MSO, CS_MSOB, CS_MEO, CS_MEOB, CS_MANDSTART and CS_MANDFIN.",
+      "meaning": "Activities whose primary constraint fixes or caps their dates.",
+      "calculation": "Activities with a restrictive primary constraint / core activities with a known or blank constraint.",
+      "threshold": "Green ≤5%; amber >5% to <10%; red ≥10%.",
+      "population": "Core activities; primary constraint only.",
+      "limitations": "Counted: CS_MSO, CS_MSOB, CS_MEO, CS_MEOB, CS_MANDSTART, CS_MANDFIN. Unknown codes excluded.",
       "classification": "Schedule constraints",
       "scored": true,
-      "score_note": "Equal weight: green 1 point; amber 0.5; red 0.",
+      "score_note": "1 point at ≤5%, falling evenly to 0 at 10%.",
       "source_measure": "XER Metrics[Constraint%]",
       "source_columns": [
         "01 XER_TASK[cstr_type]",
@@ -190,52 +185,58 @@
       ],
       "review_bands": {
         "direction": "lower",
-        "green_max": 0.05,
-        "amber_max": 0.1
+        "target": 0.05,
+        "limit": 0.1
       }
     },
     {
-      "id": "high_float",
+      "id": "out_of_sequence",
       "sort_order": 60,
-      "section": "Review indicators",
-      "metric": "High float >44d (review indicator)",
-      "meaning": "Work with more than 44 working days of total float, which can warrant a review of logic or timing assumptions.",
-      "rationale": "Large amounts of float may represent genuine flexibility or incomplete logic. Reviewing the affected work helps distinguish usable time allowance from a weakly connected forecast.",
-      "calculation": "Activities with total float above 44 working days / core activities with known total float.",
-      "threshold": "No universal pass/fail target; blue diagnostic.",
-      "population": "Core activity population with nonblank total float.",
-      "limitations": "Exactly 44 days is not flagged. Imported float is already in working days. Missing float is excluded and disclosed; it is not treated as zero. High float can be legitimate flexibility, so review the logic and timing rather than treating its prevalence as an automatic failure.",
-      "classification": "Schedule flexibility",
-      "scored": false,
-      "score_note": "Excluded from the schedule health score.",
-      "source_measure": "XER Metrics[HighFloat%]",
+      "section": "Scored checks",
+      "metric": "Out-of-sequence progress",
+      "meaning": "In-progress activities that started before their logic allowed.",
+      "calculation": "In-progress activities with an FS predecessor not finished, or an SS predecessor not started / in-progress activities.",
+      "threshold": "Green 0%; amber >0% to <10%; red ≥10%.",
+      "population": "In-progress task- and resource-dependent activities. LOE and WBS predecessors are ignored.",
+      "limitations": "Shows 0% until work is in progress. Fix by progressing the predecessor or correcting the logic.",
+      "classification": "Network logic",
+      "scored": true,
+      "score_note": "1 point at 0%, falling evenly to 0 at 10%.",
+      "source_measure": "XER Metrics[SM Out Of Sequence %]",
       "source_columns": [
-        "01 XER_TASK[total_float]",
-        "01 XER_TASK[task_type]",
-        "01 XER_TASK[status_code]"
+        "06 XER_PREDECESSOR[task_id_key]",
+        "06 XER_PREDECESSOR[pred_type]",
+        "06 XER_PREDECESSOR[predecessor_status_code]",
+        "06 XER_PREDECESSOR[predecessor_task_type]",
+        "01 XER_TASK[status_code]",
+        "01 XER_TASK[task_type]"
       ],
       "related_grid_counts": [
         {
-          "label": "Float >44",
-          "measure": "XER Metrics[Float >44]",
-          "meaning": "Number of eligible activities above 44 working days of total float."
+          "label": "Out of seq.",
+          "measure": "XER Metrics[Out Of Sequence Count]",
+          "meaning": "Number of in-progress activities out of sequence."
         }
-      ]
+      ],
+      "review_bands": {
+        "direction": "lower",
+        "target": 0,
+        "limit": 0.1
+      }
     },
     {
       "id": "negative_float",
       "sort_order": 70,
       "section": "Scored checks",
       "metric": "Negative total float",
-      "meaning": "Work with less than zero total float, indicating pressure against the schedule's required dates.",
-      "rationale": "Negative float highlights where the current schedule cannot meet a required date under its recorded logic and constraints. Review the cause and whether recovery action or a date decision is needed.",
-      "calculation": "Activities with total float below zero / core activities with known total float.",
-      "threshold": "Green: 0%; amber: >0% to 1%; red: >1%.",
-      "population": "Core activity population with nonblank total float.",
-      "limitations": "Missing float is excluded and disclosed. This check is distinct from longest-path membership.",
+      "meaning": "Activities forecast to miss a required date (total float below zero).",
+      "calculation": "Activities with total float < 0 / core activities with known float.",
+      "threshold": "Green 0%; amber >0% to <5%; red ≥5%.",
+      "population": "Core activities.",
+      "limitations": "Any negative float counts, however small. Missing float excluded.",
       "classification": "Schedule flexibility",
       "scored": true,
-      "score_note": "Equal weight: green 1 point; amber 0.5; red 0.",
+      "score_note": "1 point at 0%, falling evenly to 0 at 5%.",
       "source_measure": "XER Metrics[<0Float%]",
       "source_columns": [
         "01 XER_TASK[total_float]",
@@ -251,8 +252,8 @@
       ],
       "review_bands": {
         "direction": "lower",
-        "green_max": 0,
-        "amber_max": 0.01
+        "target": 0,
+        "limit": 0.05
       }
     },
     {
@@ -260,15 +261,14 @@
       "sort_order": 80,
       "section": "Scored checks",
       "metric": "Long remaining duration",
-      "meaning": "Work with more than 44 working days still to perform.",
-      "rationale": "Long remaining activities can conceal intermediate progress and delay the visibility of slippage. Review whether the work has enough measurable stages for reliable forecasting.",
-      "calculation": "Activities with remaining duration above 44 working days / core activities with known, nonnegative remaining duration.",
-      "threshold": "Green: <=5%; amber: >5% to 10%; red: >10%.",
-      "population": "Core activity population with usable remaining duration.",
-      "limitations": "Uses the duration still to perform rather than the activity's original duration. Exactly 44 days is not flagged. Missing or negative remaining durations are excluded and disclosed.",
+      "meaning": "Activities with more than 44 working days still to perform.",
+      "calculation": "Activities with remaining duration > 44d / core activities with known, non-negative remaining duration.",
+      "threshold": "Green ≤5%; amber >5% to <10%; red ≥10%.",
+      "population": "Core activities.",
+      "limitations": "Uses remaining, not original, duration. Exactly 44d is not flagged.",
       "classification": "Work definition",
       "scored": true,
-      "score_note": "Equal weight: green 1 point; amber 0.5; red 0.",
+      "score_note": "1 point at ≤5%, falling evenly to 0 at 10%.",
       "source_measure": "XER Metrics[HighDur%]",
       "source_columns": [
         "01 XER_TASK[remaining_duration]",
@@ -284,8 +284,8 @@
       ],
       "review_bands": {
         "direction": "lower",
-        "green_max": 0.05,
-        "amber_max": 0.1
+        "target": 0.05,
+        "limit": 0.1
       }
     },
     {
@@ -293,15 +293,14 @@
       "sort_order": 90,
       "section": "Scored checks",
       "metric": "Date integrity (invalid or missing dates)",
-      "meaning": "Activities with at least one missing required date, impossible date sequence or inconsistency with the data date or status.",
-      "rationale": "Inconsistent dates weaken the distinction between completed work and the forecast. Review these records before relying on progress, finish-date or baseline comparisons.",
-      "calculation": "Activities or milestones failing any date-integrity rule / all eligible activities and milestones. Each record is counted once.",
-      "threshold": "Green: 0%; amber: >0% to 0.1%; red: >0.1%.",
-      "population": "Task-dependent/resource-dependent activities and milestones in all statuses, including completed and unscheduled work; excludes LOE and WBS summaries.",
-      "limitations": "Tests include future actuals, overdue forecasts, inconsistent actual finish/status, missing data date, unknown status and reversed start/finish. Milestones require only their meaningful endpoint. Start is the imported status-aware field, not a separate raw actual-start column. Missing dates count as defects rather than leaving this denominator.",
+      "meaning": "Activities with a missing required date, or a date inconsistent with the data date or status.",
+      "calculation": "Activities and milestones failing any date rule / all eligible activities and milestones. Each counted once.",
+      "threshold": "Green 0%; amber >0% to <1%; red ≥1%.",
+      "population": "Task- and resource-dependent activities and milestones in all statuses. Excludes LOE and WBS summaries.",
+      "limitations": "Rules: future actuals, overdue forecasts, actual finish vs status, missing data date, unknown status, finish before start. Milestones need only their relevant date. Missing dates count as defects.",
       "classification": "Data integrity",
       "scored": true,
-      "score_note": "Equal weight: green 1 point; amber 0.5; red 0.",
+      "score_note": "1 point at 0%, falling evenly to 0 at 1%.",
       "source_measure": "XER Metrics[SM Invalid Dates %]",
       "source_columns": [
         "01 XER_TASK[Start]",
@@ -314,8 +313,8 @@
       "related_grid_counts": [],
       "review_bands": {
         "direction": "lower",
-        "green_max": 0,
-        "amber_max": 0.001
+        "target": 0,
+        "limit": 0.01
       }
     },
     {
@@ -323,85 +322,31 @@
       "sort_order": 0,
       "section": "Overall score",
       "metric": "Schedule health score",
-      "meaning": "A 0–100% summary of eight schedule health checks. Each assessed check has equal weight, regardless of its activity or relationship count.",
-      "rationale": "Helps prioritise schedule reviews. Read the individual results and evidence coverage alongside the score.",
-      "calculation": "Green (within band) = 1 point; amber (review) = 0.5; red (priority) = 0. Score = earned points / assessed checks × 100. Example: 3 green + 4 amber + 1 red gives (3 + 4 × 0.5 + 1 × 0) / 8 × 100 = 62.5%. Raw metric percentages are not averaged.",
-      "threshold": "Aim: 100%. Colour follows the worst assessed check: any red = red; otherwise any amber = amber; all green = green. N/A = grey.",
-      "population": "Included: missing logic, leads, positive lags, FS relationships, restrictive primary constraints, negative float, long remaining duration and date integrity. High float, the four selectable detail metrics and table-only counts have no additional weight.",
-      "limitations": "Coverage: assessed/applicable checks can be fewer than 8 when a check has no eligible population. A check with no usable result is omitted, never passed. Partial inputs still give a full-weight grade from usable records and a coverage warning; missing required dates count as defects. Compare scores with coverage in view. Invalid project/update selection, no incomplete discrete work or no assessable checks gives N/A. 100% means all assessed checks are green; it does not mean 100% complete, full evidence or assured delivery.",
+      "meaning": "0–100% summary of the ten scored checks, each with equal weight.",
+      "calculation": "Each check earns 1 point at its target, falling evenly to 0 at its limit. Score = average points × 100. Example: missing logic at 6% (target 5%, limit 10%) earns 0.8.",
+      "threshold": "Green ≥95%; amber 75% to <95%; red <75%.",
+      "population": "Missing logic, leads, lags over 5 days, FS relationships, restrictive constraints, out-of-sequence progress, negative total float, long remaining duration, date integrity and baseline coverage.",
+      "limitations": "A check with nothing to count shows 0%: a full point, except FS and baseline coverage, which score 0. Partial inputs still score, with a coverage warning. 100% means every check is at target, not assured delivery.",
       "classification": "Overall assessment",
       "scored": false,
-      "score_note": "The 62.5% example is red because one check is a priority. No separate percentage bands apply to the overall score.",
+      "score_note": "One check at its limit cannot turn the score red on its own; check colours show where to look.",
       "source_measure": "XER Metrics[Score]",
       "source_columns": [],
       "related_grid_counts": []
     },
     {
-      "id": "matched_missed_dates",
-      "sort_order": 110,
-      "section": "Selectable detail",
-      "metric": "Missed dates (matched)",
-      "meaning": "Matched activities due by the data date whose current finish is later than their original baseline finish.",
-      "rationale": "Shows how often comparable work due by now has finished late or is forecast to finish late. Review the affected activities to understand where the original delivery dates are slipping.",
-      "calculation": "Matched, baseline-due activities with current Finish later than baseline Finish / matched, baseline-due activities with both finish dates known.",
-      "threshold": "At most 5% — internal warning benchmark",
-      "population": "Whole-project task-dependent/resource-dependent activities, in all statuses, matched to the original baseline by activity code.",
-      "limitations": "Compares actual or forecast current finishes within the matched cohort. Missing required finishes are excluded and disclosed; unrelated Start/status warnings do not remove a usable finish comparison. Added or absent baseline activities do not enter the matched ratio. No assessable due work gives N/A. Red/green reflects the stated matched-cohort benchmark; partial inputs remain a separate warning.",
-      "classification": "Baseline delivery",
-      "scored": false,
-      "score_note": "Diagnostic only.",
-      "source_measure": "Schedule Metric Detail[SM Matched Baseline Missed %]",
-      "source_columns": [
-        "01 XER_TASK[task_code]",
-        "01 XER_TASK[Finish]",
-        "01 XER_TASK[UpdateDate]",
-        "01 XER_TASK[data_date]",
-        "01 XER_TASK[task_type]",
-        "01 XER_TASK[filename]"
-      ],
-      "related_grid_counts": []
-    },
-    {
-      "id": "matched_execution_index",
-      "sort_order": 120,
-      "section": "Selectable detail",
-      "metric": "Execution index (matched)",
-      "meaning": "Matched completions achieved by the data date compared with how many matched activities were due by that date.",
-      "rationale": "Compares the number of completions achieved with the number planned by now. It helps identify a shortfall in completion volume, while the missed-dates check shows whether the due activities themselves are late.",
-      "calculation": "Completed activities in the eligible matched cohort / activities in that same cohort with baseline Finish on or before the data date.",
-      "threshold": "At least 0.95 — internal benchmark",
-      "population": "Whole-project discrete activities matched to a dated baseline, with a known completion state. Completed means Complete with actual Finish on/before the data date; open means Not Started/In Progress with no actual Finish.",
-      "limitations": "Displayed as a ratio. Early completions can make it exceed 1. Missing/conflicting completion evidence is excluded and disclosed; unrelated Start/current forecast Finish warnings do not block it. Added or absent activities are outside this matched cohort. No eligible baseline-due work gives N/A. Red/green reflects the stated matched-cohort benchmark; partial inputs remain a separate warning.",
-      "classification": "Baseline delivery",
-      "scored": false,
-      "score_note": "Diagnostic only.",
-      "source_measure": "Schedule Metric Detail[SM Matched Baseline Execution Index]",
-      "source_columns": [
-        "01 XER_TASK[task_code]",
-        "01 XER_TASK[Finish]",
-        "01 XER_TASK[act_end_date]",
-        "01 XER_TASK[status_code]",
-        "01 XER_TASK[data_date]",
-        "01 XER_TASK[UpdateDate]",
-        "01 XER_TASK[task_type]",
-        "01 XER_TASK[filename]"
-      ],
-      "related_grid_counts": []
-    },
-    {
       "id": "baseline_coverage",
-      "sort_order": 130,
-      "section": "Selectable detail",
+      "sort_order": 95,
+      "section": "Scored checks",
       "metric": "Baseline coverage",
-      "meaning": "How much of the current activity population has a matching original baseline activity with a known finish date.",
-      "rationale": "Shows how much current work can support a dated baseline comparison. Lower coverage prompts a review of additions, missing dates or activity-code changes before interpreting delivery trends.",
-      "calculation": "Current discrete activities matched to a baseline activity with a nonblank Finish / all current discrete activities.",
-      "threshold": "100% dated coverage target",
-      "population": "Whole-project task-dependent/resource-dependent activities in all statuses. Requires recognised baseline provenance and unambiguous activity codes.",
-      "limitations": "100% means every current eligible activity has a dated baseline match. It does not mean every original baseline activity still exists. Baseline activities absent from the current snapshot and current additions are disclosed separately. This is a coverage indicator, not a schedule-performance score.",
+      "meaning": "Share of current activities that have a dated baseline match.",
+      "calculation": "Current activities matched to a baseline activity with a Finish / all current activities.",
+      "threshold": "Green ≥90%; amber >60% to <90%; red ≤60%.",
+      "population": "Whole project, all statuses, against the latest BL baseline file up to the selected update.",
+      "limitations": "Not changed by WBS selection. 0% if there is no valid BL file; repeated codes are disclosed, not penalised. New or renumbered activities lower it until the next re-baseline.",
       "classification": "Baseline coverage",
-      "scored": false,
-      "score_note": "Completeness indicator only; excluded from the score.",
+      "scored": true,
+      "score_note": "1 point at ≥90%, falling evenly to 0 at 60%.",
       "source_measure": "Schedule Metric Detail[SM Baseline Coverage %]",
       "source_columns": [
         "01 XER_TASK[task_code]",
@@ -416,41 +361,23 @@
           "measure": "Schedule Metric Detail[SM Baseline Coverage %]",
           "meaning": "The same whole-project coverage percentage shown in the counts grid."
         }
-      ]
-    },
-    {
-      "id": "longest_path_share",
-      "sort_order": 140,
-      "section": "Selectable detail",
-      "metric": "Longest-path share",
-      "meaning": "The share of remaining activities and milestones explicitly flagged as belonging to the project's longest path.",
-      "rationale": "Shows how much remaining work is identified as part of the longest path. Changes can help focus a review on where timely delivery depends on that sequence of work.",
-      "calculation": "Incomplete discrete activities and milestones with driving_path_flag = Y / all incomplete discrete activities and milestones.",
-      "threshold": "No universal target — diagnostic only",
-      "population": "Whole selected project/programme; task-dependent/resource-dependent activities and milestones that are Not Started or In Progress. LOE and WBS summaries are excluded.",
-      "limitations": "Uses the supplied Y flag only; it does not infer membership from float or blank flags. It is not a critical-path test or a recalculation of the network. Unlike the other detail options, it does not need a baseline comparison.",
-      "classification": "Delivery path",
-      "scored": false,
-      "score_note": "Diagnostic only.",
-      "source_measure": "Schedule Metric Detail[SM Longest Path %]",
-      "source_columns": [
-        "01 XER_TASK[driving_path_flag]",
-        "01 XER_TASK[status_code]",
-        "01 XER_TASK[task_type]"
       ],
-      "related_grid_counts": []
+      "review_bands": {
+        "direction": "higher",
+        "target": 0.9,
+        "limit": 0.6
+      }
     },
     {
       "id": "remaining_activity_count",
       "sort_order": 150,
       "section": "Counts-table context",
       "metric": "Remaining activities",
-      "meaning": "The number of incomplete discrete activities in this snapshot and selected core scope.",
-      "rationale": "Provides the scale of the remaining activity population so flagged counts and percentages can be interpreted in context. Changes may reflect progress, added work or restructuring.",
-      "calculation": "Count of Not Started/In Progress task-dependent and resource-dependent activities.",
+      "meaning": "Number of incomplete activities in the snapshot (the core population).",
+      "calculation": "Count of Not Started / In Progress task- and resource-dependent activities.",
       "threshold": "No pass/fail threshold",
-      "population": "Core activity population, including unscheduled work. Does not include milestones, completed work, LOE or WBS summaries.",
-      "limitations": "A population count, not a measure of remaining effort or duration. Known-input percentage denominators can be smaller. Do not sum this count across update rows.",
+      "population": "Includes unscheduled work. Excludes milestones, completed work, LOE and WBS summaries.",
+      "limitations": "Do not sum across updates.",
       "classification": "Activity population",
       "scored": false,
       "score_note": "Supports the activity checks; no separate score weight.",
@@ -472,12 +399,11 @@
       "sort_order": 160,
       "section": "Counts-table context",
       "metric": "Missing predecessors",
-      "meaning": "Incomplete discrete activities with no recorded incoming relationship.",
-      "rationale": "Identifies work whose start is not connected to preceding work. Review whether each activity is a legitimate starting point or is missing a dependency.",
-      "calculation": "Count of core activities whose No Predecessor flag is 1.",
+      "meaning": "Activities with no incoming relationship.",
+      "calculation": "Count of core activities with No Predecessor = 1.",
       "threshold": "Assessed through the combined Missing logic check",
-      "population": "Core activity population.",
-      "limitations": "A component of Missing logic. It overlaps Missing successors when both ends are absent; do not add the two counts to derive the combined numerator. To inspect these activities, right-click the update in the counts table and select Drill through > Missing Predecessor.",
+      "population": "Core activities.",
+      "limitations": "Part of Missing logic; overlaps Missing successors, so do not add them. Drill through > Missing Predecessor.",
       "classification": "Network logic",
       "scored": false,
       "score_note": "Included through combined Missing logic only; not scored separately.",
@@ -500,12 +426,11 @@
       "sort_order": 170,
       "section": "Counts-table context",
       "metric": "Missing successors",
-      "meaning": "Incomplete discrete activities with no recorded outgoing relationship.",
-      "rationale": "Identifies work whose completion is not connected to later work. Review whether each activity is a legitimate endpoint or whether its effect on downstream delivery is missing.",
-      "calculation": "Count of core activities whose No Successor flag is 1.",
+      "meaning": "Activities with no outgoing relationship.",
+      "calculation": "Count of core activities with No Successor = 1.",
       "threshold": "Assessed through the combined Missing logic check",
-      "population": "Core activity population.",
-      "limitations": "A component of Missing logic. It overlaps Missing predecessors when both ends are absent; do not add the two counts to derive the combined numerator. To inspect these activities, right-click the update in the counts table and select Drill through > Missing Successor.",
+      "population": "Core activities.",
+      "limitations": "Part of Missing logic; overlaps Missing predecessors, so do not add them. Drill through > Missing Successor.",
       "classification": "Network logic",
       "scored": false,
       "score_note": "Included through combined Missing logic only; not scored separately.",
@@ -522,37 +447,9 @@
           "meaning": "Number of eligible activities without a successor."
         }
       ]
-    },
-    {
-      "id": "zero_float_count",
-      "sort_order": 180,
-      "section": "Counts-table context",
-      "metric": "Zero total float",
-      "meaning": "Incomplete discrete activities with an explicitly recorded total float of exactly zero.",
-      "rationale": "Highlights work with no recorded total-float allowance. It provides a focused set of activities to review for timing sensitivity alongside the longest-path and negative-float results.",
-      "calculation": "Count of core activities whose total_float equals numeric zero; blank values are not counted.",
-      "threshold": "No universal target — diagnostic only",
-      "population": "Core activity population.",
-      "limitations": "Zero float is not the same as longest-path membership and is not a critical-path test. The grid shows a count, not a percentage.",
-      "classification": "Schedule flexibility",
-      "scored": false,
-      "score_note": "Diagnostic only.",
-      "source_measure": "XER Metrics[Task_Count_Float_0]",
-      "source_columns": [
-        "01 XER_TASK[total_float]",
-        "01 XER_TASK[status_code]",
-        "01 XER_TASK[task_type]"
-      ],
-      "related_grid_counts": [
-        {
-          "label": "Float = 0",
-          "measure": "XER Metrics[Task_Count_Float_0]",
-          "meaning": "Number of eligible activities with known zero total float."
-        }
-      ]
     }
   ],
-  "reading_legend": "Core colours: green = within band; amber = review; red = priority; grey = unavailable. High float and longest-path share are diagnostic blue.\nPartial inputs and unassessed checks are separate coverage warnings: hover for known/excluded records. Baseline coverage measures completeness, not performance.",
+  "reading_legend": "Check colours: green = at target (full point); amber = between target and limit (part point); red = at or past the limit (no point); grey = no valid selection.\nPartial inputs are a separate coverage warning: hover for known/excluded records.",
   "score_policy": {
     "scored_metric_ids": [
       "missing_logic",
@@ -562,15 +459,20 @@
       "restrictive_constraints",
       "negative_float",
       "long_remaining_duration",
-      "invalid_dates"
+      "invalid_dates",
+      "out_of_sequence",
+      "baseline_coverage"
     ],
     "points": {
-      "green": 1,
-      "amber": 0.5,
-      "red": 0
+      "at_target": 1,
+      "at_limit": 0,
+      "between": "linear"
     },
-    "aggregation": "sum_points/assessed_count",
-    "overall_colour": "worst_assessed_band",
+    "aggregation": "mean_points/assessed_count",
+    "overall_colour": {
+      "green_min": 0.95,
+      "amber_min": 0.75
+    },
     "coverage": "separate_warning"
   }
 }

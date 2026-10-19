@@ -85,7 +85,7 @@ def fixture_data(today):
         wbs_key = namespace + separator + "900"
         wbs.append([wbs_key, project])
         for identifier in [1001, 1002]:
-            tasks.append([namespace, project, csv, update, namespace + separator + str(identifier), wbs_key])
+            tasks.append([namespace, project, csv, update, namespace + separator + str(identifier), wbs_key, today])
     return rows, specs, tasks, wbs, sorted({source[3] for source in sources}), start
 
 
@@ -110,7 +110,7 @@ def build():
     literal_data = [
         ("11 XER_CALENDAR_DETAILED", support.NAMES, support.TYPES, rows),
         ("Project_Dimension", ["ProjectKey", "Project"], ["string", "string"], [["P1", "Project one"], ["P2", "Project two"]]),
-        ("01 XER_TASK", ["filename", "ProjectCode", "IsCsvSource", "UpdateDate", "task_id_key", "wbs_id_key"], ["string", "string", "boolean", "dateTime", "string", "string"], tasks),
+        ("01 XER_TASK", ["filename", "ProjectCode", "IsCsvSource", "UpdateDate", "task_id_key", "wbs_id_key", "data_date"], ["string", "string", "boolean", "dateTime", "string", "string", "dateTime"], tasks),
         ("03 XER_PROJWBS", ["wbs_id_key", "ProjectKey"], ["string", "string"], wbs),
         ("Fixture Identity", ["Marker", "AnchorDate"], ["string", "dateTime"], [[MARKER, today]]),
     ]

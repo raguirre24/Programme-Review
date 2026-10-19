@@ -4,10 +4,10 @@
   "position": {
     "x": 422,
     "y": 462,
-    "z": 39000,
+    "z": 36000,
     "height": 66,
     "width": 260,
-    "tabOrder": 39000
+    "tabOrder": 33000
   },
   "visual": {
     "visualType": "card",
@@ -23,7 +23,7 @@
                       "Entity": "Resource Scenario Measures"
                     }
                   },
-                  "Property": "Comparison Finish Date"
+                  "Property": "Comparison Finish Date Display"
                 }
               },
               "queryRef": "Resource Scenario Measures.Comparison Finish Date",

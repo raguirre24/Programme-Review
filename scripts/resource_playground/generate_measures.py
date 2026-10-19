@@ -23,9 +23,14 @@ def add(name, expression, description, fmt="#,0.########", hidden=False, folder=
     MEASURES.append((name, dedent(expression).strip(), description, fmt, hidden, folder))
 
 
+add("Scenario Anchor Date", """
+VAR DataDate = IF(HASONEVALUE('Project_Dimension'[ProjectKey]) && HASONEVALUE('CurrentDate'[UpdateDate]),
+    MAX('01 XER_TASK'[data_date]))
+RETURN IF(ISBLANK(DataDate), TODAY(), DataDate)
+""", "Data date of the selected project and update: the default and earliest scenario start. Falls back to today only when no single project and update is selected, where the calendar check already stops the scenario.", "dd-MM-yyyy", True, "Internal\\Inputs")
 add("Scenario Selected Start", """
-IF(NOT ISFILTERED('Scenario Start'), TODAY(), SELECTEDVALUE('Scenario Start'[Date]))
-""", "Start defaults to today only when its entire input table is unfiltered. An unmatched or ambiguous typed date remains blank.", "dd-MM-yyyy", True, "Internal\\Inputs")
+IF(NOT ISFILTERED('Scenario Start'), [Scenario Anchor Date], SELECTEDVALUE('Scenario Start'[Date]))
+""", "Start defaults to the data date only when its entire input table is unfiltered. An unmatched or ambiguous typed date remains blank.", "dd-MM-yyyy", True, "Internal\\Inputs")
 add("Scenario Selected Target", """
 VAR StartDate = [Scenario Selected Start]
 VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
@@ -82,7 +87,7 @@ RETURN IF(NOT ISBLANK(Quantity), MAX(0.00000001, ABS(Quantity) * 0.0000000000000
 add("Scenario Target Validation", """
 VAR StartDate = [Scenario Selected Start]
 VAR TargetDate = [Scenario Selected Target]
-VAR HorizonStart = TODAY()
+VAR HorizonStart = [Scenario Anchor Date]
 VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
 RETURN SWITCH(TRUE(),
     ISBLANK(TargetDate), "Enter one valid target date (DD-MM-YYYY).",
@@ -91,7 +96,7 @@ RETURN SWITCH(TRUE(),
         "Target date must be between " & FORMAT(HorizonStart, "dd-MM-yyyy") & " and " & FORMAT(HorizonEnd, "dd-MM-yyyy") & ".",
     TargetDate < StartDate, "Target finish is before the start date.",
     "")
-""", "Require a valid target from today through the available date coverage, and on or after start in both calculation modes.", "@", True, "Internal\\Validation")
+""", "Require a valid target from the data date through the available date coverage, and on or after start in both calculation modes.", "@", True, "Internal\\Validation")
 
 add("Scenario Input Validation", """
 VAR Quantity = [Scenario Selected Quantity]
@@ -102,7 +107,7 @@ VAR Basis = SELECTEDVALUE('Scenario Rate Basis'[Basis])
 VAR Rate = SELECTEDVALUE('Scenario Rate'[Value])
 VAR LimitMode = SELECTEDVALUE('Scenario Limit Mode'[Mode])
 VAR DailyLimit = SELECTEDVALUE('Scenario Limit'[Value])
-VAR HorizonStart = TODAY()
+VAR HorizonStart = [Scenario Anchor Date]
 VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
 RETURN
     SWITCH(TRUE(),
@@ -219,8 +224,8 @@ VAR ExceptionCorrection = SUMX(Exceptions,
     RETURN ReplacementWeight - NormalWeight)
 RETURN
     IF(NOT ISBLANK(StartDate) && NOT ISBLANK(Endpoint)
-        && StartDate >= TODAY() && StartDate <= CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
-        && Endpoint >= TODAY() && Endpoint <= CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+        && StartDate >= [Scenario Anchor Date] && StartDate <= CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+        && Endpoint >= [Scenario Anchor Date] && Endpoint <= CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
         && [Scenario Calendar Validation] = ""
         {('&& NOT ISBLANK(Rate)' if production else '')},
         IF(Endpoint < StartDate, 0,
@@ -266,7 +271,7 @@ VAR Capacity =
     IF(Endpoint <= SafeThrough, [Scenario Capacity Through],
         IF(SafeThrough < StartDate, 0,
             CALCULATE([Scenario Capacity Through], REMOVEFILTERS('Scenario Date'), TREATAS({ SafeThrough }, 'Scenario Date'[Date]))))
-RETURN IF(Endpoint >= TODAY() && Endpoint <= CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+RETURN IF(Endpoint >= [Scenario Anchor Date] && Endpoint <= CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
     && [Scenario Input Validation] = "" && [Scenario Calendar Validation] = "",
     SWITCH(TRUE(),
         Quantity = 0, 0,
@@ -275,7 +280,7 @@ RETURN IF(Endpoint >= TODAY() && Endpoint <= CALCULATE(MAX('Scenario Date'[Date]
         Capacity >= Quantity - Tolerance, Quantity,
         Endpoint > SafeThrough, BLANK(),
         MIN(Quantity, Capacity)))
-""", "Quantity allocated through an axis endpoint. Before today or beyond the available date coverage it is blank. Within that coverage, after unknown availability it remains Q only when completion is already proven; blanks are never coerced into zero capacity.", hidden=True, folder="Internal\\Allocation")
+""", "Quantity allocated through an axis endpoint. Before the data date or beyond the available date coverage it is blank. Within that coverage, after unknown availability it remains Q only when completion is already proven; blanks are never coerced into zero capacity.", hidden=True, folder="Internal\\Allocation")
 
 add("Scenario Boundary Quantity", """
 VAR StartDate = SELECTEDVALUE('Scenario Start'[Date])
@@ -381,7 +386,7 @@ add("Scenario Show Daily Row", """
 VAR AxisDate = SELECTEDVALUE('Scenario Date'[Date])
 VAR StartDate = SELECTEDVALUE('Scenario Start'[Date])
 RETURN IF(ISBLANK(AxisDate) || ISBLANK(StartDate) || AxisDate < StartDate
-    || StartDate < TODAY() || AxisDate > CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date')), 0,
+    || StartDate < [Scenario Anchor Date] || AxisDate > CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date')), 0,
     VAR ThroughBefore = IF(AxisDate <= StartDate, 0,
         CALCULATE([Scenario Allocated Through], REMOVEFILTERS('Scenario Date'), TREATAS({ AxisDate - 1 }, 'Scenario Date'[Date])))
     RETURN IF([Scenario Input Validation] = "" && [Scenario Calendar Validation] = ""
@@ -394,7 +399,7 @@ VAR PeriodEnd = MAX('Scenario Date'[Date])
 VAR StartDate = [Scenario Selected Start]
 VAR PeriodOrder = SELECTEDVALUE('Scenario Period'[Period Order])
 RETURN IF(NOT HASONEVALUE('Scenario Period'[Period Order]) || NOT (PeriodOrder IN { 1, 2 }) || ISBLANK(StartDate)
-    || StartDate < TODAY() || PeriodEnd < StartDate || PeriodStart > CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date')), 0,
+    || StartDate < [Scenario Anchor Date] || PeriodEnd < StartDate || PeriodStart > CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date')), 0,
     VAR ThroughBefore = IF(PeriodStart <= StartDate, 0,
         CALCULATE([Scenario Allocated Through], REMOVEFILTERS('Scenario Date'), TREATAS({ PeriodStart - 1 }, 'Scenario Date'[Date])))
     RETURN IF([Scenario Input Validation] = "" && [Scenario Calendar Validation] = ""
@@ -405,7 +410,7 @@ CHART_DISPLAY_KERNEL = r"""
 VAR StartDate = [Scenario Selected Start]
 VAR PeriodStart = MIN('Scenario Date'[Date])
 VAR PeriodEnd = MAX('Scenario Date'[Date])
-VAR HorizonStart = TODAY()
+VAR HorizonStart = [Scenario Anchor Date]
 VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
 @PERIOD_DECLARATIONS@
 VAR Quantity = [Scenario Selected Quantity]
@@ -530,7 +535,7 @@ VAR DayExceptions = FILTER(Exceptions, '11 XER_CALENDAR_DETAILED'[date] = Period
 RETURN IF(COUNTROWS(DayExceptions) = 1,
     MAXX(DayExceptions, '11 XER_CALENDAR_DETAILED'[work_hours]),
     MAXX(FILTER(WeekRows, '11 XER_CALENDAR_DETAILED'[day_of_week_num] = WEEKDAY(PeriodEnd, 2)), '11 XER_CALENDAR_DETAILED'[work_hours]))
-""", "Known calendar hours for an active daily audit row. Uses the shared display kernel, ignores chart period, and is bounded by today and the final date of the shared axis.", daily=True)
+""", "Known calendar hours for an active daily audit row. Uses the shared display kernel, ignores chart period, and is bounded by the data date and the final date of the shared axis.", daily=True)
 
 add_chart_display_measure("Scenario Daily Display Capacity", """
 MAXX(FILTER(WeekCapacity, [__Weekday] = WEEKDAY(PeriodEnd, 2)), [__Weight])
@@ -538,7 +543,7 @@ MAXX(FILTER(WeekCapacity, [__Weekday] = WEEKDAY(PeriodEnd, 2)), [__Weight])
 """, "Known daily production capacity before final quantity truncation. Hidden after completion or unknown coverage; shares the chart allocation arithmetic.", daily=True)
 
 add_chart_display_measure("Scenario Daily Display Quantity", "MAX(0, AllocatedEnd - AllocatedBefore)",
-    "Known allocated quantity for an active date inside the available date coverage from today. Independent of chart period; no visual-level measure filter is needed.", daily=True)
+    "Known allocated quantity for an active date inside the available date coverage from the data date. Independent of chart period; no visual-level measure filter is needed.", daily=True)
 
 add_chart_display_measure("Scenario Daily Display Cumulative", "AllocatedEnd",
     "Known cumulative allocation on an active daily audit row, from the same generated endpoint calculation as daily quantity.", daily=True)
@@ -561,6 +566,28 @@ RETURN IF([Scenario Input Validation] = "" && [Scenario Calendar Validation] = "
     {'&& [Scenario Target Validation] = ""' if name != 'Scenario Horizon Remaining' else ''}
     && NOT ISBLANK(Endpoint) && NOT ISBLANK(Allocated), {'MAX(0, [Scenario Selected Quantity] - Allocated)' if remaining else 'Allocated'})
 """, "Remaining quantity at the last provable calendar date; may be a partial forecast." if name == "Scenario Horizon Remaining" else "Quantity remaining after the inclusive target date." if remaining else "Quantity allocated by the inclusive selected target date.")
+
+# Card values: prompt for a target until one is typed, so the start + 30 days default is not presented as the user's target.
+for name in ["Scenario Target Quantity", "Scenario Target Remaining"]:
+    add(name + " Display", f"""
+IF(ISFILTERED('Scenario Target'), VAR Result = [{name}] RETURN IF(ISBLANK(Result), "", FORMAT(Result, IF(Result = INT(Result), "#,0", "#,0.##"))), "Enter target date")
+""", ("Card value: quantity allocated by the typed target date." if name.endswith("Quantity") else "Card value: quantity remaining after the typed target date.")
+        + " Reads \"Enter target date\" until one is typed; the start + 30 days default still drives the status, comparison table and required rate.", "@", folder="Display")
+
+# Card values: an empty value rather than "(Blank)" until the inputs and calendar allow a result.
+for name, fmt in [
+    ("Scenario Finish Date", '"dd-MM-yyyy"'),
+    ("Scenario Effective Start", '"dd-MM-yyyy"'),
+    ("Scenario Working Days", '"#,0"'),
+    ("Scenario Elapsed Days", '"#,0"'),
+    ("Scenario Required Rate", '"#,0.0"'),
+    ("Scenario Horizon Remaining", 'IF(Result = INT(Result), "#,0", "#,0.##")'),  # whole numbers without a trailing point
+    ("Comparison Finish Date", '"dd-MM-yyyy"'),
+]:
+    add(name + " Display", f"""
+VAR Result = [{name}]
+RETURN IF(ISBLANK(Result), "", FORMAT(Result, {fmt}))
+""", "Card value: " + name + ", shown as formatted text, empty rather than (Blank) until it can be calculated.", "@", folder="Display")
 
 add("Scenario Status", """
 VAR InputIssue = [Scenario Input Validation]
@@ -611,11 +638,11 @@ RETURN "Hypothetical resource distribution | " & Unit & " | " & Basis
         " | Known allocation through " & FORMAT(UnknownDate - 1, "dd-MM-yyyy"), ""))
 """, "Visible forecast and production-basis label for the resource distribution chart.", "@", folder="Display")
 add("Scenario Evaluation Window", """
-VAR WindowStart = TODAY()
+VAR WindowStart = [Scenario Anchor Date]
 VAR WindowEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
-RETURN "Start from today, " & FORMAT(WindowStart, "dd-MM-yyyy")
+RETURN "Start from data date, " & FORMAT(WindowStart, "dd-MM-yyyy")
     & " | Date coverage through " & FORMAT(WindowEnd, "dd-MM-yyyy") & " inclusive. Enter dates as DD-MM-YYYY."
-""", "Today's minimum start and the full shared date-axis coverage end. The upper boundary is independent of date, week and month filters.", "@", folder="Display")
+""", "The data-date minimum start and the full shared date-axis coverage end. The upper boundary is independent of date, week and month filters.", "@", folder="Display")
 
 add("Scenario Input Summary", """
 VAR Quantity = [Scenario Selected Quantity]
@@ -633,10 +660,10 @@ RETURN
     & " | Start: " & IF(ISBLANK(StartDate), "select date", FORMAT(StartDate, "dd-MM-yyyy"))
     & " | Rate: " & IF(ISBLANK(Rate), "unavailable", FORMAT(Rate, "#,0.##") & " " & Basis)
     & IF(LimitEnabled, " | Daily cap: " & FORMAT(SELECTEDVALUE('Scenario Limit'[Value]), "#,0.##"), " | No daily cap")
-    & " | Date coverage: " & FORMAT(TODAY(), "dd-MM-yyyy") & " to " & FORMAT(HorizonEnd, "dd-MM-yyyy")
+    & " | Date coverage: " & FORMAT([Scenario Anchor Date], "dd-MM-yyyy") & " to " & FORMAT(HorizonEnd, "dd-MM-yyyy")
     & " | Target: " & IF(ISBLANK([Scenario Selected Target]), "select date", FORMAT([Scenario Selected Target], "dd-MM-yyyy"))
     & ". Future exceptions are limited to those present in the selected source. Daily detail ends at completion or the date coverage limit."
-""", "Evaluated quantity, calendar name, dates and capacity assumptions inside the available date coverage from today.", "@", folder="Display")
+""", "Evaluated quantity, calendar name, dates and capacity assumptions inside the available date coverage from the data date.", "@", folder="Display")
 
 
 COMPARISON_CONTEXT = """VAR CalendarKey = SELECTEDVALUE('Scenario Comparison Calendar'[clndr_id_key])

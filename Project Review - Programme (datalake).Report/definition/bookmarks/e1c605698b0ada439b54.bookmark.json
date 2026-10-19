@@ -1,8 +1,9 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
-  "name": "e1c605698b0ada439b54",
   "displayName": "Compare",
+  "name": "e1c605698b0ada439b54",
   "options": {
+    "applyOnlyToTargetVisuals": true,
     "targetVisualNames": [
       "03410ac18c0fb7b35af1",
       "13675cfdfe89b2fc33d2",
@@ -26,9 +27,8 @@
       "f62b2a2433a4e7baa768",
       "fa2eaf106e8ead20b935"
     ],
-    "suppressData": true,
     "suppressActiveSection": true,
-    "applyOnlyToTargetVisuals": true
+    "suppressData": true
   },
   "explorationState": {
     "version": "1.0",
@@ -99,12 +99,6 @@
           "72d698c1dda5e61397ad": {
             "singleVisual": {
               "visualType": "textbox",
-              "objects": {}
-            }
-          },
-          "867f697ab376893338d9": {
-            "singleVisual": {
-              "visualType": "card",
               "objects": {}
             }
           },

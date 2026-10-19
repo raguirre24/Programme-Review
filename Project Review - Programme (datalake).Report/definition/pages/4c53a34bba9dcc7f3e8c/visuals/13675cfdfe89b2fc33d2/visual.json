@@ -4,10 +4,10 @@
   "position": {
     "x": 422,
     "y": 250,
-    "z": 41000,
+    "z": 38000,
     "height": 200,
     "width": 1340,
-    "tabOrder": 41000
+    "tabOrder": 35000
   },
   "visual": {
     "visualType": "tableEx",
@@ -45,7 +45,8 @@
               "queryRef": "Resource Scenario Measures.Comparison Required Rate",
               "nativeQueryRef": "Required rate",
               "active": true,
-              "displayName": "Required rate"
+              "displayName": "Required rate",
+              "format": "#,0.0"
             },
             {
               "field": {
@@ -61,7 +62,8 @@
               "queryRef": "Resource Scenario Measures.Comparison Target Remaining",
               "nativeQueryRef": "Remaining at target",
               "active": true,
-              "displayName": "Remaining at target"
+              "displayName": "Remaining at target",
+              "format": "#,0.0"
             },
             {
               "field": {
@@ -83,21 +85,6 @@
         }
       },
       "sortDefinition": {
-        "sort": [
-          {
-            "field": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "Scenario Comparison Calendar"
-                  }
-                },
-                "Property": "Inspection Calendar"
-              }
-            },
-            "direction": "Ascending"
-          }
-        ],
         "isDefaultSort": true
       }
     },

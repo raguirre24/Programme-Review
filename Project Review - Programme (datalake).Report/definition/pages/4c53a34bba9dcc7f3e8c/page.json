@@ -1,11 +1,69 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
   "name": "4c53a34bba9dcc7f3e8c",
-  "displayName": "Resource Playground",
+  "displayName": "Resource Calendars",
   "displayOption": "FitToPage",
   "height": 1080,
   "width": 1920,
-  "visibility": "HiddenInViewMode",
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "b8233762b04c541c9412",
+        "ordinal": 0,
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "01 XER_TASK"
+              }
+            },
+            "Property": "Is Unscheduled"
+          }
+        },
+        "type": "Categorical",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "0",
+              "Entity": "01 XER_TASK",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "In": {
+                  "Expressions": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "0"
+                          }
+                        },
+                        "Property": "Is Unscheduled"
+                      }
+                    }
+                  ],
+                  "Values": [
+                    [
+                      {
+                        "Literal": {
+                          "Value": "false"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "howCreated": "User"
+      }
+    ]
+  },
   "visualInteractions": [
     {
       "source": "fa2eaf106e8ead20b935",
@@ -239,27 +297,7 @@
     },
     {
       "source": "fa2eaf106e8ead20b935",
-      "target": "24fa50f52b137481bce5",
-      "type": "NoFilter"
-    },
-    {
-      "source": "fa2eaf106e8ead20b935",
-      "target": "312c5807516addd15648",
-      "type": "NoFilter"
-    },
-    {
-      "source": "fa2eaf106e8ead20b935",
       "target": "4592d52d0bff5fb7bdda",
-      "type": "NoFilter"
-    },
-    {
-      "source": "c4762ffe207ce780fc4d",
-      "target": "24fa50f52b137481bce5",
-      "type": "NoFilter"
-    },
-    {
-      "source": "c4762ffe207ce780fc4d",
-      "target": "312c5807516addd15648",
       "type": "NoFilter"
     },
     {
@@ -289,17 +327,7 @@
     },
     {
       "source": "13675cfdfe89b2fc33d2",
-      "target": "24fa50f52b137481bce5",
-      "type": "NoFilter"
-    },
-    {
-      "source": "13675cfdfe89b2fc33d2",
       "target": "2d84bec282bacc9e7c9c",
-      "type": "NoFilter"
-    },
-    {
-      "source": "13675cfdfe89b2fc33d2",
-      "target": "312c5807516addd15648",
       "type": "NoFilter"
     },
     {
@@ -360,11 +388,6 @@
     {
       "source": "13675cfdfe89b2fc33d2",
       "target": "7c85a4199efc0955fcf9",
-      "type": "NoFilter"
-    },
-    {
-      "source": "13675cfdfe89b2fc33d2",
-      "target": "94fefd2feb5616b2e747",
       "type": "NoFilter"
     },
     {
@@ -445,11 +468,6 @@
     {
       "source": "13675cfdfe89b2fc33d2",
       "target": "385d6b9651949eee2c43",
-      "type": "NoFilter"
-    },
-    {
-      "source": "13675cfdfe89b2fc33d2",
-      "target": "867f697ab376893338d9",
       "type": "NoFilter"
     },
     {
@@ -499,17 +517,7 @@
     },
     {
       "source": "4048e613efa20dcf8bd5",
-      "target": "24fa50f52b137481bce5",
-      "type": "NoFilter"
-    },
-    {
-      "source": "4048e613efa20dcf8bd5",
       "target": "2d84bec282bacc9e7c9c",
-      "type": "NoFilter"
-    },
-    {
-      "source": "4048e613efa20dcf8bd5",
-      "target": "312c5807516addd15648",
       "type": "NoFilter"
     },
     {
@@ -570,11 +578,6 @@
     {
       "source": "4048e613efa20dcf8bd5",
       "target": "7c85a4199efc0955fcf9",
-      "type": "NoFilter"
-    },
-    {
-      "source": "4048e613efa20dcf8bd5",
-      "target": "94fefd2feb5616b2e747",
       "type": "NoFilter"
     },
     {
@@ -659,11 +662,6 @@
     },
     {
       "source": "4048e613efa20dcf8bd5",
-      "target": "867f697ab376893338d9",
-      "type": "NoFilter"
-    },
-    {
-      "source": "4048e613efa20dcf8bd5",
       "target": "8ccd002fac5dfe15fae1",
       "type": "NoFilter"
     },
@@ -719,11 +717,6 @@
     },
     {
       "source": "fa2eaf106e8ead20b935",
-      "target": "867f697ab376893338d9",
-      "type": "NoFilter"
-    },
-    {
-      "source": "fa2eaf106e8ead20b935",
       "target": "8ccd002fac5dfe15fae1",
       "type": "NoFilter"
     },
@@ -759,11 +752,6 @@
     },
     {
       "source": "c4762ffe207ce780fc4d",
-      "target": "867f697ab376893338d9",
-      "type": "NoFilter"
-    },
-    {
-      "source": "c4762ffe207ce780fc4d",
       "target": "8ccd002fac5dfe15fae1",
       "type": "NoFilter"
     },
@@ -795,11 +783,6 @@
     {
       "source": "16643c36a5f294a63a18",
       "target": "72d698c1dda5e61397ad",
-      "type": "NoFilter"
-    },
-    {
-      "source": "16643c36a5f294a63a18",
-      "target": "867f697ab376893338d9",
       "type": "NoFilter"
     },
     {
@@ -829,17 +812,7 @@
     },
     {
       "source": "385d6b9651949eee2c43",
-      "target": "24fa50f52b137481bce5",
-      "type": "NoFilter"
-    },
-    {
-      "source": "385d6b9651949eee2c43",
       "target": "2d84bec282bacc9e7c9c",
-      "type": "NoFilter"
-    },
-    {
-      "source": "385d6b9651949eee2c43",
-      "target": "312c5807516addd15648",
       "type": "NoFilter"
     },
     {
@@ -900,11 +873,6 @@
     {
       "source": "385d6b9651949eee2c43",
       "target": "7c85a4199efc0955fcf9",
-      "type": "NoFilter"
-    },
-    {
-      "source": "385d6b9651949eee2c43",
-      "target": "94fefd2feb5616b2e747",
       "type": "NoFilter"
     },
     {
@@ -980,66 +948,12 @@
     {
       "source": "385d6b9651949eee2c43",
       "target": "fa2eaf106e8ead20b935",
+      "type": "NoFilter"
+    },
+    {
+      "source": "d80c22aa4fc16a4ee9d2",
+      "target": "bf2c5a9d2aaf3cf456d7",
       "type": "NoFilter"
     }
-  ],
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "b8233762b04c541c9412",
-        "ordinal": 0,
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "01 XER_TASK"
-              }
-            },
-            "Property": "Is Unscheduled"
-          }
-        },
-        "type": "Categorical",
-        "filter": {
-          "Version": 2,
-          "From": [
-            {
-              "Name": "0",
-              "Entity": "01 XER_TASK",
-              "Type": 0
-            }
-          ],
-          "Where": [
-            {
-              "Condition": {
-                "In": {
-                  "Expressions": [
-                    {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Source": "0"
-                          }
-                        },
-                        "Property": "Is Unscheduled"
-                      }
-                    }
-                  ],
-                  "Values": [
-                    [
-                      {
-                        "Literal": {
-                          "Value": "false"
-                        }
-                      }
-                    ]
-                  ]
-                }
-              }
-            }
-          ]
-        },
-        "howCreated": "User"
-      }
-    ]
-  }
+  ]
 }

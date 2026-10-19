@@ -4,10 +4,10 @@
   "position": {
     "x": 30,
     "y": 950,
-    "z": 62000,
+    "z": 51000,
     "height": 120,
     "width": 1855,
-    "tabOrder": 300
+    "tabOrder": 5000
   },
   "visual": {
     "visualType": "textbox",
@@ -19,7 +19,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Core colours: green = within band; amber = review; red = priority; grey = unavailable. High float and longest-path share are diagnostic blue.\nPartial inputs and unassessed checks are separate coverage warnings: hover for known/excluded records. Baseline coverage measures completeness, not performance.",
+                    "value": "Check colours: green = at target (full point); amber = between target and limit (part point); red = at or past the limit (no point); grey = no valid selection.\nPartial inputs are a separate coverage warning: hover for known/excluded records.",
                     "textStyle": {
                       "fontSize": "17pt",
                       "fontFamily": "Segoe UI",

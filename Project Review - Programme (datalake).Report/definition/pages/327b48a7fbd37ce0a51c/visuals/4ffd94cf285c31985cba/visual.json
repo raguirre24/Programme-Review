@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "4ffd94cf285c31985cba",
   "position": {
     "x": 1437.5,
@@ -7,7 +7,7 @@
     "z": 8000,
     "height": 300,
     "width": 350,
-    "tabOrder": 17000
+    "tabOrder": 24000
   },
   "visual": {
     "visualType": "shape",
@@ -96,7 +96,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Date integrity (custom) | 0% / ≤0.1%'"
+                  "Value": "'Date integrity (invalid or missing dates) | 0% / <1%'"
                 }
               }
             },

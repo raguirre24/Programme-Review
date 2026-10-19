@@ -210,6 +210,29 @@ table Resources
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
+	/// Card value: Actual Quantity, showing 0 rather than (Blank) when there is nothing to sum. Tables and charts keep the original measure.
+	measure 'Actual Quantity Card' = COALESCE([Actual Quantity], 0)
+		formatString: #,0
+		displayFolder: Card values
+		lineageTag: 27679dcd-5170-4952-a045-bfde63eb8aa8
+
+	/// Card value: Remaining Quantity, showing 0 rather than (Blank) when there is nothing to sum. Tables and charts keep the original measure.
+	measure 'Remaining Quantity Card' = COALESCE([Remaining Quantity], 0)
+		formatString: #,0
+		displayFolder: Card values
+		lineageTag: 9a87f143-3a35-4363-bc2e-a30365d4eb82
+
+	/// Card value: Total Quantity, showing 0 rather than (Blank) when there is nothing to sum. Tables and charts keep the original measure.
+	measure 'Total Quantity Card' = COALESCE([Total Quantity], 0)
+		formatString: #,0
+		displayFolder: Card values
+		lineageTag: 2783ac58-31f5-4d50-82f8-c5e7630129a1
+
+	/// Card value: Total Baseline Quantity, showing 0 rather than (Blank) when there is nothing to sum. Tables and charts keep the original measure.
+	measure 'Total Baseline Quantity Card' = COALESCE([Total Baseline Quantity], 0)
+		displayFolder: Card values
+		lineageTag: bb625451-f3d1-47b8-b886-423d6275f2bc
+
 	partition Resources = m
 		mode: import
 		source =

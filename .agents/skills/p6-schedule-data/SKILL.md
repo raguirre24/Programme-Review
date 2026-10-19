@@ -118,6 +118,20 @@ RETURN
 - **Visual JSON edits:** change only `Entity`/`Property`. Keep each projection's existing `queryRef` — series colours and markers are keyed to it (`"selector": {"metadata": "<queryRef>"}`) — and add `"displayName"` (the old label) where there isn't one, so legends don't read "… (History)". Update any bookmark that stores the visual's state (`grep` the visual id in `definition/bookmarks/`).
 - Calculation groups are not an option while visuals use implicit aggregations (they force `discourageImplicitMeasures`).
 
+### This workspace: status values differ by table
+
+- `'01 XER_TASK'[status_code]` holds labels: `"Not Started"`, `"In Progress"`, `"Complete"`.
+- `'06 XER_PREDECESSOR'[status_code]` (the successor) and `[predecessor_status_code]` keep raw P6 codes: `TK_NotStart`, `TK_Active`, `TK_Complete`. `[predecessor_task_type]` keeps `TT_*` codes.
+- A filter written with the other table's vocabulary matches nothing and fails silently (0 or BLANK, no error). Check the column's values with `SUMMARIZECOLUMNS` before relying on them. Example: the out-of-sequence measure in `'XER Metrics'` filters links with the TK codes.
+
+### This workspace: units, calendars and keys
+
+- **Already working days.** `'01 XER_TASK'[total_float]`, `[remaining_duration]` and `'06 XER_PREDECESSOR'[lag]` are converted upstream with each activity's own calendar (checked October 2026: on the 24/7 calendar a 4 h lag reads 0.17, and work spans about one calendar day per remaining day). Don't convert again; rule 2 applies to raw `*_hr_cnt` fields only.
+- **A missing calendar blanks float and duration.** An activity whose calendar is absent from `10 XER_CALENDARS` has blank `total_float` and `remaining_duration` although P6 scheduled it (early and late dates present). C6014 Sep-26: 94 activities and 51 milestones (packages UGL-DN025 and SSP). Treat blank as missing, never zero, and don't read it as unscheduled: the rule in *Detecting unscheduled / invalid tasks* misfires here, so check `late_end_date`. The float's sign survives: `late_end_date < early_end_date` matched P6's sign on 6,030 of 6,039 activities with float. Completed activities never have float.
+- **Dates are date-only.** The source SQL truncates start, finish, early, late, actual and data dates to `DATE`, so comparisons are by day and same-day hour differences are invisible.
+- **Keys.** `task_id_key` is `<XER filename>.<task_id>` (e.g. `C6014-C-BL01_20250701.xer.141630877`), unique per snapshot; calendar keys follow the same pattern. `'06 XER_PREDECESSOR'` has no `UpdateDate` and reaches its snapshot only through these keys. `ProjectCode` comes from the filename, so one code can span several P6 projects (`proj_id_key`) in the same XER.
+- **Activity codes can repeat within one snapshot.** J5068's July 2026 file holds `APP_7460` twice (one is `APP_7460-1` in every other update), and Power BI compares text without regard to case, so codes that differ only in case collide too. Key per-snapshot logic on `task_id_key`; treat a repeated `task_code` as something to disclose, and reduce one side to distinct codes before a cross-snapshot join so nothing is counted twice.
+
 ## Quality checks worth automating (DCMA-14 aligned)
 
 Missing predecessors/successors (dangling logic), leads (negative lag), lags, FS-relationship ratio, hard constraints, high float (> threshold), negative float, high duration, invalid dates (forecast before data date / actual after), resources on effort activities, missed activities vs baseline, critical-path integrity test. Each is a simple aggregate over TASK/TASKPRED once the semantics above are respected.

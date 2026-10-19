@@ -51,21 +51,25 @@ try {
     }
     $rates = @('MissingPredecessor%', 'MissingSuccessor%', 'HighFloat%', 'HighDur%', 'Lags%',
         '<0Lead%', '<0Float%', '0Float%', 'Constraint%', 'Score',
-        'SM Missing Logic %', 'SM FS %', 'SM Invalid Dates %')
+        'SM Missing Logic %', 'SM FS %', 'SM Invalid Dates %', 'SM Out Of Sequence %')
     $availableRates = @($rates | Where-Object { $metricsTable.Measures.Contains($_) })
+    # Baseline coverage is scored from the detail table's consolidated value.
+    $crossTable = @('SM Detail Value')
     $helpers = @('Task_Count', 'SM Eligible Relationship Count', 'SM Date Eligible Count',
         'SM Positive Lag Count', 'SM Missing Logic Count', 'SM FS Count', 'SM Restrictive Primary Count',
         'SM Invalid Dates Count', 'SM Applicable Checks', 'SM Assessed Checks', 'SM Passed Checks',
         'SM Partial Checks', 'SM Review Checks', 'SM Priority Checks', 'Float >44', 'Dur >44', 'Task_Count_Negative_Float', 'Task_Count_Float_0', 'Leads<0d',
+        'Lags>5d', 'Out Of Sequence Count', 'SM In Progress Count',
         'SM Missing Float Count', 'SM Missing Duration Count', 'SM Missing Lag Count',
         'SM Unknown Relationship Type Count', 'SM Unknown Constraint Count') |
         Where-Object { $metricsTable.Measures.Contains($_) }
     $colourMeasures = [ordered]@{
-        'HighFloat%' = 'SM High Float Colour'; 'HighDur%' = 'SM High Duration Colour';
+        'HighDur%' = 'SM High Duration Colour';
         '<0Lead%' = 'SM Leads Colour'; 'Lags%' = 'SM Lags Colour';
         'SM Missing Logic %' = 'SM Missing Logic Colour'; 'SM FS %' = 'SM FS Colour';
         '<0Float%' = 'SM Negative Float Colour'; 'Constraint%' = 'SM Constraints Colour';
-        'SM Invalid Dates %' = 'SM Invalid Dates Colour'; 'Score' = 'SM Score Colour'
+        'SM Invalid Dates %' = 'SM Invalid Dates Colour'; 'SM Out Of Sequence %' = 'SM Out Of Sequence Colour';
+        'SM Detail Value' = 'SM Baseline Coverage Colour'; 'Score' = 'SM Score Colour'
     }
     $presentationMeasures = @()
     if ($UseLoadedModel) { $presentationMeasures = @($colourMeasures.Values) + @('SM Coverage Tooltip', 'SM Score Status', 'SM Score Coverage') }
@@ -75,7 +79,7 @@ TREATAS({"Not Started","In Progress"},'01 XER_TASK'[status_code]),
 TREATAS({FALSE},'01 XER_TASK'[Is Unscheduled]),
 TREATAS({FALSE},'01 XER_TASK'[IsExcludedFromDataLake])
 '@
-    $projection = Get-MetricProjections -Names @($availableRates + $helpers + $presentationMeasures)
+    $projection = Get-MetricProjections -Names @($availableRates + $helpers + $crossTable + $presentationMeasures)
     $inventoryQuery = @"
 EVALUATE SUMMARIZECOLUMNS(
 '01 XER_TASK'[ProjectCode], '01 XER_TASK'[ProgrammeType], '01 XER_TASK'[UpdateDate],
@@ -112,17 +116,22 @@ TREATAS({$pointDate},CurrentDate[UpdateDate]),$pageFilters)
         '<0Float%' = @('Task_Count_Negative_Float', 'Task_Count', 'SM Missing Float Count')
         '0Float%' = @('Task_Count_Float_0', 'Task_Count', 'SM Missing Float Count')
         'HighDur%' = @('Dur >44', 'Task_Count', 'SM Missing Duration Count')
-        'Lags%' = @('SM Positive Lag Count', 'SM Eligible Relationship Count', 'SM Missing Lag Count')
+        'Lags%' = @('Lags>5d', 'SM Eligible Relationship Count', 'SM Missing Lag Count')
         '<0Lead%' = @('Leads<0d', 'SM Eligible Relationship Count', 'SM Missing Lag Count')
         'SM FS %' = @('SM FS Count', 'SM Eligible Relationship Count', 'SM Unknown Relationship Type Count')
         'Constraint%' = @('SM Restrictive Primary Count', 'Task_Count', 'SM Unknown Constraint Count')
+        'SM Out Of Sequence %' = @('Out Of Sequence Count', 'SM In Progress Count', $null)
     }
     $scoreLimits = [ordered]@{
         'SM Missing Logic %' = 0.05; '<0Lead%' = 0; 'Lags%' = 0.05; 'SM FS %' = 0.9;
-        'Constraint%' = 0.05; '<0Float%' = 0; 'HighDur%' = 0.05; 'SM Invalid Dates %' = 0
+        'Constraint%' = 0.05; '<0Float%' = 0; 'HighDur%' = 0.05; 'SM Invalid Dates %' = 0;
+        'SM Out Of Sequence %' = 0; 'SM Detail Value' = 0.9
     }
+    # Zero-point limits: points fall linearly from 1 at the target to 0 at the limit.
     $reviewLimits = @{ 'SM Missing Logic %'=.10; '<0Lead%'=.01; 'Lags%'=.10; 'SM FS %'=.80;
-        'Constraint%'=.10; '<0Float%'=.01; 'HighDur%'=.10; 'SM Invalid Dates %'=.001 }
+        'Constraint%'=.10; '<0Float%'=.05; 'HighDur%'=.10; 'SM Invalid Dates %'=.01;
+        'SM Out Of Sequence %'=.10; 'SM Detail Value'=.60 }
+    $higherIsBetter = @('SM FS %', 'SM Detail Value')
     $availableRecordChecks = 0
     $scoreCoverageChecks = 0
     $colourChecks = 0
@@ -142,7 +151,7 @@ TREATAS({$pointDate},CurrentDate[UpdateDate]),$pageFilters)
             $excluded = $row.PSObject.Properties["[$($spec[2])]"].Value
             $known = [double]$eligible - [double]$excluded
             Assert-ScheduleMetric ($known -ge 0) "$name has more excluded than eligible records."
-            $expected = if ($known -gt 0 -and $null -ne $count) { [double]$count / $known } else { $null }
+            $expected = if ($known -gt 0 -and $null -ne $count) { [double]$count / $known } else { 0.0 }
             $actual = $row.PSObject.Properties["[$name]"].Value
             Assert-ScheduleMetric (Test-ScheduleMetricNumber $actual $expected) "$name does not use its available-record denominator."
             $availableRecordChecks++
@@ -158,11 +167,13 @@ TREATAS({$pointDate},CurrentDate[UpdateDate]),$pageFilters)
             $value = $row.PSObject.Properties["[$name]"].Value
             if ($null -eq $value) { $bandPoints[$name]=$null; continue }
             $assessed++
-            if (($name -eq 'SM FS %' -and $value -ge $scoreLimits[$name]) -or
-                ($name -ne 'SM FS %' -and $value -le $scoreLimits[$name])) { $passed++; $points=1.0 }
-            elseif (($name -eq 'SM FS %' -and $value -ge $reviewLimits[$name]) -or
-                ($name -ne 'SM FS %' -and $value -le $reviewLimits[$name])) { $review++; $points=.5 }
-            else { $priority++; $points=0.0 }
+            $target = $scoreLimits[$name]; $limit = $reviewLimits[$name]
+            $points = if ($name -in $higherIsBetter) {
+                if ($value -ge $target) { 1.0 } elseif ($value -le $limit) { 0.0 } else { ([double]$value - $limit) / ($target - $limit) }
+            } else {
+                if ($value -le $target) { 1.0 } elseif ($value -ge $limit) { 0.0 } else { ($limit - [double]$value) / ($limit - $target) }
+            }
+            if ($points -ge 1) { $passed++ } elseif ($points -gt 0) { $review++ } else { $priority++ }
             $pointsTotal += $points
             $bandPoints[$name] = $points
             if ($observedRates.Contains($name)) {
@@ -183,11 +194,12 @@ TREATAS({$pointDate},CurrentDate[UpdateDate]),$pageFilters)
         if ($UseLoadedModel) {
             foreach ($name in $colourMeasures.Keys) {
                 $value = $row.PSObject.Properties["[$name]"].Value
+                # Score colour follows the score itself; check colours follow their points.
                 $points = if ($name -eq 'Score') {
-                    if ($priority -gt 0) {0} elseif ($review -gt 0) {.5} else {1}
+                    if ($null -eq $value) { $null } elseif ($value -ge .95) { 1 } elseif ($value -ge .75) { .5 } else { 0 }
                 } else { $bandPoints[$name] }
-                $expectedColour = if ($null -eq $value) { '#687078' } elseif ($name -eq 'HighFloat%') { '#3979A6' }
-                    elseif ($points -eq 1) { '#4b6110' } elseif ($points -eq .5) { '#9C6500' } else { '#6f0516' }
+                $expectedColour = if ($null -eq $value) { '#687078' }
+                    elseif ($points -ge 1) { '#4b6110' } elseif ($points -gt 0) { '#9C6500' } else { '#6f0516' }
                 $actualColour = $row.PSObject.Properties["[$($colourMeasures[$name])]"].Value
                 Assert-ScheduleMetric ($actualColour -eq $expectedColour) "$name colour disagrees with its severity band."
                 $colourChecks++
@@ -198,9 +210,9 @@ TREATAS({$pointDate},CurrentDate[UpdateDate]),$pageFilters)
             Assert-ScheduleMetric (($status -match 'partial inputs') -eq ($partial -gt 0)) 'Score partial-input label disagrees with coverage.'
             $tooltip = $row.'[SM Coverage Tooltip]'
             $tooltipSpecs = [ordered]@{
-                'High float' = 'HighFloat%'; 'Long remaining duration' = 'HighDur%';
-                'Positive lags' = 'Lags%'; 'Leads' = '<0Lead%'; 'FS (including PR_FS1)' = 'SM FS %';
-                'Negative float' = '<0Float%'; 'Restrictive primary constraints' = 'Constraint%'
+                'Out-of-sequence' = 'SM Out Of Sequence %'; 'Remaining duration >44d' = 'HighDur%';
+                'Lags >5d' = 'Lags%'; 'Leads' = '<0Lead%'; 'FS' = 'SM FS %';
+                'Negative float' = '<0Float%'; 'Constraints' = 'Constraint%'
             }
             foreach ($label in $tooltipSpecs.Keys) {
                 $spec = $observedRates[$tooltipSpecs[$label]]

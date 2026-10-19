@@ -7,7 +7,7 @@
     "z": 17000,
     "height": 137.5,
     "width": 445,
-    "tabOrder": 10000
+    "tabOrder": 17000
   },
   "visual": {
     "visualType": "lineChart",
@@ -33,25 +33,6 @@
           ],
           "showAll": true
         },
-        "Y": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "XER Metrics"
-                    }
-                  },
-                  "Property": "Lags% (History)"
-                }
-              },
-              "queryRef": "XER Metrics.Lags%",
-              "nativeQueryRef": "Lags% (History)",
-              "displayName": "Positive lags | ≤5% / ≤10%"
-            }
-          ]
-        },
         "Tooltips": {
           "projections": [
             {
@@ -68,6 +49,25 @@
               "queryRef": "XER Metrics.SM Coverage Tooltip (History)",
               "nativeQueryRef": "SM Coverage Tooltip (History)",
               "displayName": "Scope and coverage"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Metrics"
+                    }
+                  },
+                  "Property": "Lags% (History)"
+                }
+              },
+              "queryRef": "XER Metrics.Lags%",
+              "nativeQueryRef": "Lags% (History)",
+              "displayName": "Lags >5d | ≤5% / <10%"
             }
           ]
         }
@@ -352,7 +352,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Positive lags | ≤5% / ≤10% history'"
+                  "Value": "'Lags >5d | ≤5% / <10% history'"
                 }
               }
             }
@@ -378,6 +378,19 @@
                       "Percent": 0
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "visualTooltip": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

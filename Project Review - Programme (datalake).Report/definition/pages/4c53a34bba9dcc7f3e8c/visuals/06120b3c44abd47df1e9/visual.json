@@ -1,12 +1,12 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "06120b3c44abd47df1e9",
   "position": {
-    "x": 422,
-    "y": 1026,
-    "z": 0,
-    "height": 42,
-    "width": 1340,
+    "x": 422.3195656152767,
+    "y": 1027.0611921176255,
+    "z": 3000,
+    "height": 34.985052772863156,
+    "width": 1339.4277347324753,
     "tabOrder": 0
   },
   "visual": {
@@ -21,9 +21,8 @@
                   {
                     "value": "Calendar basis: weekly rules and dated exceptions in the selected update. Future holidays are included only when present in that calendar.",
                     "textStyle": {
-                      "fontSize": "11pt",
-                      "fontWeight": "normal",
-                      "fontFamily": "Segoe UI"
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "11pt"
                     }
                   }
                 ]

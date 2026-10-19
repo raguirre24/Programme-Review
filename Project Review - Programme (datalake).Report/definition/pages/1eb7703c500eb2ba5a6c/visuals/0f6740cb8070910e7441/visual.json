@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "0f6740cb8070910e7441",
   "position": {
     "x": 887.5,
@@ -699,6 +699,18 @@
                   "expr": {
                     "Literal": {
                       "Value": "'#000000'"
+                    }
+                  }
+                }
+              }
+            },
+            "level4Colour": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0
                     }
                   }
                 }

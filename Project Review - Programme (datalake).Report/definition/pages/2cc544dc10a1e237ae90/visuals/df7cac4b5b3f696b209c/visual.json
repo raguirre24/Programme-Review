@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "df7cac4b5b3f696b209c",
   "position": {
     "x": 425.35384615384612,
@@ -165,12 +165,6 @@
           {
             "queryRefs": [
               "03 XER_PROJWBS.Level_5"
-            ],
-            "isCollapsed": true
-          },
-          {
-            "queryRefs": [
-              "03 XER_PROJWBS.Level_6"
             ],
             "isCollapsed": true
           }

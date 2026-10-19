@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "4de2ffc08e51a2b74f2f",
   "position": {
-    "x": 24,
-    "y": 910,
-    "z": 2000,
-    "height": 65,
-    "width": 368,
-    "tabOrder": 3000
+    "x": 24.047462096242583,
+    "y": 893.55306526038225,
+    "z": 5000,
+    "height": 96.189848384970333,
+    "width": 368.30586684245219,
+    "tabOrder": 2000
   },
   "visual": {
     "visualType": "textbox",
@@ -21,9 +21,8 @@
                   {
                     "value": "Type one exact value and press Enter. Quantity × multiplier gives the total. Rate and limit use the selected unit.",
                     "textStyle": {
-                      "fontSize": "11pt",
-                      "fontWeight": "normal",
-                      "fontFamily": "Segoe UI"
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "11pt"
                     }
                   }
                 ]

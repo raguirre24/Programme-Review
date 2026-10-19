@@ -7,7 +7,7 @@
     "z": 37000,
     "height": 140,
     "width": 350,
-    "tabOrder": 35000
+    "tabOrder": 43000
   },
   "visual": {
     "visualType": "lineChart",
@@ -33,25 +33,6 @@
           ],
           "showAll": true
         },
-        "Y": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "XER Metrics"
-                    }
-                  },
-                  "Property": "SM FS % (History)"
-                }
-              },
-              "queryRef": "XER Metrics.MissingSuccessor%",
-              "nativeQueryRef": "SM FS % (History)",
-              "displayName": "FS relationships | ≥90% / ≥80%"
-            }
-          ]
-        },
         "Tooltips": {
           "projections": [
             {
@@ -68,6 +49,25 @@
               "queryRef": "XER Metrics.SM Coverage Tooltip (History)",
               "nativeQueryRef": "SM Coverage Tooltip (History)",
               "displayName": "Scope and coverage"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Metrics"
+                    }
+                  },
+                  "Property": "SM FS % (History)"
+                }
+              },
+              "queryRef": "XER Metrics.MissingSuccessor%",
+              "nativeQueryRef": "SM FS % (History)",
+              "displayName": "FS relationships | ≥90% / >80%"
             }
           ]
         }
@@ -378,7 +378,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'FS relationships | ≥90% / ≥80% history'"
+                  "Value": "'FS relationships | ≥90% / >80% history'"
                 }
               }
             }
@@ -411,6 +411,19 @@
               "expr": {
                 "Literal": {
                   "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "visualTooltip": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

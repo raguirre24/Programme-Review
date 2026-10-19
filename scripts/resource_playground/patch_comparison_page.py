@@ -98,7 +98,7 @@ def build() -> dict[Path, dict]:
 
     for label, output, caption, x, y, width, height, size in (
         ("selection-summary", "Comparison Selection Summary", "Comparison selection", 422, 196, 1340, 48, 13),
-        ("finish", "Comparison Finish Date", "Inspected calendar finish", 422, 462, 260, 66, 20),
+        ("finish", "Comparison Finish Date Display", "Inspected calendar finish", 422, 462, 260, 66, 20),
         ("status", "Comparison Status", "Inspected calendar status", 692, 462, 786, 66, 12),
     ):
         card = positioned(existing["03410ac18c0fb7b35af1"], label, x, y, width, height, 37 + len(visuals))

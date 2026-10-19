@@ -76,12 +76,12 @@ table 'XER Metrics'
 		lineageTag: f0c8dee3-9325-44bb-ac70-f3c622aae79a
 
 	/// Custom remaining duration >44 working days / work with valid duration; internal benchmark at or below 5%.
-	measure HighDur% = DIVIDE ( [Dur >44], [Task_Count] - [SM Missing Duration Count] )
+	measure HighDur% = IF ( [SM Snapshot Valid], COALESCE ( DIVIDE ( [Dur >44], [Task_Count] - [SM Missing Duration Count] ), 0 ) )
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Visuals
 		lineageTag: 197e994d-8397-448d-81b5-bd7fc09c90d2
 
-	/// Long-lag diagnostic retained by name. The scored Lags% uses all positive lags.
+	/// Lags over 5 working days into eligible work: the scored lag check's numerator. Short overlap lags are assessed through FS%.
 	measure Lags>5d =
 			VAR N = [Task_Count]
 			VAR WorkKeys = CALCULATETABLE ( VALUES ( '01 XER_TASK'[task_id_key] ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
@@ -101,13 +101,13 @@ table 'XER Metrics'
 		displayFolder: Schedule Quality Table
 		lineageTag: aebdccda-d216-44b1-a7ab-769cdc91a580
 
-	/// Positive lag relationships / relationships with known lag. Pass at or below 5%.
-	measure Lags% = DIVIDE ( [SM Positive Lag Count], [SM Eligible Relationship Count] - [SM Missing Lag Count] )
+	/// Lags over 5 working days / relationships with known lag. Full point at or below 5%, none at 10%.
+	measure Lags% = IF ( [SM Snapshot Valid], COALESCE ( DIVIDE ( [Lags>5d], [SM Eligible Relationship Count] - [SM Missing Lag Count] ), 0 ) )
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Visuals
 		lineageTag: 0b9d0cbd-83a4-4567-9276-c9e312b19b1d
 
-	/// Average of eight assessed internal review grades: within=1, review=0.5, priority=0. High float is diagnostic only; coverage is separate.
+	/// Average of the ten assessed checks' points: 1 at target, 0 at limit, proportional between. Input coverage is reported separately.
 	measure Score =
 			VAR CheckPoints =
 			{
@@ -118,7 +118,9 @@ table 'XER Metrics'
 			    [SM Constraints Points],
 			    [SM Negative Float Points],
 			    [SM High Duration Points],
-			    [SM Invalid Dates Points]
+			    [SM Invalid Dates Points],
+			    [SM Baseline Coverage Points],
+			    [SM Out Of Sequence Points]
 			}
 			VAR AssessedPoints = FILTER ( CheckPoints, NOT ISBLANK ( [Value] ) )
 			RETURN IF ( [Task_Count] > 0, AVERAGEX ( AssessedPoints, [Value] ) )
@@ -126,6 +128,7 @@ table 'XER Metrics'
 		displayFolder: Schedule Quality Score
 		lineageTag: 91a728f9-6f81-400e-a5e1-e9f966f407af
 
+	/// Incomplete discrete work with negative total float: the scored negative-float numerator.
 	measure Task_Count_Negative_Float =
 			VAR N = [Task_Count]
 			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
@@ -198,20 +201,20 @@ table 'XER Metrics'
 		displayFolder: Schedule Quality Visuals
 		lineageTag: a831311e-8b1d-4ec8-b39f-dccb280d63ff
 
-	/// Negative total float / work with known float. Pass only at zero; missing inputs are disclosed separately.
-	measure <0Float% = DIVIDE ( [Task_Count_Negative_Float], [Task_Count] - [SM Missing Float Count] )
+	/// Negative total float / work with known float. Full point at zero, none at 5%; missing inputs are disclosed separately.
+	measure <0Float% = IF ( [SM Snapshot Valid], COALESCE ( DIVIDE ( [Task_Count_Negative_Float], [Task_Count] - [SM Missing Float Count] ), 0 ) )
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Visuals
 		lineageTag: f2302477-2578-475c-a8c0-6c00a2b9dd98
 
 	/// Negative lag relationships / relationships with known lag. Pass only at zero.
-	measure <0Lead% = DIVIDE ( [Leads<0d], [SM Eligible Relationship Count] - [SM Missing Lag Count] )
+	measure <0Lead% = IF ( [SM Snapshot Valid], COALESCE ( DIVIDE ( [Leads<0d], [SM Eligible Relationship Count] - [SM Missing Lag Count] ), 0 ) )
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Visuals
 		lineageTag: 491fc125-f8aa-4e36-878d-89d555bf390c
 
 	/// Primary restrictive constraints only; at or below 5%. Secondary constraints are not available.
-	measure Constraint% = DIVIDE ( [SM Restrictive Primary Count], [Task_Count] - [SM Unknown Constraint Count] )
+	measure Constraint% = IF ( [SM Snapshot Valid], COALESCE ( DIVIDE ( [SM Restrictive Primary Count], [Task_Count] - [SM Unknown Constraint Count] ), 0 ) )
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Visuals
 		lineageTag: 2ad2059f-95e3-418a-9e3e-4a2659f6bb8c
@@ -357,7 +360,7 @@ table 'XER Metrics'
 		displayFolder: Schedule Quality Trend
 		lineageTag: 5b9091f0-61b8-4dde-ac05-8acf4eb1c168
 
-	/// One project/programme/update and unique activity codes are required. Clears health population filters, preserving project/WBS scope and RLS.
+	/// One project/programme/update from one XER file, with row keys present. Activity codes may repeat; baseline coverage discloses them. Clears health population filters, preserving project/WBS scope and RLS.
 	measure 'SM Snapshot Valid' =
 			VAR ScopeRows = CALCULATETABLE ( '01 XER_TASK', REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
 			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
@@ -367,12 +370,11 @@ table 'XER Metrics'
 			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) )
 			VAR SnapshotCount = COUNTROWS ( SUMMARIZE ( ScopeRows,
 			    '01 XER_TASK'[ProjectCode], '01 XER_TASK'[ProgrammeType], '01 XER_TASK'[UpdateDate] ) )
+			VAR FileCount = COUNTROWS ( SUMMARIZE ( ScopeRows, '01 XER_TASK'[filename] ) )
 			VAR MissingKeys = COUNTROWS ( FILTER ( ScopeRows,
 			    ISBLANK ( '01 XER_TASK'[ProjectCode] ) || ISBLANK ( '01 XER_TASK'[ProgrammeType] )
-			    || ISBLANK ( '01 XER_TASK'[UpdateDate] ) || ISBLANK ( '01 XER_TASK'[task_code] )
-			    || ISBLANK ( '01 XER_TASK'[task_id_key] ) ) )
-			RETURN SnapshotCount = 1 && MissingKeys = 0
-			    && COUNTROWS ( ScopeRows ) = COUNTROWS ( SUMMARIZE ( ScopeRows, '01 XER_TASK'[task_code] ) )
+			    || ISBLANK ( '01 XER_TASK'[UpdateDate] ) || ISBLANK ( '01 XER_TASK'[task_id_key] ) ) )
+			RETURN SnapshotCount = 1 && FileCount = 1 && MissingKeys = 0
 		formatString: 0
 		displayFolder: Schedule Quality Support
 		lineageTag: 6528d2a9-effa-4624-beb0-5d7827bc57c3
@@ -552,13 +554,13 @@ table 'XER Metrics'
 		lineageTag: 092ffb29-33ea-49f0-926e-ba5016931867
 
 	/// Union of missing predecessor/successor activities. Pass at or below 5%.
-	measure 'SM Missing Logic %' = DIVIDE ( [SM Missing Logic Count], [Task_Count] )
+	measure 'SM Missing Logic %' = IF ( [SM Snapshot Valid], COALESCE ( DIVIDE ( [SM Missing Logic Count], [Task_Count] ), 0 ) )
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Visuals
 		lineageTag: 7fbffa3b-6c57-47cd-8d7b-f253602f23e9
 
 	/// Finish-to-start share of relationships with recognised types; PR_FS1 counts as FS. Pass at or above 90%.
-	measure 'SM FS %' = DIVIDE ( [SM FS Count], [SM Eligible Relationship Count] - [SM Unknown Relationship Type Count] )
+	measure 'SM FS %' = IF ( [SM Snapshot Valid], COALESCE ( DIVIDE ( [SM FS Count], [SM Eligible Relationship Count] - [SM Unknown Relationship Type Count] ), 0 ) )
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Visuals
 		lineageTag: ccac7e63-2a44-4d12-935d-0027049761dc
@@ -613,18 +615,15 @@ table 'XER Metrics'
 		displayFolder: Schedule Quality Table
 		lineageTag: 5c1ed009-c35f-43bc-ac32-2efaf1c3ba06
 
-	/// Zero target with frequency-based review bands; every defect still requires correction. Includes complete activities and milestones. Start is the imported status-aware actual/forecast field, not a raw actual-start field.
-	measure 'SM Invalid Dates %' = DIVIDE ( [SM Invalid Dates Count], [SM Date Eligible Count] )
+	/// Zero target; points fall to none at 1%. Every defect still requires correction. Includes complete activities and milestones. Start is the imported status-aware actual/forecast field, not a raw actual-start field.
+	measure 'SM Invalid Dates %' = IF ( [SM Snapshot Valid], COALESCE ( DIVIDE ( [SM Invalid Dates Count], [SM Date Eligible Count] ), 0 ) )
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Visuals
 		lineageTag: 7dcee22c-29a3-4eb4-bd50-d5cf6fbe4705
 
 	measure 'SM Applicable Checks' =
-			// Four work checks, three relationship checks and one date-integrity check. High float is diagnostic only.
-			VAR HasWork = [Task_Count] > 0
-			VAR HasLinks = [SM Eligible Relationship Count] > 0
-			VAR HasEvents = [SM Date Eligible Count] > 0
-			RETURN IF ( HasWork, 4 + IF ( HasLinks, 3, 0 ) + IF ( HasEvents, 1, 0 ) )
+			// All ten checks return a value for any valid snapshot (0% when there is nothing to count).
+			IF ( [Task_Count] > 0, 10 )
 		formatString: #,0
 		displayFolder: Schedule Quality Score
 		lineageTag: 7d854546-5c7d-4099-8c23-a17b162501ff
@@ -639,7 +638,9 @@ table 'XER Metrics'
 			    [SM Constraints Points],
 			    [SM Negative Float Points],
 			    [SM High Duration Points],
-			    [SM Invalid Dates Points]
+			    [SM Invalid Dates Points],
+			    [SM Baseline Coverage Points],
+			    [SM Out Of Sequence Points]
 			}
 			RETURN IF ( [Task_Count] > 0, COALESCE ( COUNTROWS ( FILTER ( CheckPoints, NOT ISBLANK ( [Value] ) ) ), 0 ) )
 		formatString: #,0
@@ -656,7 +657,9 @@ table 'XER Metrics'
 			    [SM Constraints Points],
 			    [SM Negative Float Points],
 			    [SM High Duration Points],
-			    [SM Invalid Dates Points]
+			    [SM Invalid Dates Points],
+			    [SM Baseline Coverage Points],
+			    [SM Out Of Sequence Points]
 			}
 			RETURN IF ( [Task_Count] > 0, COALESCE ( COUNTROWS ( FILTER ( CheckPoints,
 			    NOT ISBLANK ( [Value] ) && [Value] == 1 ) ), 0 ) )
@@ -698,7 +701,7 @@ table 'XER Metrics'
 		displayFolder: Schedule Quality Score
 		lineageTag: 3f46da93-c566-4335-8c80-9fff3f75134a
 
-	measure 'SM High Float Colour' = IF ( ISBLANK ( [HighFloat%] ), "#687078", "#3979A6" )
+	measure 'SM High Float Colour' = IF ( ISBLANK ( [HighFloat%] ), "#687078", "#252525" )
 		formatString: @
 		displayFolder: Schedule Quality Formatting
 		lineageTag: ce57a426-7400-4545-a84c-bcaa06e189ef
@@ -706,7 +709,7 @@ table 'XER Metrics'
 	measure 'SM High Duration Colour' =
 			VAR GradeValue = [SM High Duration Points]
 			RETURN SWITCH ( TRUE (), ISBLANK ( GradeValue ), "#687078",
-			    GradeValue = 1, "#4b6110", GradeValue = 0.5, "#9C6500", "#6f0516" )
+			    GradeValue >= 1, "#4b6110", GradeValue > 0, "#9C6500", "#6f0516" )
 		formatString: @
 		displayFolder: Schedule Quality Formatting
 		lineageTag: 6d26e6fa-59f2-4b58-931f-f2cdbdc06105
@@ -714,7 +717,7 @@ table 'XER Metrics'
 	measure 'SM Leads Colour' =
 			VAR GradeValue = [SM Leads Points]
 			RETURN SWITCH ( TRUE (), ISBLANK ( GradeValue ), "#687078",
-			    GradeValue = 1, "#4b6110", GradeValue = 0.5, "#9C6500", "#6f0516" )
+			    GradeValue >= 1, "#4b6110", GradeValue > 0, "#9C6500", "#6f0516" )
 		formatString: @
 		displayFolder: Schedule Quality Formatting
 		lineageTag: 8d110e18-8f1f-4086-8a7e-21c67e2932be
@@ -722,7 +725,7 @@ table 'XER Metrics'
 	measure 'SM Lags Colour' =
 			VAR GradeValue = [SM Lags Points]
 			RETURN SWITCH ( TRUE (), ISBLANK ( GradeValue ), "#687078",
-			    GradeValue = 1, "#4b6110", GradeValue = 0.5, "#9C6500", "#6f0516" )
+			    GradeValue >= 1, "#4b6110", GradeValue > 0, "#9C6500", "#6f0516" )
 		formatString: @
 		displayFolder: Schedule Quality Formatting
 		lineageTag: 3f08e482-48c9-4eb7-93aa-e8806e70d768
@@ -730,7 +733,7 @@ table 'XER Metrics'
 	measure 'SM Missing Logic Colour' =
 			VAR GradeValue = [SM Missing Logic Points]
 			RETURN SWITCH ( TRUE (), ISBLANK ( GradeValue ), "#687078",
-			    GradeValue = 1, "#4b6110", GradeValue = 0.5, "#9C6500", "#6f0516" )
+			    GradeValue >= 1, "#4b6110", GradeValue > 0, "#9C6500", "#6f0516" )
 		formatString: @
 		displayFolder: Schedule Quality Formatting
 		lineageTag: 577216d6-a0ce-402a-9cf4-784233e67ca4
@@ -738,7 +741,7 @@ table 'XER Metrics'
 	measure 'SM FS Colour' =
 			VAR GradeValue = [SM FS Points]
 			RETURN SWITCH ( TRUE (), ISBLANK ( GradeValue ), "#687078",
-			    GradeValue = 1, "#4b6110", GradeValue = 0.5, "#9C6500", "#6f0516" )
+			    GradeValue >= 1, "#4b6110", GradeValue > 0, "#9C6500", "#6f0516" )
 		formatString: @
 		displayFolder: Schedule Quality Formatting
 		lineageTag: 09283ee4-08ed-4cd3-b649-c6641827ac41
@@ -746,7 +749,7 @@ table 'XER Metrics'
 	measure 'SM Negative Float Colour' =
 			VAR GradeValue = [SM Negative Float Points]
 			RETURN SWITCH ( TRUE (), ISBLANK ( GradeValue ), "#687078",
-			    GradeValue = 1, "#4b6110", GradeValue = 0.5, "#9C6500", "#6f0516" )
+			    GradeValue >= 1, "#4b6110", GradeValue > 0, "#9C6500", "#6f0516" )
 		formatString: @
 		displayFolder: Schedule Quality Formatting
 		lineageTag: d4ce2a65-2fbc-4e37-92c7-1b4b4b65e7ed
@@ -754,7 +757,7 @@ table 'XER Metrics'
 	measure 'SM Constraints Colour' =
 			VAR GradeValue = [SM Constraints Points]
 			RETURN SWITCH ( TRUE (), ISBLANK ( GradeValue ), "#687078",
-			    GradeValue = 1, "#4b6110", GradeValue = 0.5, "#9C6500", "#6f0516" )
+			    GradeValue >= 1, "#4b6110", GradeValue > 0, "#9C6500", "#6f0516" )
 		formatString: @
 		displayFolder: Schedule Quality Formatting
 		lineageTag: 1b9a485e-6758-492d-b59a-ef8a4dc334f0
@@ -762,16 +765,17 @@ table 'XER Metrics'
 	measure 'SM Invalid Dates Colour' =
 			VAR GradeValue = [SM Invalid Dates Points]
 			RETURN SWITCH ( TRUE (), ISBLANK ( GradeValue ), "#687078",
-			    GradeValue = 1, "#4b6110", GradeValue = 0.5, "#9C6500", "#6f0516" )
+			    GradeValue >= 1, "#4b6110", GradeValue > 0, "#9C6500", "#6f0516" )
 		formatString: @
 		displayFolder: Schedule Quality Formatting
 		lineageTag: d33bc63c-5252-4869-bd63-80ad0e9f0250
 
+	/// Headline colour from the score itself: green at 95% or more, amber at 75% or more, red below. Check colours show where to look.
 	measure 'SM Score Colour' =
 			VAR MetricValue = [Score]
 			RETURN SWITCH ( TRUE (), ISBLANK ( MetricValue ), "#687078",
-			    [SM Priority Checks] > 0, "#6f0516",
-			    [SM Review Checks] > 0, "#9C6500", "#4b6110" )
+			    MetricValue >= 0.95, "#4b6110",
+			    MetricValue >= 0.75, "#9C6500", "#6f0516" )
 		formatString: @
 		displayFolder: Schedule Quality Formatting
 		lineageTag: 1b430a82-d792-4e24-9408-3562bbcdf5bb
@@ -789,29 +793,24 @@ table 'XER Metrics'
 			VAR KnownLag = R - MissingLag
 			VAR KnownType = R - UnknownType
 			VAR KnownConstraint = N - UnknownConstraint
+			VAR Excluded =
+			    IF ( MissingFloat > 0, "float " & FORMAT ( MissingFloat, "#,0" ) & "; ", "" )
+			    & IF ( MissingDuration > 0, "duration " & FORMAT ( MissingDuration, "#,0" ) & "; ", "" )
+			    & IF ( MissingLag > 0, "lag " & FORMAT ( MissingLag, "#,0" ) & "; ", "" )
+			    & IF ( UnknownType > 0, "link type " & FORMAT ( UnknownType, "#,0" ) & "; ", "" )
+			    & IF ( UnknownConstraint > 0, "constraint " & FORMAT ( UnknownConstraint, "#,0" ) & "; ", "" )
 			RETURN IF ( [SM Snapshot Valid],
-			    "Incomplete discrete work: " & FORMAT ( N, "#,0" )
-			    & " | Relationships: " & FORMAT ( R, "#,0" )
-			    & UNICHAR ( 10 ) & "Known-input ratios: green = within target; amber = review; red = priority. Input coverage is separate; no usable inputs = N/A."
-			    & UNICHAR ( 10 ) & "Missing logic: " & FORMAT ( [SM Missing Logic Count], "#,0" ) & "/" & FORMAT ( N, "#,0" )
-			    & " | High float (diagnostic): " & FORMAT ( [Float >44], "#,0" ) & "/" & FORMAT ( KnownFloat, "#,0" )
-			    & " | Long remaining duration: " & FORMAT ( [Dur >44], "#,0" ) & "/" & FORMAT ( KnownDuration, "#,0" )
-			    & UNICHAR ( 10 ) & "Positive lags: " & FORMAT ( [SM Positive Lag Count], "#,0" ) & "/" & FORMAT ( KnownLag, "#,0" )
+			    "Missing logic: " & FORMAT ( [SM Missing Logic Count], "#,0" ) & "/" & FORMAT ( N, "#,0" )
 			    & " | Leads: " & FORMAT ( [Leads<0d], "#,0" ) & "/" & FORMAT ( KnownLag, "#,0" )
-			    & " | FS (including PR_FS1): " & FORMAT ( [SM FS Count], "#,0" ) & "/" & FORMAT ( KnownType, "#,0" )
-			    & UNICHAR ( 10 ) & "Negative float: " & FORMAT ( [Task_Count_Negative_Float], "#,0" ) & "/" & FORMAT ( KnownFloat, "#,0" )
-			    & " | Restrictive primary constraints: " & FORMAT ( [SM Restrictive Primary Count], "#,0" ) & "/" & FORMAT ( KnownConstraint, "#,0" )
-			    & " (secondary constraints unavailable)"
-			    & UNICHAR ( 10 ) & "Invalid/missing dates: " & FORMAT ( [SM Invalid Dates Count], "#,0" ) & "/" & FORMAT ( [SM Date Eligible Count], "#,0" )
-			    & " (all statuses; includes milestones; nonzero defects require correction)"
-			    & UNICHAR ( 10 ) & "Input coverage (usable/eligible; excluded) - float: " & FORMAT ( KnownFloat, "#,0" ) & "/" & FORMAT ( N, "#,0" ) & "; " & FORMAT ( MissingFloat, "0" ) & " excluded"
-			    & " | duration: " & FORMAT ( KnownDuration, "#,0" ) & "/" & FORMAT ( N, "#,0" ) & "; " & FORMAT ( MissingDuration, "0" ) & " excluded"
-			    & UNICHAR ( 10 ) & "Lag coverage: " & FORMAT ( KnownLag, "#,0" ) & "/" & FORMAT ( R, "#,0" ) & "; " & FORMAT ( MissingLag, "0" ) & " excluded"
-			    & " | relationship type: " & FORMAT ( KnownType, "#,0" ) & "/" & FORMAT ( R, "#,0" ) & "; " & FORMAT ( UnknownType, "0" ) & " excluded"
-			    & " | constraint type: " & FORMAT ( KnownConstraint, "#,0" ) & "/" & FORMAT ( N, "#,0" ) & "; " & FORMAT ( UnknownConstraint, "0" ) & " excluded"
-			    & UNICHAR ( 10 ) & "Internal review bands: logic/lags/constraints/duration <=5% within, >5-10% review, >10% priority; FS >=90% within, 80-<90% review, <80% priority. Leads/negative float: 0 within, >0-1% review, >1% priority. Dates: 0 within, >0-0.1% review, >0.1% priority."
-			    & UNICHAR ( 10 ) & "Definition v3: score averages eight assessed grades (within=1, review=0.5, priority=0). High float >44 working days is diagnostic only. Any priority check makes the score red; otherwise review is amber and all within is green. Coverage is reported separately; missing inputs are not passes. These are provisional internal review bands. Unscheduled work is included; datalake exclusions are retained.",
-			    "Unavailable - select one project/programme and an available update with unique activity codes."
+			    & " | Lags >5d: " & FORMAT ( [Lags>5d], "#,0" ) & "/" & FORMAT ( KnownLag, "#,0" )
+			    & UNICHAR ( 10 ) & "FS: " & FORMAT ( [SM FS Count], "#,0" ) & "/" & FORMAT ( KnownType, "#,0" )
+			    & " | Constraints: " & FORMAT ( [SM Restrictive Primary Count], "#,0" ) & "/" & FORMAT ( KnownConstraint, "#,0" )
+			    & " | Negative float: " & FORMAT ( [Task_Count_Negative_Float], "#,0" ) & "/" & FORMAT ( KnownFloat, "#,0" )
+			    & UNICHAR ( 10 ) & "Remaining duration >44d: " & FORMAT ( [Dur >44], "#,0" ) & "/" & FORMAT ( KnownDuration, "#,0" )
+			    & " | Dates: " & FORMAT ( [SM Invalid Dates Count], "#,0" ) & "/" & FORMAT ( [SM Date Eligible Count], "#,0" )
+			    & " | Out-of-sequence: " & FORMAT ( COALESCE ( [Out Of Sequence Count], 0 ), "#,0" ) & "/" & FORMAT ( COALESCE ( [SM In Progress Count], 0 ), "#,0" )
+			    & IF ( Excluded <> "", UNICHAR ( 10 ) & "Excluded for missing input: " & LEFT ( Excluded, LEN ( Excluded ) - 2 ), "" ),
+			    "Unavailable - select one project/programme and an available update."
 			)
 		formatString: @
 		displayFolder: Schedule Quality Coverage
@@ -992,82 +991,114 @@ table 'XER Metrics'
 		displayFolder: Schedule Quality Drill-through
 		lineageTag: 83d3c473-d268-5a30-91b7-7640ba209d03
 
+	/// 1 at or below the 5% target, 0 at or above the 10% limit, proportional between.
 	measure 'SM Missing Logic Points' =
 			VAR MetricValue = [SM Missing Logic %]
+			VAR Target = 0.05
+			VAR Limit = 0.10
 			RETURN IF ( NOT ISBLANK ( MetricValue ),
-			    SWITCH ( TRUE (), MetricValue <= 0.05, 1, MetricValue <= 0.10, 0.5, 0 )
+			    SWITCH ( TRUE (), MetricValue <= Target, 1.0, MetricValue >= Limit, 0.0,
+			        DIVIDE ( Limit - MetricValue, Limit - Target ) )
 			)
-		formatString: 0.0
+		formatString: 0.00
 		isHidden
 		displayFolder: Schedule Quality Score\Internal bands
 		lineageTag: c2dcb778-9118-5d31-a86d-e0ffde8b064f
 
+	/// 1 at 0%, 0 at or above the 1% limit, proportional between.
 	measure 'SM Leads Points' =
 			VAR MetricValue = [<0Lead%]
+			VAR Target = 0
+			VAR Limit = 0.01
 			RETURN IF ( NOT ISBLANK ( MetricValue ),
-			    SWITCH ( TRUE (), MetricValue <= 0, 1, MetricValue <= 0.01, 0.5, 0 )
+			    SWITCH ( TRUE (), MetricValue <= Target, 1.0, MetricValue >= Limit, 0.0,
+			        DIVIDE ( Limit - MetricValue, Limit - Target ) )
 			)
-		formatString: 0.0
+		formatString: 0.00
 		isHidden
 		displayFolder: Schedule Quality Score\Internal bands
 		lineageTag: 17507a89-463e-5935-bab5-98810f41a41f
 
+	/// Lags over 5 working days: 1 at or below the 5% target, 0 at or above the 10% limit, proportional between.
 	measure 'SM Lags Points' =
 			VAR MetricValue = [Lags%]
+			VAR Target = 0.05
+			VAR Limit = 0.10
 			RETURN IF ( NOT ISBLANK ( MetricValue ),
-			    SWITCH ( TRUE (), MetricValue <= 0.05, 1, MetricValue <= 0.10, 0.5, 0 )
+			    SWITCH ( TRUE (), MetricValue <= Target, 1.0, MetricValue >= Limit, 0.0,
+			        DIVIDE ( Limit - MetricValue, Limit - Target ) )
 			)
-		formatString: 0.0
+		formatString: 0.00
 		isHidden
 		displayFolder: Schedule Quality Score\Internal bands
 		lineageTag: bd12dee0-b112-560c-ab6c-a6b786b4b3f8
 
+	/// 1 at or above the 90% target, 0 at or below the 80% limit, proportional between.
 	measure 'SM FS Points' =
 			VAR MetricValue = [SM FS %]
+			VAR Target = 0.90
+			VAR Limit = 0.80
 			RETURN IF ( NOT ISBLANK ( MetricValue ),
-			    SWITCH ( TRUE (), MetricValue >= 0.90, 1, MetricValue >= 0.80, 0.5, 0 )
+			    SWITCH ( TRUE (), MetricValue >= Target, 1.0, MetricValue <= Limit, 0.0,
+			        DIVIDE ( MetricValue - Limit, Target - Limit ) )
 			)
-		formatString: 0.0
+		formatString: 0.00
 		isHidden
 		displayFolder: Schedule Quality Score\Internal bands
 		lineageTag: 107640e5-9570-5aac-b666-4934663ed668
 
+	/// 1 at or below the 5% target, 0 at or above the 10% limit, proportional between.
 	measure 'SM Constraints Points' =
 			VAR MetricValue = [Constraint%]
+			VAR Target = 0.05
+			VAR Limit = 0.10
 			RETURN IF ( NOT ISBLANK ( MetricValue ),
-			    SWITCH ( TRUE (), MetricValue <= 0.05, 1, MetricValue <= 0.10, 0.5, 0 )
+			    SWITCH ( TRUE (), MetricValue <= Target, 1.0, MetricValue >= Limit, 0.0,
+			        DIVIDE ( Limit - MetricValue, Limit - Target ) )
 			)
-		formatString: 0.0
+		formatString: 0.00
 		isHidden
 		displayFolder: Schedule Quality Score\Internal bands
 		lineageTag: 265693d8-6230-5247-b9b6-29c5219ce82b
 
+	/// Negative total float: 1 at 0%, 0 at or above the 5% limit, proportional between.
 	measure 'SM Negative Float Points' =
 			VAR MetricValue = [<0Float%]
+			VAR Target = 0
+			VAR Limit = 0.05
 			RETURN IF ( NOT ISBLANK ( MetricValue ),
-			    SWITCH ( TRUE (), MetricValue <= 0, 1, MetricValue <= 0.01, 0.5, 0 )
+			    SWITCH ( TRUE (), MetricValue <= Target, 1.0, MetricValue >= Limit, 0.0,
+			        DIVIDE ( Limit - MetricValue, Limit - Target ) )
 			)
-		formatString: 0.0
+		formatString: 0.00
 		isHidden
 		displayFolder: Schedule Quality Score\Internal bands
 		lineageTag: caa5f73e-ab1f-574e-a3f4-de87ad277abd
 
+	/// 1 at or below the 5% target, 0 at or above the 10% limit, proportional between.
 	measure 'SM High Duration Points' =
 			VAR MetricValue = [HighDur%]
+			VAR Target = 0.05
+			VAR Limit = 0.10
 			RETURN IF ( NOT ISBLANK ( MetricValue ),
-			    SWITCH ( TRUE (), MetricValue <= 0.05, 1, MetricValue <= 0.10, 0.5, 0 )
+			    SWITCH ( TRUE (), MetricValue <= Target, 1.0, MetricValue >= Limit, 0.0,
+			        DIVIDE ( Limit - MetricValue, Limit - Target ) )
 			)
-		formatString: 0.0
+		formatString: 0.00
 		isHidden
 		displayFolder: Schedule Quality Score\Internal bands
 		lineageTag: 3a92454e-0ad5-577b-be15-0149c22c27ad
 
+	/// 1 at 0%, 0 at or above the 1% limit, proportional between.
 	measure 'SM Invalid Dates Points' =
 			VAR MetricValue = [SM Invalid Dates %]
+			VAR Target = 0
+			VAR Limit = 0.01
 			RETURN IF ( NOT ISBLANK ( MetricValue ),
-			    SWITCH ( TRUE (), MetricValue <= 0, 1, MetricValue <= 0.001, 0.5, 0 )
+			    SWITCH ( TRUE (), MetricValue <= Target, 1.0, MetricValue >= Limit, 0.0,
+			        DIVIDE ( Limit - MetricValue, Limit - Target ) )
 			)
-		formatString: 0.0
+		formatString: 0.00
 		isHidden
 		displayFolder: Schedule Quality Score\Internal bands
 		lineageTag: ad669110-2f27-5fb9-8aed-97922e4c3e27
@@ -1082,10 +1113,12 @@ table 'XER Metrics'
 			    [SM Constraints Points],
 			    [SM Negative Float Points],
 			    [SM High Duration Points],
-			    [SM Invalid Dates Points]
+			    [SM Invalid Dates Points],
+			    [SM Baseline Coverage Points],
+			    [SM Out Of Sequence Points]
 			}
 			RETURN IF ( [Task_Count] > 0, COALESCE ( COUNTROWS ( FILTER ( CheckPoints,
-			    NOT ISBLANK ( [Value] ) && [Value] == 0.5 ) ), 0 ) )
+			    NOT ISBLANK ( [Value] ) && [Value] > 0 && [Value] < 1 ) ), 0 ) )
 		formatString: #,0
 		displayFolder: Schedule Quality Score
 		lineageTag: 32d91495-d09d-598d-bacc-5c63ae381210
@@ -1100,7 +1133,9 @@ table 'XER Metrics'
 			    [SM Constraints Points],
 			    [SM Negative Float Points],
 			    [SM High Duration Points],
-			    [SM Invalid Dates Points]
+			    [SM Invalid Dates Points],
+			    [SM Baseline Coverage Points],
+			    [SM Out Of Sequence Points]
 			}
 			RETURN IF ( [Task_Count] > 0, COALESCE ( COUNTROWS ( FILTER ( CheckPoints,
 			    NOT ISBLANK ( [Value] ) && [Value] == 0 ) ), 0 ) )
@@ -1125,6 +1160,106 @@ table 'XER Metrics'
 		formatString: @
 		displayFolder: Schedule Quality Coverage
 		lineageTag: 9e3aa57d-5300-5ffc-9025-0769345fe721
+
+	/// In-progress discrete work (TT_Task/TT_Rsrc): the out-of-sequence denominator. Includes unscheduled work; preserves datalake exclusions.
+	measure 'SM In Progress Count' =
+			VAR N = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			REMOVEFILTERS ( Filter_Activity_Status ),
+			REMOVEFILTERS ( Filter_TaskType ),
+			REMOVEFILTERS ( '00 CALENDAR' ),
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			'01 XER_TASK'[status_code] IN { "In Progress" },
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" } )
+			RETURN IF ( [SM Snapshot Valid], COALESCE ( N, 0 ) )
+		formatString: #,0
+		displayFolder: Schedule Quality Table
+		lineageTag: 6eeaad4c-5d93-49fa-8d6c-04ba785b7837
+
+	/// In-progress discrete work started before an FS predecessor finished, or before an SS predecessor started. LOE/WBS predecessors are ignored; predecessor status uses P6 codes.
+	measure 'Out Of Sequence Count' =
+			VAR N = [SM In Progress Count]
+			VAR WorkKeys = CALCULATETABLE ( VALUES ( '01 XER_TASK'[task_id_key] ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			REMOVEFILTERS ( Filter_Activity_Status ),
+			REMOVEFILTERS ( Filter_TaskType ),
+			REMOVEFILTERS ( '00 CALENDAR' ),
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			'01 XER_TASK'[status_code] IN { "In Progress" },
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" } )
+			VAR Result = CALCULATE ( DISTINCTCOUNT ( '06 XER_PREDECESSOR'[task_id_key] ),
+			    REMOVEFILTERS ( '01 XER_TASK' ),
+			    TREATAS ( WorkKeys, '06 XER_PREDECESSOR'[task_id_key] ),
+			    KEEPFILTERS ( '06 XER_PREDECESSOR'[predecessor_task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" } ),
+			    KEEPFILTERS ( FILTER ( ALL ( '06 XER_PREDECESSOR'[pred_type], '06 XER_PREDECESSOR'[predecessor_status_code] ),
+			        ( '06 XER_PREDECESSOR'[pred_type] IN { "PR_FS", "PR_FS1" } && '06 XER_PREDECESSOR'[predecessor_status_code] IN { "TK_NotStart", "TK_Active" } )
+			        || ( '06 XER_PREDECESSOR'[pred_type] = "PR_SS" && '06 XER_PREDECESSOR'[predecessor_status_code] = "TK_NotStart" ) ) ) )
+			RETURN IF ( [SM Snapshot Valid], IF ( N > 0, COALESCE ( Result, 0 ), 0 ) )
+		formatString: #,0
+		displayFolder: Schedule Quality Table
+		lineageTag: ee1b8ebd-80cd-4674-aa48-93102e319af3
+
+	/// Out-of-sequence in-progress work / in-progress work. Full point at 0%, none at 10%; no in-progress work shows 0%.
+	measure 'SM Out Of Sequence %' = IF ( [SM Snapshot Valid], COALESCE ( DIVIDE ( [Out Of Sequence Count], [SM In Progress Count] ), 0 ) )
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Schedule Quality Visuals
+		lineageTag: 6b2b033a-dfcd-4522-a67f-5eb5ecd2defe
+
+	/// History up to the selected update, evaluated at one disconnected UpdateHistory axis point.
+	measure 'SM Out Of Sequence % (History)' =
+			VAR SelectedUpdate = [SM Selected History Cutoff]
+			VAR AxisUpdate = SELECTEDVALUE ( UpdateHistory[UpdateDate] )
+			RETURN IF ( NOT ISBLANK ( AxisUpdate ) && AxisUpdate <= SelectedUpdate,
+			    CALCULATE ( [SM Out Of Sequence %], REMOVEFILTERS ( CurrentDate ),
+			        TREATAS ( { AxisUpdate }, '01 XER_TASK'[UpdateDate] ) )
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Schedule Quality Trend
+		lineageTag: be3da963-0da2-4dcb-939e-706d21b0155a
+
+	/// 1 at 0%, 0 at or above the 10% limit, proportional between.
+	measure 'SM Out Of Sequence Points' =
+			VAR MetricValue = [SM Out Of Sequence %]
+			VAR Target = 0
+			VAR Limit = 0.10
+			RETURN IF ( NOT ISBLANK ( MetricValue ),
+			    SWITCH ( TRUE (), MetricValue <= Target, 1.0, MetricValue >= Limit, 0.0,
+			        DIVIDE ( Limit - MetricValue, Limit - Target ) )
+			)
+		formatString: 0.00
+		isHidden
+		displayFolder: Schedule Quality Score\Internal bands
+		lineageTag: edf05d9d-b978-4014-bec4-64547bd6f82e
+
+	measure 'SM Out Of Sequence Colour' =
+			VAR GradeValue = [SM Out Of Sequence Points]
+			RETURN SWITCH ( TRUE (), ISBLANK ( GradeValue ), "#687078",
+			    GradeValue >= 1, "#4b6110", GradeValue > 0, "#9C6500", "#6f0516" )
+		formatString: @
+		displayFolder: Schedule Quality Formatting
+		lineageTag: 49f4e577-9562-40e0-b545-0bc51b5aeacf
+
+	/// Whole-project baseline coverage against the latest BL file: 1 at or above the 90% target, 0 at or below the 60% limit, proportional between.
+	measure 'SM Baseline Coverage Points' =
+			VAR MetricValue = [SM Detail Value]
+			VAR Target = 0.90
+			VAR Limit = 0.60
+			RETURN IF ( NOT ISBLANK ( MetricValue ),
+			    SWITCH ( TRUE (), MetricValue >= Target, 1.0, MetricValue <= Limit, 0.0,
+			        DIVIDE ( MetricValue - Limit, Target - Limit ) )
+			)
+		formatString: 0.00
+		isHidden
+		displayFolder: Schedule Quality Score\Internal bands
+		lineageTag: 67b963d1-3dae-4f7c-9094-e9b1240e1bb7
+
+	measure 'SM Baseline Coverage Colour' =
+			VAR GradeValue = [SM Baseline Coverage Points]
+			RETURN SWITCH ( TRUE (), ISBLANK ( GradeValue ), "#687078",
+			    GradeValue >= 1, "#4b6110", GradeValue > 0, "#9C6500", "#6f0516" )
+		formatString: @
+		displayFolder: Schedule Quality Formatting
+		lineageTag: 2d7ec45b-acb0-410e-9b78-e84e33a8d204
 
 	partition 'XER Metrics' = m
 		mode: import

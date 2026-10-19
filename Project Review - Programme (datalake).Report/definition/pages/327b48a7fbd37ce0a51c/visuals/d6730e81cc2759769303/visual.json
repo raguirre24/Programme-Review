@@ -4,10 +4,10 @@
   "position": {
     "x": 30,
     "y": 20,
-    "z": 62000,
+    "z": 53000,
     "height": 64,
     "width": 1420,
-    "tabOrder": 10
+    "tabOrder": 1000
   },
   "visual": {
     "visualType": "textbox",
@@ -21,10 +21,10 @@
                   {
                     "value": "Schedule Metrics | Metric guide",
                     "textStyle": {
-                      "fontSize": "28pt",
-                      "fontFamily": "Segoe UI",
                       "fontWeight": "bold",
-                      "color": "#BE281D"
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "28pt",
+                      "color": "#be281d"
                     }
                   }
                 ]

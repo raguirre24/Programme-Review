@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "b472a4a2b0c50d6843ad",
   "position": {
     "x": 441.52149671663983,
@@ -7,31 +7,12 @@
     "z": 11000,
     "height": 129.41147317556684,
     "width": 423.75913765332672,
-    "tabOrder": 3000
+    "tabOrder": 10000
   },
   "visual": {
     "visualType": "gauge",
     "query": {
       "queryState": {
-        "Y": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "XER Metrics"
-                    }
-                  },
-                  "Property": "HighFloat%"
-                }
-              },
-              "queryRef": "XER Metrics.HighFloat%",
-              "nativeQueryRef": "HighFloat%",
-              "displayName": "High float >44d | review indicator"
-            }
-          ]
-        },
         "Tooltips": {
           "projections": [
             {
@@ -50,6 +31,25 @@
               "displayName": "Scope and coverage"
             }
           ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Metrics"
+                    }
+                  },
+                  "Property": "SM Out Of Sequence %"
+                }
+              },
+              "queryRef": "XER Metrics.HighFloat%",
+              "nativeQueryRef": "SM Out Of Sequence %",
+              "displayName": "Out-of-sequence"
+            }
+          ]
         }
       },
       "sortDefinition": {
@@ -62,7 +62,7 @@
                     "Entity": "XER Metrics"
                   }
                 },
-                "Property": "HighFloat%"
+                "Property": "SM Out Of Sequence %"
               }
             },
             "direction": "Descending"
@@ -91,7 +91,7 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
                 }
               }
             }
@@ -132,7 +132,7 @@
                           "Entity": "XER Metrics"
                         }
                       },
-                      "Property": "SM High Float Colour"
+                      "Property": "SM Out Of Sequence Colour"
                     }
                   }
                 }
@@ -157,6 +157,13 @@
                   "Value": "0D"
                 }
               }
+            },
+            "target": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
             }
           }
         }
@@ -174,7 +181,7 @@
                           "Entity": "XER Metrics"
                         }
                       },
-                      "Property": "SM High Float Colour"
+                      "Property": "SM Out Of Sequence Colour"
                     }
                   }
                 }
@@ -216,7 +223,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'High float >44d | review indicator'"
+                  "Value": "'Out-of-sequence | 0% / <10%'"
                 }
               }
             },
@@ -227,6 +234,19 @@
                 }
               }
             },
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "visualTooltip": [
+        {
+          "properties": {
             "show": {
               "expr": {
                 "Literal": {

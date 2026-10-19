@@ -42,7 +42,6 @@
       "ae06bd72d522fde5d7e0",
       "b07222b4891891cf9403",
       "b472a4a2b0c50d6843ad",
-      "b619bdaf7bac4917bfef",
       "befe996cf56ab1546db0",
       "c7f71fd2e347b3f85c92",
       "ce14589ca97dacfb8ed1",
@@ -406,15 +405,6 @@
           "b472a4a2b0c50d6843ad": {
             "singleVisual": {
               "visualType": "gauge",
-              "objects": {},
-              "display": {
-                "mode": "hidden"
-              }
-            }
-          },
-          "b619bdaf7bac4917bfef": {
-            "singleVisual": {
-              "visualType": "slicer",
               "objects": {},
               "display": {
                 "mode": "hidden"

@@ -269,23 +269,23 @@ def build_page(output_dir: Path | None = None) -> None:
     input_slicer("limit", "Scenario Limit", "Value", "Limit · step 0.1", 260, 628, 132, 80, 9,
                  default=100, numeric=True, placeholder="0–10,000")
     input_slicer("start", "Scenario Start", "Date Input", "Start date · DD-MM-YYYY", 24, 724, 368, 80, 10,
-                 placeholder="Clear uses today's date")
+                 placeholder="Clear uses the data date")
     input_slicer("target", "Scenario Target", "Date Input", "Target finish · DD-MM-YYYY", 24, 814, 368, 80, 11,
                  placeholder="Clear uses start + 30 days, within window")
     textbox("input-help", "Type one exact value and press Enter. Quantity × multiplier gives the total. Rate and limit use the selected unit.",
             24, 910, 368, 65, size=11)
 
     for index, (output, caption) in enumerate([
-        ("Scenario Finish Date", "Potential finish"), ("Scenario Effective Start", "First working date"),
-        ("Scenario Working Days", "Working dates used"), ("Scenario Elapsed Days", "Elapsed days"),
-        ("Scenario Required Rate", "Required production"),
+        ("Scenario Finish Date Display", "Potential finish"), ("Scenario Effective Start Display", "First working date"),
+        ("Scenario Working Days Display", "Working dates used"), ("Scenario Elapsed Days Display", "Elapsed days"),
+        ("Scenario Required Rate Display", "Required production"),
     ]):
         card("result-" + str(index), output, caption, 422 + index * 270, 196, 260, 100)
     card("status", "Scenario Status", "Scenario status", 422, 302, 1340, 68, size=15)
     card("input-summary", "Scenario Input Summary", "Evaluated inputs", 422, 376, 1340, 80, size=12)
-    card("target-quantity", "Scenario Target Quantity", "Quantity by target", 422, 462, 300, 66, size=20)
-    card("target-remaining", "Scenario Target Remaining", "Remaining at target", 748, 462, 300, 66, size=20)
-    card("horizon-remaining", "Scenario Horizon Remaining", "Remaining at last known date", 1074, 462, 300, 66, size=20)
+    card("target-quantity", "Scenario Target Quantity Display", "Quantity by target", 422, 462, 300, 66, size=20)
+    card("target-remaining", "Scenario Target Remaining Display", "Remaining at target", 748, 462, 300, 66, size=20)
+    card("horizon-remaining", "Scenario Horizon Remaining Display", "Remaining at last known date", 1074, 462, 300, 66, size=20)
     period = dropdown("period", "Scenario Period", "Period", "Display period", 1492, 462, 270, 66, 12, "Month")
     period["visual"]["objects"]["general"][0]["properties"]["filter"] = period_filter("Month")
 

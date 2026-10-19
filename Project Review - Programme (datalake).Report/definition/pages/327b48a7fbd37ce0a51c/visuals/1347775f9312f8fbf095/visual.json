@@ -7,7 +7,7 @@
     "z": 29000,
     "height": 139.56139264031719,
     "width": 423.75913765332672,
-    "tabOrder": 23000
+    "tabOrder": 31000
   },
   "visual": {
     "visualType": "lineChart",
@@ -33,25 +33,6 @@
           ],
           "showAll": true
         },
-        "Y": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Schedule Metric Detail"
-                    }
-                  },
-                  "Property": "SM Detail History"
-                }
-              },
-              "queryRef": "XER Metrics.0Float%",
-              "nativeQueryRef": "SM Detail History",
-              "displayName": "Selected detail metric"
-            }
-          ]
-        },
         "Tooltips": {
           "projections": [
             {
@@ -68,6 +49,25 @@
               "queryRef": "Schedule Metric Detail.SM Detail Tooltip (History)",
               "nativeQueryRef": "SM Detail Tooltip (History)",
               "displayName": "Scope and coverage"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Schedule Metric Detail"
+                    }
+                  },
+                  "Property": "SM Detail History"
+                }
+              },
+              "queryRef": "XER Metrics.0Float%",
+              "nativeQueryRef": "SM Detail History",
+              "displayName": "Baseline coverage"
             }
           ]
         }
@@ -344,13 +344,8 @@
             },
             "text": {
               "expr": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Schedule Metric Detail"
-                    }
-                  },
-                  "Property": "SM Detail Title"
+                "Literal": {
+                  "Value": "'Baseline coverage | ≥90% / >60% history'"
                 }
               }
             }
@@ -376,6 +371,19 @@
                       "Percent": 0
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "visualTooltip": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

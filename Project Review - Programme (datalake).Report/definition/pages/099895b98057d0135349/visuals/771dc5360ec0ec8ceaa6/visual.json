@@ -23,7 +23,7 @@
                       "Entity": "Resources"
                     }
                   },
-                  "Property": "Actual Quantity"
+                  "Property": "Actual Quantity Card"
                 }
               },
               "queryRef": "Resources.Actual Quantity",
@@ -38,7 +38,7 @@
                       "Entity": "Resources"
                     }
                   },
-                  "Property": "Remaining Quantity"
+                  "Property": "Remaining Quantity Card"
                 }
               },
               "queryRef": "Resources.Remaining Quantity",
@@ -53,7 +53,7 @@
                       "Entity": "Resources"
                     }
                   },
-                  "Property": "Total Quantity"
+                  "Property": "Total Quantity Card"
                 }
               },
               "queryRef": "Resources.Total Quantity",
@@ -68,7 +68,7 @@
                       "Entity": "Resources"
                     }
                   },
-                  "Property": "Total Baseline Quantity"
+                  "Property": "Total Baseline Quantity Card"
                 }
               },
               "queryRef": "Resources.Total Baseline Quantity",
@@ -88,7 +88,7 @@
                     "Entity": "Resources"
                   }
                 },
-                "Property": "Actual Quantity"
+                "Property": "Actual Quantity Card"
               }
             },
             "direction": "Descending"

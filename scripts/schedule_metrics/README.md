@@ -42,8 +42,11 @@ metrics have been authored. Full validation also compares every metric's base
 value with its history endpoint for every loaded project/snapshot, verifies an
 earlier cutoff, and checks missing-snapshot BLANK behaviour.
 
-The direct detail runner checks all four selector options under label-only,
-ID-only and combined filters across all loaded snapshots and cutoffs. The cutoff
+The direct detail runner checks the baseline-coverage gauge against
+`SM Baseline Coverage %` and its history across all loaded snapshots and
+cutoffs, checks that each update compares with the latest BL-tagged file on or
+before it, plus provenance, partial/full coverage and repeated-code disclosure
+fixtures (a repeated code is disclosed, not penalised). The cutoff
 runner uses the report's actual project dimension to test available, unavailable,
 earlier, multiple and absent explicit date selections. An unavailable selected
 update must leave current gauges BLANK while retaining valid earlier history.
@@ -55,21 +58,24 @@ Date alignment has been removed without a replacement; invalid dates remains
 an independent scored check.
 
 The fixture script executes the actual proposed ratios and score expressions,
-substituting aggregate inputs through query-scoped measures. It checks the eight
+substituting aggregate inputs through query-scoped measures. It checks the ten
 scored checks, band boundaries, zero versus BLANK populations,
 available-record denominators, all-missing inputs, partial coverage labels and
 colours, and that false predicates do not count as passes. The review-band
-runner independently checks green = 1, amber = 0.5 and red = 0 scoring, high
-float's exclusion from the score, and separate input-coverage disclosure. Score
+runner independently checks graduated points (1 at target, 0 at limit, linear
+between) at exact and adjacent boundaries, the 95%/75% headline colour,
+0% (never blank) when a check has nothing to count, and separate input-coverage disclosure. Score
 uses only assessed checks while separately reporting applicable and partial checks.
 It does not replace physical task tables or pretend to simulate P6 scheduling.
 
 The population fixture redirects actual aggregate expressions to two query-local
 tables. It checks activity/milestone/LOE/WBS/completed exclusions, recovery of a
 row hidden by the old unscheduled filter, exactly 44 versus above 44, null versus
-zero float, union logic counting, hard versus soft constraints, positive lags
-below/equal/above five days, leads, the user-confirmed `PR_FS1` alias and a truly
-unknown relationship encoding. Known records remain in each rate's denominator;
+zero float, small (-5 days) and larger negative float both counting, union
+logic counting, hard versus soft constraints, positive lags below/equal/above five
+days, leads, out-of-sequence progress (an FS predecessor still active counts;
+an LOE predecessor or a started SS predecessor does not), the user-confirmed
+`PR_FS1` alias and a truly unknown relationship encoding. Known records remain in each rate's denominator;
 unusable records are excluded only from the affected check.
 
 The date fixture redirects the actual date-check expressions to 22 independent
@@ -89,11 +95,13 @@ refresh validation. The loaded cache may be older than the source systems.
 ## In-report metric guide
 
 The **Metric guide** button on Sched. Metrics opens a scrollable reference table
-on the same page. Its 18 rows cover eight scored checks, high float as a
-diagnostic, the overall score, four detail options and four supporting counts.
-Each row explains what the metric measures,
-why it matters, its calculation, target and interpretation. **Close guide** restores the charts without
-resetting project, update, WBS or detail selections. The guide uses a disconnected
+on the same page. Its 14 rows cover the overall score, the ten scored checks
+and three supporting counts.
+Each row gives a short definition, calculation, target, scope and key notes. **Close guide** restores the charts without
+resetting project, update or WBS selections.
+
+The detail panel shows baseline coverage only; `Schedule Metric Detail` holds a
+single Baseline coverage row and no selector. The guide uses a disconnected
 constant table and does not change any metric calculations or data sources.
 
 Edit `metric_guide.json` to maintain the definitions, then run
@@ -102,10 +110,10 @@ the existing guide content without rebuilding visuals or bookmarks. The full
 builder is reserved for explicitly approved guide creation or layout work.
 `metric_guide_manifest.json` records the existing guide IDs.
 Use `pwsh -File scripts/schedule_metrics/Validate-Guide.ps1` to check the loaded
-guide's 18 rows, content parity and disconnected state. If more than one report
+guide's 14 rows, content parity and disconnected state. If more than one report
 containing the guide is open, specify `-ServerAddress` and `-Catalog`.
 
-Native acceptance: open the guide, scroll through the execution-index and
-supporting-count rows, close it, and confirm the selected project/update/detail
+Native acceptance: open the guide, scroll through the baseline-coverage and
+supporting-count rows, close it, and confirm the selected project/update
 and chart values remain intact. In Desktop edit mode, use Ctrl+click on buttons;
 report readers use a normal click.

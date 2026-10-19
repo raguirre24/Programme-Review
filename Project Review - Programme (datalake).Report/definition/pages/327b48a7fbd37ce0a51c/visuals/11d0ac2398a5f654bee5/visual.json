@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "11d0ac2398a5f654bee5",
   "position": {
     "x": 1078.125,
@@ -7,7 +7,7 @@
     "z": 24000,
     "height": 300,
     "width": 350,
-    "tabOrder": 30000
+    "tabOrder": 38000
   },
   "visual": {
     "visualType": "shape",
@@ -108,7 +108,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Restrictive primary | ≤5% / ≤10%'"
+                  "Value": "'Restrictive primary | ≤5% / <10%'"
                 }
               }
             },

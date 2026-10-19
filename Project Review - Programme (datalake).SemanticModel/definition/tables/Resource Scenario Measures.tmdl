@@ -2,8 +2,8 @@
 table 'Resource Scenario Measures'
 	lineageTag: d7b30071-db90-5b01-9092-f0ffe3a752d1
 
-	/// Start defaults to today only when its entire input table is unfiltered. An unmatched or ambiguous typed date remains blank.
-	measure 'Scenario Selected Start' = IF(NOT ISFILTERED('Scenario Start'), TODAY(), SELECTEDVALUE('Scenario Start'[Date]))
+	/// Start defaults to the data date only when its entire input table is unfiltered. An unmatched or ambiguous typed date remains blank.
+	measure 'Scenario Selected Start' = IF(NOT ISFILTERED('Scenario Start'), [Scenario Anchor Date], SELECTEDVALUE('Scenario Start'[Date]))
 		formatString: dd-MM-yyyy
 		isHidden
 		displayFolder: Internal\Inputs
@@ -79,11 +79,11 @@ table 'Resource Scenario Measures'
 		displayFolder: Internal\Allocation
 		lineageTag: ee90ee68-44b1-5470-b50b-910c863fd71b
 
-	/// Require a valid target from today through the available date coverage, and on or after start in both calculation modes.
+	/// Require a valid target from the data date through the available date coverage, and on or after start in both calculation modes.
 	measure 'Scenario Target Validation' =
 			VAR StartDate = [Scenario Selected Start]
 			VAR TargetDate = [Scenario Selected Target]
-			VAR HorizonStart = TODAY()
+			VAR HorizonStart = [Scenario Anchor Date]
 			VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
 			RETURN SWITCH(TRUE(),
 			    ISBLANK(TargetDate), "Enter one valid target date (DD-MM-YYYY).",
@@ -107,7 +107,7 @@ table 'Resource Scenario Measures'
 			VAR Rate = [Scenario Selected Rate]
 			VAR LimitMode = [Scenario Selected Limit Mode]
 			VAR DailyLimit = [Scenario Selected Limit]
-			VAR HorizonStart = TODAY()
+			VAR HorizonStart = [Scenario Anchor Date]
 			VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
 			RETURN
 			    SWITCH(TRUE(),
@@ -274,8 +274,8 @@ table 'Resource Scenario Measures'
 			    RETURN ReplacementWeight - NormalWeight)
 			RETURN
 			    IF(NOT ISBLANK(StartDate) && NOT ISBLANK(Endpoint)
-			        && StartDate >= TODAY() && StartDate <= CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
-			        && Endpoint >= TODAY() && Endpoint <= CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			        && StartDate >= [Scenario Anchor Date] && StartDate <= CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			        && Endpoint >= [Scenario Anchor Date] && Endpoint <= CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
 			        && [Scenario Calendar Validation] = ""
 			        ,
 			        IF(Endpoint < StartDate, 0,
@@ -330,8 +330,8 @@ table 'Resource Scenario Measures'
 			    RETURN ReplacementWeight - NormalWeight)
 			RETURN
 			    IF(NOT ISBLANK(StartDate) && NOT ISBLANK(Endpoint)
-			        && StartDate >= TODAY() && StartDate <= CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
-			        && Endpoint >= TODAY() && Endpoint <= CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			        && StartDate >= [Scenario Anchor Date] && StartDate <= CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			        && Endpoint >= [Scenario Anchor Date] && Endpoint <= CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
 			        && [Scenario Calendar Validation] = ""
 			        ,
 			        IF(Endpoint < StartDate, 0,
@@ -421,8 +421,8 @@ table 'Resource Scenario Measures'
 			    RETURN ReplacementWeight - NormalWeight)
 			RETURN
 			    IF(NOT ISBLANK(StartDate) && NOT ISBLANK(Endpoint)
-			        && StartDate >= TODAY() && StartDate <= CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
-			        && Endpoint >= TODAY() && Endpoint <= CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			        && StartDate >= [Scenario Anchor Date] && StartDate <= CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			        && Endpoint >= [Scenario Anchor Date] && Endpoint <= CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
 			        && [Scenario Calendar Validation] = ""
 			        && NOT ISBLANK(Rate),
 			        IF(Endpoint < StartDate, 0,
@@ -432,7 +432,7 @@ table 'Resource Scenario Measures'
 		displayFolder: Internal\Sparse interval kernels
 		lineageTag: 362cae3b-939b-5102-82c7-4c7126794337
 
-	/// Quantity allocated through an axis endpoint. Before today or beyond the available date coverage it is blank. Within that coverage, after unknown availability it remains Q only when completion is already proven; blanks are never coerced into zero capacity.
+	/// Quantity allocated through an axis endpoint. Before the data date or beyond the available date coverage it is blank. Within that coverage, after unknown availability it remains Q only when completion is already proven; blanks are never coerced into zero capacity.
 	measure 'Scenario Allocated Through' =
 			VAR Quantity = [Scenario Selected Quantity]
 			VAR StartDate = [Scenario Selected Start]
@@ -443,7 +443,7 @@ table 'Resource Scenario Measures'
 			    IF(Endpoint <= SafeThrough, [Scenario Capacity Through],
 			        IF(SafeThrough < StartDate, 0,
 			            CALCULATE([Scenario Capacity Through], REMOVEFILTERS('Scenario Date'), TREATAS({ SafeThrough }, 'Scenario Date'[Date]))))
-			RETURN IF(Endpoint >= TODAY() && Endpoint <= CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
+			RETURN IF(Endpoint >= [Scenario Anchor Date] && Endpoint <= CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
 			    && [Scenario Input Validation] = "" && [Scenario Calendar Validation] = "",
 			    SWITCH(TRUE(),
 			        Quantity = 0, 0,
@@ -494,7 +494,7 @@ table 'Resource Scenario Measures'
 			VAR StartDate = [Scenario Selected Start]
 			VAR PeriodStart = MIN('Scenario Date'[Date])
 			VAR PeriodEnd = MAX('Scenario Date'[Date])
-			VAR HorizonStart = TODAY()
+			VAR HorizonStart = [Scenario Anchor Date]
 			VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
 			
 			VAR Quantity = [Scenario Selected Quantity]
@@ -730,7 +730,7 @@ table 'Resource Scenario Measures'
 			VAR AxisDate = SELECTEDVALUE('Scenario Date'[Date])
 			VAR StartDate = [Scenario Selected Start]
 			RETURN IF(ISBLANK(AxisDate) || ISBLANK(StartDate) || AxisDate < StartDate
-			    || StartDate < TODAY() || AxisDate > CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date')), 0,
+			    || StartDate < [Scenario Anchor Date] || AxisDate > CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date')), 0,
 			    VAR ThroughBefore = IF(AxisDate <= StartDate, 0,
 			        CALCULATE([Scenario Allocated Through], REMOVEFILTERS('Scenario Date'), TREATAS({ AxisDate - 1 }, 'Scenario Date'[Date])))
 			    RETURN IF([Scenario Input Validation] = "" && [Scenario Calendar Validation] = ""
@@ -747,7 +747,7 @@ table 'Resource Scenario Measures'
 			VAR StartDate = [Scenario Selected Start]
 			VAR PeriodOrder = SELECTEDVALUE('Scenario Period'[Period Order])
 			RETURN IF(NOT HASONEVALUE('Scenario Period'[Period Order]) || NOT (PeriodOrder IN { 1, 2 }) || ISBLANK(StartDate)
-			    || StartDate < TODAY() || PeriodEnd < StartDate || PeriodStart > CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date')), 0,
+			    || StartDate < [Scenario Anchor Date] || PeriodEnd < StartDate || PeriodStart > CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date')), 0,
 			    VAR ThroughBefore = IF(PeriodStart <= StartDate, 0,
 			        CALCULATE([Scenario Allocated Through], REMOVEFILTERS('Scenario Date'), TREATAS({ PeriodStart - 1 }, 'Scenario Date'[Date])))
 			    RETURN IF([Scenario Input Validation] = "" && [Scenario Calendar Validation] = ""
@@ -851,7 +851,7 @@ table 'Resource Scenario Measures'
 		displayFolder: Display
 		lineageTag: 3c656370-11e9-5fd1-a92c-33392a784b7b
 
-	/// Evaluated quantity, calendar name, dates and capacity assumptions inside the available date coverage from today.
+	/// Evaluated quantity, calendar name, dates and capacity assumptions inside the available date coverage from the data date.
 	measure 'Scenario Input Summary' =
 			VAR Quantity = [Scenario Selected Quantity]
 			VAR Unit = COALESCE([Scenario Selected Unit], "select unit")
@@ -868,7 +868,7 @@ table 'Resource Scenario Measures'
 			    & " | Start: " & IF(ISBLANK(StartDate), "select date", FORMAT(StartDate, "dd-MM-yyyy"))
 			    & " | Rate: " & IF(ISBLANK(Rate), "unavailable", FORMAT(Rate, "#,0.########") & " " & Basis)
 			    & IF(LimitEnabled, " | Daily cap: " & FORMAT([Scenario Selected Limit], "#,0.########"), " | No daily cap")
-			    & " | Date coverage: " & FORMAT(TODAY(), "dd-MM-yyyy") & " to " & FORMAT(HorizonEnd, "dd-MM-yyyy")
+			    & " | Date coverage: " & FORMAT([Scenario Anchor Date], "dd-MM-yyyy") & " to " & FORMAT(HorizonEnd, "dd-MM-yyyy")
 			    & " | Target: " & IF(ISBLANK([Scenario Selected Target]), "select date", FORMAT([Scenario Selected Target], "dd-MM-yyyy"))
 			    & ". Future exceptions are limited to those present in the selected source. Daily detail ends at completion or the date coverage limit."
 		formatString: @
@@ -880,7 +880,7 @@ table 'Resource Scenario Measures'
 			VAR StartDate = [Scenario Selected Start]
 			VAR PeriodStart = MIN('Scenario Date'[Date])
 			VAR PeriodEnd = MAX('Scenario Date'[Date])
-			VAR HorizonStart = TODAY()
+			VAR HorizonStart = [Scenario Anchor Date]
 			VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
 			VAR PeriodOrder = SELECTEDVALUE('Scenario Period'[Period Order])
 			VAR Quantity = [Scenario Selected Quantity]
@@ -982,7 +982,7 @@ table 'Resource Scenario Measures'
 			VAR StartDate = [Scenario Selected Start]
 			VAR PeriodStart = MIN('Scenario Date'[Date])
 			VAR PeriodEnd = MAX('Scenario Date'[Date])
-			VAR HorizonStart = TODAY()
+			VAR HorizonStart = [Scenario Anchor Date]
 			VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
 			VAR PeriodOrder = SELECTEDVALUE('Scenario Period'[Period Order])
 			VAR Quantity = [Scenario Selected Quantity]
@@ -1079,12 +1079,12 @@ table 'Resource Scenario Measures'
 		displayFolder: Display
 		lineageTag: aa292bcf-136e-576e-8665-6446c401232f
 
-	/// Known calendar hours for an active daily audit row. Uses the shared display kernel, ignores chart period, and is bounded by today and the final date of the shared axis.
+	/// Known calendar hours for an active daily audit row. Uses the shared display kernel, ignores chart period, and is bounded by the data date and the final date of the shared axis.
 	measure 'Scenario Daily Display Hours' = ```
 			VAR StartDate = [Scenario Selected Start]
 			VAR PeriodStart = MIN('Scenario Date'[Date])
 			VAR PeriodEnd = MAX('Scenario Date'[Date])
-			VAR HorizonStart = TODAY()
+			VAR HorizonStart = [Scenario Anchor Date]
 			VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
 			
 			VAR Quantity = [Scenario Selected Quantity]
@@ -1192,7 +1192,7 @@ table 'Resource Scenario Measures'
 			VAR StartDate = [Scenario Selected Start]
 			VAR PeriodStart = MIN('Scenario Date'[Date])
 			VAR PeriodEnd = MAX('Scenario Date'[Date])
-			VAR HorizonStart = TODAY()
+			VAR HorizonStart = [Scenario Anchor Date]
 			VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
 			
 			VAR Quantity = [Scenario Selected Quantity]
@@ -1293,12 +1293,12 @@ table 'Resource Scenario Measures'
 		displayFolder: Display
 		lineageTag: 359d6d8e-d1f9-5b75-a1f9-bbb9e02078eb
 
-	/// Known allocated quantity for an active date inside the available date coverage from today. Independent of chart period; no visual-level measure filter is needed.
+	/// Known allocated quantity for an active date inside the available date coverage from the data date. Independent of chart period; no visual-level measure filter is needed.
 	measure 'Scenario Daily Display Quantity' =
 			VAR StartDate = [Scenario Selected Start]
 			VAR PeriodStart = MIN('Scenario Date'[Date])
 			VAR PeriodEnd = MAX('Scenario Date'[Date])
-			VAR HorizonStart = TODAY()
+			VAR HorizonStart = [Scenario Anchor Date]
 			VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
 			
 			VAR Quantity = [Scenario Selected Quantity]
@@ -1400,7 +1400,7 @@ table 'Resource Scenario Measures'
 			VAR StartDate = [Scenario Selected Start]
 			VAR PeriodStart = MIN('Scenario Date'[Date])
 			VAR PeriodEnd = MAX('Scenario Date'[Date])
-			VAR HorizonStart = TODAY()
+			VAR HorizonStart = [Scenario Anchor Date]
 			VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
 			
 			VAR Quantity = [Scenario Selected Quantity]
@@ -1502,7 +1502,7 @@ table 'Resource Scenario Measures'
 			VAR StartDate = [Scenario Selected Start]
 			VAR PeriodStart = MIN('Scenario Date'[Date])
 			VAR PeriodEnd = MAX('Scenario Date'[Date])
-			VAR HorizonStart = TODAY()
+			VAR HorizonStart = [Scenario Anchor Date]
 			VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
 			
 			VAR Quantity = [Scenario Selected Quantity]
@@ -1599,11 +1599,11 @@ table 'Resource Scenario Measures'
 		displayFolder: Display
 		lineageTag: 141ef9da-1109-5240-bc0d-8f29fc012324
 
-	/// Today's minimum start and the full shared date-axis coverage end. The upper boundary is independent of date, week and month filters.
+	/// The data-date minimum start and the full shared date-axis coverage end. The upper boundary is independent of date, week and month filters.
 	measure 'Scenario Evaluation Window' =
-			VAR WindowStart = TODAY()
+			VAR WindowStart = [Scenario Anchor Date]
 			VAR WindowEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
-			RETURN "Start from today, " & FORMAT(WindowStart, "dd-MM-yyyy")
+			RETURN "Start from data date, " & FORMAT(WindowStart, "dd-MM-yyyy")
 			    & " | Date coverage through " & FORMAT(WindowEnd, "dd-MM-yyyy") & " inclusive. Enter dates as DD-MM-YYYY."
 		formatString: @
 		displayFolder: Display
@@ -1825,6 +1825,84 @@ table 'Resource Scenario Measures'
 		formatString: @
 		displayFolder: Comparison
 		lineageTag: cf0d5fa5-9fb8-59d0-a0df-d389ea49a377
+
+	/// Data date of the selected project and update: the default and earliest scenario start. Falls back to today only when no single project and update is selected, where the calendar check already stops the scenario.
+	measure 'Scenario Anchor Date' =
+			VAR DataDate = IF(HASONEVALUE('Project_Dimension'[ProjectKey]) && HASONEVALUE('CurrentDate'[UpdateDate]),
+			    MAX('01 XER_TASK'[data_date]))
+			RETURN IF(ISBLANK(DataDate), TODAY(), DataDate)
+		formatString: dd-MM-yyyy
+		isHidden
+		displayFolder: Internal\Inputs
+		lineageTag: 03092733-03e4-5e23-9e22-bfc0a62160d4
+
+	/// Card value: quantity allocated by the typed target date. Reads "Enter target date" until one is typed; the start + 30 days default still drives the status, comparison table and required rate.
+	measure 'Scenario Target Quantity Display' = IF(ISFILTERED('Scenario Target'), VAR Result = [Scenario Target Quantity] RETURN IF(ISBLANK(Result), "", FORMAT(Result, IF(Result = INT(Result), "#,0", "#,0.##"))), "Enter target date")
+		formatString: @
+		displayFolder: Display
+		lineageTag: f0cfb530-20b3-55de-b105-c7a3764ddc7c
+
+	/// Card value: quantity remaining after the typed target date. Reads "Enter target date" until one is typed; the start + 30 days default still drives the status, comparison table and required rate.
+	measure 'Scenario Target Remaining Display' = IF(ISFILTERED('Scenario Target'), VAR Result = [Scenario Target Remaining] RETURN IF(ISBLANK(Result), "", FORMAT(Result, IF(Result = INT(Result), "#,0", "#,0.##"))), "Enter target date")
+		formatString: @
+		displayFolder: Display
+		lineageTag: ba2c212d-114b-5d74-9042-b8cfef9b466a
+
+	/// Card value: Scenario Finish Date, shown as formatted text, empty rather than (Blank) until it can be calculated.
+	measure 'Scenario Finish Date Display' =
+			VAR Result = [Scenario Finish Date]
+			RETURN IF(ISBLANK(Result), "", FORMAT(Result, "dd-MM-yyyy"))
+		formatString: @
+		displayFolder: Display
+		lineageTag: f215ef4a-5cf2-5573-b046-5dca5228dd3d
+
+	/// Card value: Scenario Effective Start, shown as formatted text, empty rather than (Blank) until it can be calculated.
+	measure 'Scenario Effective Start Display' =
+			VAR Result = [Scenario Effective Start]
+			RETURN IF(ISBLANK(Result), "", FORMAT(Result, "dd-MM-yyyy"))
+		formatString: @
+		displayFolder: Display
+		lineageTag: fe190e5b-814b-5940-ae89-b30b53eed04f
+
+	/// Card value: Scenario Working Days, shown as formatted text, empty rather than (Blank) until it can be calculated.
+	measure 'Scenario Working Days Display' =
+			VAR Result = [Scenario Working Days]
+			RETURN IF(ISBLANK(Result), "", FORMAT(Result, "#,0"))
+		formatString: @
+		displayFolder: Display
+		lineageTag: bb04b6e5-612c-5b80-bb02-16ad1a28b6e8
+
+	/// Card value: Scenario Elapsed Days, shown as formatted text, empty rather than (Blank) until it can be calculated.
+	measure 'Scenario Elapsed Days Display' =
+			VAR Result = [Scenario Elapsed Days]
+			RETURN IF(ISBLANK(Result), "", FORMAT(Result, "#,0"))
+		formatString: @
+		displayFolder: Display
+		lineageTag: f270958f-fd60-508a-8622-8cc162f59da6
+
+	/// Card value: Scenario Required Rate, shown as formatted text, empty rather than (Blank) until it can be calculated.
+	measure 'Scenario Required Rate Display' =
+			VAR Result = [Scenario Required Rate]
+			RETURN IF(ISBLANK(Result), "", FORMAT(Result, "#,0.0"))
+		formatString: @
+		displayFolder: Display
+		lineageTag: 6f2b7954-3932-5a58-a911-6cfc5f775d1d
+
+	/// Card value: Scenario Horizon Remaining, shown as formatted text, empty rather than (Blank) until it can be calculated.
+	measure 'Scenario Horizon Remaining Display' =
+			VAR Result = [Scenario Horizon Remaining]
+			RETURN IF(ISBLANK(Result), "", FORMAT(Result, IF(Result = INT(Result), "#,0", "#,0.##")))
+		formatString: @
+		displayFolder: Display
+		lineageTag: 27b1ba56-a7eb-536d-9542-bbcecd72d2de
+
+	/// Card value: Comparison Finish Date, shown as formatted text, empty rather than (Blank) until it can be calculated.
+	measure 'Comparison Finish Date Display' =
+			VAR Result = [Comparison Finish Date]
+			RETURN IF(ISBLANK(Result), "", FORMAT(Result, "dd-MM-yyyy"))
+		formatString: @
+		displayFolder: Display
+		lineageTag: 22419aa5-ec51-5265-97a7-4b3222a6ca37
 
 	partition 'Resource Scenario Measures' = m
 		mode: import

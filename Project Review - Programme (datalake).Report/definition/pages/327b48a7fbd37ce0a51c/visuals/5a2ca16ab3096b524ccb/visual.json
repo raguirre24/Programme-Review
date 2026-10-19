@@ -7,7 +7,7 @@
     "z": 15000,
     "height": 139.56139264031719,
     "width": 423.75913765332672,
-    "tabOrder": 8000
+    "tabOrder": 15000
   },
   "visual": {
     "visualType": "lineChart",
@@ -33,25 +33,6 @@
           ],
           "showAll": true
         },
-        "Y": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "XER Metrics"
-                    }
-                  },
-                  "Property": "HighFloat% (History)"
-                }
-              },
-              "queryRef": "XER Metrics.HighFloat%",
-              "nativeQueryRef": "HighFloat% (History)",
-              "displayName": "High float >44d | review indicator"
-            }
-          ]
-        },
         "Tooltips": {
           "projections": [
             {
@@ -68,6 +49,25 @@
               "queryRef": "XER Metrics.SM Coverage Tooltip (History)",
               "nativeQueryRef": "SM Coverage Tooltip (History)",
               "displayName": "Scope and coverage"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Metrics"
+                    }
+                  },
+                  "Property": "SM Out Of Sequence % (History)"
+                }
+              },
+              "queryRef": "XER Metrics.HighFloat%",
+              "nativeQueryRef": "SM Out Of Sequence % (History)",
+              "displayName": "Out-of-sequence"
             }
           ]
         }
@@ -107,7 +107,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#3979A6'"
+                      "Value": "'#d50000'"
                     }
                   }
                 }
@@ -117,8 +117,9 @@
               "solid": {
                 "color": {
                   "expr": {
-                    "Literal": {
-                      "Value": "'#3979A6'"
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0
                     }
                   }
                 }
@@ -310,8 +311,9 @@
               "solid": {
                 "color": {
                   "expr": {
-                    "Literal": {
-                      "Value": "'#3979A6'"
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": 0
                     }
                   }
                 }
@@ -345,7 +347,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'High float >44d | review indicator history'"
+                  "Value": "'Out-of-sequence | 0% / <10% history'"
                 }
               }
             }
@@ -378,6 +380,19 @@
         }
       ],
       "divider": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "visualTooltip": [
         {
           "properties": {
             "show": {

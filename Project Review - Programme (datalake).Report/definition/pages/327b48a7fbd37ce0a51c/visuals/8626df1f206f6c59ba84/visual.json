@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "8626df1f206f6c59ba84",
   "position": {
     "x": 718.33333333333337,
@@ -7,7 +7,7 @@
     "z": 25000,
     "height": 300,
     "width": 350,
-    "tabOrder": 31000
+    "tabOrder": 39000
   },
   "visual": {
     "visualType": "shape",
@@ -96,7 +96,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Negative float | 0% / ≤1%'"
+                  "Value": "'Negative float | 0% / <5%'"
                 }
               }
             },

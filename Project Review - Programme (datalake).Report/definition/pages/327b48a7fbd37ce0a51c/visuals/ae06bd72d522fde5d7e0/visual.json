@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "ae06bd72d522fde5d7e0",
   "position": {
     "x": 0,
@@ -7,7 +7,7 @@
     "z": 6000,
     "height": 302.85714285714289,
     "width": 426,
-    "tabOrder": 15000
+    "tabOrder": 22000
   },
   "visual": {
     "visualType": "shape",
@@ -96,7 +96,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Remaining duration >44d (custom) | ≤5% / ≤10%'"
+                  "Value": "'Remaining duration >44d (custom) | ≤5% / <10%'"
                 }
               }
             },

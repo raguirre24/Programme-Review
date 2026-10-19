@@ -1,0 +1,49 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "Open Project Menu - Resource Calendars",
+  "name": "429a3fbda5b6c0afc60d",
+  "options": {
+    "targetVisualNames": [
+      "f07b62160a6bcaded91e",
+      "bf2c5a9d2aaf3cf456d7",
+      "d80c22aa4fc16a4ee9d2",
+      "fa323b6b39cecca295b5"
+    ],
+    "suppressData": true,
+    "applyOnlyToTargetVisuals": true
+  },
+  "explorationState": {
+    "version": "1.0",
+    "activeSection": "4c53a34bba9dcc7f3e8c",
+    "sections": {
+      "4c53a34bba9dcc7f3e8c": {
+        "visualContainers": {
+          "f07b62160a6bcaded91e": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {}
+            }
+          },
+          "bf2c5a9d2aaf3cf456d7": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {}
+            }
+          },
+          "d80c22aa4fc16a4ee9d2": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {}
+            }
+          },
+          "fa323b6b39cecca295b5": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "objects": {}
+            }
+          }
+        }
+      }
+    }
+  }
+}

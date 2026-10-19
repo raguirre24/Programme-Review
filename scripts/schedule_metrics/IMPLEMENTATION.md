@@ -13,27 +13,40 @@ their predecessors need not themselves be incomplete. Missing logic counts an
 activity once if either end is missing. The two component counts remain useful
 diagnostics.
 
-| Scored check | Green | Amber | Red |
-| --- | --- | --- | --- |
-| Missing predecessor or successor | <=5% | >5% to 10% | >10% |
-| Leads | 0% | >0% to 1% | >1% |
-| Positive lags | <=5% | >5% to 10% | >10% |
-| Finish-to-start links | >=90% | 80% to <90% | <80% |
-| Restrictive primary constraints | <=5% | >5% to 10% | >10% |
-| Negative total float | 0% | >0% to 1% | >1% |
-| Remaining duration above 44 working days | <=5% | >5% to 10% | >10% |
-| Date integrity | 0% | >0% to 0.1% | >0.1% |
+| Scored check | Target (1 point) | Limit (0 points) |
+| --- | --- | --- |
+| Missing predecessor or successor | <=5% | 10% |
+| Leads | 0% | 1% |
+| Lags over 5 working days | <=5% | 10% |
+| Finish-to-start links | >=90% | 80% |
+| Restrictive primary constraints | <=5% | 10% |
+| Negative total float | 0% | 5% |
+| Remaining duration above 44 working days | <=5% | 10% |
+| Date integrity | 0% | 1% |
+| Out-of-sequence progress (in-progress work) | 0% | 10% |
+| Baseline coverage (whole project) | >=90% | 60% |
 
-These are the approved practical review bands for this report, not a claim of
-standard DCMA certification. Green is within band, amber needs review and red
-is a priority. The compact metric titles show the green / amber boundaries;
-gauge markers retain the green boundary. High float above 44 working days is
-a blue review indicator with no universal pass/fail target and no score weight.
-Its gauge target marker is removed; its percentage, counts and history remain.
+Points fall evenly from 1 at the target to 0 at the limit. Gauge colours follow
+the points: green at target, amber between target and limit, red at or past the
+limit. These are internal review settings, not a claim of DCMA certification;
+lags deliberately depart from DCMA (see Score policy
+revision below). The compact metric titles show target / limit; gauge markers
+retain the target. Every gauge on the page is scored.
+
+Out-of-sequence counts in-progress `TT_Task`/`TT_Rsrc` activities with an FS
+predecessor not yet finished, or an SS predecessor not yet started; LOE and WBS
+predecessors are ignored. `06 XER_PREDECESSOR` holds raw P6 status codes
+(`TK_NotStart`, `TK_Active`, `TK_Complete`), unlike the task table. With no
+in-progress work it shows 0%. It replaced high float, which
+scored 0 on C6014 every month (22–42% against DCMA's 5%) even where the float
+was genuine; `HighFloat%` and the zero-float measures remain in the model but
+are no longer shown.
 
 Relationship denominators use eligible links with a known lag or recognised
-relationship type. All positive lags count, including those of five days or
-less. Constraints use recognised primary codes; blank means unconstrained and
+relationship type. Only lags over 5 working days count; shorter lags, mostly on
+SS/FF overlap pairs, are assessed through the FS share instead. Negative float
+counts every activity with total float below zero, however small (user decision,
+19 October 2026). Constraints use recognised primary codes; blank means unconstrained and
 secondary constraints are unavailable. Float is already in working days.
 Remaining duration uses known, nonnegative remaining days and remains a custom
 work-definition check. Date integrity includes completed activities, milestones
@@ -45,9 +58,9 @@ The imported status-aware `Start` field is used; a raw actual-start field is not
 available. Missing float/duration/lag, negative duration and unknown relevant
 enums are excluded from the denominator of their affected check. Other known
 records remain assessable. Each rate is therefore an observed rate among known
-records, with excluded counts disclosed in the tooltip. An affected rate returns
-BLANK only when no usable records remain or the snapshot/identity scope is
-invalid. Partial-input warnings are separate from severity: an observed priority
+records, with excluded counts disclosed in the tooltip. An affected rate shows
+0% when no usable records remain and is BLANK only when the snapshot/identity
+scope is invalid. Partial-input warnings are separate from severity: an observed priority
 result remains red, and an observed within-band result remains green. Coverage
 is disclosed in the score status and metric tooltips.
 
@@ -62,7 +75,11 @@ fresh live Athena historical-object unit verification was performed. No extra
 field conversion is introduced, and remaining duration remains a custom check.
 
 All ratios use safe division and unavailable snapshots return BLANK. A single
-project/programme/update with valid unique activity codes is required. Health
+project/programme/update from one XER file, with row keys present, is required.
+Activity codes may repeat: J5068's July 2026 file holds `APP_7460` twice (one is
+`APP_7460-1` in every other update), and Power BI compares text without regard
+to case. The single-snapshot checks key rows on `task_id_key`, so a repeat no
+longer blanks the page (20 October 2026); baseline coverage discloses it. Health
 measures override the old incomplete/type/unscheduled filters to apply their own
 documented populations while retaining project/WBS scope, datalake exclusions
 and RLS. Baseline detail diagnostics use the whole project/programme so WBS or
@@ -70,37 +87,69 @@ current-status selection cannot redefine the original commitment.
 
 ## Score and presentation
 
-The **Schedule health score** gives each assessed check 1 point for green,
-0.5 for amber and 0 for red, then divides total points by assessed-check count.
-The eight scored checks are listed above. Raw percentages are not averaged.
-A check with usable inputs is assessed on those inputs; a check with no usable
-result is omitted from the denominator. No assessable checks, or no incomplete
-discrete work, gives N/A. High float and every selectable detail option are
-excluded from scoring.
+The **Schedule health score** averages the assessed checks' points (1 at
+target, 0 at limit, proportional between). The ten scored checks are listed
+above. Raw percentages are not averaged. Every check returns a number for a
+valid project/update (user decision, 19 October 2026): a check with nothing to
+count shows 0%, which earns a full point for the lower-is-better checks and no
+points for FS and baseline coverage. Metrics are blank only when no single
+valid project/update is selected; the score is also N/A when the selection has
+no incomplete discrete work.
 
-The overall colour shows the worst assessed severity: red if any check is a
-priority, amber if there is a review check but no priority, and green if all
-assessed checks are within band. A high numeric score can therefore remain red.
-This prevents an aggregate from hiding a priority issue. A score of 100% means
-all assessed checks are green; it does not imply complete evidence or assure
-delivery.
+The overall colour follows the score: green at 95% or more, amber at 75% or
+more, red below 75%. One check at its limit (90% at best) keeps the score below
+green but cannot make it red on its own; two stay amber (80%), three turn it
+red (70%). The check's own gauge stays red and the status card still counts it
+as priority. A score of 100% means every assessed check is at target; it does
+not imply complete evidence or assure delivery.
+
+### Score policy revision — 19 October 2026
+
+The 9 October step bands (1 / 0.5 / 0 points, worst-check colour) were reviewed
+for fairness as a planner guide. On the four loaded C6014 updates the headline
+was red every month (50–69%) although most checks were green:
+
+- the SS/FF overlap style was penalised twice (FS share and all lags, 94–98% of
+  lags being 5 days or less);
+- single items triggered half-point losses (one lead in 2,841 links), and
+  rates a hair either side of a band edge jumped half a point;
+- negative float of a day or two on 45 activities cost a full point, so
+  truthful reporting of small slips was penalised;
+- eight date records in 3,119 (0.26%) cost a full point.
+
+The revision introduced graduated points, counted only lags over 5 days and
+negative float beyond 5 days (zero points at 5%), moved the date limit from
+0.1% to 1%, and coloured the headline from the score. The same updates now
+score 81.5–86.7%, all amber, with FS (74–79%) still at 0 points as the clear
+review item. A schedule with every check at its limit still scores 0%. All
+history recalculates under the revised rules.
+
+### Ten scored checks — 19 October 2026
+
+Every metric presented is now scored. Baseline coverage was added (target 90%,
+limit 60%, against the latest BL-tagged file on or before the selected update
+so an approved re-baseline resets it), and high float was replaced by
+out-of-sequence progress (target 0%, limit 10%). With ten checks the headline
+thresholds moved to 95% / 75% to keep the same meaning. Negative float then
+reverted to counting every activity below zero (no 5-day tolerance). On C6014
+the score is 89.3% (Jul-25, out-of-sequence 0% with nothing in progress), 66.7% (Jul-26), 71.2%
+(Aug-26) and 75.2% (Sep-26). Baseline coverage (68% → 44% against BL01, with
+no re-baseline loaded), July's 15 of 40 out-of-sequence activities and July's
+45 activities with negative float (2.6%) are the new review items.
 
 The existing status card shows within/review/priority counts on its first line
 and `SM Score Coverage` on its second. Coverage reports assessed/applicable
-checks, unassessed checks and partial inputs independently of severity.
-`SM Partial Checks` counts assessed checks with incomplete inputs; wholly
-unavailable checks appear in the assessed/applicable gap. Coverage does not
-replace a red or amber severity colour. The score denominator is the dynamic
-assessed count, with eight configured checks rather than a fixed denominator.
+checks (always 10/10 for a valid selection) and partial inputs independently of
+severity. `SM Partial Checks` counts checks where some, but not all, inputs are
+missing. Coverage does not replace a red or amber severity colour. The score
+denominator is the ten checks.
 
 The scored set is explicit: changes must stay aligned across points, severity,
 assessed/applicable counts, coverage, colour measures, guide bands and tests.
-Adding a diagnostic option does not add score weight. Zero-float share,
-high float and longest-path share remain diagnostics. Longest-path
-membership uses `driving_path_flag = "Y"`, not total float equal to zero.
 
-The existing gauge/trend positions and IDs remain unchanged. High-float history
-uses diagnostic blue. Other trend styles remain unchanged; their history-aware
+The existing gauge/trend positions and IDs remain unchanged; the former
+high-float panel now shows out-of-sequence progress in the standard trend
+style. Trend styles are otherwise unchanged; their history-aware
 tooltips show the severity at each update rather than colouring a whole history
 from the selected cutoff. The guide can be refreshed with
 `python scripts/schedule_metrics/build_metric_guide.py --content-only`; this
@@ -123,46 +172,30 @@ dates and dates at which the selected project has no snapshot.
 
 ## Baseline detail
 
-The four-option detail control uses current Table 01 data only:
+The detail panel shows one metric from current Table 01 data: current activity
+coverage by a matching dated baseline (100% means every current eligible
+activity matches a baseline activity with a finish date). The earlier missed
+dates, execution index and longest-path share options were removed with their
+measures; `Schedule Metric Detail` now hosts a single Baseline coverage row.
 
-- Matched-baseline missed dates (internal warning benchmark at most 5%).
-- Matched-baseline execution index (internal benchmark at least 0.95).
-- Current activity coverage by a matching dated baseline (100% means every
-  current eligible activity matches a baseline activity with a finish date).
-- Longest-path share (contextual diagnostic, with no universal pass threshold).
-
-The baseline is the minimum loaded update for the selected project and programme,
-with explicit baseline-filename provenance validation. Table 04 is itself a
+The baseline is the latest BL-tagged update on or before the selected update for
+the selected project and programme, so an approved re-baseline resets the
+comparison, with explicit baseline-filename provenance validation. Table 04 is itself a
 derived earliest-snapshot subset, so it is not an independent proof that a real
 baseline was supplied. An update-only history must not silently become a baseline.
 Cross-snapshot matching uses activity code within project/programme, never
-snapshot-local task IDs. Duplicate/blank keys and missing baseline provenance
-remain guards. Row-level date/status exclusions apply only to metrics needing
-those inputs, so unrelated field warnings do not blank all matched-cohort values.
+snapshot-local task IDs. Missing baseline provenance leaves coverage at 0% with
+an explicit tooltip reason. Repeated or blank activity codes are disclosed in
+the tooltip, not penalised: the baseline side is reduced to one row per code,
+so each current activity counts at most once.
 
-Missed dates use matched discrete activities with known baseline/current finish
-dates that were due by the data date; Start/status warnings do not remove a known
-finish comparison. Execution index uses dated baseline matches with a known
-completion state: Complete with an actual finish on/before the data date, or
-Not Started/In Progress with no actual finish. Its numerator and due denominator
-use the same eligible cohort; Start/current forecast Finish do not gate this
-index. Tooltips show assessed, known and excluded counts. The missed-date and
-execution-index colours use their unchanged performance benchmarks even when
-inputs are partial; the partial-input status and tooltip disclose exclusions
-separately. Baseline coverage is a completeness indicator: green at 100%, amber
-below 100%, independent of performance. Unrelated source warnings remain
-informational.
-
-Matched-cohort diagnostics are explicitly custom and excluded from the score.
-Coverage uses the current eligible activity cohort as its denominator; 100%
-does not mean all original baseline activities have been retained. Baseline
-activity codes absent from the current snapshot are disclosed separately.
-When baseline activities disappear from the current snapshot, the dataset does
-not establish whether they completed, were deleted or were renumbered. Their
-unknown status must not be silently treated as complete or late. Coverage is
-shown alongside the matched metrics; those metrics are not labelled full-cohort
-DCMA Missed Tasks or BEI. The execution index can legitimately exceed 1, and the
-gauge scale and format must preserve that value.
+Baseline coverage is scored like the other checks (green at 90% or more, red at
+60% or less) and stays whole-project: the WBS selection does not change it. It uses the current
+eligible activity cohort as its denominator; 100% does not mean all original
+baseline activities have been retained. Baseline activity codes absent from the
+current snapshot are disclosed separately in the tooltip. When baseline
+activities disappear from the current snapshot, the dataset does not establish
+whether they completed, were deleted or were renumbered.
 
 ## Validation limits and repaired drill-through scope
 
@@ -172,6 +205,11 @@ share the activity population, including unscheduled work. Governance and
 security remain unchanged. The four Summary bookmark captures use the same local filter
 placement. See [DRILLTHROUGH-VALIDATION.md](DRILLTHROUGH-VALIDATION.md) for the
 implementation, loaded-model reconciliation and native Desktop evidence.
+
+The Missing Predecessor and Missing Successor lists are keyed by activity code,
+so two flagged activities sharing a code would show as one row;
+`Validate-Drillthrough.ps1` reports that as a collapse. J5068's repeated code is
+in neither list.
 
 The speculative Date alignment diagnostic has been removed at the user's
 request: its counts-table column, detail page, page-menu bookmarks, guide row

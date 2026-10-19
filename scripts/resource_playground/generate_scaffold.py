@@ -93,7 +93,7 @@ def main(output_dir: Path | None = None):
             )
     names = []
     name = "Scenario Date"
-    names.append(table(name, "One shared display-date axis providing finite forecast coverage; measures require starts on or after today.",
+    names.append(table(name, "One shared display-date axis providing finite forecast coverage; measures require starts on or after the selected update's data date.",
         [column(name, "Date", "dateTime", fmt="dd-MM-yyyy"),
          column(name, "Week", "dateTime", fmt="dd-MM-yyyy"),
          column(name, "Month", "dateTime", fmt="MMM yyyy")],
@@ -106,7 +106,7 @@ RETURN
         "Month", DATE ( YEAR ( [Date] ), MONTH ( [Date] ), 1 )
     )'''))
     for name in ["Scenario Start", "Scenario Target"]:
-        names.append(table(name, "DD-MM-YYYY date input over the shared axis; measures enforce today's minimum and available date coverage.",
+        names.append(table(name, "DD-MM-YYYY date input over the shared axis; measures enforce the data-date minimum and available date coverage.",
             [column(name, "Date", "dateTime", fmt="dd-MM-yyyy"),
              column(name, "Date Input", "string")],
             '''SELECTCOLUMNS (

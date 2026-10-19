@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "ce14589ca97dacfb8ed1",
   "position": {
     "x": 440.75,
@@ -7,7 +7,7 @@
     "z": 22000,
     "height": 302.85714285714289,
     "width": 426,
-    "tabOrder": 28000
+    "tabOrder": 36000
   },
   "visual": {
     "visualType": "shape",
@@ -85,7 +85,7 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
                 }
               }
             }
@@ -96,7 +96,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Schedule metric detail'"
+                  "Value": "'Baseline coverage | ≥90% / >60%'"
                 }
               }
             },

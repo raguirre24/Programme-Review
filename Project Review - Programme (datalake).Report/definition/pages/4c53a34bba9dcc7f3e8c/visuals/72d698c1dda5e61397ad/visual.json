@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "72d698c1dda5e61397ad",
   "position": {
-    "x": 422,
-    "y": 998,
-    "z": 43000,
-    "height": 26,
-    "width": 1340,
-    "tabOrder": 43000
+    "x": 422.3195656152767,
+    "y": 989.57720700384368,
+    "z": 40000,
+    "height": 34.985052772863156,
+    "width": 1339.4277347324753,
+    "tabOrder": 37000
   },
   "visual": {
     "visualType": "textbox",
@@ -21,9 +21,8 @@
                   {
                     "value": "Each colour is an alternative scenario. Calendar quantities are not added together. Select a table row to inspect its finish and status.",
                     "textStyle": {
-                      "fontSize": "11pt",
                       "fontFamily": "Segoe UI",
-                      "fontWeight": "normal"
+                      "fontSize": "11pt"
                     }
                   }
                 ]

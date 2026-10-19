@@ -1,4 +1,4 @@
-/// DD-MM-YYYY date input over the shared axis; measures enforce today's minimum and available date coverage.
+/// DD-MM-YYYY date input over the shared axis; measures enforce the data-date minimum and available date coverage.
 table 'Scenario Target'
 	lineageTag: 64e87f4f-6a23-565e-9936-c43499c0ab81
 

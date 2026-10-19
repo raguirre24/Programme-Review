@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
-  "name": "b619bdaf7bac4917bfef",
+  "name": "ad7400649f94db2c6276",
   "position": {
-    "x": 447,
-    "y": 469,
-    "z": 46000,
-    "height": 48,
-    "width": 413,
-    "tabOrder": 3700
+    "x": 880,
+    "y": 41.428571428571431,
+    "z": 42000,
+    "height": 41.428571428571431,
+    "width": 160,
+    "tabOrder": 39000
   },
   "visual": {
     "visualType": "slicer",
@@ -20,15 +20,16 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Schedule Metric Detail"
+                      "Entity": "CurrentDate"
                     }
                   },
-                  "Property": "Metric"
+                  "Property": "UpdateDate"
                 }
               },
-              "queryRef": "Schedule Metric Detail.Metric",
-              "nativeQueryRef": "Metric",
-              "active": true
+              "queryRef": "CurrentDate.UpdateDate",
+              "nativeQueryRef": "UpdateDate",
+              "active": true,
+              "format": "MMMM yyyy"
             }
           ]
         }
@@ -40,13 +41,13 @@
               "Column": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "Schedule Metric Detail"
+                    "Entity": "CurrentDate"
                   }
                 },
-                "Property": "Metric"
+                "Property": "UpdateDate"
               }
             },
-            "direction": "Ascending"
+            "direction": "Descending"
           }
         ]
       }
@@ -69,13 +70,6 @@
         {
           "properties": {
             "strictSingleSelect": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "singleSelect": {
               "expr": {
                 "Literal": {
                   "Value": "true"
@@ -105,8 +99,8 @@
                 "Version": 2,
                 "From": [
                   {
-                    "Name": "s",
-                    "Entity": "Schedule Metric Detail",
+                    "Name": "c",
+                    "Entity": "CurrentDate",
                     "Type": 0
                   }
                 ],
@@ -119,10 +113,10 @@
                             "Column": {
                               "Expression": {
                                 "SourceRef": {
-                                  "Source": "s"
+                                  "Source": "c"
                                 }
                               },
-                              "Property": "Metric"
+                              "Property": "UpdateDate"
                             }
                           }
                         ],
@@ -130,7 +124,7 @@
                           [
                             {
                               "Literal": {
-                                "Value": "'Execution index (matched)'"
+                                "Value": "datetime'2026-09-30T00:00:00'"
                               }
                             }
                           ]
@@ -182,7 +176,7 @@
             "textSize": {
               "expr": {
                 "Literal": {
-                  "Value": "9D"
+                  "Value": "10D"
                 }
               }
             },
@@ -250,6 +244,11 @@
           }
         }
       ]
+    },
+    "syncGroup": {
+      "groupName": "last_recalc_date",
+      "fieldChanges": true,
+      "filterChanges": true
     },
     "drillFilterOtherVisuals": true
   }

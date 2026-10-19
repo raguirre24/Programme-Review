@@ -1,5 +1,9 @@
 """Apply the approved internal review bands to XER Metrics only.
 
+Superseded on 19 October 2026 by graduated scoring (see IMPLEMENTATION.md).
+This v3 migration would restore step points and worst-check colouring, so it
+now exits without changes; XER Metrics.tmdl is the source of truth.
+
 Preserves existing measure identities, metadata, raw metrics and histories.
 The eight points helpers own the policy; colour and score measures consume them.
 This edits the saved TMDL, never a loaded Desktop model.
@@ -190,4 +194,4 @@ RETURN SWITCH ( TRUE (), ISBLANK ( MetricValue ), "#687078",
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit("Superseded by graduated scoring (19 October 2026); edit XER Metrics.tmdl directly.")

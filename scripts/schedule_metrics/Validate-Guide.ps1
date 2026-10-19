@@ -34,13 +34,13 @@ try {
     $guideRows = Invoke-ScheduleMetricsDax -Target $guideTarget -Query @'
 EVALUATE 'Schedule Metric Guide' ORDER BY 'Schedule Metric Guide'[Order]
 '@
-    Assert-ScheduleMetric ($guideRows.Count -eq 18) 'Guide must contain all 18 retained metric definitions.'
+    Assert-ScheduleMetric ($guideRows.Count -eq 14) 'Guide must contain all 14 retained metric definitions.'
     $guideExpected = @(Get-Content (Join-Path $PSScriptRoot 'metric_guide.json') -Raw | ConvertFrom-Json | Select-Object -ExpandProperty rows | Sort-Object sort_order)
     for ($guideIndex=0; $guideIndex -lt $guideRows.Count; $guideIndex++) {
         Assert-ScheduleMetric ($guideRows[$guideIndex].'Schedule Metric Guide[Metric]' -eq $guideExpected[$guideIndex].metric) 'Guide metric order/content mismatch.'
         $expectedRow = $guideExpected[$guideIndex]
         $expectedCells = @{
-            'Meaning and calculation' = $expectedRow.meaning + ' Why it matters: ' + $expectedRow.rationale + ' Calculation: ' + $expectedRow.calculation
+            'Meaning and calculation' = $expectedRow.meaning + ' Calculation: ' + $expectedRow.calculation
             'Target / score' = $expectedRow.threshold + ' ' + $expectedRow.score_note
             'Scope and notes' = $expectedRow.population + ' ' + $expectedRow.limitations
         }

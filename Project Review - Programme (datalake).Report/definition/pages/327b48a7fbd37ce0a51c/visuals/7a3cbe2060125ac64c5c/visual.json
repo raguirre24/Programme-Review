@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "7a3cbe2060125ac64c5c",
   "position": {
     "x": 359.375,
@@ -7,7 +7,7 @@
     "z": 2000,
     "height": 300,
     "width": 350,
-    "tabOrder": 33000
+    "tabOrder": 41000
   },
   "visual": {
     "visualType": "shape",
@@ -96,7 +96,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'FS relationships | ≥90% / ≥80%'"
+                  "Value": "'FS relationships | ≥90% / >80%'"
                 }
               }
             },

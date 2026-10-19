@@ -7,7 +7,7 @@
     "z": 21000,
     "height": 140,
     "width": 425,
-    "tabOrder": 19000
+    "tabOrder": 27000
   },
   "visual": {
     "visualType": "lineChart",
@@ -33,25 +33,6 @@
           ],
           "showAll": true
         },
-        "Y": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "XER Metrics"
-                    }
-                  },
-                  "Property": "Score (History)"
-                }
-              },
-              "queryRef": "XER Metrics.Score",
-              "nativeQueryRef": "Score (History)",
-              "displayName": "Schedule health score"
-            }
-          ]
-        },
         "Tooltips": {
           "projections": [
             {
@@ -68,6 +49,25 @@
               "queryRef": "XER Metrics.SM Coverage Tooltip (History)",
               "nativeQueryRef": "SM Coverage Tooltip (History)",
               "displayName": "Scope and coverage"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Metrics"
+                    }
+                  },
+                  "Property": "Score (History)"
+                }
+              },
+              "queryRef": "XER Metrics.Score",
+              "nativeQueryRef": "Score (History)",
+              "displayName": "Schedule health score"
             }
           ]
         }
@@ -360,6 +360,19 @@
                       "Percent": 0
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "visualTooltip": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

@@ -26,51 +26,61 @@ TABLE '__SM Tasks' = DATATABLE(
         {"A","Not Started","Not Complete","TT_Task","Activity",FALSE,44,44,BLANK(),1,1,"Not Driven"},
         {"B","In Progress","Not Complete","TT_Rsrc","Activity",FALSE,44.01,44.01,"CS_MSO",0,0,"Not Driven"},
         {"C","Not Started","Not Complete","TT_Task","Activity",TRUE,BLANK(),BLANK(),"UNKNOWN",0,0,BLANK()},
-        {"D","Not Started","Not Complete","TT_Task","Activity",FALSE,-1,-1,BLANK(),0,0,"Not Driven"},
+        {"D","Not Started","Not Complete","TT_Task","Activity",FALSE,-5,-1,BLANK(),0,0,"Not Driven"},
         {"I","Not Started","Not Complete","TT_Task","Activity",FALSE,0,0,"CS_MSOA",0,0,"Not Driven"},
+        {"J","Not Started","Not Complete","TT_Task","Activity",FALSE,-5.01,1,BLANK(),0,0,"Not Driven"},
+        {"K","In Progress","Not Complete","TT_Task","Activity",FALSE,10,10,BLANK(),0,0,"Not Driven"},
         {"E","Not Started","Not Complete","TT_Mile","Milestone",FALSE,99,99,"CS_MSO",1,1,"Not Driven"},
         {"F","Complete","Complete","TT_Task","Activity",FALSE,99,99,"CS_MSO",1,1,"Not Driven"},
         {"G","Not Started","Not Complete","TT_LOE","Level Of Effort",FALSE,99,99,"CS_MSO",1,1,"Not Driven"},
         {"H","Not Started","Not Complete","TT_WBS","WBS Summary",FALSE,99,99,"CS_MSO",1,1,"Not Driven"}
     })
 TABLE '__SM Links' = DATATABLE("task_id_key",STRING,"lag",DOUBLE,"pred_type",STRING,
+    "status_code",STRING,"predecessor_status_code",STRING,"predecessor_task_type",STRING,
     {
-        {"B",0,"PR_FS"},{"B",0.1,"PR_SS"},{"D",5,"PR_FS"},
-        {"I",5.1,"PR_FS"},{"A",-0.1,"PR_SF"},{"C",BLANK(),"PR_FS1"},
-        {"C",BLANK(),"PR_FS"},
-        {"C",0,"PR_UNKNOWN"},
-        {"E",100,"PR_FS"},{"F",100,"PR_FS"},{"G",100,"PR_FS"},{"H",100,"PR_FS"}
+        {"B",0,"PR_FS","TK_Active","TK_Active","TT_LOE"},{"B",0.1,"PR_SS","TK_Active","TK_Active","TT_Task"},
+        {"D",5,"PR_FS","TK_NotStart","TK_Complete","TT_Task"},
+        {"I",5.1,"PR_FS","TK_NotStart","TK_Complete","TT_Task"},{"A",-0.1,"PR_SF","TK_NotStart","TK_Complete","TT_Task"},
+        {"C",BLANK(),"PR_FS1","TK_NotStart","TK_Complete","TT_Task"},
+        {"C",BLANK(),"PR_FS","TK_NotStart","TK_Complete","TT_Task"},
+        {"C",0,"PR_UNKNOWN","TK_NotStart","TK_Complete","TT_Task"},
+        {"K",0,"PR_FS","TK_Active","TK_Active","TT_Task"},
+        {"E",100,"PR_FS","TK_NotStart","TK_Complete","TT_Task"},{"F",100,"PR_FS","TK_Complete","TK_Complete","TT_Task"},
+        {"G",100,"PR_FS","TK_NotStart","TK_Complete","TT_Task"},{"H",100,"PR_FS","TK_NotStart","TK_Complete","TT_Task"}
     })
 '@
 $expected = [ordered]@{
-    'Task_Count' = 5
+    'Task_Count' = 7
     'Missing Predecessor' = 1
     'Missing Successor' = 1
     'SM Missing Logic Count' = 1
     'Float >44' = 1
     'Dur >44' = 1
-    'Task_Count_Negative_Float' = 1
+    'Task_Count_Negative_Float' = 2
     'Task_Count_Float_0' = 1
     'Primary Constraints' = 3
     'SM Restrictive Primary Count' = 1
     'SM Unknown Constraint Count' = 1
     'SM Missing Float Count' = 1
     'SM Missing Duration Count' = 2
-    'SM Eligible Relationship Count' = 8
+    'SM Eligible Relationship Count' = 9
     'SM Positive Lag Count' = 3
     'Lags>5d' = 1
     'Leads<0d' = 1
-    'SM FS Count' = 5
+    'SM FS Count' = 6
     'SM Missing Lag Count' = 2
     'SM Unknown Relationship Type Count' = 1
-    'HighFloat%' = 0.25
-    '<0Float%' = 0.25
-    '0Float%' = 0.25
-    'HighDur%' = (1.0 / 3.0)
-    'Constraint%' = 0.25
-    'Lags%' = 0.5
-    '<0Lead%' = (1.0 / 6.0)
-    'SM FS %' = (5.0 / 7.0)
+    'SM In Progress Count' = 2
+    'Out Of Sequence Count' = 1
+    'HighFloat%' = (1.0 / 6.0)
+    '<0Float%' = (2.0 / 6.0)
+    '0Float%' = (1.0 / 6.0)
+    'HighDur%' = 0.2
+    'Constraint%' = (1.0 / 6.0)
+    'Lags%' = (1.0 / 7.0)
+    '<0Lead%' = (1.0 / 7.0)
+    'SM FS %' = 0.75
+    'SM Out Of Sequence %' = 0.5
     'SM Partial Checks' = 6
 }
 try {

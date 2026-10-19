@@ -4,7 +4,7 @@
   "name": "109523331af7b8688e3a",
   "options": {
     "targetVisualNames": [
-      "d0f42d6f6db694358c27"
+      "e473b21d676622c41e5d"
     ],
     "suppressActiveSection": true,
     "suppressDisplay": true
@@ -12,8 +12,46 @@
   "explorationState": {
     "version": "1.3",
     "activeSection": "2cc544dc10a1e237ae90",
+    "filters": {
+      "byExpr": [
+        {
+          "name": "adf145333090dd095a53",
+          "type": "Categorical",
+          "expression": {
+            "Column": {
+              "Expression": {
+                "SourceRef": {
+                  "Entity": "01 XER_TASK"
+                }
+              },
+              "Property": "IsExcludedFromDataLake"
+            }
+          },
+          "howCreated": 1
+        }
+      ]
+    },
     "sections": {
       "2cc544dc10a1e237ae90": {
+        "filters": {
+          "byExpr": [
+            {
+              "name": "8b5a37208e355985ac7d",
+              "type": "Categorical",
+              "expression": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "01 XER_TASK"
+                    }
+                  },
+                  "Property": "Is Unscheduled"
+                }
+              },
+              "howCreated": 1
+            }
+          ]
+        },
         "visualContainers": {
           "1dffccbf36381f9ff820": {
             "singleVisual": {
@@ -312,7 +350,7 @@
             "filters": {
               "byExpr": [
                 {
-                  "name": "2ec8cf00ad053b0c0243",
+                  "name": "2fde6c505784d7a25f57",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -365,7 +403,7 @@
                                       [
                                         {
                                           "Literal": {
-                                            "Value": "datetime'2026-07-31T00:00:00'"
+                                            "Value": "datetime'2026-09-30T00:00:00'"
                                           }
                                         }
                                       ]
@@ -442,7 +480,22 @@
             "filters": {
               "byExpr": [
                 {
-                  "name": "5a076e1b495e629d8358",
+                  "name": "9772131160054a44e59a",
+                  "type": "Categorical",
+                  "expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "03 XER_PROJWBS"
+                        }
+                      },
+                      "Property": "Has_Unscheduled_Task_In_Path"
+                    }
+                  },
+                  "howCreated": 1
+                },
+                {
+                  "name": "73da8b7c94eb8d6a3384",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -457,7 +510,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "c1c8ffb4be76770e0bd5",
+                  "name": "f9da3928de6069f2b8e0",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -472,7 +525,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "099a64b1edbc753874cc",
+                  "name": "b05d61e62f5b98bfe05d",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -487,7 +540,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "102f727eb0ad8328d851",
+                  "name": "230d3b507fbad1ccf39e",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -497,6 +550,21 @@
                         }
                       },
                       "Property": "Level_5"
+                    }
+                  },
+                  "howCreated": 0
+                },
+                {
+                  "name": "f64fa9a5b1734f90d709",
+                  "type": "Categorical",
+                  "expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "03 XER_PROJWBS"
+                        }
+                      },
+                      "Property": "Level_6"
                     }
                   },
                   "howCreated": 0
@@ -743,7 +811,7 @@
             "filters": {
               "byExpr": [
                 {
-                  "name": "2f667349b231ee052570",
+                  "name": "a0fb51e07bb7f2a15b3a",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -758,7 +826,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "1a7773a8414855033203",
+                  "name": "4c9abd582fd79c1f62a7",
                   "type": "Categorical",
                   "expression": {
                     "Column": {

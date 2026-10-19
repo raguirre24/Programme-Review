@@ -7,7 +7,7 @@
     "z": 3000,
     "height": 300,
     "width": 905,
-    "tabOrder": 6000
+    "tabOrder": 13000
   },
   "visual": {
     "visualType": "tableEx",
@@ -114,27 +114,12 @@
                       "Entity": "XER Metrics"
                     }
                   },
-                  "Property": "SM Positive Lag Count"
+                  "Property": "Lags>5d"
                 }
               },
               "queryRef": "XER Metrics.Lags>5d",
-              "nativeQueryRef": "SM Positive Lag Count",
-              "displayName": "Positive lags"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "XER Metrics"
-                    }
-                  },
-                  "Property": "Task_Count_Float_0"
-                }
-              },
-              "queryRef": "XER Metrics.Task_Count_Float_0",
-              "nativeQueryRef": "Task_Count_Float_0",
-              "displayName": "Float = 0"
+              "nativeQueryRef": "Lags>5d",
+              "displayName": "Lags >5d"
             },
             {
               "field": {
@@ -159,11 +144,12 @@
                       "Entity": "XER Metrics"
                     }
                   },
-                  "Property": "Float >44"
+                  "Property": "Out Of Sequence Count"
                 }
               },
               "queryRef": "XER Metrics.Float >44",
-              "nativeQueryRef": "Float >44"
+              "nativeQueryRef": "Out Of Sequence Count",
+              "displayName": "Out of seq."
             },
             {
               "field": {
@@ -344,20 +330,6 @@
           },
           "selector": {
             "metadata": "XER Metrics.Lags>5d"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "65.31175712829703D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "XER Metrics.Task_Count_Float_0"
           }
         },
         {
@@ -592,20 +564,6 @@
           },
           "selector": {
             "metadata": "XER Metrics.Missing Successor"
-          }
-        },
-        {
-          "properties": {
-            "alignment": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Center'"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "XER Metrics.Task_Count_Float_0"
           }
         },
         {

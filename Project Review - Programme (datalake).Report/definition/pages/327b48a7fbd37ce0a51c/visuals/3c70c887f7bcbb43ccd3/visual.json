@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "3c70c887f7bcbb43ccd3",
   "position": {
     "x": 440.75,
@@ -7,7 +7,7 @@
     "z": 5000,
     "height": 303,
     "width": 426,
-    "tabOrder": 14000
+    "tabOrder": 21000
   },
   "visual": {
     "visualType": "shape",
@@ -103,7 +103,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'High float >44d | review indicator'"
+                  "Value": "'Out-of-sequence | 0% / <10%'"
                 }
               }
             },

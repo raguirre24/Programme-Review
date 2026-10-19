@@ -4,10 +4,10 @@
   "position": {
     "x": 24,
     "y": 192,
-    "z": 36000,
+    "z": 35000,
     "height": 90,
     "width": 368,
-    "tabOrder": 36000
+    "tabOrder": 32000
   },
   "visual": {
     "visualType": "slicer",
@@ -32,23 +32,6 @@
             }
           ]
         }
-      },
-      "sortDefinition": {
-        "sort": [
-          {
-            "field": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "Scenario Comparison Calendar"
-                  }
-                },
-                "Property": "Calendar"
-              }
-            },
-            "direction": "Ascending"
-          }
-        ]
       }
     },
     "objects": {
@@ -260,23 +243,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "fbf7ccc0e7592492193f",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Scenario Comparison Calendar"
-              }
-            },
-            "Property": "Calendar"
-          }
-        },
-        "type": "Categorical"
-      }
-    ]
   }
 }

@@ -103,7 +103,7 @@ def write_reference_table(content):
     columns = ['Metric', 'Meaning and calculation', 'Target / score', 'Scope and notes']
     rows = [{
         'Metric': row['metric'],
-        'Meaning and calculation': row['meaning'] + '\nWhy it matters: ' + row['rationale'] + '\nCalculation: ' + row['calculation'],
+        'Meaning and calculation': row['meaning'] + '\nCalculation: ' + row['calculation'],
         'Target / score': row['threshold'] + '\n' + row['score_note'],
         'Scope and notes': row['population'] + '\n' + row['limitations'],
     } for row in sorted(content['rows'], key=lambda row: row['sort_order'])]

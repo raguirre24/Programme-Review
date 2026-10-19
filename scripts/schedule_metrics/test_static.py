@@ -12,30 +12,34 @@ class ReviewPolicyTests(unittest.TestCase):
     def setUp(self):
         self.guide = json.loads((Path(__file__).parent / "metric_guide.json").read_text(encoding="utf-8-sig"))
 
-    def test_authored_policy_matches_eight_check_contract(self):
-        self.assertEqual(validate_guide_policy(self.guide), 8)
+    def test_authored_policy_matches_ten_check_contract(self):
+        self.assertEqual(validate_guide_policy(self.guide), 10)
 
     def test_rejects_removed_unscored_guide_row(self):
         changed = copy.deepcopy(self.guide)
         changed["rows"].append({"id": "date_alignment_count", "scored": False})
-        with self.assertRaisesRegex(AssertionError, "18 rows"):
+        with self.assertRaisesRegex(AssertionError, "14 rows"):
             validate_guide_policy(changed)
 
-    def test_rejects_high_float_reintroduced_to_score(self):
-        changed = copy.deepcopy(self.guide)
-        next(row for row in changed["rows"] if row["id"] == "high_float")["scored"] = True
-        with self.assertRaisesRegex(AssertionError, "exactly eight"):
-            validate_guide_policy(changed)
+    def test_rejects_scored_check_dropped_from_score(self):
+        for check in ("out_of_sequence", "baseline_coverage"):
+            changed = copy.deepcopy(self.guide)
+            next(row for row in changed["rows"] if row["id"] == check)["scored"] = False
+            with self.assertRaisesRegex(AssertionError, "exactly ten"):
+                validate_guide_policy(changed)
 
     def test_rejects_percent_scale_or_wrong_boundary(self):
-        for wrong in (0.01, 0.0001, 0.1):
+        for wrong in (1, 0.001, 0.1):
             changed = copy.deepcopy(self.guide)
-            next(row for row in changed["rows"] if row["id"] == "invalid_dates")["review_bands"]["amber_max"] = wrong
+            next(row for row in changed["rows"] if row["id"] == "invalid_dates")["review_bands"]["limit"] = wrong
             with self.assertRaisesRegex(AssertionError, "invalid_dates"):
                 validate_guide_policy(changed)
 
     def test_rejects_binary_aggregation_or_partial_severity_override(self):
-        for key, value in (("aggregation", "passed/assessed"), ("coverage", "override_severity")):
+        for key, value in (("aggregation", "passed/assessed"), ("coverage", "override_severity"),
+                           ("points", {"green": 1, "amber": .5, "red": 0}),
+                           ("overall_colour", "worst_assessed_band"),
+                           ("overall_colour", {"green_min": .90, "amber_min": .65})):
             changed = copy.deepcopy(self.guide)
             changed["score_policy"][key] = value
             with self.assertRaisesRegex(AssertionError, "aggregation/severity/coverage"):

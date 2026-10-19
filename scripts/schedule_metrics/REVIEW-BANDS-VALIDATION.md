@@ -1,5 +1,10 @@
 # Schedule review bands — 9 October 2026
 
+> Superseded on 19 October 2026 by graduated scoring, lags over 5 days,
+> negative float beyond 5 days, a 1% date limit and score-based headline
+> colour. See the score policy revision in [IMPLEMENTATION.md](IMPLEMENTATION.md).
+> This record is kept as the evidence for the earlier policy.
+
 The user approved practical internal review bands and a graded score. This
 supersedes the binary nine-check scoring policy in earlier validation records.
 The underlying activity and relationship calculations are unchanged.

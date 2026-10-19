@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "6e49a460604369390e81",
   "position": {
     "x": 0,
@@ -940,8 +940,9 @@
               "solid": {
                 "color": {
                   "expr": {
-                    "Literal": {
-                      "Value": "'#DE2E21'"
+                    "ThemeDataColor": {
+                      "ColorId": 9,
+                      "Percent": 0
                     }
                   }
                 }
@@ -1022,6 +1023,18 @@
                   "expr": {
                     "Literal": {
                       "Value": "'#000000'"
+                    }
+                  }
+                }
+              }
+            },
+            "level4Colour": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0
                     }
                   }
                 }
@@ -1119,282 +1132,5 @@
     },
     "drillFilterOtherVisuals": true
   },
-  "parentGroupName": "5d39ae0c29e4e310905e",
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "f044902d05c20d32bdcb",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "03 XER_PROJWBS"
-              }
-            },
-            "Property": "Level_3"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "96109f48e2dc837b036c",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "03 XER_PROJWBS"
-              }
-            },
-            "Property": "Level_4"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "cbb2054a7c7a4e00afae",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "03 XER_PROJWBS"
-              }
-            },
-            "Property": "Level_5"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "4b04c05111a1b0e2bd54",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "03 XER_PROJWBS"
-              }
-            },
-            "Property": "Level_6"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "cd1f2cb5f9693f1ddbcc",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Measures"
-              }
-            },
-            "Property": "ShowTaskName"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "7d0d1433fcaa00e68367",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Measures"
-              }
-            },
-            "Property": "ShowTaskType"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "053141fef0e0ff97195f",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Measures"
-              }
-            },
-            "Property": "ShowDuration"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "cd354ce07ac1614f092d",
-        "field": {
-          "Aggregation": {
-            "Expression": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "01 XER_TASK"
-                  }
-                },
-                "Property": "total_float"
-              }
-            },
-            "Function": 3
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "5e0be7bc542fbd118a6b",
-        "field": {
-          "Aggregation": {
-            "Expression": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "01 XER_TASK"
-                  }
-                },
-                "Property": "Baseline Start"
-              }
-            },
-            "Function": 3
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "8ec55bf2384c59dbe1f3",
-        "field": {
-          "Aggregation": {
-            "Expression": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "01 XER_TASK"
-                  }
-                },
-                "Property": "Baseline Finish"
-              }
-            },
-            "Function": 4
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "3e3d06e16f865959efac",
-        "field": {
-          "Aggregation": {
-            "Expression": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "01 XER_TASK"
-                  }
-                },
-                "Property": "Previous Month Start"
-              }
-            },
-            "Function": 3
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "b8f01b77951feb8c556a",
-        "field": {
-          "Aggregation": {
-            "Expression": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "01 XER_TASK"
-                  }
-                },
-                "Property": "Previous Month Finish"
-              }
-            },
-            "Function": 4
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "d91f2754fa54896d70ba",
-        "field": {
-          "Aggregation": {
-            "Expression": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "01 XER_TASK"
-                  }
-                },
-                "Property": "Start"
-              }
-            },
-            "Function": 3
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "7e6514ba1e7c9049f64b",
-        "field": {
-          "Aggregation": {
-            "Expression": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "01 XER_TASK"
-                  }
-                },
-                "Property": "Finish"
-              }
-            },
-            "Function": 4
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "1ac663d57cf0922bfd32",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Measures"
-              }
-            },
-            "Property": "ShowVarianceBL"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "1a7e035fc3d97c9c9ff4",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Measures"
-              }
-            },
-            "Property": "ShowVariance"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "720cc6d3605aec8f09c3",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "01 XER_TASK"
-              }
-            },
-            "Property": "task_code"
-          }
-        },
-        "type": "Categorical"
-      }
-    ]
-  }
+  "parentGroupName": "5d39ae0c29e4e310905e"
 }

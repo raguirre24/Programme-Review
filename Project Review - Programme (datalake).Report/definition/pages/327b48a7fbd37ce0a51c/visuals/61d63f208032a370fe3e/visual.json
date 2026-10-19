@@ -1,19 +1,19 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "61d63f208032a370fe3e",
   "position": {
     "x": 441.52149671663983,
-    "y": 518,
+    "y": 501.02527567835466,
     "z": 26000,
-    "height": 111.2950068145211,
+    "height": 128.26973113616646,
     "width": 423.75913765332672,
-    "tabOrder": 20000
+    "tabOrder": 28000
   },
   "visual": {
     "visualType": "gauge",
     "query": {
       "queryState": {
-        "Y": {
+        "MaxValue": {
           "projections": [
             {
               "field": {
@@ -23,12 +23,12 @@
                       "Entity": "Schedule Metric Detail"
                     }
                   },
-                  "Property": "SM Detail Value"
+                  "Property": "SM Detail Maximum"
                 }
               },
-              "queryRef": "XER Metrics.0Float%",
-              "nativeQueryRef": "SM Detail Value",
-              "displayName": "Selected detail metric"
+              "queryRef": "Schedule Metric Detail.SM Detail Maximum",
+              "nativeQueryRef": "SM Detail Maximum",
+              "displayName": "Scale maximum"
             }
           ]
         },
@@ -51,25 +51,6 @@
             }
           ]
         },
-        "MaxValue": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Schedule Metric Detail"
-                    }
-                  },
-                  "Property": "SM Detail Maximum"
-                }
-              },
-              "queryRef": "Schedule Metric Detail.SM Detail Maximum",
-              "nativeQueryRef": "SM Detail Maximum",
-              "displayName": "Scale maximum"
-            }
-          ]
-        },
         "Tooltips": {
           "projections": [
             {
@@ -86,6 +67,25 @@
               "queryRef": "Schedule Metric Detail.SM Detail Tooltip",
               "nativeQueryRef": "SM Detail Tooltip",
               "displayName": "Scope and coverage"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Schedule Metric Detail"
+                    }
+                  },
+                  "Property": "SM Detail Value"
+                }
+              },
+              "queryRef": "XER Metrics.0Float%",
+              "nativeQueryRef": "SM Detail Value",
+              "displayName": "Baseline coverage"
             }
           ]
         }
@@ -246,13 +246,8 @@
           "properties": {
             "text": {
               "expr": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Schedule Metric Detail"
-                    }
-                  },
-                  "Property": "SM Detail Title"
+                "Literal": {
+                  "Value": "'Baseline coverage | ≥90% / >60%'"
                 }
               }
             },
@@ -266,7 +261,7 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
+                  "Value": "false"
                 }
               }
             },
@@ -278,6 +273,19 @@
               }
             },
             "titleWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "visualTooltip": [
+        {
+          "properties": {
+            "show": {
               "expr": {
                 "Literal": {
                   "Value": "false"

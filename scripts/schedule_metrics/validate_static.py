@@ -101,30 +101,32 @@ def field_references(data):
 
 def validate_guide_policy(guide: dict) -> int:
     """Acceptance policy is fixed independently of the authored guide/model."""
-    lower_five = {"direction": "lower", "green_max": .05, "amber_max": .10}
-    zero_one = {"direction": "lower", "green_max": 0, "amber_max": .01}
+    lower_five = {"direction": "lower", "target": .05, "limit": .10}
     expected = {
-        "missing_logic": lower_five, "leads": zero_one,
+        "missing_logic": lower_five,
+        "leads": {"direction": "lower", "target": 0, "limit": .01},
         "positive_lags": lower_five,
-        "fs_relationships": {"direction": "higher", "green_min": .90, "amber_min": .80},
-        "restrictive_constraints": lower_five, "negative_float": zero_one,
+        "fs_relationships": {"direction": "higher", "target": .90, "limit": .80},
+        "restrictive_constraints": lower_five,
+        "negative_float": {"direction": "lower", "target": 0, "limit": .05},
         "long_remaining_duration": lower_five,
-        "invalid_dates": {"direction": "lower", "green_max": 0, "amber_max": .001},
+        "invalid_dates": {"direction": "lower", "target": 0, "limit": .01},
+        "out_of_sequence": {"direction": "lower", "target": 0, "limit": .10},
+        "baseline_coverage": {"direction": "higher", "target": .90, "limit": .60},
     }
     rows = {row["id"]: row for row in guide["rows"]}
-    assert len(rows) == len(guide["rows"]) == 18, "Guide must retain exactly 18 rows after Date alignment removal"
+    assert len(rows) == len(guide["rows"]) == 14, "Guide must retain exactly 14 rows: score, ten checks and three supporting counts"
     assert "date_alignment_count" not in rows, "Removed Date alignment guide entry remains"
-    assert {key for key, row in rows.items() if row.get("scored")} == set(expected), "Guide must identify exactly eight scored checks"
+    assert not {"high_float", "zero_float_count"} & set(rows), "Unscored float rows must not be presented"
+    assert {key for key, row in rows.items() if row.get("scored")} == set(expected), "Guide must identify exactly ten scored checks"
     for key, bands in expected.items():
         assert rows[key].get("review_bands") == bands, f"Guide band contract differs: {key}"
-    assert rows["high_float"].get("scored") is False, "High float must be explicitly excluded"
-    assert not rows["high_float"].get("review_bands"), "High float must not imply a scored band"
     policy = guide.get("score_policy", {})
-    assert len(policy.get("scored_metric_ids", [])) == 8 and set(policy["scored_metric_ids"]) == set(expected), "Score policy membership differs"
+    assert len(policy.get("scored_metric_ids", [])) == 10 and set(policy["scored_metric_ids"]) == set(expected), "Score policy membership differs"
     expected_policy = {
-        "points": {"green": 1, "amber": .5, "red": 0},
-        "aggregation": "sum_points/assessed_count",
-        "overall_colour": "worst_assessed_band",
+        "points": {"at_target": 1, "at_limit": 0, "between": "linear"},
+        "aggregation": "mean_points/assessed_count",
+        "overall_colour": {"green_min": .95, "amber_min": .75},
         "coverage": "separate_warning",
     }
     assert all(policy.get(key) == value for key, value in expected_policy.items()), "Guide score aggregation/severity/coverage policy differs"
@@ -132,25 +134,27 @@ def validate_guide_policy(guide: dict) -> int:
 
 
 def validate_review_visuals(visuals: dict[str, dict]) -> None:
-    high_float = visuals["b472a4a2b0c50d6843ad"]["visual"]
-    query = high_float["query"]["queryState"]
-    assert not query.get("TargetValue", {}).get("projections"), "High float still binds a target"
-    axes = high_float["objects"].get("axis", [])
+    # The former high-float panel now shows the scored out-of-sequence check.
+    out_of_sequence = visuals["b472a4a2b0c50d6843ad"]["visual"]
+    values = out_of_sequence["query"]["queryState"]["Y"]["projections"]
+    assert [p["field"]["Measure"]["Property"] for p in values] == ["SM Out Of Sequence %"], "Out-of-sequence gauge binding changed"
+    axes = out_of_sequence["objects"].get("axis", [])
     if isinstance(axes, dict):
         axes = [axes]
-    assert not any("target" in axis.get("properties", {}) for axis in axes), "High float still has a numerical target"
-    targets = high_float["objects"].get("target", [])
+    assert any(axis.get("properties", {}).get("target", {}).get("expr", {}).get("Literal", {}).get("Value") == "0D"
+               for axis in axes), "Out-of-sequence gauge must mark its 0% target"
+    targets = out_of_sequence["objects"].get("target", [])
     if isinstance(targets, dict):
         targets = [targets]
-    assert targets and all(t.get("properties", {}).get("show", {}).get("expr", {}).get("Literal", {}).get("Value") == "false"
-                           for t in targets), "High float target marker remains visible"
+    assert targets and all(t.get("properties", {}).get("show", {}).get("expr", {}).get("Literal", {}).get("Value") == "true"
+                           for t in targets), "Out-of-sequence target marker must be visible"
     for identifier in ("81ad6771956ff5d1741f", "c7f71fd2e347b3f85c92"):
         for node in walk(visuals[identifier]):
             for key, value in node.items():
                 if key in {"displayName", "Value"} and isinstance(value, str):
                     assert not re.search(r"checks?\s+passed", value, re.I), "Score caption still implies binary passed checks"
     expected_history = {
-        "HighFloat% (History)", "HighDur% (History)", "Lags% (History)",
+        "SM Out Of Sequence % (History)", "HighDur% (History)", "Lags% (History)",
         "<0Lead% (History)", "<0Float% (History)", "Constraint% (History)",
         "SM Missing Logic % (History)", "SM FS % (History)",
         "SM Invalid Dates % (History)", "Score (History)", "SM Detail History",

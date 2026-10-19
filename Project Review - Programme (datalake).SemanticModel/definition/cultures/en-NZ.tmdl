@@ -1616,16 +1616,6 @@ cultureInfo en-NZ
 			            },
 			            "Weight": 0.582
 			          }
-			        },
-			        {
-			          "WBS": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -1718,26 +1708,6 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.582
-			          }
-			        },
-			        {
-			          "WBS": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
-			        },
-			        {
-			          "Activity ID": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        },
 			        {
@@ -4059,16 +4029,6 @@ cultureInfo en-NZ
 			            },
 			            "Weight": 0.727
 			          }
-			        },
-			        {
-			          "High float >44d | review indicator": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -4133,7 +4093,7 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "Remaining duration >44d (custom) | ≤5% / ≤10%": {
+			          "Remaining duration >44d (custom) | ≤5% / <10%": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -4156,6 +4116,16 @@ cultureInfo en-NZ
 			        {
 			          "lags>5d": {
 			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "Lags >5d": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -4195,7 +4165,7 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "Positive lags | ≤5% / ≤10%": {
+			          "Lags >5d | ≤5% / <10%": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -4492,16 +4462,6 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.591
-			          }
-			        },
-			        {
-			          "Float = 0": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -6256,7 +6216,7 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "Negative float | 0% / ≤1%": {
+			          "Negative float | 0% / <5%": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -6302,7 +6262,7 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "Leads | 0% / ≤1%": {
+			          "Leads | 0% / <1%": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -6348,7 +6308,7 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "Restrictive primary | ≤5% / ≤10%": {
+			          "Restrictive primary | ≤5% / <10%": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -20623,16 +20583,6 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.492
-			          }
-			        },
-			        {
-			          "Baseline": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -37952,16 +37902,6 @@ cultureInfo en-NZ
 			            },
 			            "Weight": 0.727
 			          }
-			        },
-			        {
-			          "Potential finish": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ],
 			      "SemanticType": "Time"
@@ -38079,16 +38019,6 @@ cultureInfo en-NZ
 			            },
 			            "Weight": 0.492
 			          }
-			        },
-			        {
-			          "Required production": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -38110,16 +38040,6 @@ cultureInfo en-NZ
 			          "horizon remaining": {
 			            "State": "Generated",
 			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "Remaining at last known date": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -38248,16 +38168,6 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.485
-			          }
-			        },
-			        {
-			          "First working date": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ],
@@ -38984,16 +38894,6 @@ cultureInfo en-NZ
 			            },
 			            "Weight": 0.5
 			          }
-			        },
-			        {
-			          "Quantity by target": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -39232,16 +39132,6 @@ cultureInfo en-NZ
 			            },
 			            "Weight": 0.475
 			          }
-			        },
-			        {
-			          "Working dates used": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -39323,16 +39213,6 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.582
-			          }
-			        },
-			        {
-			          "Remaining at target": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -39429,16 +39309,6 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.468
-			          }
-			        },
-			        {
-			          "Elapsed days": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -40557,7 +40427,7 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "Positive lags | ≤5% / ≤10%": {
+			          "Lags >5d | ≤5% / <10%": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -40651,7 +40521,7 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "Remaining duration >44d (custom) | ≤5% / ≤10%": {
+			          "Remaining duration >44d (custom) | ≤5% / <10%": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -40700,16 +40570,6 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.605
-			          }
-			        },
-			        {
-			          "High float >44d | review indicator": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -40777,7 +40637,7 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "Leads | 0% / ≤1%": {
+			          "Leads | 0% / <1%": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -40809,7 +40669,7 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "Negative float | 0% / ≤1%": {
+			          "Negative float | 0% / <5%": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -40861,7 +40721,7 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "Restrictive primary | ≤5% / ≤10%": {
+			          "Restrictive primary | ≤5% / <10%": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -50859,7 +50719,7 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "FS relationships | ≥90% / ≥80%": {
+			          "FS relationships | ≥90% / >80%": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -51009,16 +50869,6 @@ cultureInfo en-NZ
 			            },
 			            "Weight": 0.727
 			          }
-			        },
-			        {
-			          "Positive lags": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -51067,7 +50917,7 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "Missing logic | ≤5% / ≤10%": {
+			          "Missing logic | ≤5% / <10%": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -51123,7 +50973,7 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "Date integrity (custom) | 0% / ≤0.1%": {
+			          "Date integrity (custom) | 0% / <1%": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -51149,7 +50999,7 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "FS relationships | ≥90% / ≥80%": {
+			          "FS relationships | ≥90% / >80%": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -51307,7 +51157,7 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "Date integrity (custom) | 0% / ≤0.1%": {
+			          "Date integrity (custom) | 0% / <1%": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -51333,7 +51183,7 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "Missing logic | ≤5% / ≤10%": {
+			          "Missing logic | ≤5% / <10%": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -51471,7 +51321,7 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "Selected detail metric": {
+			          "Baseline coverage": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -51681,7 +51531,7 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "Selected detail metric": {
+			          "Baseline coverage": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -56571,65 +56421,6 @@ cultureInfo en-NZ
 			        }
 			      ]
 			    },
-			    "schedule_metric_detail.metric_ID": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "Schedule Metric Detail",
-			          "ConceptualProperty": "Metric ID"
-			        }
-			      },
-			      "State": "Generated",
-			      "Visibility": {
-			        "Value": "Hidden"
-			      },
-			      "Terms": [
-			        {
-			          "metric ID": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "metric identification": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.75
-			          }
-			        },
-			        {
-			          "metric identity": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.75
-			          }
-			        },
-			        {
-			          "metric identifier": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.75
-			          }
-			        },
-			        {
-			          "metric credential": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.727
-			          }
-			        }
-			      ]
-			    },
 			    "schedule_metric_detail.SM_detail_project": {
 			      "Definition": {
 			        "Binding": {
@@ -58114,823 +57905,6 @@ cultureInfo en-NZ
 			        }
 			      ]
 			    },
-			    "schedule_metric_detail.SM_detail_invalid_matched_records": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "Schedule Metric Detail",
-			          "ConceptualProperty": "SM Detail Invalid Matched Records"
-			        }
-			      },
-			      "State": "Generated",
-			      "Visibility": {
-			        "Value": "Hidden"
-			      },
-			      "Terms": [
-			        {
-			          "SM detail invalid matched records": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "sm detail invalid matched annals": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.52
-			          }
-			        },
-			        {
-			          "sm detail invalid matched history": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.52
-			          }
-			        },
-			        {
-			          "sm detail invalid matched archive": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.504
-			          }
-			        },
-			        {
-			          "sm detail invalid matched chronicle": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.504
-			          }
-			        },
-			        {
-			          "sm detail invalid matched account": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.504
-			          }
-			        },
-			        {
-			          "sm detail invalid matched register": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.504
-			          }
-			        },
-			        {
-			          "sm detail invalid matched minute": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.479
-			          }
-			        },
-			        {
-			          "sm detail invalid matched proceeding": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.479
-			          }
-			        },
-			        {
-			          "sm detail invalid matched report": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.479
-			          }
-			        },
-			        {
-			          "sm detail invalid matched file": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.479
-			          }
-			        }
-			      ]
-			    },
-			    "schedule_metric_detail.SM_detail_baseline_due": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "Schedule Metric Detail",
-			          "ConceptualProperty": "SM Detail Baseline Due"
-			        }
-			      },
-			      "State": "Generated",
-			      "Visibility": {
-			        "Value": "Hidden"
-			      },
-			      "Terms": [
-			        {
-			          "SM detail baseline due": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "due": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "baseline due": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "detail baseline due": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "owing": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.476
-			          }
-			        },
-			        {
-			          "outstanding": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.476
-			          }
-			        },
-			        {
-			          "payable": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.476
-			          }
-			        }
-			      ]
-			    },
-			    "schedule_metric_detail.SM_detail_missed_assessable_due": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "Schedule Metric Detail",
-			          "ConceptualProperty": "SM Detail Missed Assessable Due"
-			        }
-			      },
-			      "State": "Generated",
-			      "Visibility": {
-			        "Value": "Hidden"
-			      },
-			      "Terms": [
-			        {
-			          "SM detail missed assessable due": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "sm aspect missed assessable due": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.52
-			          }
-			        },
-			        {
-			          "sm element missed assessable due": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.52
-			          }
-			        },
-			        {
-			          "sm fact missed assessable due": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.52
-			          }
-			        },
-			        {
-			          "sm part missed assessable due": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.504
-			          }
-			        },
-			        {
-			          "sm feature missed assessable due": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.504
-			          }
-			        },
-			        {
-			          "sm point missed assessable due": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.504
-			          }
-			        },
-			        {
-			          "sm factor missed assessable due": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.504
-			          }
-			        },
-			        {
-			          "sm facet missed assessable due": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.504
-			          }
-			        },
-			        {
-			          "sm unit missed assessable due": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.494
-			          }
-			        },
-			        {
-			          "sm taskforce missed assessable due": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.494
-			          }
-			        }
-			      ]
-			    },
-			    "schedule_metric_detail.SM_detail_execution_activities": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "Schedule Metric Detail",
-			          "ConceptualProperty": "SM Detail Execution Activities"
-			        }
-			      },
-			      "State": "Generated",
-			      "Visibility": {
-			        "Value": "Hidden"
-			      },
-			      "Terms": [
-			        {
-			          "SM detail execution activities": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "activities": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "execution activities": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "detail execution activities": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "sm detail execution goings-on": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.514
-			          }
-			        },
-			        {
-			          "sm detail execution accomplishment": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.514
-			          }
-			        },
-			        {
-			          "detail execution goings-on": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.508
-			          }
-			        },
-			        {
-			          "detail execution accomplishment": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.508
-			          }
-			        },
-			        {
-			          "execution goings-on": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.5
-			          }
-			        },
-			        {
-			          "execution accomplishment": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.5
-			          }
-			        },
-			        {
-			          "sm detail execution doing": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.499
-			          }
-			        },
-			        {
-			          "sm detail execution action": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.499
-			          }
-			        },
-			        {
-			          "sm detail execution event": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.499
-			          }
-			        },
-			        {
-			          "sm detail execution happening": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.499
-			          }
-			        }
-			      ]
-			    },
-			    "schedule_metric_detail.SM_detail_execution_due": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "Schedule Metric Detail",
-			          "ConceptualProperty": "SM Detail Execution Due"
-			        }
-			      },
-			      "State": "Generated",
-			      "Visibility": {
-			        "Value": "Hidden"
-			      },
-			      "Terms": [
-			        {
-			          "SM detail execution due": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "due": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "execution due": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "detail execution due": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "sm detail implementation due": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.514
-			          }
-			        },
-			        {
-			          "sm detail performance due": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.514
-			          }
-			        },
-			        {
-			          "sm detail accomplishment due": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.514
-			          }
-			        },
-			        {
-			          "detail implementation due": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.508
-			          }
-			        },
-			        {
-			          "detail performance due": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.508
-			          }
-			        },
-			        {
-			          "detail accomplishment due": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.508
-			          }
-			        },
-			        {
-			          "implementation due": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.5
-			          }
-			        },
-			        {
-			          "performance due": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.5
-			          }
-			        },
-			        {
-			          "accomplishment due": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.5
-			          }
-			        },
-			        {
-			          "sm detail completing due": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.499
-			          }
-			        }
-			      ]
-			    },
-			    "schedule_metric_detail.SM_detail_missed_due": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "Schedule Metric Detail",
-			          "ConceptualProperty": "SM Detail Missed Due"
-			        }
-			      },
-			      "State": "Generated",
-			      "Visibility": {
-			        "Value": "Hidden"
-			      },
-			      "Terms": [
-			        {
-			          "SM detail missed due": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "sm aspect missed due": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.514
-			          }
-			        },
-			        {
-			          "sm element missed due": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.514
-			          }
-			        },
-			        {
-			          "sm fact missed due": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.514
-			          }
-			        },
-			        {
-			          "sm part missed due": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.499
-			          }
-			        },
-			        {
-			          "sm feature missed due": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.499
-			          }
-			        },
-			        {
-			          "sm point missed due": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.499
-			          }
-			        },
-			        {
-			          "sm factor missed due": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.499
-			          }
-			        },
-			        {
-			          "sm facet missed due": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.499
-			          }
-			        },
-			        {
-			          "sm unit missed due": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.489
-			          }
-			        },
-			        {
-			          "sm taskforce missed due": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.489
-			          }
-			        }
-			      ]
-			    },
-			    "schedule_metric_detail.SM_detail_matched_completed": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "Schedule Metric Detail",
-			          "ConceptualProperty": "SM Detail Matched Completed"
-			        }
-			      },
-			      "State": "Generated",
-			      "Visibility": {
-			        "Value": "Hidden"
-			      },
-			      "Terms": [
-			        {
-			          "SM detail matched completed": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "sm aspect matched completed": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.514
-			          }
-			        },
-			        {
-			          "sm element matched completed": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.514
-			          }
-			        },
-			        {
-			          "sm fact matched completed": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.514
-			          }
-			        },
-			        {
-			          "sm part matched completed": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.499
-			          }
-			        },
-			        {
-			          "sm feature matched completed": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.499
-			          }
-			        },
-			        {
-			          "sm point matched completed": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.499
-			          }
-			        },
-			        {
-			          "sm factor matched completed": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.499
-			          }
-			        },
-			        {
-			          "sm facet matched completed": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.499
-			          }
-			        },
-			        {
-			          "sm unit matched completed": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.489
-			          }
-			        },
-			        {
-			          "sm taskforce matched completed": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.489
-			          }
-			        }
-			      ]
-			    },
 			    "schedule_metric_detail.SM_detail_added_activities": {
 			      "Definition": {
 			        "Binding": {
@@ -59324,883 +58298,6 @@ cultureInfo en-NZ
 			        }
 			      ]
 			    },
-			    "schedule_metric_detail.SM_detail_baseline_message": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "Schedule Metric Detail",
-			          "ConceptualProperty": "SM Detail Baseline Message"
-			        }
-			      },
-			      "State": "Generated",
-			      "Visibility": {
-			        "Value": "Hidden"
-			      },
-			      "Terms": [
-			        {
-			          "SM detail baseline message": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "message": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "baseline message": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "detail baseline message": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "sm detail baseline memo": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.514
-			          }
-			        },
-			        {
-			          "sm detail baseline memorandum": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.514
-			          }
-			        },
-			        {
-			          "sm detail baseline missive": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.514
-			          }
-			        },
-			        {
-			          "detail baseline memo": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.508
-			          }
-			        },
-			        {
-			          "detail baseline memorandum": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.508
-			          }
-			        },
-			        {
-			          "detail baseline missive": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.508
-			          }
-			        },
-			        {
-			          "baseline memo": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.5
-			          }
-			        },
-			        {
-			          "baseline memorandum": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.5
-			          }
-			        },
-			        {
-			          "baseline missive": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.5
-			          }
-			        },
-			        {
-			          "sm detail baseline communication": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.499
-			          }
-			        }
-			      ]
-			    },
-			    "schedule_metric_detail.SM_matched_baseline_missed_": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "Schedule Metric Detail",
-			          "ConceptualProperty": "SM Matched Baseline Missed %"
-			        }
-			      },
-			      "State": "Generated",
-			      "Terms": [
-			        {
-			          "SM matched baseline missed %": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "sm matched baseline missed percentage": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.78
-			          }
-			        },
-			        {
-			          "sm matched baseline missed pct": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.757
-			          }
-			        }
-			      ]
-			    },
-			    "schedule_metric_detail.SM_matched_baseline_execution_index": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "Schedule Metric Detail",
-			          "ConceptualProperty": "SM Matched Baseline Execution Index"
-			        }
-			      },
-			      "State": "Generated",
-			      "Terms": [
-			        {
-			          "SM matched baseline execution index": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "sm matched baseline execution directory": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.504
-			          }
-			        },
-			        {
-			          "sm matched baseline execution catalogue": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.504
-			          }
-			        },
-			        {
-			          "sm matched baseline execution catalog": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.504
-			          }
-			        },
-			        {
-			          "sm matched baseline execution guide": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.504
-			          }
-			        },
-			        {
-			          "sm matched baseline execution file": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.504
-			          }
-			        },
-			        {
-			          "sm matched baseline execution key": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.504
-			          }
-			        },
-			        {
-			          "sm matched baseline execution table": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.504
-			          }
-			        },
-			        {
-			          "sm matched baseline execution manifestation": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.494
-			          }
-			        },
-			        {
-			          "sm matched baseline execution pointer": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.494
-			          }
-			        },
-			        {
-			          "sm matched baseline execution indication": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.494
-			          }
-			        }
-			      ]
-			    },
-			    "schedule_metric_detail.SM_detail_open_activities": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "Schedule Metric Detail",
-			          "ConceptualProperty": "SM Detail Open Activities"
-			        }
-			      },
-			      "State": "Generated",
-			      "Visibility": {
-			        "Value": "Hidden"
-			      },
-			      "Terms": [
-			        {
-			          "SM detail open activities": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "activities": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "open activities": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "detail open activities": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "sm detail open goings-on": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.514
-			          }
-			        },
-			        {
-			          "sm detail open accomplishment": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.514
-			          }
-			        },
-			        {
-			          "detail open goings-on": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.508
-			          }
-			        },
-			        {
-			          "detail open accomplishment": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.508
-			          }
-			        },
-			        {
-			          "open goings-on": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.5
-			          }
-			        },
-			        {
-			          "open accomplishment": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.5
-			          }
-			        },
-			        {
-			          "sm detail open doing": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.499
-			          }
-			        },
-			        {
-			          "sm detail open action": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.499
-			          }
-			        },
-			        {
-			          "sm detail open event": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.499
-			          }
-			        },
-			        {
-			          "sm detail open happening": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.499
-			          }
-			        }
-			      ]
-			    },
-			    "schedule_metric_detail.SM_detail_longest_path_activities": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "Schedule Metric Detail",
-			          "ConceptualProperty": "SM Detail Longest Path Activities"
-			        }
-			      },
-			      "State": "Generated",
-			      "Visibility": {
-			        "Value": "Hidden"
-			      },
-			      "Terms": [
-			        {
-			          "SM detail longest path activities": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "sm detail longest path goings-on": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.52
-			          }
-			        },
-			        {
-			          "sm detail longest path accomplishment": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.52
-			          }
-			        },
-			        {
-			          "sm detail longest path doing": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.504
-			          }
-			        },
-			        {
-			          "sm detail longest path action": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.504
-			          }
-			        },
-			        {
-			          "sm detail longest path event": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.504
-			          }
-			        },
-			        {
-			          "sm detail longest path happening": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.504
-			          }
-			        },
-			        {
-			          "sm detail longest path deed": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.504
-			          }
-			        },
-			        {
-			          "sm detail longest path undertaking": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.504
-			          }
-			        },
-			        {
-			          "sm detail longest path manner": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.494
-			          }
-			        },
-			        {
-			          "sm detail longest path performance": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.494
-			          }
-			        }
-			      ]
-			    },
-			    "schedule_metric_detail.SM_longest_path_": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "Schedule Metric Detail",
-			          "ConceptualProperty": "SM Longest Path %"
-			        }
-			      },
-			      "State": "Generated",
-			      "Terms": [
-			        {
-			          "SM longest path %": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "sm longest path percentage": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.771
-			          }
-			        },
-			        {
-			          "sm longest path pct": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.748
-			          }
-			        }
-			      ]
-			    },
-			    "schedule_metric_detail.SM_detail_format": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "Schedule Metric Detail",
-			          "ConceptualProperty": "SM Detail Format"
-			        }
-			      },
-			      "State": "Generated",
-			      "Visibility": {
-			        "Value": "Hidden"
-			      },
-			      "Terms": [
-			        {
-			          "SM detail format": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "format": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "detail format": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "sm detail arrangement": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.508
-			          }
-			        },
-			        {
-			          "sm detail setup": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.508
-			          }
-			        },
-			        {
-			          "sm detail presentation": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.508
-			          }
-			        },
-			        {
-			          "sm detail organization": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.508
-			          }
-			        },
-			        {
-			          "sm detail layout": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.508
-			          }
-			        },
-			        {
-			          "sm detail system": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.508
-			          }
-			        },
-			        {
-			          "detail arrangement": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.5
-			          }
-			        },
-			        {
-			          "detail setup": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.5
-			          }
-			        },
-			        {
-			          "detail presentation": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.5
-			          }
-			        },
-			        {
-			          "detail organization": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.5
-			          }
-			        }
-			      ]
-			    },
-			    "schedule_metric_detail.SM_detail_title": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "Schedule Metric Detail",
-			          "ConceptualProperty": "SM Detail Title"
-			        }
-			      },
-			      "State": "Generated",
-			      "Terms": [
-			        {
-			          "SM detail title": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "title": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "detail title": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "sm detail designation": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.762
-			          }
-			        },
-			        {
-			          "detail designation": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.75
-			          }
-			        },
-			        {
-			          "sm detail name": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.739
-			          }
-			        },
-			        {
-			          "sm detail award": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.739
-			          }
-			        },
-			        {
-			          "sm detail call": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.739
-			          }
-			        },
-			        {
-			          "sm detail heading": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.739
-			          }
-			        },
-			        {
-			          "sm detail label": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.739
-			          }
-			        },
-			        {
-			          "designation": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.736
-			          }
-			        },
-			        {
-			          "detail name": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.727
-			          }
-			        },
-			        {
-			          "detail award": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.727
-			          }
-			        }
-			      ]
-			    },
-			    "schedule_metric_detail.SM_detail_partial_inputs": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "Schedule Metric Detail",
-			          "ConceptualProperty": "SM Detail Partial Inputs"
-			        }
-			      },
-			      "State": "Generated",
-			      "Visibility": {
-			        "Value": "Hidden"
-			      },
-			      "Terms": [
-			        {
-			          "SM detail partial inputs": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "inputs": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "partial inputs": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "detail partial inputs": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        }
-			      ]
-			    },
 			    "schedule_metric_detail.SM_detail_status": {
 			      "Definition": {
 			        "Binding": {
@@ -60499,112 +58596,6 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.494
-			          }
-			        }
-			      ]
-			    },
-			    "schedule_metric_detail.entity__SM_detail_value_FormatString": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "Schedule Metric Detail",
-			          "ConceptualProperty": "_SM Detail Value FormatString"
-			        }
-			      },
-			      "State": "Generated",
-			      "Visibility": {
-			        "Value": "Hidden"
-			      },
-			      "Terms": [
-			        {
-			          "_SM detail value FormatString": {
-			            "State": "Generated"
-			          }
-			        }
-			      ]
-			    },
-			    "schedule_metric_detail.entity__SM_detail_target_FormatString": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "Schedule Metric Detail",
-			          "ConceptualProperty": "_SM Detail Target FormatString"
-			        }
-			      },
-			      "State": "Generated",
-			      "Visibility": {
-			        "Value": "Hidden"
-			      },
-			      "Terms": [
-			        {
-			          "_SM detail target FormatString": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "_sm detail focus formatstring": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.605
-			          }
-			        },
-			        {
-			          "_sm detail goal formatstring": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.605
-			          }
-			        },
-			        {
-			          "_sm detail objective formatstring": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.605
-			          }
-			        }
-			      ]
-			    },
-			    "schedule_metric_detail.entity__SM_detail_maximum_FormatString": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "Schedule Metric Detail",
-			          "ConceptualProperty": "_SM Detail Maximum FormatString"
-			        }
-			      },
-			      "State": "Generated",
-			      "Visibility": {
-			        "Value": "Hidden"
-			      },
-			      "Terms": [
-			        {
-			          "_SM detail maximum FormatString": {
-			            "State": "Generated"
-			          }
-			        }
-			      ]
-			    },
-			    "schedule_metric_detail.entity__SM_detail_history_FormatString": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "Schedule Metric Detail",
-			          "ConceptualProperty": "_SM Detail History FormatString"
-			        }
-			      },
-			      "State": "Generated",
-			      "Visibility": {
-			        "Value": "Hidden"
-			      },
-			      "Terms": [
-			        {
-			          "_SM detail history FormatString": {
-			            "State": "Generated"
 			          }
 			        }
 			      ]
@@ -61409,10 +59400,28 @@ cultureInfo en-NZ
 			          "ConceptualProperty": "Comparison Selection Summary"
 			        }
 			      },
+			      "State": "Generated"
+			    },
+			    "resource_scenario_measures.comparison_finish_date": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Comparison Finish Date"
+			        }
+			      },
+			      "State": "Generated"
+			    },
+			    "scenario_comparison_calendar.inspection_calendar": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Scenario Comparison Calendar",
+			          "ConceptualProperty": "Inspection Calendar"
+			        }
+			      },
 			      "State": "Generated",
 			      "Terms": [
 			        {
-			          "Comparison selection": {
+			          "Calendar": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -61423,11 +59432,230 @@ cultureInfo en-NZ
 			        }
 			      ]
 			    },
-			    "resource_scenario_measures.comparison_finish_date": {
+			    "xer_metrics.negative_float_5d": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Metrics",
+			          "ConceptualProperty": "Negative Float >5d"
+			        }
+			      },
+			      "State": "Generated"
+			    },
+			    "xer_metrics.out_of_sequence_count": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Metrics",
+			          "ConceptualProperty": "Out Of Sequence Count"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Out of seq.": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_metrics.sm_out_of_sequence__history": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Metrics",
+			          "ConceptualProperty": "SM Out Of Sequence % (History)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Out-of-sequence": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_metrics.sm_out_of_sequence_": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Metrics",
+			          "ConceptualProperty": "SM Out Of Sequence %"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Out-of-sequence": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resources.actual_quantity_card": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resources",
+			          "ConceptualProperty": "Actual Quantity Card"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Actual To Date": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resources.remaining_quantity_card": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resources",
+			          "ConceptualProperty": "Remaining Quantity Card"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "To Complete": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resources.total_quantity_card": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resources",
+			          "ConceptualProperty": "Total Quantity Card"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "At Completion": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resources.total_baseline_quantity_card": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resources",
+			          "ConceptualProperty": "Total Baseline Quantity Card"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Baseline": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.scenario_finish_date_display": {
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "Resource Scenario Measures",
-			          "ConceptualProperty": "Comparison Finish Date"
+			          "ConceptualProperty": "Scenario Finish Date Display"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Potential finish": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.scenario_required_rate_display": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Scenario Required Rate Display"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Required production": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.scenario_horizon_remaining_display": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Scenario Horizon Remaining Display"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Remaining at last known date": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.comparison_finish_date_display": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Comparison Finish Date Display"
 			        }
 			      },
 			      "State": "Generated",
@@ -61444,17 +59672,101 @@ cultureInfo en-NZ
 			        }
 			      ]
 			    },
-			    "scenario_comparison_calendar.inspection_calendar": {
+			    "resource_scenario_measures.scenario_effective_start_display": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Scenario Comparison Calendar",
-			          "ConceptualProperty": "Inspection Calendar"
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Scenario Effective Start Display"
 			        }
 			      },
 			      "State": "Generated",
 			      "Terms": [
 			        {
-			          "Calendar": {
+			          "First working date": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.scenario_target_quantity_display": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Scenario Target Quantity Display"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Quantity by target": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.scenario_working_days_display": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Scenario Working Days Display"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Working dates used": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.scenario_target_remaining_display": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Scenario Target Remaining Display"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Remaining at target": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "resource_scenario_measures.scenario_elapsed_days_display": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Resource Scenario Measures",
+			          "ConceptualProperty": "Scenario Elapsed Days Display"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Elapsed days": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -81442,237 +79754,6 @@ cultureInfo en-NZ
 			          "State": "Generated",
 			          "Weight": 0.99,
 			          "ID": "schedule_metric_details_have_metrics"
-			        }
-			      ]
-			    },
-			    "entity_01_xer_task_has_schedule_metric_detail_SM_matched_baseline_missed_": {
-			      "Binding": {
-			        "ConceptualEntity": "01 XER_TASK"
-			      },
-			      "State": "Generated",
-			      "Roles": {
-			        "entity_01_xer_task": {
-			          "Target": {
-			            "Entity": "entity_01_xer_task"
-			          }
-			        },
-			        "schedule_metric_detail.SM_matched_baseline_missed_": {
-			          "Target": {
-			            "Entity": "schedule_metric_detail.SM_matched_baseline_missed_"
-			          }
-			        }
-			      },
-			      "Phrasings": [
-			        {
-			          "Attribute": {
-			            "Subject": {
-			              "Role": "entity_01_xer_task"
-			            },
-			            "Object": {
-			              "Role": "schedule_metric_detail.SM_matched_baseline_missed_"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "Phrasing01_xer_tasks_have_SM_matched_baseline_missed_"
-			        }
-			      ]
-			    },
-			    "current_date_has_schedule_metric_detail_SM_matched_baseline_missed_": {
-			      "Binding": {
-			        "ConceptualEntity": "CurrentDate"
-			      },
-			      "State": "Generated",
-			      "Roles": {
-			        "current_date": {
-			          "Target": {
-			            "Entity": "current_date"
-			          }
-			        },
-			        "schedule_metric_detail.SM_matched_baseline_missed_": {
-			          "Target": {
-			            "Entity": "schedule_metric_detail.SM_matched_baseline_missed_"
-			          }
-			        }
-			      },
-			      "Phrasings": [
-			        {
-			          "Attribute": {
-			            "Subject": {
-			              "Role": "current_date"
-			            },
-			            "Object": {
-			              "Role": "schedule_metric_detail.SM_matched_baseline_missed_"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "current_dates_have_SM_matched_baseline_missed_"
-			        }
-			      ]
-			    },
-			    "entity_01_xer_task_has_schedule_metric_detail_SM_matched_baseline_execution_index": {
-			      "Binding": {
-			        "ConceptualEntity": "01 XER_TASK"
-			      },
-			      "State": "Generated",
-			      "Roles": {
-			        "entity_01_xer_task": {
-			          "Target": {
-			            "Entity": "entity_01_xer_task"
-			          }
-			        },
-			        "schedule_metric_detail.SM_matched_baseline_execution_index": {
-			          "Target": {
-			            "Entity": "schedule_metric_detail.SM_matched_baseline_execution_index"
-			          }
-			        }
-			      },
-			      "Phrasings": [
-			        {
-			          "Attribute": {
-			            "Subject": {
-			              "Role": "entity_01_xer_task"
-			            },
-			            "Object": {
-			              "Role": "schedule_metric_detail.SM_matched_baseline_execution_index"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "Phrasing01_xer_tasks_have_SM_matched_baseline_execution_index"
-			        }
-			      ]
-			    },
-			    "current_date_has_schedule_metric_detail_SM_matched_baseline_execution_index": {
-			      "Binding": {
-			        "ConceptualEntity": "CurrentDate"
-			      },
-			      "State": "Generated",
-			      "Roles": {
-			        "current_date": {
-			          "Target": {
-			            "Entity": "current_date"
-			          }
-			        },
-			        "schedule_metric_detail.SM_matched_baseline_execution_index": {
-			          "Target": {
-			            "Entity": "schedule_metric_detail.SM_matched_baseline_execution_index"
-			          }
-			        }
-			      },
-			      "Phrasings": [
-			        {
-			          "Attribute": {
-			            "Subject": {
-			              "Role": "current_date"
-			            },
-			            "Object": {
-			              "Role": "schedule_metric_detail.SM_matched_baseline_execution_index"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "current_dates_have_SM_matched_baseline_execution_index"
-			        }
-			      ]
-			    },
-			    "entity_01_xer_task_has_schedule_metric_detail_SM_longest_path_": {
-			      "Binding": {
-			        "ConceptualEntity": "01 XER_TASK"
-			      },
-			      "State": "Generated",
-			      "Roles": {
-			        "entity_01_xer_task": {
-			          "Target": {
-			            "Entity": "entity_01_xer_task"
-			          }
-			        },
-			        "schedule_metric_detail.SM_longest_path_": {
-			          "Target": {
-			            "Entity": "schedule_metric_detail.SM_longest_path_"
-			          }
-			        }
-			      },
-			      "Phrasings": [
-			        {
-			          "Attribute": {
-			            "Subject": {
-			              "Role": "entity_01_xer_task"
-			            },
-			            "Object": {
-			              "Role": "schedule_metric_detail.SM_longest_path_"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "Phrasing01_xer_tasks_have_SM_longest_path_"
-			        }
-			      ]
-			    },
-			    "current_date_has_schedule_metric_detail_SM_longest_path_": {
-			      "Binding": {
-			        "ConceptualEntity": "CurrentDate"
-			      },
-			      "State": "Generated",
-			      "Roles": {
-			        "current_date": {
-			          "Target": {
-			            "Entity": "current_date"
-			          }
-			        },
-			        "schedule_metric_detail.SM_longest_path_": {
-			          "Target": {
-			            "Entity": "schedule_metric_detail.SM_longest_path_"
-			          }
-			        }
-			      },
-			      "Phrasings": [
-			        {
-			          "Attribute": {
-			            "Subject": {
-			              "Role": "current_date"
-			            },
-			            "Object": {
-			              "Role": "schedule_metric_detail.SM_longest_path_"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "current_dates_have_SM_longest_path_"
-			        }
-			      ]
-			    },
-			    "schedule_metric_detail_has_SM_detail_title": {
-			      "Binding": {
-			        "ConceptualEntity": "Schedule Metric Detail"
-			      },
-			      "State": "Generated",
-			      "Roles": {
-			        "schedule_metric_detail": {
-			          "Target": {
-			            "Entity": "schedule_metric_detail"
-			          }
-			        },
-			        "schedule_metric_detail.SM_detail_title": {
-			          "Target": {
-			            "Entity": "schedule_metric_detail.SM_detail_title"
-			          }
-			        }
-			      },
-			      "Phrasings": [
-			        {
-			          "Attribute": {
-			            "Subject": {
-			              "Role": "schedule_metric_detail"
-			            },
-			            "Object": {
-			              "Role": "schedule_metric_detail.SM_detail_title"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "schedule_metric_details_have_SM_detail_title"
 			        }
 			      ]
 			    },

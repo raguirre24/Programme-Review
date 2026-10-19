@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "5a1178e4780765a33ec9",
   "position": {
     "x": 3.9901477832512313,
     "y": 134.33497536945814,
-    "z": 95001,
+    "z": 11000,
     "height": 915.07389162561572,
     "width": 1909.9507389162561,
-    "tabOrder": 95001
+    "tabOrder": 11000
   },
   "visual": {
     "visualType": "P6WBSMatrix8BDB3B26BB4B497EA3E044ADBDE081D0",
@@ -896,6 +896,18 @@
                   }
                 }
               }
+            },
+            "level4Colour": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -968,249 +980,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "19eea894c21f111008d8",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "03 XER_PROJWBS"
-              }
-            },
-            "Property": "Level_3"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "309fe4c153b1f11de9a9",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "03 XER_PROJWBS"
-              }
-            },
-            "Property": "Level_4"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "afb3595cd96a42fc966a",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Measures"
-              }
-            },
-            "Property": "ShowTaskName"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "7f7088140c8edb7e02b6",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Measures"
-              }
-            },
-            "Property": "ShowTaskType"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "d59ebd92f30c5cc4cb23",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Measures"
-              }
-            },
-            "Property": "ShowDuration"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "dae0fbc426c230d6cdb4",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Measures"
-              }
-            },
-            "Property": "ShowFloat"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "0d7dd76efb6031aadea7",
-        "field": {
-          "Aggregation": {
-            "Expression": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "01 XER_TASK"
-                  }
-                },
-                "Property": "Baseline Start"
-              }
-            },
-            "Function": 3
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "fdc2a088b87b97c0c961",
-        "field": {
-          "Aggregation": {
-            "Expression": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "01 XER_TASK"
-                  }
-                },
-                "Property": "Baseline Finish"
-              }
-            },
-            "Function": 4
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "00ee8ec3c9454be25819",
-        "field": {
-          "Aggregation": {
-            "Expression": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "01 XER_TASK"
-                  }
-                },
-                "Property": "Previous Month Start"
-              }
-            },
-            "Function": 3
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "299a41af1b796e694566",
-        "field": {
-          "Aggregation": {
-            "Expression": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "01 XER_TASK"
-                  }
-                },
-                "Property": "Previous Month Finish"
-              }
-            },
-            "Function": 4
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "e7f5d4c0f81b250d0762",
-        "field": {
-          "Aggregation": {
-            "Expression": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "01 XER_TASK"
-                  }
-                },
-                "Property": "Start"
-              }
-            },
-            "Function": 3
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "d662bd7213d57057b49d",
-        "field": {
-          "Aggregation": {
-            "Expression": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "01 XER_TASK"
-                  }
-                },
-                "Property": "Finish"
-              }
-            },
-            "Function": 4
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "8496a4a6bfa3509f8b95",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Measures"
-              }
-            },
-            "Property": "ShowVarianceBL"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "35dfe6cb2dbd2e28e7e3",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Measures"
-              }
-            },
-            "Property": "ShowVariance"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "d772eaa88ec8df519108",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "01 XER_TASK"
-              }
-            },
-            "Property": "task_code"
-          }
-        },
-        "type": "Categorical"
-      }
-    ]
   }
 }
