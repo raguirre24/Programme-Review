@@ -79,7 +79,7 @@
                         "textSize": {
                           "expr": {
                             "Literal": {
-                              "Value": "12D"
+                              "Value": "11D"
                             }
                           }
                         },
@@ -295,14 +295,14 @@
                         "placeholder": {
                           "expr": {
                             "Literal": {
-                              "Value": "'Whole quantity'"
+                              "Value": "'0–100,000'"
                             }
                           }
                         },
                         "fontSize": {
                           "expr": {
                             "Literal": {
-                              "Value": "12D"
+                              "Value": "11D"
                             }
                           }
                         },
@@ -431,7 +431,7 @@
                         "textSize": {
                           "expr": {
                             "Literal": {
-                              "Value": "12D"
+                              "Value": "11D"
                             }
                           }
                         },
@@ -572,7 +572,7 @@
                         "textSize": {
                           "expr": {
                             "Literal": {
-                              "Value": "12D"
+                              "Value": "11D"
                             }
                           }
                         },
@@ -720,14 +720,14 @@
                         "placeholder": {
                           "expr": {
                             "Literal": {
-                              "Value": "'Production rate'"
+                              "Value": "'0–10,000 (step 0.1)'"
                             }
                           }
                         },
                         "fontSize": {
                           "expr": {
                             "Literal": {
-                              "Value": "12D"
+                              "Value": "11D"
                             }
                           }
                         },
@@ -856,7 +856,7 @@
                         "textSize": {
                           "expr": {
                             "Literal": {
-                              "Value": "12D"
+                              "Value": "11D"
                             }
                           }
                         },
@@ -997,7 +997,7 @@
                         "textSize": {
                           "expr": {
                             "Literal": {
-                              "Value": "12D"
+                              "Value": "11D"
                             }
                           }
                         },
@@ -1152,7 +1152,7 @@
                         "fontSize": {
                           "expr": {
                             "Literal": {
-                              "Value": "12D"
+                              "Value": "11D"
                             }
                           }
                         },
@@ -1288,14 +1288,14 @@
                         "placeholder": {
                           "expr": {
                             "Literal": {
-                              "Value": "'Clear uses today''s date'"
+                              "Value": "'Clear uses data date'"
                             }
                           }
                         },
                         "fontSize": {
                           "expr": {
                             "Literal": {
-                              "Value": "12D"
+                              "Value": "11D"
                             }
                           }
                         },
@@ -1394,14 +1394,14 @@
                         "placeholder": {
                           "expr": {
                             "Literal": {
-                              "Value": "'Clear uses start + 30 days, within window'"
+                              "Value": "'Optional (required in target mode)'"
                             }
                           }
                         },
                         "fontSize": {
                           "expr": {
                             "Literal": {
-                              "Value": "12D"
+                              "Value": "11D"
                             }
                           }
                         },
@@ -1493,7 +1493,7 @@
                         "textSize": {
                           "expr": {
                             "Literal": {
-                              "Value": "12D"
+                              "Value": "11D"
                             }
                           }
                         },

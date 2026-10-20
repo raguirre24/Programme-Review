@@ -1,5 +1,8 @@
 # Schedule Metrics drill-through acceptance — 9 October 2026
 
+> [!NOTE]
+> **Historical validation record (9 October 2026)**: This document preserves the point-in-time validation evidence from 9 October 2026. Subsequent approved changes on 9–20 October 2026 removed Date alignment, promoted High Float and Remaining Duration (`>44d`) to scored checks, added the `Out of Seq.` and `Baseline Execution Index` gauges, and streamlined `Schedule Metric Guide` to **14 rows** (**10 scored checks**, **55 visuals** on `Sched. Metrics`, and **2 drill-through routes**: `Missing Predecessor` and `Missing Successor`). See [IMPLEMENTATION.md](IMPLEMENTATION.md) and [README.md](README.md) for the current specification and verification commands.
+
 This record covers **Missing Predecessor**, **Missing Successor** and
 **Date alignment**, reached from the existing Schedule Metrics counts table.
 It supplements [DISPLAY-VALIDATION.md](DISPLAY-VALIDATION.md) and supersedes

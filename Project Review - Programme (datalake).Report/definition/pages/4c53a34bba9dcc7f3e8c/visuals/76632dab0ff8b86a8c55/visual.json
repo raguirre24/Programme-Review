@@ -3,10 +3,10 @@
   "name": "76632dab0ff8b86a8c55",
   "position": {
     "x": 24,
-    "y": 292,
+    "y": 258,
     "z": 9000,
-    "height": 80,
-    "width": 224,
+    "height": 76,
+    "width": 228,
     "tabOrder": 6000
   },
   "visual": {
@@ -87,14 +87,14 @@
             "placeholder": {
               "expr": {
                 "Literal": {
-                  "Value": "'Whole quantity'"
+                  "Value": "'0–100,000'"
                 }
               }
             },
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "12D"
+                  "Value": "11D"
                 }
               }
             },
@@ -163,7 +163,25 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
                 }
               }
             }
@@ -230,14 +248,14 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Quantity · 0–100,000'"
+                  "Value": "'Quantity'"
                 }
               }
             },
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "12D"
+                  "Value": "11D"
                 }
               }
             },
@@ -256,7 +274,7 @@
             "bold": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
                 }
               }
             },
@@ -264,6 +282,38 @@
               "expr": {
                 "Literal": {
                   "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "border": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0.6
+                    }
+                  }
+                }
+              }
+            },
+            "radius": {
+              "expr": {
+                "Literal": {
+                  "Value": "4D"
                 }
               }
             }

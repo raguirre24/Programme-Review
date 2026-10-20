@@ -90,3 +90,21 @@ Use for families of variations (YTD/PY/Δ across many base measures) instead of 
 2. Decompose: create temp measures for each VAR / sub-expression and put them side by side.
 3. Question the context: what filters does this cell actually have? (Tooltip a `CONCATENATEX(FILTERS(...))` helper or use DAX Studio's query view.)
 4. Only then touch the formula. Most fixes are adding/removing a `KEEPFILTERS`, `ALL`, or fixing an unintended context transition.
+
+
+## This workspace: DAX Guardrails & Patterns
+
+1. **Engine-Rejected DAX Variable Names**:
+   - The Analysis Services / Power BI Desktop engine rejects certain identifier names inside `VAR` declarations. Never name a DAX variable `firstdate`, `lastdate`, `updates`, `key`, or `ordinal` ( regardless of casing; enforced by `scripts/resource_playground/verify_integration.py`).
+2. **TMDL Measure Formatting & `ERROR()` Rules**:
+   - Never specify both `formatString` and `formatStringDefinition` on the same measure in TMDL — Power BI Desktop refuses to load the model if both are present.
+   - When calling `ERROR("...")` in calculated tables or measures (such as `XER CSV Refresh Audit`), always pass a **literal string constant**, never a dynamic concatenated expression, because Power BI Service rejects dynamic `ERROR()` arguments during cloud refresh.
+3. **Table & Column Naming Gotchas**:
+   - `'XER  Counts'` has **two spaces** between `XER` and `Counts`.
+   - `'01 XER_TASK'[status_code]` uses `"Not Started"`, `"In Progress"`, `"Complete"`, whereas `'06 XER_PREDECESSOR'[status_code]` and `[predecessor_status_code]` use `"TK_NotStart"`, `"TK_Active"`, `"TK_Complete"`.
+   - In `06 XER_PREDECESSOR[pred_type]`, always include `"PR_FS1"` alongside `"PR_FS"` when filtering Finish-to-Start links.
+   - Durations, floats, and lags in `01 XER_TASK` and `06 XER_PREDECESSOR` are **already in working days** — never divide them by 8.
+4. **Display Wrapper Measures Instead of Visual-Level Measure Filters**:
+   - On high-grain axes such as `Scenario Date` (on the `Resource Calendars` page), visual-level row measure filters (`Scenario Show Daily Row` / `Scenario Show Period Row`) exceed the native query memory budget. Always bind visuals to bounded display wrapper measures (`Scenario Daily Display *`, `Scenario Chart Quantity`, `Scenario Chart Cumulative Quantity`, `Comparison Chart Quantity`) that return `BLANK()` outside the active planning window.
+5. **Detail Scope Toggle (`Schedule Metric Detail`)**:
+   - Measures in `Schedule Metric Detail` (`SM Detail *`) check `ISFILTERED('Schedule Metric Detail'[DetailScope])`: when unfiltered on the main counts table, they return the activity's own metric; when filtered to `"Baseline coverage"` in the detail panel, they evaluate the baseline comparison across the whole project/programme.

@@ -3,9 +3,9 @@
   "name": "c4762ffe207ce780fc4d",
   "position": {
     "x": 422,
-    "y": 830,
+    "y": 704,
     "z": 34000,
-    "height": 188,
+    "height": 292,
     "width": 1340,
     "tabOrder": 29000
   },
@@ -124,7 +124,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "180D"
+                  "Value": "210D"
                 }
               }
             }
@@ -152,7 +152,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "210D"
+                  "Value": "220D"
                 }
               }
             }
@@ -166,7 +166,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "210D"
+                  "Value": "220D"
                 }
               }
             }
@@ -180,7 +180,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "210D"
+                  "Value": "220D"
                 }
               }
             }
@@ -194,7 +194,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "210D"
+                  "Value": "220D"
                 }
               }
             }
@@ -278,7 +278,25 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
                 }
               }
             }
@@ -299,6 +317,38 @@
               "expr": {
                 "Literal": {
                   "Value": "'Daily resource detail'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "border": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0.6
+                    }
+                  }
+                }
+              }
+            },
+            "radius": {
+              "expr": {
+                "Literal": {
+                  "Value": "4D"
                 }
               }
             }

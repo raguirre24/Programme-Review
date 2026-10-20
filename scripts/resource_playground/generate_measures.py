@@ -32,10 +32,9 @@ add("Scenario Selected Start", """
 IF(NOT ISFILTERED('Scenario Start'), [Scenario Anchor Date], SELECTEDVALUE('Scenario Start'[Date]))
 """, "Start defaults to the data date only when its entire input table is unfiltered. An unmatched or ambiguous typed date remains blank.", "dd-MM-yyyy", True, "Internal\\Inputs")
 add("Scenario Selected Target", """
-VAR StartDate = [Scenario Selected Start]
 VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
-RETURN IF(NOT ISFILTERED('Scenario Target'), IF(NOT ISBLANK(StartDate), MIN(StartDate + 30, HorizonEnd)), SELECTEDVALUE('Scenario Target'[Date]))
-""", "Target defaults to the earlier of start plus 30 days and the available date coverage end, only when its input table is unfiltered. Unmatched or ambiguous typed dates remain blank.", "dd-MM-yyyy", True, "Internal\\Inputs")
+RETURN IF(ISFILTERED('Scenario Target') && NOT ISBLANK(HorizonEnd), SELECTEDVALUE('Scenario Target'[Date]))
+""", "Target is optional in Find finish date mode and required in Meet target date mode; no target is assumed when its input table is unfiltered.", "dd-MM-yyyy", True, "Internal\\Inputs")
 
 INPUT_HELPERS = {
     "Scenario Selected Rate": ("Scenario Rate", "Value", "100"),
@@ -124,7 +123,7 @@ RETURN
         LimitMode = "Daily limit" && DailyLimit < 0, "Daily limit must be zero or positive.",
         Mode = "Find finish date" && ISBLANK(Rate), "Select one production rate.",
         Mode = "Find finish date" && Rate < 0, "Production rate must be zero or positive.",
-        [Scenario Target Validation] <> "", [Scenario Target Validation],
+        (Mode = "Meet target date" || ISFILTERED('Scenario Target')) && [Scenario Target Validation] <> "", [Scenario Target Validation],
         ""
     )
 """, "Validate disconnected inputs without calling rate, target capacity or finish solvers.", "@", True, "Internal\\Validation")
@@ -320,18 +319,62 @@ RETURN IF(PeriodEnd >= StartDate && PeriodStart <= CALCULATE(MAX('Scenario Date'
 
 
 def date_solver(name, kernel_name, threshold, description):
+    production = kernel_name == "Scenario Capacity Through"
+    rate_vars = """VAR Rate = [Scenario Applied Rate]
+VAR Basis = [Scenario Selected Basis]
+VAR LimitEnabled = [Scenario Selected Limit Mode] = "Daily limit"
+VAR DailyLimit = CONVERT([Scenario Selected Limit], DOUBLE)
+""" if production else ""
+    rate_ok = " && NOT ISBLANK(Rate) && Rate > 0" if production else ""
+    weight_expr = """
+        VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+        VAR RawCapacity = IF(Hours > 0, IF(Basis = "Per working hour", Rate * Hours, Rate), 0)
+        RETURN IF(LimitEnabled, MIN(RawCapacity, DailyLimit), RawCapacity)""" if production else " IF('11 XER_CALENDAR_DETAILED'[work_hours] > 0, 1, 0)"
+    replacement_expr = """VAR Hours = '11 XER_CALENDAR_DETAILED'[work_hours]
+        VAR RawCapacity = IF(Hours > 0, IF(Basis = "Per working hour", Rate * Hours, Rate), 0)
+        VAR ReplacementCapacity = IF(LimitEnabled, MIN(RawCapacity, DailyLimit), RawCapacity)""" if production else "VAR ReplacementCapacity = IF('11 XER_CALENDAR_DETAILED'[work_hours] > 0, 1, 0)"
     add(name, f"""
 VAR StartDate = SELECTEDVALUE('Scenario Start'[Date])
 VAR SafeThrough = [Scenario Safe Through]
 VAR Threshold = {threshold}
-VAR Tolerance = {'[Scenario Quantity Tolerance]' if kernel_name == 'Scenario Capacity Through' else '0'}
+VAR Tolerance = {'[Scenario Quantity Tolerance]' if production else '0'}
+{rate_vars}VAR InputOk = [Scenario Input Validation] = "" && [Scenario Calendar Validation] = ""
+    && NOT ISBLANK(Threshold) && Threshold > 0{rate_ok}
+    && NOT ISBLANK(StartDate) && NOT ISBLANK(SafeThrough) && SafeThrough >= StartDate
+VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
+VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
+VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+VAR CalendarRows = CALCULATETABLE(
+    '11 XER_CALENDAR_DETAILED',
+    KEEPFILTERS(TREATAS({{ CalendarKey }}, '11 XER_CALENDAR_DETAILED'[clndr_id_key])),
+    KEEPFILTERS(TREATAS({{ ProjectKey }}, '11 XER_CALENDAR_DETAILED'[ProjectKey])),
+    KEEPFILTERS(TREATAS({{ CsvSource }}, '11 XER_CALENDAR_DETAILED'[IsCsvSource])))
+VAR WeekRows = FILTER(CalendarRows, InputOk && ISBLANK('11 XER_CALENDAR_DETAILED'[date]) && '11 XER_CALENDAR_DETAILED'[exception_type] == "Standard")
+VAR Exceptions = FILTER(CalendarRows, InputOk && NOT ISBLANK('11 XER_CALENDAR_DETAILED'[date])
+    && '11 XER_CALENDAR_DETAILED'[date] >= StartDate && '11 XER_CALENDAR_DETAILED'[date] <= SafeThrough)
+VAR WeekCapacity = SELECTCOLUMNS(WeekRows,
+    "__Weekday", '11 XER_CALENDAR_DETAILED'[day_of_week_num],
+    "__Weight",{weight_expr})
+VAR ExceptionCapacity = SELECTCOLUMNS(Exceptions,
+    "__ExceptionDate", '11 XER_CALENDAR_DETAILED'[date],
+    "__Correction",
+        VAR ExceptionWeekday = WEEKDAY('11 XER_CALENDAR_DETAILED'[date], 2)
+        VAR NormalCapacity = MAXX(FILTER(WeekCapacity, [__Weekday] = ExceptionWeekday), [__Weight])
+        {replacement_expr}
+        RETURN ReplacementCapacity - NormalCapacity)
+VAR StartWeekday = WEEKDAY(StartDate, 2)
 VAR MonthValues = CALCULATETABLE(VALUES('Scenario Date'[Month]), REMOVEFILTERS('Scenario Date'))
 VAR MonthCandidates = SELECTCOLUMNS(
-    FILTER(MonthValues, EOMONTH('Scenario Date'[Month], 0) >= StartDate && 'Scenario Date'[Month] <= SafeThrough),
+    FILTER(MonthValues, InputOk && EOMONTH('Scenario Date'[Month], 0) >= StartDate && 'Scenario Date'[Month] <= SafeThrough),
     "__Endpoint", MIN(EOMONTH('Scenario Date'[Month], 0), SafeThrough))
 VAR MonthCapacity = ADDCOLUMNS(MonthCandidates, "__Capacity",
     VAR ProbeDate = [__Endpoint]
-    RETURN CALCULATE([{kernel_name}], REMOVEFILTERS('Scenario Date'), TREATAS({{ ProbeDate }}, 'Scenario Date'[Date])))
+    VAR SpanDays = MAX(0, INT(ProbeDate - StartDate) + 1)
+    VAR FullWeeks = QUOTIENT(SpanDays, 7)
+    VAR ExtraDays = MOD(SpanDays, 7)
+    VAR WeeklyTotal = SUMX(WeekCapacity, [__Weight] * (FullWeeks + IF(MOD([__Weekday] - StartWeekday, 7) < ExtraDays, 1, 0)))
+    VAR ExceptionTotal = SUMX(FILTER(ExceptionCapacity, [__ExceptionDate] <= ProbeDate), [__Correction])
+    RETURN MAX(0, WeeklyTotal + ExceptionTotal))
 VAR FirstBoundary = MINX(FILTER(MonthCapacity, NOT ISBLANK([__Capacity]) && [__Capacity] >= Threshold - Tolerance), [__Endpoint])
 VAR MonthStart = IF(NOT ISBLANK(FirstBoundary), MAX(StartDate, EOMONTH(FirstBoundary, -1) + 1))
 VAR DatesInMonth = CALCULATETABLE(
@@ -339,9 +382,13 @@ VAR DatesInMonth = CALCULATETABLE(
     'Scenario Date'[Date] >= MonthStart, 'Scenario Date'[Date] <= FirstBoundary)
 VAR DailyCapacity = ADDCOLUMNS(DatesInMonth, "__Capacity",
     VAR ProbeDate = 'Scenario Date'[Date]
-    RETURN CALCULATE([{kernel_name}], REMOVEFILTERS('Scenario Date'), TREATAS({{ ProbeDate }}, 'Scenario Date'[Date])))
-RETURN IF([Scenario Input Validation] = "" && [Scenario Calendar Validation] = ""
-    && NOT ISBLANK(Threshold) && Threshold > 0 && SafeThrough >= StartDate && NOT ISBLANK(FirstBoundary),
+    VAR SpanDays = MAX(0, INT(ProbeDate - StartDate) + 1)
+    VAR FullWeeks = QUOTIENT(SpanDays, 7)
+    VAR ExtraDays = MOD(SpanDays, 7)
+    VAR WeeklyTotal = SUMX(WeekCapacity, [__Weight] * (FullWeeks + IF(MOD([__Weekday] - StartWeekday, 7) < ExtraDays, 1, 0)))
+    VAR ExceptionTotal = SUMX(FILTER(ExceptionCapacity, [__ExceptionDate] <= ProbeDate), [__Correction])
+    RETURN MAX(0, WeeklyTotal + ExceptionTotal))
+RETURN IF(InputOk && NOT ISBLANK(FirstBoundary),
     MINX(FILTER(DailyCapacity, NOT ISBLANK([__Capacity]) && [__Capacity] >= Threshold - Tolerance), 'Scenario Date'[Date]))
 """, description, "dd-MM-yyyy")
 
@@ -567,27 +614,27 @@ RETURN IF([Scenario Input Validation] = "" && [Scenario Calendar Validation] = "
     && NOT ISBLANK(Endpoint) && NOT ISBLANK(Allocated), {'MAX(0, [Scenario Selected Quantity] - Allocated)' if remaining else 'Allocated'})
 """, "Remaining quantity at the last provable calendar date; may be a partial forecast." if name == "Scenario Horizon Remaining" else "Quantity remaining after the inclusive target date." if remaining else "Quantity allocated by the inclusive selected target date.")
 
-# Card values: prompt for a target until one is typed, so the start + 30 days default is not presented as the user's target.
+# Card values: evaluate against the active target date (typed target or start + 30 days default).
 for name in ["Scenario Target Quantity", "Scenario Target Remaining"]:
     add(name + " Display", f"""
-IF(ISFILTERED('Scenario Target'), VAR Result = [{name}] RETURN IF(ISBLANK(Result), "", FORMAT(Result, IF(Result = INT(Result), "#,0", "#,0.##"))), "Enter target date")
-""", ("Card value: quantity allocated by the typed target date." if name.endswith("Quantity") else "Card value: quantity remaining after the typed target date.")
-        + " Reads \"Enter target date\" until one is typed; the start + 30 days default still drives the status, comparison table and required rate.", "@", folder="Display")
+VAR Result = [{name}]
+RETURN IF(ISBLANK(Result), "—", FORMAT(Result, IF(ABS(Result - INT(Result)) < 0.00000001, "#,0", "#,0.##")))
+""", ("Card value: quantity allocated by the active target date (typed target or start + 30 days default), shown as formatted text." if name.endswith("Quantity") else "Card value: quantity remaining after the active target date (typed target or start + 30 days default), shown as formatted text."), "@", folder="Display")
 
-# Card values: an empty value rather than "(Blank)" until the inputs and calendar allow a result.
+# Card values: a dash rather than "(Blank)" until the inputs and calendar allow a result.
 for name, fmt in [
     ("Scenario Finish Date", '"dd-MM-yyyy"'),
     ("Scenario Effective Start", '"dd-MM-yyyy"'),
     ("Scenario Working Days", '"#,0"'),
     ("Scenario Elapsed Days", '"#,0"'),
     ("Scenario Required Rate", '"#,0.0"'),
-    ("Scenario Horizon Remaining", 'IF(Result = INT(Result), "#,0", "#,0.##")'),  # whole numbers without a trailing point
+    ("Scenario Horizon Remaining", 'IF(ABS(Result - INT(Result)) < 0.00000001, "#,0", "#,0.##")'),
     ("Comparison Finish Date", '"dd-MM-yyyy"'),
 ]:
     add(name + " Display", f"""
 VAR Result = [{name}]
-RETURN IF(ISBLANK(Result), "", FORMAT(Result, {fmt}))
-""", "Card value: " + name + ", shown as formatted text, empty rather than (Blank) until it can be calculated.", "@", folder="Display")
+RETURN IF(ISBLANK(Result), "—", FORMAT(Result, {fmt}))
+""", ("Card value: Comparison Finish Date, shown as formatted text, or a dash until a comparison row is inspected." if name == "Comparison Finish Date" else "Card value: " + name + ", shown as formatted text, or a dash until it can be calculated."), "@", folder="Display")
 
 add("Scenario Status", """
 VAR InputIssue = [Scenario Input Validation]
@@ -617,9 +664,9 @@ RETURN
         LimitEnabled && DailyLimit = 0, "Daily limit is zero; no quantity can be produced.",
         NOT ISBLANK(Rate) && Rate = 0, "Production rate is zero; no finish date can be calculated.",
         Mode = "Meet target date" && Basis = "Per working day" && LimitEnabled && RequiredRate > DailyLimit,
-            "Target is infeasible at the daily limit. Required: " & FORMAT(RequiredRate, "#,0.##") & " per working day.",
+            "Target is infeasible at the daily limit. Required: " & FORMAT(RequiredRate, IF(ABS(RequiredRate - INT(RequiredRate)) < 0.00000001, "#,0", "#,0.##")) & " per working day.",
         NOT ISBLANK(FinishDate), "Hypothetical forecast: completion " & FORMAT(FinishDate, "dd-MM-yyyy") & "."
-            & IF(Mode = "Find finish date" && TargetIssue <> "", " Target comparison unavailable: " & TargetIssue, ""),
+            & IF(Mode = "Find finish date" && ISFILTERED('Scenario Target') && TargetIssue <> "", " Target comparison unavailable: " & TargetIssue, ""),
         NOT ISBLANK(UnknownDate) && UnknownDate <= HorizonEnd,
             "Completion is unavailable: calendar data is unknown from " & FORMAT(UnknownDate, "dd-MM-yyyy") & ". Known allocation is retained.",
         "Quantity exceeds the available capacity through " & FORMAT(HorizonEnd, "dd-MM-yyyy") & "."
@@ -653,15 +700,17 @@ VAR StartDate = SELECTEDVALUE('Scenario Start'[Date])
 VAR Rate = [Scenario Applied Rate]
 VAR Basis = COALESCE([Scenario Selected Basis], "select basis")
 VAR LimitEnabled = SELECTEDVALUE('Scenario Limit Mode'[Mode]) = "Daily limit"
+VAR DailyLimit = SELECTEDVALUE('Scenario Limit'[Value])
+VAR TargetDate = SELECTEDVALUE('Scenario Target'[Date])
 VAR HorizonEnd = CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'))
 RETURN
-    IF(ISBLANK(Quantity), "Select quantity", FORMAT(Quantity, "#,0.##") & " " & Unit)
+    IF(ISBLANK(Quantity), "Select quantity", FORMAT(Quantity, IF(ABS(Quantity - INT(Quantity)) < 0.00000001, "#,0", "#,0.##")) & " " & Unit)
     & " | " & CalendarName
     & " | Start: " & IF(ISBLANK(StartDate), "select date", FORMAT(StartDate, "dd-MM-yyyy"))
-    & " | Rate: " & IF(ISBLANK(Rate), "unavailable", FORMAT(Rate, "#,0.##") & " " & Basis)
-    & IF(LimitEnabled, " | Daily cap: " & FORMAT(SELECTEDVALUE('Scenario Limit'[Value]), "#,0.##"), " | No daily cap")
+    & " | Rate: " & IF(ISBLANK(Rate), "unavailable", FORMAT(Rate, IF(ABS(Rate - INT(Rate)) < 0.00000001, "#,0", "#,0.##")) & " " & Basis)
+    & IF(LimitEnabled, " | Daily cap: " & FORMAT(DailyLimit, IF(ABS(DailyLimit - INT(DailyLimit)) < 0.00000001, "#,0", "#,0.##")), " | No daily cap")
     & " | Date coverage: " & FORMAT([Scenario Anchor Date], "dd-MM-yyyy") & " to " & FORMAT(HorizonEnd, "dd-MM-yyyy")
-    & " | Target: " & IF(ISBLANK([Scenario Selected Target]), "select date", FORMAT([Scenario Selected Target], "dd-MM-yyyy"))
+    & " | Target: " & IF(NOT ISFILTERED('Scenario Target'), "none", IF(ISBLANK(TargetDate), "select valid date", FORMAT(TargetDate, "dd-MM-yyyy")))
     & ". Future exceptions are limited to those present in the selected source. Daily detail ends at completion or the date coverage limit."
 """, "Evaluated quantity, calendar name, dates and capacity assumptions inside the available date coverage from the data date.", "@", folder="Display")
 
@@ -740,9 +789,53 @@ add("Comparison Validation", COMPARISON_CONTEXT + "RETURN IF(Eligible,\n    CALC
     + comparison_validation + ",\n" + COMPARISON_FILTERS + "))",
     "Bounded per-calendar input, source and target validation. Never evaluates the finish solver or full scenario status.",
     "@", folder="Comparison")
-add("Comparison Status", COMPARISON_CONTEXT + """RETURN IF(
+add("Comparison Status", """
+VAR CalendarKey = SELECTEDVALUE('Scenario Comparison Calendar'[clndr_id_key])
+VAR ProjectKey = SELECTEDVALUE('Scenario Comparison Calendar'[ProjectKey])
+VAR CsvSource = SELECTEDVALUE('Scenario Comparison Calendar'[IsCsvSource])
+VAR InspectedLabel = SELECTEDVALUE('Scenario Comparison Calendar'[Inspection Calendar])
+VAR Eligible = HASONEVALUE('Project_Dimension'[ProjectKey])
+    && HASONEVALUE('CurrentDate'[UpdateDate])
+    && NOT ISBLANK(SELECTEDVALUE('CurrentDate'[UpdateDate]))
+    && COUNTROWS('Scenario Comparison Calendar') = 1
+    && NOT ISBLANK(CalendarKey) && NOT ISBLANK(ProjectKey) && NOT ISBLANK(CsvSource)
+RETURN IF(
     Eligible && ISFILTERED('Scenario Comparison Calendar'[Inspection Calendar]),
-    CALCULATE([Scenario Status],
+    CALCULATE(
+        VAR BaseStatus = [Scenario Status]
+        VAR FinishDate = [Scenario Finish Date]
+        VAR EffectiveStart = [Scenario Effective Start]
+        VAR WorkingDays = [Scenario Working Days]
+        VAR ElapsedDays = [Scenario Elapsed Days]
+        VAR Unit = COALESCE([Scenario Selected Unit], "units")
+        VAR Basis = COALESCE([Scenario Selected Basis], "Per working day")
+        VAR Rate = [Scenario Applied Rate]
+        VAR LimitEnabled = [Scenario Selected Limit Mode] = "Daily limit"
+        VAR DailyLimit = [Scenario Selected Limit]
+        VAR TargetDate = [Scenario Selected Target]
+        VAR TargetQty = [Scenario Target Quantity]
+        VAR TargetRem = [Scenario Target Remaining]
+        VAR TargetIssue = [Scenario Target Validation]
+        RETURN IF(
+            NOT ISBLANK(FinishDate),
+            COALESCE(InspectedLabel, SELECTEDVALUE('Scenario Calendar'[Calendar Name]), "Selected calendar")
+                & " | First working day: " & IF(ISBLANK(EffectiveStart), "—", FORMAT(EffectiveStart, "dd-MM-yyyy"))
+                & " | " & FORMAT(WorkingDays, "#,0") & " working days (" & FORMAT(ElapsedDays, "#,0") & " elapsed days)"
+                & " | Applied rate: " & IF(ISBLANK(Rate), "—", FORMAT(Rate, IF(ABS(Rate - INT(Rate)) < 0.00000001, "#,0", "#,0.##")) & " " & Unit & " " & LOWER(Basis))
+                & IF(LimitEnabled && NOT ISBLANK(DailyLimit), " (cap " & FORMAT(DailyLimit, IF(ABS(DailyLimit - INT(DailyLimit)) < 0.00000001, "#,0", "#,0.##")) & "/day)", "")
+                & IF(
+                    NOT ISFILTERED('Scenario Target'),
+                    " | No target date set",
+                    IF(
+                        NOT ISBLANK(TargetDate) && TargetIssue = "",
+                        " | By target (" & FORMAT(TargetDate, "dd-MM-yyyy") & "): "
+                            & FORMAT(TargetQty, IF(ABS(TargetQty - INT(TargetQty)) < 0.00000001, "#,0", "#,0.##")) & " allocated, "
+                            & FORMAT(TargetRem, IF(ABS(TargetRem - INT(TargetRem)) < 0.00000001, "#,0", "#,0.##")) & " remaining",
+                        IF(TargetIssue <> "", " | Target: " & TargetIssue, "")
+                    )
+                ),
+            COALESCE(InspectedLabel, SELECTEDVALUE('Scenario Calendar'[Calendar Name]), "Selected calendar") & " | " & BaseStatus
+        ),
     """ + COMPARISON_FILTERS + """),
     "Select one calendar row to inspect its finish and status.")""",
     "Full scalar status only after explicit results-row inspection; selector-only choices do not run the finish solver.",
@@ -792,7 +885,6 @@ def generate(output_dir: Path | None = None):
     lines = ["/// Hypothetical resource forecasts calculated directly from table-11 rules and exceptions. No calendar-by-date rows are materialised.",
              "table 'Resource Scenario Measures'", f"\tlineageTag: {uid('Resource Scenario Measures')}", ""]
     for name, expression, description, fmt, hidden, folder in MEASURES:
-        expression = expression.replace('"#,0.##"', '"#,0.########"')
         if fmt == "#,0.##":
             fmt = "#,0.########"
         if name not in {"Scenario Selected Start", "Scenario Selected Target"}:

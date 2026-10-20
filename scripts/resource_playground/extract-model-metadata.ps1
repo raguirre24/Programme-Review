@@ -7,6 +7,7 @@ param(
 # Read metadata through TOM so fenced, inline and Desktop-indented expressions
 # receive identical coverage. This does not compile DAX or connect to an engine.
 $ErrorActionPreference = 'Stop'
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 if (-not $TomDirectory) {
     $cache = Join-Path ([Environment]::GetFolderPath('UserProfile')) '.nuget\packages\microsoft.analysisservices'
     $package = Get-ChildItem -LiteralPath $cache -Directory |

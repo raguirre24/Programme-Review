@@ -92,3 +92,18 @@ Fixes, in order of preference:
 - M is lazy: a step defined but never referenced never runs. Diagnostic steps must be referenced to execute.
 - `let` bindings are not sequential statements; they're expressions evaluated on demand. Order in the editor is convention, not execution order.
 - Each query evaluation may hit the source **multiple times** (schema check + data). Sources with side effects or per-query costs (Athena!) feel this — one more reason to keep Athena logic in views and keep M thin.
+
+
+## This workspace: Power Query (M) Conventions & Guardrails
+
+1. **Never Buffer SharePoint CSV Tables or Binaries**:
+   - In `expressions.tmdl` (`fnXerCsvReadBundleTable`), each of the 11 imported XER tables streams only its own CSV file and validates row counts against the small manifest. **Do not add `Table.Buffer` or large-file `Binary.Buffer`** to the 11 table queries — doing so spikes concurrent M-engine memory past the 0.938 GiB budget during parallel refresh. (`Binary.Buffer` is permitted only on the tiny `XER_CSV_MANIFEST.csv`).
+2. **Compact Key Delimiter (`::`, Never `|`)**:
+   - SharePoint CSV schema `5.0` keys use `CSV::<project_code>::<programme_type>::<snapshot_tag>::<native_id>`. Never rewrite or generate keys with `|` because `03 XER_PROJWBS` uses DAX `PATH()`, which reserves `|` as its hierarchy separator.
+3. **`IsCsvSource` Column Contract**:
+   - All 11 imported XER tables (`01 XER_TASK` through `15_XER_RESOURCE_DISTRIBUTION`) must output the hidden Boolean column `IsCsvSource` (`false` on the Athena branch, `true` on the CSV branch) so `XER CSV Refresh Audit` can verify source ownership.
+4. **Short-Circuit When CSV Disabled or All-CSV**:
+   - When `XerCsvEnabled = false` or `XerCsvProjectCodes` is blank, the CSV branch returns a typed empty table without calling `SharePoint.Contents`.
+   - Conversely, when `SelectedProjects` is a finite list that is 100% covered by `XerCsvRouting`, the Athena branch returns a typed empty table without opening `AthenaDB`.
+5. **Testing SQL Inside M Expressions**:
+   - After any edit to `AthenaScopeSql` in `expressions.tmdl` or the native SQL in `01 XER_TASK.tmdl`, run `python scripts/test_prefilter.py`.

@@ -36,6 +36,45 @@
           }
         },
         "type": "Categorical",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "0",
+              "Entity": "01 XER_TASK",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "In": {
+                  "Expressions": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "0"
+                          }
+                        },
+                        "Property": "IsExcludedFromDataLake"
+                      }
+                    }
+                  ],
+                  "Values": [
+                    [
+                      {
+                        "Literal": {
+                          "Value": "false"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              }
+            }
+          ]
+        },
         "howCreated": "User"
       }
     ],
@@ -139,7 +178,6 @@
     "exportDataMode": "AllowSummarized",
     "defaultDrillFilterOtherVisuals": true,
     "useEnhancedTooltips": true,
-    "filterPaneHiddenInEditMode": true,
     "disableFilterPaneSearch": true,
     "useDefaultAggregateDisplayName": true,
     "queryLimitOption": "Custom",

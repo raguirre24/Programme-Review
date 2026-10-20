@@ -70,3 +70,19 @@ VertiPaq Analyzer, read in this order: total size → largest tables → largest
 - All fact filters in CALCULATE are column predicates, not table filters.
 - Incremental refresh on any fact > a few million rows with a reliable date column.
 - Measure sub-expressions hoisted into variables.
+
+
+## This workspace: Performance & Memory Guardrails
+
+1. **No Materialised Calendar-by-Date Expansion (`Resource Calendars`)**:
+   - `11 XER_CALENDAR_DETAILED` stores only 7 undated `WEEKDAY` rows plus sparse dated `EXCEPTION` rows per calendar. `Resource Scenario Measures` computes working hours, capacities, and finish dates on the fly from weekday counts and exception deltas. Never materialise a calendar × date table in Power Query or DAX.
+2. **Avoid Visual-Level Row Measure Filters on `Scenario Date`**:
+   - Adding a visual-level measure filter (`Scenario Show Period Row` or `Scenario Show Daily Row`) to the `Resource Calendars` chart or daily table caused native queries to exceed the memory budget. Suppress out-of-window rows inside the projected display wrapper measures (`Scenario Chart Quantity`, `Scenario Chart Cumulative Quantity`, `Comparison Chart Quantity`, `Scenario Daily Display *`) and keep totals disabled on the daily detail table.
+3. **Scalar Bounds for Calculated Date Tables**:
+   - In `Resource Calendar.tmdl`, compute `MinDate` and `MaxDate` as scalar `VAR` values over `'15_XER_RESOURCE_DISTRIBUTION'[Period]` before calling `CALENDAR(MinDate, MaxDate)` — never materialise a `UNION` of fact rows to find date bounds.
+   - Omit near-unique surrogate keys that have no report or relationship use (for example, `task_pred_id_key` is excluded from `06 XER_PREDECESSOR` and `06a XER_SUCCESSOR`).
+4. **Portfolio Scale (`SelectedProjects = "ALL"` in Service) vs. Local Desktop Subset**:
+   - Local Desktop work uses a reduced `SelectedProjects` subset, whereas the Power BI Service switches `SelectedProjects` to `"ALL"` and loads the full multi-project portfolio. Every calculated table, relationship, and DAX measure must scale across all projects without cross-project Cartesian expansion.
+5. **Refresh Memory & Parallelism Targets**:
+   - Target refresh wall duration: **≤ 25 minutes** (hard maximum **40 minutes**); M-engine peak memory **≤ 0.938 GiB**; total peak memory **≤ 7.5 GiB**.
+   - Never add `Table.Buffer` or large-file `Binary.Buffer` to the 11 SharePoint CSV loader queries in `expressions.tmdl`.

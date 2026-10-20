@@ -2,6 +2,17 @@
 
 `validation-runtime.ps1` is an **offline** validator despite its filename. It never connects to Analysis Services, refreshes data or executes DAX. It deserialises TMDL with Microsoft TOM, checks scenario field references and variable names, detects measure dependency cycles, parses M with Microsoft's parser and compares report-authoring diagnostics to an optional baseline.
 
+## Resource update — 20 October 2026 (`df14c05`)
+
+Static integration (`verify_integration.py` and `verify_comparison_integration.py`) passes against the 20 October 2026 update (`df14c05 — 261020 - Resource update`) with **15 scenario tables, 66 measures (`57` `Scenario *` + `9` `Comparison *`), 14 calculated partitions, 80 extracted DAX expressions, 634 qualified DAX references, 860 variable declarations and 50 page visuals** on `Resource Calendars` (`4c53a34bba9dcc7f3e8c`).
+
+Key changes in `df14c05`:
+- **Data-date start anchor**: Added `Scenario Anchor Date` (`MAX('01 XER_TASK'[data_date])` for a single selected project/update, falling back to `TODAY()`) so `Scenario Default Start Date`, `Scenario Start Error`, and `Scenario Effective Start Date` anchor the forecast horizon at the selected snapshot's Data Date rather than `TODAY()`.
+- **Card display text wrappers**: Added 9 display measures (`Scenario Target Quantity Display`, `Scenario Target Remaining Display`, `Scenario Finish Date Display`, `Scenario Effective Start Display`, `Scenario Working Days Display`, `Scenario Elapsed Days Display`, `Scenario Required Rate Display`, `Scenario Horizon Remaining Display`, and `Comparison Finish Date Display`) plus 4 `Resources` card wrappers (`Max Resource Units Card`, `Planned Resource Units Card`, `Remaining Resource Units Card`, `Actual Resource Units Card`).
+- **Page header & navigation alignment**: Added the 11 standard Programme Review header/navigation/guide visuals to `Resource Calendars` and replaced the standalone comparison selection-summary card and 3 legacy textboxes (`50` total visuals on the page).
+
+The sections below retain the historical 17 October 2026 and 11 September 2026 validation logs as originally recorded.
+
 ## Calendar comparison revision — 17 October 2026
 
 Fresh static integration passes with 15 scenario tables, 56 measures, 14 calculated partitions, 70 extracted DAX expressions and 43 page visuals. All 48 original single-calendar expressions match Git HEAD. The eight comparison measures preserve the secured calendar scope and leave numeric totals over alternative calendars blank. The results table binds only the required rate, target remainder and bounded validation; Finish Date and full Status require explicit `Inspection Calendar` filtering and are bound only to the two inspection cards. The full-identity tooltip is a text measure guarded by the chart quantity, so it cannot add invalid series or empty allocation periods to the chart query.

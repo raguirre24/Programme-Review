@@ -59776,6 +59776,373 @@ cultureInfo en-NZ
 			          }
 			        }
 			      ]
+			    },
+			    "xer_measures.ca_kpi_active_calendars": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CA KPI Active Calendars"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Active Calendars": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.ca_critical_activity_count": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CA Critical Activity Count"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Critical Activities (TF ≤ 0)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        },
+			        {
+			          "Critical (TF≤0)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.ca_kpi_critical_exception_blackout_days": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CA KPI Critical Exception Blackout Days"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Exception Blackout Days (Critical)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.ca_kpi_max_critical_stretch_days": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CA KPI Max Critical Stretch Days"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Max Critical Activity Stretch (Days)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.ca_workweek_signature": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CA Workweek Signature"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Workweek Rule": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.ca_future_exception_blackout_days": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CA Future Exception Blackout Days"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Future Blackouts": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.ca_incomplete_activity_count": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CA Incomplete Activity Count"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Incomp. Tasks": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.ca_critical_remaining_working_days": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CA Critical Remaining Working Days"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Crit. Rem. Days": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.ca_monthly_working_days": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CA Monthly Working Days"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Working Days": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.ca_activity_total_float": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CA Activity Total Float"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Total Float": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.ca_activity_remaining_working_days": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CA Activity Remaining Working Days"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Rem. Work Days": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.ca_activity_remaining_elapsed_days": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CA Activity Remaining Elapsed Days"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Elapsed Days": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.ca_activity_standard_nonworking_days": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CA Activity Standard Non-Working Days"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Wknd / Roster Off": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.ca_activity_exception_blackout_days": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CA Activity Exception Blackout Days"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Exception Blackouts": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.ca_activity_nonworking_stretch_days": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CA Activity Non-Working Stretch Days"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Total Non-Work Days": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.ca_activity_stretch_ratio": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CA Activity Stretch Ratio"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Stretch Ratio": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.ca_activity_stretch_diagnosis": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CA Activity Stretch Diagnosis"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Calendar Stretch Diagnosis": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
 			    }
 			  },
 			  "Relationships": {

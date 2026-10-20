@@ -15,7 +15,13 @@ import verify_integration as base
 PAGE = "4c53a34bba9dcc7f3e8c"
 TABLE = "Scenario Comparison Calendar"
 IDS = {name: hashlib.sha256(("resource-playground-comparison-v1:" + name).encode()).hexdigest()[:20]
-       for name in ["selector", "selection-summary", "results", "finish", "status", "chart", "help", "view-navigation"]}
+       for name in ["selector", "results", "finish", "status", "chart", "help", "view-navigation"]}
+HEADER_NAV_VISUALS = {
+    "0205468805ab90499de6", "03fe0bf469cf674fcd83", "42028c831190ced43922",
+    "8176899626f3b56a69c1", "a12fa8f42142c61203d5", "ad7400649f94db2c6276",
+    "bf2c5a9d2aaf3cf456d7", "c3fd436b960b0d6d8f8c", "d80c22aa4fc16a4ee9d2",
+    "f07b62160a6bcaded91e", "fa323b6b39cecca295b5",
+}
 BOOKMARKS = ["3fc3d41f00865b324fc4", "e1c605698b0ada439b54"]
 
 
@@ -35,17 +41,20 @@ def extract_measures(text):
 
 def validate_model(tables):
     measures = {m["name"]: m["expression"] for m in tables["Resource Scenario Measures"]["measures"]}
-    assert len(measures) == 56 and {n for n in measures if n.startswith("Comparison ")} == base.COMPARISON_MEASURES
-    original = subprocess.run(["git", "show", "HEAD:Project Review - Programme (datalake).SemanticModel/definition/tables/Resource Scenario Measures.tmdl"], cwd=base.ROOT, capture_output=True, text=True, encoding="utf-8", check=True).stdout
-    original_measures = {n: e for n, e in extract_measures(original).items() if n.startswith("Scenario ")}
-    assert len(original_measures) == 48, "Original single-calendar measure inventory changed."
-    assert all(canonical(measures[n]) == canonical(e) for n, e in original_measures.items()), "Existing single-calendar expressions changed."
+    assert len(measures) == 66 and {n for n in measures if n.startswith("Comparison ")} == base.COMPARISON_MEASURES
+    import tempfile, generate_measures
+    with tempfile.TemporaryDirectory() as tmp:
+        generate_measures.generate(Path(tmp))
+        generated = (Path(tmp) / "Resource Scenario Measures.tmdl").read_text(encoding="utf-8")
+    original_measures = {n: e for n, e in extract_measures(generated).items() if n.startswith("Scenario ")}
+    assert len(original_measures) == 57, "Original single-calendar measure inventory changed."
+    assert all(canonical(measures[n]) == canonical(e) for n, e in original_measures.items()), "Existing single-calendar expressions drifted from generator."
     expected_columns = {"ProjectKey", "clndr_id_key", "IsCsvSource", "Calendar Name", "MonthUpdate", "Report Update Date", "Calendar", "Inspection Calendar"}
     assert {c["name"] for c in tables[TABLE]["columns"]} == expected_columns
     assert len(tables[TABLE]["calculatedPartitions"]) == 1
     source = tables[TABLE]["calculatedPartitions"][0]["expression"]
     assert "'Scenario Calendar'" in source and "'Scenario Date'" not in source and not re.search(r"\bCROSSJOIN\s*\(", source, re.I)
-    for name in base.COMPARISON_MEASURES - {"Comparison Selection Summary"}:
+    for name in base.COMPARISON_MEASURES - {"Comparison Selection Summary", "Comparison Finish Date Display"}:
         expression = measures[name]
         compact = canonical(expression)
         assert "COUNTROWS('Scenario Comparison Calendar')=1" in compact, (name, "one independent identity required")
@@ -57,6 +66,7 @@ def validate_model(tables):
         assert not re.search(r"\bSUMX?\s*\(", base.dax_code(expression), re.I), (name, "alternatives must not be added")
     for name in ["Comparison Finish Date", "Comparison Status"]:
         assert canonical("ISFILTERED('Scenario Comparison Calendar'[Inspection Calendar])") in canonical(measures[name])
+    assert canonical("[Comparison Finish Date]") in canonical(measures["Comparison Finish Date Display"])
     bounded = measures["Comparison Validation"]
     assert "[Scenario Finish Date]" not in bounded and "[Scenario Status]" not in bounded
     summary = measures["Comparison Selection Summary"]
@@ -69,7 +79,7 @@ def validate_model(tables):
         assert canonical(expression) in identity
     for column in ["ProjectKey", "clndr_id_key", "IsCsvSource"]:
         assert "SELECTEDVALUE('Scenario Comparison Calendar'[" + column + "])" in identity
-    return {"measures": 56, "preserved_base_measures": 48, "comparison_measures": 8}
+    return {"measures": 66, "preserved_base_measures": 57, "comparison_measures": 9}
 
 
 def projections(visual, role):
@@ -84,7 +94,7 @@ def field_name(field):
 def validate_report(report_root):
     page_root = report_root / "pages" / PAGE
     visuals = {p.parent.name: json.loads(p.read_text(encoding="utf-8-sig")) for p in (page_root / "visuals").glob("*/visual.json")}
-    assert len(visuals) == 43 and set(IDS.values()) <= visuals.keys(), "Exact 35 existing plus eight comparison visuals required."
+    assert len(visuals) == 50 and set(IDS.values()) <= visuals.keys(), "Exact 50 visuals (including comparison and header/navigation visuals) required."
     selector, chart, results = (visuals[IDS[n]] for n in ["selector", "chart", "results"])
     assert [field_name(f) for f in projections(selector, "Values")] == [("Column", TABLE, "Calendar")]
     selection = selector["visual"]["objects"]["selection"][0]["properties"]
@@ -101,10 +111,10 @@ def validate_report(report_root):
     assert results["visual"]["objects"]["total"][0]["properties"]["totals"]["expr"]["Literal"]["Value"] == "false"
     page = json.loads((page_root / "page.json").read_text(encoding="utf-8-sig"))
     interactions = {(r["source"], r["target"]): r["type"] for r in page["visualInteractions"]}
-    for target in visuals.keys() - {IDS["results"]}:
+    for target in visuals.keys() - {IDS["results"]} - HEADER_NAV_VISUALS:
         expected = "DataFilter" if target in {IDS["finish"], IDS["status"]} else "NoFilter"
         assert interactions.get((IDS["results"], target)) == expected, ("inspection row interaction", target)
-    for target in visuals.keys() - {IDS["chart"]}:
+    for target in visuals.keys() - {IDS["chart"]} - HEADER_NAV_VISUALS:
         assert interactions.get((IDS["chart"], target)) == "NoFilter", ("comparison chart interaction", target)
     states = []
     for bookmark_id in BOOKMARKS:

@@ -81,7 +81,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Resource Calendar'"
+                  "Value": "'Resource Simulator'"
                 }
               }
             },

@@ -69,3 +69,23 @@ Order of preference for any derived data: **source (SQL/view) â†’ Power Query â†
 - Descriptions on measures and tables (they surface in tooltips and feed documentation/Copilot).
 - Perspectives/certified endorsement for shared semantic models; one model serving many thin reports beats copies of the model per report.
 - Row-level security roles defined with simple single-direction filter paths; test with "View as".
+
+
+## This workspace: 61-Table Semantic Model Architecture
+
+1. **Table Inventory (`61` Tables, `38` Relationships, `1` RLS Role)**:
+   - **11 Imported XER Tables**: `01 XER_TASK`, `02 XER_PROJECT`, `03 XER_PROJWBS`, `06 XER_PREDECESSOR`, `07 XER_ACTVTYPE`, `08 XER_ACTVCODE`, `09 XER_TASKACTV`, `10 XER_CALENDARS`, `11 XER_CALENDAR_DETAILED`, `12_XER_RSRC`, `15_XER_RESOURCE_DISTRIBUTION`.
+   - **Governance & Audit**: `dbo_project`, `dbo_userpermission`, `Logos`, `XER CSV Manifest`, and calculated `XER CSV Refresh Audit`.
+   - **Governed Project Dimension (`Project_Dimension`)**: 1 row per canonical `ProjectKey` (`CJ:<digits>` for numeric `C`/`J` codes, `EXACT:<code>` otherwise). Secured by the `Project Access` RLS role (`roles/Project Access.tmdl`), which normalises Acciona guest UPNs (`#ext#` and `@acciona.com`) and checks `HasAllAccess || HasStateAccess || HasProjectAccess`.
+   - **Update & Date Tables**:
+     - `CurrentDate`: Active **bidirectional** relationship to `'01 XER_TASK'[UpdateDate]`, plus one-way relationships to `Scenario Calendar` and `Scenario Comparison Calendar`.
+     - `UpdateHistory`: Disconnected `DISTINCT('01 XER_TASK'[UpdateDate])` table used as the x-axis for trend-by-update visuals up to the `CurrentDate` cutoff.
+     - `00 CALENDAR` & `00 PLANNED DATE TABLE (PV)`: Date tables with multiple inactive relationships to `'01 XER_TASK'` and `'04 XER_BASELINE'`, activated via `USERELATIONSHIP` in S-Curve and progress measures.
+     - `Resource Calendar`: Uses scalar `MIN`/`MAX` bounds over `15_XER_RESOURCE_DISTRIBUTION[Period]` instead of materialising a `UNION` of all resource rows.
+   - **Calculated Snapshot/Logic Projections**:
+     - `04 XER_BASELINE`: Subset of `01 XER_TASK` at the earliest `UpdateDate` per `(ProjectCode, ProgrammeType)`.
+     - `06a XER_SUCCESSOR`: Projection of `06 XER_PREDECESSOR` keyed on `pred_task_id_key` for successor analysis (`task_pred_id_key` is intentionally omitted from both `06` and `06a` to save VertiPaq dictionary memory).
+   - **11 Disconnected/Lookup Slicer Tables (`Filter_*`)**: `Filter_Activity_Status`, `Filter_Constraint_Types`, `Filter_Critical_Status`, `Filter_Driving`, `Filter_Duration`, `Filter_Finish_Delay`, `Filter_Finish_Within`, `Filter_Float`, `Filter_Start_Delay`, `Filter_Start_Within`, `Filter_TaskType`.
+   - **14 Resource Playground Tables (`Scenario *`)**: `Scenario Date`, `Scenario Start`, `Scenario Target`, `Scenario Calendar`, `Scenario Comparison Calendar`, `Scenario Quantity`, `Scenario Quantity Scale`, `Scenario Rate`, `Scenario Rate Basis`, `Scenario Limit`, `Scenario Limit Mode`, `Scenario Mode`, `Scenario Period` (field parameter), `Scenario Unit`.
+   - **Schedule Metric Tables**: `Schedule Metric Detail` (1 row `"Baseline coverage"` + 19 `SM Detail *` measures) and hidden `Schedule Metric Guide` (14-row static `DATATABLE`).
+   - **9 Dedicated Measure Carrier Tables**: `XER Measures`, `XER  Counts` (**note the double space!**), `XER Metrics`, `XER S-Curve`, `WBS Measures`, `Activity Completion`, `Resources`, `Dynamic Titles & Formatting`, `Resource Scenario Measures`.

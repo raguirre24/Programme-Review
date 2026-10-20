@@ -76,3 +76,23 @@ MyReport.Report/
 3. RLS tested per role with "View as" and a real low-privilege account.
 4. Deployment rules verified in each stage (open dataset settings, confirm parameter values).
 5. Tag/release in git matching what was promoted to Prod.
+
+
+## This workspace: PBIP, TMDL, Git & Release Discipline
+
+1. **TMDL Editing Rules**:
+   - Preserve tab-based indentation, `lineageTag` GUIDs, relationship IDs, and property casing in `Project Review - Programme (datalake).SemanticModel/definition/`.
+   - When adding or modifying DAX expressions that contain multiline formulas or special characters in TMDL, ensure proper indentation and never attach both `formatString` and `formatStringDefinition` to the same measure.
+2. **Draft-Only Code Generators**:
+   - The generators in `scripts/resource_playground/` (`generate_scaffold.py`, `generate_measures.py`, `generate_page.py`) must **only** be run with `--output-dir <temp_dir>` to produce review drafts; never overwrite deployed `.SemanticModel` or `.Report` files directly from a generator.
+   - For `Schedule Metric Guide`, update `scripts/schedule_metrics/metric_guide.json` and run `python scripts/schedule_metrics/build_metric_guide.py --content-only` so existing page bookmarks, filters, and layout are preserved.
+3. **Mandatory Verification Before Completion**:
+   - Run `git status --short` before and after making edits, and `git diff --check` to catch whitespace errors.
+   - Run the static verification harnesses matching your changes:
+     - `python scripts/test_prefilter.py`
+     - `python scripts/schedule_metrics/validate_static.py`
+     - `python scripts/resource_playground/verify_rule_calculations.py`
+     - `python scripts/resource_playground/verify_integration.py`
+     - `python scripts/resource_playground/verify_comparison_integration.py`
+   - Remember that `expressions.tmdl` commits a reduced `SelectedProjects` subset for Desktop development, while Power BI Service parameters are set to `SelectedProjects = "ALL"` after publishing to load all projects.
+   - Update `ARCHITECTURE.md` whenever any table, column, measure, parameter, page, visual, or script is added, removed, or re-architected, and remind the user to reopen Power BI Desktop after TMDL/PBIR edits.

@@ -1,5 +1,8 @@
 # Schedule Metrics display validation — 9 October 2026
 
+> [!NOTE]
+> **Historical validation record (9 October 2026)**: This document preserves the point-in-time validation evidence from 9 October 2026. Subsequent approved changes on 9–20 October 2026 removed Date alignment, promoted High Float and Remaining Duration (`>44d`) to scored checks, added the `Out of Seq.` and `Baseline Execution Index` gauges, and streamlined `Schedule Metric Guide` to **14 rows** (**10 scored checks**, **55 visuals** on `Sched. Metrics`, and **2 drill-through routes**: `Missing Predecessor` and `Missing Successor`). See [IMPLEMENTATION.md](IMPLEMENTATION.md) and [README.md](README.md) for the current specification and verification commands.
+
 This note covers the existing **Sched. Metrics** page (`327b48a7fbd37ce0a51c`). It supplements [VALIDATION.md](VALIDATION.md); it does not replace its fixture, source-data or implementation evidence.
 
 ## Evidence boundaries

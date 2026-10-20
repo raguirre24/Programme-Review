@@ -1,11 +1,11 @@
 # Resource Playground
 
-The new **Resource Playground** page follows **Resources**. It distributes a hypothetical quantity using the selected version of `11 XER_CALENDAR_DETAILED`. The existing Resources calculations are unchanged. This is a planning estimate, not a P6 scheduling or resource-levelling calculation.
+The **Resource Playground** (`Resource Calendars`) page follows **Resources**. It distributes a hypothetical quantity using the selected version of `11 XER_CALENDAR_DETAILED`. The existing Resources calculations are unchanged (four card-display wrapper measures `Actual Quantity Card`, `Remaining Quantity Card`, `Total Quantity Card`, and `Total Baseline Quantity Card` were added in `Resources.tmdl` so cards show `0` rather than `(Blank)`). This is a planning estimate, not a P6 scheduling or resource-levelling calculation.
 
 ## Using the page
 
 1. Select the **Project** and **Monthly update**. These controls share the same context as the other report pages. Choose a calendar from that project and update; only its name is displayed.
-2. Enter a quantity, quantity multiplier, unit and start date. Dates use exact **DD-MM-YYYY** text. Start today or later; there is no fixed twelve-month cap. The page displays the full available date range, currently through **31-12-2036**.
+2. Enter a quantity, quantity multiplier, unit and start date. Dates use exact **DD-MM-YYYY** text. Start on or after the selected update's **data date** (`Scenario Anchor Date`, falling back to `TODAY()` only when no single project/update is selected); there is no fixed twelve-month cap. The page displays the full available date range, currently through **31-12-2036**.
 3. In **Find finish date**, enter production per working day or working hour and optionally enable a daily quantity limit.
 4. In **Meet target date**, enter the inclusive target date. The page calculates the required daily rate, or the required hourly rate with no daily cap. Hourly target solving with a daily cap is explicitly unavailable in this version.
 5. Compare period quantities and cumulative quantity by **Week** or **Month**. Month is the default. The separate daily audit shows calendar hours, available capacity, allocated quantity and quantity remaining.
@@ -34,13 +34,13 @@ Native Power BI Input slicers filter disconnected numeric columns. They do not s
 | Quantity multiplier | 0.01, 0.1, 1, 1,000 or 1,000,000 |
 | Rate | 0 to 10,000 in increments of 0.1 |
 | Daily quantity limit | 0 to 10,000 in increments of 0.1 |
-| Start and target | Today through the last date in the shared Scenario Date axis, inclusive; exact DD-MM-YYYY entry |
+| Start and target | Selected update's data date (`Scenario Anchor Date`) through the last date in the shared `Scenario Date` axis, inclusive; exact DD-MM-YYYY entry |
 | Chart | Week or Month; Month by default |
 | Daily audit | Known dates in the permitted window, ending at completion or unresolved availability |
 
 For example, quantity `1050` with multiplier `1` means 1,050 units; `12345` with multiplier `0.01` means 123.45 units. The supported domains do not represent every possible decimal at every magnitude. The evaluated quantity and assumptions appear on the page.
 
-**Reset scenario** restores the sample: quantity 1,050, rate 120 per working day, daily limit 100, unit m³, monthly chart; the calendar and dates clear. Completely cleared inputs use quantity 1,000, multiplier 1, rate 100, no limit, per working day, items, start today and target start plus 30 days, capped at the window end. A filtered input with no match never receives a default. Reset affects only the twelve scenario inputs; it preserves Project, State, Monthly update and report filters.
+**Reset scenario** restores the sample: quantity 1,050, rate 120 per working day, daily limit 100, unit m³, monthly chart; the calendar and dates clear. Completely cleared inputs use quantity 1,000, multiplier 1, rate 100, no limit, per working day, items, start at the data date (`Scenario Anchor Date`) and no assumed target date (`BLANK()`). When no target date is set, target-dependent metrics (`Required production`, `Quantity by target`, `Remaining at target` in Single view, and `Required rate` / `Remaining at target` in Compare view) remain blank (`"—"` on cards), while `"Find finish date"` calculations proceed without assuming a target and `"Meet target date"` prompts for a target date. Result cards bind `* Display` text wrapper measures so unavailable states render `"—"` rather than `(Blank)`. A filtered input with no match never receives a default. Reset affects only the 14 scenario/comparison target visuals; it preserves Project, State, Monthly update and report filters.
 
 ## Calendar calculation and storage
 
@@ -65,34 +65,40 @@ Storage added by the playground is independent of project or update counts excep
 
 - One shared date axis, plus two disconnected date-input projections: roughly 4,383 dates each.
 - Three bounded numeric-input tables: 300,003 rows in total across the whole model, independent of calendars.
-- A calendar selector with one row per `ProjectKey`, scoped calendar key and source tuple.
-- Small option tables, one native axis field parameter, and a measure table.
+- Two calendar selectors (`Scenario Calendar` and `Scenario Comparison Calendar`) with one row per `ProjectKey`, scoped calendar key and source tuple.
+- Small option tables, one native axis field parameter, and a measure table (`Resource Scenario Measures`, 66 measures: 57 `Scenario *` + 9 `Comparison *`).
 
-The selector has direct, one-way relationships from `Project_Dimension` and `CurrentDate`. It inherits the existing Project Access role through the project relationship. Its hidden Report Update Date is resolved from the existing Task source-to-UpdateDate mapping, not from the calendar's source date or a guessed month end. A compact grouping is built before source-key parsing, and calendars unused by tasks remain available when their source snapshot is mapped. Missing or conflicting mappings remain unresolved. Measures apply the selected project/key/source tuple to table 11 with `KEEPFILTERS` and `TREATAS`.
+Both selectors have direct, one-way relationships from `Project_Dimension` and `CurrentDate`. They inherit the existing Project Access role through the project relationship. Their hidden Report Update Date is resolved from the existing Task source-to-UpdateDate mapping, not from the calendar's source date or a guessed month end. A compact grouping is built before source-key parsing, and calendars unused by tasks remain available when their source snapshot is mapped. Missing or conflicting mappings remain unresolved. Measures apply the selected project/key/source tuple to table 11 with `KEEPFILTERS` and `TREATAS`.
 
 Calendar names may repeat across projects and updates; the shared context resolves those versions. Names repeated inside one project/update are disambiguated with their native ID and, only when needed, source identity. An unresolved or ambiguous identity still blocks calculation instead of choosing an arbitrary calendar. RLS must still be checked with **View as** and a restricted Service account before release.
 
-The physical shared date tables run from the beginning of the previous year through the end of the refresh year plus ten. Measures calculate `TODAY()` at query time and use the full, unfiltered shared date-axis maximum for the upper bound. A Week, Month or sparse-date selection cannot shorten that bound. Longer scenarios add query work without multiplying calendar rows by projects or updates. A scenario that cannot finish within the available range reports the unallocated quantity; it never invents a finish beyond that range.
+The physical shared date tables run from the beginning of the previous year through the end of the refresh year plus ten. Measures calculate `Scenario Anchor Date` (the selected update's data date, falling back to `TODAY()` when no single project/update is selected) for the lower bound and use the full, unfiltered shared date-axis maximum for the upper bound. A Week, Month or sparse-date selection cannot shorten that bound. Longer scenarios add query work without multiplying calendar rows by projects or updates. A scenario that cannot finish within the available range reports the unallocated quantity; it never invents a finish beyond that range.
 
 Invalid or duplicate weekday rules, unresolved undated markers and ambiguous calendar identities block calculation. The first invalid or duplicated dated exception limits verified coverage. Dates after a proven completion retain the completed quantity even when later availability is unknown. Future holidays are only those contained in the selected source calendar; none are inferred.
 
 ## Files and regeneration
 
-The 14 `Scenario ...` tables and the `Resource Scenario Measures` measure carrier are registered in the semantic model. Report page ID is `4c53a34bba9dcc7f3e8c`; reset bookmark ID is `e899bf3a9c2d243f33bf`. Existing Resources visuals are unchanged.
+The 14 `Scenario ...` tables and the `Resource Scenario Measures` measure carrier (66 measures) are registered in the semantic model. Report page ID is `4c53a34bba9dcc7f3e8c` (`Resource Calendars`, 50 visuals); reset bookmark ID is `e899bf3a9c2d243f33bf` (14 target visuals). Existing Resources visuals are unchanged.
 
 The source generators under `scripts/resource_playground/` are:
 
 - `generate_scaffold.py`: disconnected input tables, calendar selector, field parameter, table registration and selector relationship.
 - `generate_measures.py`: scenario measures, with shared generation of the weekday/exception interval kernels.
-- `generate_page.py`: the native page and its reset bookmark.
+- `generate_page.py` and `patch_comparison_page.py`: the native page, comparison visuals, and reset bookmark.
 
 Keep generators and deployed files together when changing this feature. Once production files exist, generators require an explicit `--output-dir` for review drafts and refuse to overwrite the deployed feature. Compare the draft expressions using TOM, then apply targeted changes that preserve Desktop's metadata, lineage tags and visual IDs. Native input capability and serialisation evidence is in [INPUT_CONTROL_EVIDENCE.md](scripts/resource_playground/INPUT_CONTROL_EVIDENCE.md).
 
+## Data-date anchor and card display update — 20 October 2026 (`df14c05`)
+
+- Replaced the `TODAY()` lower-bound start anchor across scenario and display measures with `Scenario Anchor Date` (the selected project/update's `MAX('01 XER_TASK'[data_date])`, falling back to `TODAY()` only when no single project and update is selected).
+- Added 9 card display wrapper measures (`Scenario Target Quantity Display`, `Scenario Target Remaining Display`, `Scenario Finish Date Display`, `Scenario Effective Start Display`, `Scenario Working Days Display`, `Scenario Elapsed Days Display`, `Scenario Required Rate Display`, `Scenario Horizon Remaining Display`, `Comparison Finish Date Display`), bringing `Resource Scenario Measures` to **66 measures** (`57` `Scenario *` + `9` `Comparison *`). All `* Display` wrappers return `"—"` when unavailable, no target date is assumed when `Scenario Target` is unfiltered (`[Scenario Selected Target]` returns `BLANK()`), and `Scenario Finish Date` / `Scenario Effective Start` pre-compute `WeekCapacity` and `ExceptionCapacity` once outside the probe loops.
+- Added standard report header/navigation visuals on `Resource Calendars`, bringing the page to **50 visuals** while keeping the 14-target Reset bookmark contract intact.
+
 ## Calendar comparison validation — 17 October 2026
 
-The addition retains all 48 existing single-calendar measure expressions and adds one calendar selector dimension plus eight comparison measures. The model keeps sparse table-11 rules and exceptions; it does not create calendar-by-date rows. Both selectors have direct one-way Project and Monthly update relationships. The native comparison table avoids the finish solver; completion details are evaluated only for an explicitly inspected row. Each chart tooltip exposes the full project, calendar key and source through a guarded text measure; invalid calendars and empty chart periods remain blank.
+The 17 October addition retained all 48 existing single-calendar measure expressions and added one calendar selector dimension plus eight comparison measures (subsequently expanded to 57 single-calendar + 9 comparison = 66 measures on 20 October 2026). The model keeps sparse table-11 rules and exceptions; it does not create calendar-by-date rows. Both selectors have direct one-way Project and Monthly update relationships. The native comparison table avoids the finish solver; completion details are evaluated only for an explicitly inspected row. Each chart tooltip exposes the full project, calendar key and source through a guarded text measure; invalid calendars and empty chart periods remain blank.
 
-Fresh static checks pass for the 56 measures, 14 calculated partitions, four selector relationships, 43 visuals, display-only view bookmarks and the exact 14-target Reset scope. The optional `filterConfig` omission saved by Desktop is accepted by the integration checker while a mismatched retained native filter identity still fails. Eight focused checker/oracle regressions pass, including the engine-rejected `Ordinal` variable and correct handling of `RETURN [virtual column]`. The existing independent exact-rational suite passes 3,000 random scenarios, ten deterministic scenarios and three invalid-calendar checks. Offline TOM and all 60 M syntax checks pass; report diagnostics retain the complete baseline's 31 errors and 67 warnings after the final report validation. These are static and mathematical results, distinct from DAX execution and rendering.
+Fresh static checks pass for the measures, 14 calculated partitions, four selector relationships, page visuals, display-only view bookmarks and the exact 14-target Reset scope. The optional `filterConfig` omission saved by Desktop is accepted by the integration checker while a mismatched retained native filter identity still fails. Eight focused checker/oracle regressions pass, including the engine-rejected `Ordinal` variable and correct handling of `RETURN [virtual column]`. The existing independent exact-rational suite passes 3,000 random scenarios, ten deterministic scenarios and three invalid-calendar checks. Offline TOM and all 60 M syntax checks pass; report diagnostics retain the complete baseline's 31 errors and 67 warnings after the final report validation. These are static and mathematical results, distinct from DAX execution and rendering.
 
 The current-date comparison fixture copies production expressions into a source-free 21-table model with 24 synthetic calendar identities, 21 eligible in its principal project/update. Its final engine run passes **56 cases and 8,076 assertions**, including 24 grouped Week/Month chart cases, a mixed-calendar results-table query and all eight new measures. Coverage includes generated-versus-original label collisions, case-only names, calendar identity, independent allocation, invalid-calendar isolation, capped/hourly/inverse modes, unknown data and a restricted fixture role. Every grouped chart query includes the real identity tooltip and checks the entire expected row set. Forward scenarios warn about future unknown calendar data even when it falls after the target, unless completion is already proven; inverse scenarios ending before unknown data remain valid. The fixture matches all 70 final scenario expressions and has no non-Ready objects.
 
@@ -147,6 +153,7 @@ Repeat the independent checks from the repository root:
 ```powershell
 python scripts/resource_playground/verify_rule_calculations.py
 python scripts/resource_playground/verify_integration.py
+python scripts/resource_playground/verify_comparison_integration.py
 git diff --check
 ```
 

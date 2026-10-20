@@ -23,21 +23,24 @@ flowchart TD
     subgraph Semantic Model Layer TMDL
         MExpr[M Query Expressions\nAthena routing + validated CSV loader]
         Params[Nine required parameters\nportable source + project scope settings]
-        Tables[Star Schema Tables & Dimensions\n`01 XER_TASK`, `03 XER_PROJWBS`, etc.]
-        Measures[DAX Measure Tables\n`XER Measures`, `XER Counts`, `XER Metrics`]
+        Tables[Star Schema Tables & Dimensions\n61 TMDL tables, 40 relationships]
+        Measures[DAX Measure Tables\n`XER Measures`, `XER  Counts`, `XER Metrics`, etc.]
         RLS[Role-Based Security\n`Project Access` RLS]
     end
 
     subgraph Report Layer PBIR
         ReportRoot[`Project Review - Programme (datalake).Report`]
-        Pages[17 PBIR Report Pages]
-        Bookmarks[Bookmarks JSON]
+        Pages[15 PBIR Report Pages\n12 visible + 3 drill-through]
+        Bookmarks[40 Bookmarks JSON]
         Themes[JSON Theme Schemas\n`Contract_Theme.json`, `Target_Theme.json`]
         Backgrounds[Background Canvas Images\n`Contract.png`, `Target.png`]
     end
 
-    subgraph Automation Scripts
+    subgraph Automation & Validation Scripts
         ThemeScript[`scripts/switch_theme.js`]
+        PrefilterTest[`scripts/test_prefilter.py`]
+        SchedMetrics[`scripts/schedule_metrics/`]
+        ResPlayground[`scripts/resource_playground/`]
     end
 
     P6 --> Athena
@@ -61,22 +64,22 @@ flowchart TD
 - **AWS Athena & Power Query M Integration**: Raw Primavera P6 schedule data (`.xer` file parses) resides in AWS Athena under database `primary_p6_bi_reporting` and schema `prod_projectcontrols_p6`.
 - **Query Expressions (`expressions.tmdl`)**:
   - `AthenaDB`: Establishes native Amazon Athena database connection.
-  - `AthenaScopeSql`: Filters narrow project metadata first, requires a named `dbo_project` match, prefers the complete J history over C separately for Contract/Target, then selects the latest baseline and subsequent updates. Numeric C/J aliases are considered together for registry eligibility/inclusion and excluded together for project exclusions/CSV ownership; other codes require an exact registry match. All eleven XER queries join this shared filename scope; TASK reuses its parsed fields. The load-disabled audit exposes `NO_NAMED_PROJECT_MATCH` for rejected files. See [ATHENA_PROGRAMME_SELECTION.md](ATHENA_PROGRAMME_SELECTION.md) for lookup and date rules.
+  - `AthenaScopeSql`: Filters narrow project metadata first, requires a named `dbo_project` match, prefers the complete J history over C separately for Contract/Target (except `CJ:6012`, which prefers `C6012` over `J6012`), then selects the latest baseline and subsequent updates. Numeric C/J aliases are considered together for registry eligibility/inclusion and excluded together for project exclusions/CSV ownership; other codes require an exact registry match. All eleven XER queries join this shared filename scope; TASK reuses its parsed fields. The load-disabled `AthenaProgrammeSelectionAudit` query exposes `NO_NAMED_PROJECT_MATCH` for rejected files. See [ATHENA_PROGRAMME_SELECTION.md](ATHENA_PROGRAMME_SELECTION.md) for lookup and date rules.
   - `fnAthenaSource`: Parameterised M function executing SQL against kept filenames in Athena.
   - `scripts/test_prefilter.py`: Extracts the current native SQL and checks common named-project eligibility and baseline-window selection across all eleven XER consumers: ten `fnAthenaSource` queries, including `11_xer_calendar_detailed`, plus TASK's SQL. Synthetic fixtures execute translated Trino SQL in DuckDB; they do not establish live Athena, Power Query, DAX or RLS acceptance.
-  - `XerCsvTableContracts`: Ordered columns, types, nullability and key rules for the eleven fallback tables. The current loader requires schema `5.0` only, including table 11's weekday rules and dated exceptions. Older bundles must be regenerated.
+  - `XerCsvRouting` & `XerCsvTableContracts`: `XerCsvRouting` computes case-insensitive SharePoint CSV project ownership and Athena C/J family exclusions; `XerCsvTableContracts` defines ordered columns, types, nullability and key rules for the eleven fallback tables. The current loader requires schema `5.0` only, including table 11's weekday rules and dated exceptions. Older bundles must be regenerated.
   - `XerCsvSelectedBundles`: Navigates SharePoint with `SharePoint.Contents` only through project folders explicitly named in `XerCsvProjectCodes`, ignores manifest-free staging folders, selects the newest project/programme folder, and validates that selected bundle with `fnXerCsvReadBundle`. An invalid newest bundle fails rather than falling back to an older folder.
   - `fnXerCsvReadBundle` and `XerCsvSelectedManifest`: Validate the selected small manifest and expose its matching files. The selected metadata is loaded into the hidden `XER CSV Manifest` audit table.
-  - `fnXerCsvReadBundleTable`: For each selected project, sums manifest `row_count` across all source snapshots for the requested table, streams the corresponding CSV, validates its data-row count after its header, then applies types and validates current compact keys without rewriting them. A mismatch raises contextual `XerCsvRowCount`; large CSV binaries and tables are not buffered.
+  - `fnXerCsvReadBundleTable` and `fnXerCsvLoadTable`: For each selected project, sums manifest `row_count` across all source snapshots for the requested table, streams the corresponding CSV, validates its data-row count after its header, then applies types and validates current compact keys without rewriting them. A mismatch raises contextual `XerCsvRowCount`; large CSV binaries and tables are not buffered.
   - `XER CSV Refresh Audit`: Hidden calculated table that returns `PASS` or `DIAGNOSTIC_MISMATCH` for each of the eleven row-count records. It still fails refresh through `ERROR()` for Athena/CSV ownership overlap or a routed project missing from `dbo_project` or `dbo_userpermission`. Manifest content never grants RLS access.
   - **Parameters**:
     - `AthenaDsn`: Amazon Athena connection DSN; default `primary_p6_bi_reporting`.
     - `SharePointSite`: Required SharePoint site-root URL used by both external assets and CSV loading.
-    - `SelectedProjects`: Overall report scope as a comma-separated list of project codes (e.g. `"C5064, C5001, C4007, C4017"`) or `"ALL"`. Selecting either numeric C/J alias considers both and prefers J when available for the selected programme type. Athena-owned projects must have a named registry match even when explicitly selected; `ALL` does not bypass that check.
+    - `SelectedProjects`: Overall report scope as a comma-separated list of project codes or `"ALL"`. **In Power BI Desktop, this parameter is kept to a reduced development subset (currently `"J5064, J5068"`) for fast local authoring; after publishing to the Power BI Service, it is changed to `"ALL"` so scheduled/service refreshes load the entire governed project portfolio.** Selecting either numeric C/J alias considers both and prefers J when available for the selected programme type (except `CJ:6012`, which prefers `C6012` over `J6012`). Athena-owned projects must have a named registry match even when explicitly selected; `ALL` does not bypass that check.
     - `ExcludedProjects`: Optional comma-separated list of project codes to exclude from the report scope (e.g. `"C6036, C5064"`), or blank / `"NONE"`. Automatically excludes both C and J aliases from Athena queries.
     - `SelectedProgrammeType`: Programme type code (`"C"` for Contract, `"T"` for Target, or `"ALL"`).
-    - `XerCsvEnabled`: Logical opt-in; current default `true`.
-    - `XerCsvProjectCodes`: Current CSV-source override as comma-separated routed project codes; current default `C6036`. Do not enter both C and J aliases for the same project.
+    - `XerCsvEnabled`: Logical opt-in; current default `false`.
+    - `XerCsvProjectCodes`: Current CSV-source override as comma-separated routed project codes; current default `CNZ01`. Do not enter both C and J aliases for the same project.
     - `XerCsvLibrary`: Document library name; default `Documents`. Set it to the exact name exposed by `SharePoint.Contents` for `SharePointSite`.
     - `XerCsvRootFolder`: Path below the library; default `P6/XER CSV/Active`.
 
@@ -114,48 +117,76 @@ flowchart TD
 
 ### B. Semantic Model Layer (TMDL Format)
 - Location: `Project Review - Programme (datalake).SemanticModel/definition/`
-- **Format**: **TMDL** (Tabular Model Definition Language) - plain-text, source-controlled definitions.
-- **Core Entity Tables**:
+- **Format**: **TMDL** (Tabular Model Definition Language) - plain-text, source-controlled definitions (`61` table TMDL files, `40` relationships, `1` RLS role).
+- **Core Entity & Governance Tables**:
   - `01 XER_TASK`: Task activities, dates (`act_end_date`, `early_end_date`, `late_end_date`, `Finish`), duration, critical status, constraint types, variance categories.
   - `02 XER_PROJECT`: Project-level metadata and settings.
   - `03 XER_PROJWBS`: Work Breakdown Structure hierarchy.
-  - `04 XER_BASELINE`: Baseline schedule snapshots for variance comparison.
+  - `04 XER_BASELINE`: Calculated baseline schedule snapshots (earliest `UpdateDate` per project/programme) for variance comparison.
   - `06 XER_PREDECESSOR` & `06a XER_SUCCESSOR`: Network logic links and dependencies.
   - `07 XER_ACTVTYPE`, `08 XER_ACTVCODE`, `09 XER_TASKACTV`: Activity code definitions and assignments.
   - `10 XER_CALENDARS`, `12_XER_RSRC`, `15_XER_RESOURCE_DISTRIBUTION`: Calendars, resource master, and resource distribution data.
   - `11 XER_CALENDAR_DETAILED`: Seven undated `Standard` weekday rules plus sparse dated exceptions for each scoped source calendar. Source loading was already present before the playground implementation.
-  - `00 CALENDAR`, `00 PLANNED DATE TABLE (PV)`, `CurrentDate`, `Project_Dimension`: Dimension date tables and project lookup tables.
+  - `dbo_project`, `dbo_userpermission`, `Logos`, `XER CSV Manifest`, `XER CSV Refresh Audit`: Governance metadata, SharePoint branding assets, CSV manifest rows, and the calculated CSV refresh audit table.
+  - `00 CALENDAR`, `00 PLANNED DATE TABLE (PV)`, `Resource Calendar`, `Monthly Resource Distribution Baseline`, `CurrentDate`, `UpdateHistory`, `Project_Dimension`: Dimension date tables, disconnected trend axis (`UpdateHistory`), and governed project lookup table (`Project_Dimension`).
+  - `Schedule Metric Detail` & `Schedule Metric Guide`: Single-row detail-scope selector (`"Baseline coverage"`, hosting 19 `SM Detail *` measures) and hidden 14-row static `DATATABLE` generated from `scripts/schedule_metrics/metric_guide.json`.
+  - `Filter_*` (11 disconnected/lookup slicer tables): `Filter_Activity_Status`, `Filter_Constraint_Types`, `Filter_Critical_Status`, `Filter_Driving`, `Filter_Duration`, `Filter_Finish_Delay`, `Filter_Finish_Within`, `Filter_Float`, `Filter_Start_Delay`, `Filter_Start_Within`, `Filter_TaskType`.
+  - `Scenario *` (14 Resource Playground tables): `Scenario Date`, `Scenario Start`, `Scenario Target`, `Scenario Calendar`, `Scenario Comparison Calendar`, `Scenario Quantity`, `Scenario Quantity Scale`, `Scenario Rate`, `Scenario Rate Basis`, `Scenario Limit`, `Scenario Limit Mode`, `Scenario Mode`, `Scenario Period`, `Scenario Unit`.
 - **Measure Tables**:
-  - `XER Measures`: Core DAX measures for task calculations.
-  - `XER  Counts`: Task, milestone, constraint, and logic count metrics.
-  - `XER Metrics`: Schedule health indicator metrics.
+  - `XER Measures`: Core DAX measures for task calculations, plus 24 `CA *` measures (`displayFolder: Calendar Analysis`) for closed-form monthly calendar working/non-working day availability, workweek signatures, dated exception blackouts, and single-table `O(1)` activity-level calendar stretch decomposition (`Remaining Working Days` vs `Remaining Calendar Days` = `Weekends / Off-Days` + `Holidays / Exceptions`, guarded by `COUNTROWS('01 XER_TASK') > 0` sparsity short-circuiting with zero bi-directional `CROSSFILTER` or measure-to-measure chaining).
+  - `XER  Counts`: Task, milestone, constraint, and logic count metrics (note double space in table name).
+  - `XER Metrics`: Schedule health indicator metrics (`SM Score` and 10 scored checks with graduated points, plus legacy `Schedule Quality Score` and trend-by-update measures evaluated over `UpdateHistory[UpdateDate]` up to `CurrentDate`).
   - `XER S-Curve`: Cumulative baseline vs actual vs forecast curves.
+  - `Resources`: Resource distribution and histogram measures.
   - `Dynamic Titles & Formatting`: Dynamic visual title strings and conditional formatting flags.
   - `WBS Measures` & `Activity Completion`: Dedicated WBS rollup and progress completion DAX.
-  - `Resource Scenario Measures`: Calendar-aware hypothetical resource allocation, inverse target rates, bounded finish search, validation and display measures. The 13 `Scenario ...` tables supply a governed calendar selector and disconnected native inputs/axis.
+  - `Resource Scenario Measures`: 66 measures (57 `Scenario *` + 9 `Comparison *`) for calendar-aware hypothetical resource allocation, inverse target rates, bounded finish search, validation, display wrappers, card formatting wrappers, and side-by-side calendar comparison.
 - **Row-Level Security (RLS)**:
   - Role defined in `roles/Project Access.tmdl`. Filters `Project_Dimension` by evaluating UPN / email against `dbo_userpermission` for explicit project, state, or global permissions.
 
 ### C. Report Layer (PBIR Format)
 - Location: `Project Review - Programme (datalake).Report/definition/`
 - **Format**: **PBIR** (Power BI Report definition) - modern JSON-structured folder layout.
-- **Page Management**:
-  - `pages/pages.json` lists 17 report pages and sets active/landing page (`2cc544dc10a1e237ae90` - Home).
+- **Page Management (`pages/pages.json`)**:
+  - Lists 16 report pages (13 visible operational/analytical pages + 3 hidden drill-through pages) and sets the active/landing page (`2cc544dc10a1e237ae90` - `Home`):
+    1. `2cc544dc10a1e237ae90`: `Home` (Visible, 17 visuals)
+    2. `1351c9e89c045d35e160`: `Summary` (Visible, 22 visuals)
+    3. `90b784e28b9f50741b0b`: `Programme` (Visible, 57 visuals)
+    4. `349fceb1aa22881316d8`: `Gantt Chart` (Visible, 17 visuals)
+    5. `60269a73141469b06603`: `Activity Completion Progress` (Visible, 22 visuals)
+    6. `584ca37745f48e8b6958`: `Schedule Adherence Scorecard` (Visible, 23 visuals)
+    7. `099895b98057d0135349`: `Resources` (Visible, 21 visuals)
+    8. `4c53a34bba9dcc7f3e8c`: `Resource Simulator` (Visible, 50 visuals)
+    9. `ca1da4a175154c398f01`: `Calendar Analysis` (Visible, 24 visuals, enforcing `Float Category <= 50` and incomplete status across all visuals with a `Max Total Float (<= 50d)` slider slicer)
+    10. `eb4b0a43085cad901574`: `Cross-WBS Analysis` (HiddenInViewMode, 25 visuals)
+    11. `327b48a7fbd37ce0a51c`: `Sched. Metrics` (Visible, 55 visuals)
+    12. `ea24ab599f13f4ea4572`: `Float Analysis` (Visible, 19 visuals)
+    13. `97f7d216ba38e55033da`: `Duration Analysis` (Visible, 19 visuals)
+    14. `1eb7703c500eb2ba5a6c`: `Constraint Analysis` (Visible, 22 visuals)
+    15. `4f15f55676d2add4e922`: `Missing Successor` (HiddenInViewMode, 12 visuals)
+    16. `061f748900951ae92ba9`: `Missing Predecessor` (HiddenInViewMode, 12 visuals)
   - Each page folder contains `page.json` (page settings and canvas layout) and a `visuals/` subdirectory containing individual visual JSON definitions.
 - **Bookmarks**:
-  - `bookmarks/*.bookmark.json` defines interactive state bookmarks (navigational toggles, visual state snapshots).
+  - `bookmarks/*.bookmark.json` defines 42 interactive state bookmarks (navigational toggles, panel switches, and visual state snapshots).
 
-### Resource Playground
+### Resource Playground (`Resource Calendars` Page)
 
-- Page `4c53a34bba9dcc7f3e8c` follows Resources and contains 35 native visuals. Project and Monthly update are visible shared context controls; State is synchronised and hidden. Reset bookmark `e899bf3a9c2d243f33bf` affects only the 12 scenario inputs. Existing Resources visuals are unchanged.
+- Page `4c53a34bba9dcc7f3e8c` (`Resource Calendars`) follows `Resources` and contains 50 native visuals (including the Single/Compare view toggle and Calendar Comparison visuals). Project and Monthly update are visible shared context controls; State is synchronised and hidden. Reset bookmark `e899bf3a9c2d243f33bf` affects only its 14 target visuals (`12` scenario inputs plus the comparison calendar slicer and comparison results table, with `applyOnlyToTargetVisuals: true`). Existing `Resources` visuals are unchanged.
 - Uses `11 XER_CALENDAR_DETAILED` at its original weekday/exception grain. No calendar-by-date expansion is stored or evaluated across projects or updates. Measures sum weekday occurrences plus dated replacement corrections, with a daily cap applied before aggregation.
-- One calendar-selector row per project/key/source identity inherits Project Access through a direct one-way `Project_Dimension` relationship. A second one-way `CurrentDate` relationship restricts it to the report's selected update. Report Update Date comes from a compact Task source/update mapping, preserving unused calendars in mapped sources and rejecting ambiguous mappings. Visible calendar labels contain only the name. There is no selector-to-calendar-fact relationship; `KEEPFILTERS` and `TREATAS` preserve the selected governed scope in each measure.
-- One shared date axis and two date-input projections cover the previous year through ten future years. Three bounded numeric-input tables total 300,003 rows across the entire model. Other option tables are small. Calendar count only affects the selector and existing table-11 rows.
-- Finds finish from month checkpoints plus at most 31 daily probes. Query-time bounds enforce today through the full, unfiltered shared Scenario Date maximum, inclusive; there is no fixed twelve-month cap. Start/target text uses exact DD-MM-YYYY equality; invalid dates block calculation. Charts offer Week or Month, while daily detail includes every known permitted date. Invalid source data limits verified coverage instead of inventing availability.
-- The 48 scenario measures include the dynamic planning-window label, two chart and five daily-detail display measures. They suppress inactive rows without visual-level measure filters. A shared generator template computes the selected rate, seven weekday capacities and sparse exception corrections once per bucket and reuses them for its endpoints. This avoids repeated target-rate dependency expansion in native visual queries. The daily table remains independent of the chart period selector and omits unknown dates whose numeric results are blank; the status measure identifies the coverage boundary. Core allocation/endpoint measures retain their total and sparse-selection semantics within the permitted window. Arithmetic switches from exact fixed-decimal input matching to double precision before inverse-rate division.
-- `scripts/resource_playground/generate_scaffold.py`, `generate_measures.py` and `generate_page.py` create review drafts through an explicit output directory and refuse deployed-file overwrites. Targeted integration preserves Desktop metadata and IDs. `verify_integration.py` uses TOM to extract every scenario expression, including ordinary and fenced TMDL, and requires all six daily-table fields to be active.
-- The 11 September repair explicitly aliases the calendar selector's six output columns and replaces engine-rejected DAX variable names. All 14 playground partitions are Ready in the reopened Desktop model. Tests build a separately marked source-free model, execute the production DAX against synthetic calendar rules and compare results with an independent oracle. Static TOM/M/report checks remain separate from this evidence.
+- Both `Scenario Calendar` and `Scenario Comparison Calendar` carry one calendar-selector row per project/key/source identity, inheriting `Project Access` through direct one-way `Project_Dimension` relationships and restricting to the selected update via one-way `CurrentDate` relationships. Report Update Date comes from a compact Task source/update mapping, preserving unused calendars in mapped sources and rejecting ambiguous mappings. Visible calendar labels contain only the name. There is no selector-to-calendar-fact relationship; `KEEPFILTERS` and `TREATAS` preserve the selected governed scope in each measure.
+- One shared date axis (`Scenario Date`) and two date-input projections (`Scenario Start`, `Scenario Target`) cover the previous year through ten future years. Three bounded numeric-input tables total 300,003 rows across the entire model. Other option tables are small. Calendar count only affects the selector and existing table-11 rows.
+- Finds finish from month-end checkpoints plus at most 31 daily probes (`Scenario Finish Date` and `Scenario Effective Start`), pre-computing the 7 weekday capacities and exception corrections once outside the probe loops. Query-time bounds enforce the data date (`Scenario Anchor Date`, falling back to `TODAY()` only when no single project/update is selected) through the full, unfiltered shared `Scenario Date` maximum, inclusive; there is no fixed twelve-month cap. Start/target text uses exact DD-MM-YYYY equality; invalid dates block calculation. Charts offer Week or Month, while daily detail includes every known permitted date. Invalid source data limits verified coverage instead of inventing availability.
+- The 66 measures in `Resource Scenario Measures` (57 `Scenario *` + 9 `Comparison *` measures) include the original 48 core/display scenario measures, 8 core comparison measures, `Scenario Anchor Date`, and 9 `* Display` card text-formatting wrappers (`Scenario Target Quantity Display`, `Scenario Target Remaining Display`, `Scenario Finish Date Display`, `Scenario Effective Start Display`, `Scenario Working Days Display`, `Scenario Elapsed Days Display`, `Scenario Required Rate Display`, `Scenario Horizon Remaining Display`, `Comparison Finish Date Display`) that return `"—"` when unavailable; no target date is assumed when `Scenario Target` is unfiltered. Chart and daily-detail display measures suppress inactive rows without visual-level measure filters. A shared generator template computes the selected rate, seven weekday capacities and sparse exception corrections once per bucket and reuses them for its endpoints. This avoids repeated target-rate dependency expansion in native visual queries. The daily table remains independent of the chart period selector and omits unknown dates whose numeric results are blank; the status measure identifies the coverage boundary. Core allocation/endpoint measures retain their total and sparse-selection semantics within the permitted window. Arithmetic switches from exact fixed-decimal input matching to double precision before inverse-rate division.
+- `scripts/resource_playground/generate_scaffold.py`, `generate_measures.py` and `generate_page.py` create review drafts through an explicit output directory and refuse deployed-file overwrites. Targeted integration preserves Desktop metadata and IDs. `verify_integration.py` and `verify_comparison_integration.py` use TOM/static checks to verify scenario and comparison expressions, bookmark reset targets, and projection contracts.
+- The 11 September repair explicitly aliases the calendar selector's six output columns and replaces engine-rejected DAX variable names (`firstdate`, `lastdate`, `updates`, `key`, `ordinal`). All playground partitions are Ready in the reopened Desktop model. Tests build a separately marked source-free model, execute the production DAX against synthetic calendar rules and compare results with an independent oracle. Static TOM/M/report checks remain separate from this evidence.
 - See [RESOURCE_PLAYGROUND.md](RESOURCE_PLAYGROUND.md) and [VALIDATION.md](scripts/resource_playground/VALIDATION.md) for inputs, bounds and current acceptance evidence. Native Performance Analyzer queries are retained for chart memory regression checks; a simpler query does not represent the native visual's query plan. Service publishing and restricted-account validation are separate release work.
+
+### Schedule Metrics & Drill-Through Validation Suite (`scripts/schedule_metrics/`)
+
+- Page `327b48a7fbd37ce0a51c` (`Sched. Metrics`, 55 visuals) and its two hidden drill-through pages (`Missing Predecessor` `061f748900951ae92ba9`, `Missing Successor` `4f15f55676d2add4e922`) evaluate 10 scored schedule-health checks (`1` point at target, `0` at limit, proportional between, averaged in `SM Score`) plus coverage diagnostics.
+- `Is Unscheduled = false` is applied as a page-level filter on the other 13 operational pages and intentionally omitted from `Sched. Metrics`, `Missing Predecessor`, and `Missing Successor` so schedule quality checks evaluate the full eligible activity population.
+- `Schedule Metric Guide` is a hidden 14-row static `DATATABLE` generated from `scripts/schedule_metrics/metric_guide.json` via `python scripts/schedule_metrics/build_metric_guide.py --content-only`.
+- `scripts/schedule_metrics/validate_static.py` verifies TMDL/PBIR invariants offline; PowerShell scripts (`Validate-Live.ps1`, `Validate-ReviewBands.ps1`, `Validate-Detail-Loaded.ps1`, `Validate-Drillthrough.ps1`, `Validate-Guide.ps1`) verify live DAX evaluation and drill-through reconciliation against an open Power BI Desktop instance. See [scripts/schedule_metrics/README.md](scripts/schedule_metrics/README.md) and [scripts/schedule_metrics/IMPLEMENTATION.md](scripts/schedule_metrics/IMPLEMENTATION.md).
 
 ### D. Visual Theme & Canvas Background Subsystem
 - **Themes (`Themes/`)**: Contains custom theme JSON definitions (`Contract_Theme.json` and `Target_Theme.json`).
@@ -170,6 +201,7 @@ flowchart TD
 - The root project has been cleared of prior `.pbi/localSettings.json` Service bindings. Its first publication is therefore workspace-independent: a destination without matching items creates new items, while a destination with exactly one matching report and semantic model can offer an explicit **Replace** operation.
 - After a successful publication, Desktop may recreate ignored `localSettings.json` files in the same root project. This is expected and lets subsequent publications from that PBIP update the same target directly. These machine-local bindings are never committed.
 - Continue only when Desktop explicitly offers **Replace** for the expected same-name pair. Never delete, recreate or manually rename the existing Service items during replacement.
+- In the Power BI Service dataset parameters, switch `SelectedProjects` from the local Desktop development subset to `"ALL"` (and configure `XerCsvEnabled` / `XerCsvProjectCodes` as required for production CSV routing) before running the full Service refresh.
 - Record and then verify the report/model IDs, links, direct and Build access, RLS membership, app inclusion, audiences, refresh settings, gateway mapping, endorsement and labels.
 - A PBIX saved from the root PBIP is an optional fallback. PBIX files, caches, credentials and local Service bindings are never committed.
 
@@ -181,12 +213,17 @@ flowchart TD
 Programme-Review/
 ├── AGENTS.md                                           # Repository-specific rules for AI agents
 ├── ARCHITECTURE.md                                     # System architecture & AI maintenance guide (this file)
+├── ATHENA_PROGRAMME_SELECTION.md                       # Athena C/J family selection and baseline window rules
+├── RESOURCE_PLAYGROUND.md                              # Resource Calendars (Playground) functional specification
 ├── SHAREPOINT_CSV_SETUP.md                             # SharePoint folders, credentials, refresh and rollback guide
 ├── Backgrounds/                                        # Canvas background images (Contract.png, Target.png)
 ├── Themes/                                             # JSON theme definitions (Contract_Theme.json, Target_Theme.json)
-├── scripts/                                            # Automation scripts
-│   ├── resource_playground/                            # Scenario generators, checks and input evidence
-│   └── switch_theme.js                                 # Script to switch page canvas background images
+├── scripts/                                            # Automation & verification scripts
+│   ├── calendar_analysis/                              # Calendar Analysis static, TOM, and conservation-law validator
+│   ├── resource_playground/                            # Scenario generators, static/TOM checks, and live harnesses
+│   ├── schedule_metrics/                               # Schedule metrics guide generator, static validator, and XMLA tests
+│   ├── switch_theme.js                                 # Script to switch page canvas background images
+│   └── test_prefilter.py                               # DuckDB test harness for AthenaScopeSql & 01 XER_TASK SQL
 ├── Project Review - Programme (datalake).pbip          # Root Power BI Project declaration file
 ├── Project Review - Programme (datalake).SemanticModel/# TMDL Semantic Model root
 │   ├── definition.pbism                                # Semantic Model metadata
@@ -194,20 +231,20 @@ Programme-Review/
 │   └── definition/                                     # TMDL model definition folder
 │       ├── model.tmdl                                  # Model declaration & table/role references
 │       ├── database.tmdl                               # Database declaration
-│       ├── expressions.tmdl                            # Power Query M parameters & queries (Athena)
-│       ├── relationships.tmdl                          # Model table relationships
+│       ├── expressions.tmdl                            # Power Query M parameters & queries (Athena + SharePoint CSV)
+│       ├── relationships.tmdl                          # Model table relationships (40 relationships)
 │       ├── cultures/                                   # Locale definition (en-NZ)
 │       ├── roles/                                      # Row-Level Security definitions (Project Access.tmdl)
-│       └── tables/                                     # TMDL table & measure files (57 TMDL files)
+│       └── tables/                                     # TMDL table & measure files (61 TMDL files)
 └── Project Review - Programme (datalake).Report/       # PBIR Report root
     ├── definition.pbir                                 # Report metadata pointing to SemanticModel
-    ├── CustomVisuals/                                  # Custom visual packages
+    ├── CustomVisuals/                                  # Custom visual packages (3 custom visuals)
     ├── StaticResources/                                # Embedded image resources
     └── definition/                                     # PBIR report definition folder
         ├── report.json                                 # Global report settings & theme bindings
         ├── version.json                                # PBIR format version
-        ├── bookmarks/                                  # Report bookmark JSON files
-        └── pages/                                      # 17 Report pages (page.json & visual folders)
+        ├── bookmarks/                                  # Report bookmark JSON files (42 bookmarks)
+        └── pages/                                      # 16 Report pages (page.json & visual folders)
 ```
 
 ---

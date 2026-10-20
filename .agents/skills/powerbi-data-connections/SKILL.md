@@ -87,3 +87,21 @@ Create these parameters in every model: `pEnvironment`, plus one per connection 
 1. Does it fail in Desktop too? If yes, it's the query/source. If Service-only: credentials, gateway, privacy levels, or timeouts.
 2. Read the exact error class: `DataSource.Error` (source/driver), `Expression.Error` (M logic, often schema drift), `Formula.Firewall` (privacy levels / query interdependence), timeout (gateway or source performance).
 3. Schema drift is the most common silent killer with file sources — a renamed column upstream. Defend with explicit column selection and `MissingField.UseNull`, and fail loudly with a validation query where correctness matters.
+
+
+## This workspace: Hybrid Athena + SharePoint CSV Architecture (`expressions.tmdl`)
+
+1. **Connector & 9 Required Parameters**:
+   - Athena uses the native connector `AmazonAthena.Databases(AthenaDsn, null, [EnableNativeQuery = true])` (not raw `Odbc.DataSource` connection strings), accessing catalog `AwsDataCatalog`, schedule schema `prod_projectcontrols_p6`, and governance schema `prod_projectcontrols_linkedsitereports` (`dbo_project`, `dbo_userpermission`).
+   - SharePoint uses `SharePoint.Contents(SharePointSite)` for `Logos` and for optional schema `5.0` XER CSV bundles.
+   - All source and scope settings live in the 9 parameters in `expressions.tmdl`: `AthenaDsn`, `SharePointSite`, `SelectedProjects`, `ExcludedProjects`, `SelectedProgrammeType`, `XerCsvEnabled`, `XerCsvProjectCodes`, `XerCsvLibrary`, `XerCsvRootFolder`.
+   - **Desktop Reduced Subset vs. Service `SelectedProjects = "ALL"`**: In local Power BI Desktop development, `SelectedProjects` holds a small subset (e.g. `"J5064, J5068"`) to keep local refreshes fast. In the Power BI Service, `SelectedProjects` is changed to `"ALL"` to load all eligible projects across the organisation. Never write SQL or M logic that assumes only the locally loaded projects exist.
+2. **Athena Programme Selection (`AthenaScopeSql` & `ATHENA_PROGRAMME_SELECTION.md`)**:
+   - **Named Governance Gate**: Only P6 files whose project identity matches a row in `dbo_project` with a non-blank `projectname` are eligible.
+   - **C/J Family Resolution**: Numeric `C<digits>` and `J<digits>` share `CJ:<digits>` (non-numeric codes use `EXACT:<code>`). Per `(project_identity, programme_type)`, `J` history is preferred over `C`, **except `CJ:6012`**, which explicitly prefers `C6012` over `J6012`.
+   - **Baseline & Update Window**: `BL<num>(-<rev>)?` snapshots are ranked per `(project_identity, programme_type)`; only the latest baseline (`bl_rank = 1`) and updates with `last_recalc_date > anchor_date` are retained.
+   - **Baseline Month-End Collision Avoidance (`01 XER_TASK`)**: `update_date` defaults to the month-end on or before `last_recalc_date`; for baselines (`BL%`), the Trino SQL searches backwards up to 240 months (`sequence(0, 240)`) to pick the latest month-end that does not collide with any non-baseline update date.
+3. **Whole-Project CSV Routing & Service Refresh Rules**:
+   - `XerCsvRouting` routes explicitly listed `XerCsvProjectCodes` to SharePoint CSV bundles and excludes both `C` and `J` aliases from `AthenaScopeSql`.
+   - Switching `XerCsvProjectCodes` in the Power BI Service requires a full transactional model refresh (`type=full`, `commitMode=transactional`, low `maxParallelism` such as `2` or `3`); never use partial or single-table refresh when changing source ownership.
+   - Whenever modifying `AthenaScopeSql` or `01 XER_TASK` SQL, run `python scripts/test_prefilter.py` to validate the translated Trino SQL against the DuckDB fixture suite across all 11 consumer queries.

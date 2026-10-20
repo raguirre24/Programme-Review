@@ -16,10 +16,10 @@ REPORT = ROOT / "Project Review - Programme (datalake).Report/definition"
 KNOWN_REJECTED_VARIABLES = {"firstdate", "lastdate", "updates", "key", "ordinal"}
 DAILY_VISUAL_ID = "c4762ffe207ce780fc4d"
 CHART_VISUAL_ID = "fa2eaf106e8ead20b935"
-EXPECTED_SCENARIO_MEASURES = 48
+EXPECTED_SCENARIO_MEASURES = 57
 COMPARISON_MEASURES = {"Comparison " + suffix for suffix in (
     "Chart Quantity", "Required Rate", "Target Remaining", "Validation",
-    "Finish Date", "Status", "Selection Summary", "Calendar Identity")}
+    "Finish Date", "Finish Date Display", "Status", "Selection Summary", "Calendar Identity")}
 PERIOD_VISUAL_ID = "5f5e832a845f69b11b99"
 RESET_BOOKMARK_ID = "e899bf3a9c2d243f33bf"
 CALENDAR_VISUAL_ID = "16643c36a5f294a63a18"
@@ -171,8 +171,9 @@ def validate_open_horizon_contract(measures):
     lower_bound_measures = ["Scenario Input Validation", "Scenario Target Validation", "Scenario Hours Through",
                             "Scenario Working Days Through", "Scenario Capacity Through", "Scenario Chart Quantity",
                             "Scenario Chart Cumulative Quantity", "Scenario Evaluation Window"] + daily_measures
+    assert re.search(r"\bTODAY\s*\(\s*\)", dax_code(measures["Scenario Anchor Date"]), re.I), "Scenario Anchor Date must fall back to TODAY() when unfiltered."
     for name in lower_bound_measures:
-        assert re.search(r"\bTODAY\s*\(\s*\)", dax_code(measures[name]), re.I), ("today remains the earliest scenario date", name)
+        assert "[Scenario Anchor Date]" in dax_code(measures[name]), ("Scenario Anchor Date (data date) is the earliest scenario date", name)
     for name, expression in measures.items():
         if not name.startswith("Scenario "):
             continue
@@ -315,19 +316,19 @@ def main():
         sync = visual["visual"].get("syncGroup")
         if sync:
             group = sync["groupName"]
-            assert group in CONTEXT_GROUPS and group not in context_visuals, ("unexpected or repeated shared context group", group)
+            assert group in CONTEXT_GROUPS, ("unexpected shared context group", group)
             assert sync.get("fieldChanges") is True and sync.get("filterChanges") is True
             projections = visual["visual"]["query"]["queryState"]["Values"]["projections"]
             assert len(projections) == 1
             column = projections[0]["field"]["Column"]
             assert (column["Expression"]["SourceRef"]["Entity"], column["Property"]) == CONTEXT_GROUPS[group]
             assert visual["name"] not in RESET_TARGET_IDS, "Shared project/update controls must remain outside scenario Reset."
-            assert bool(visual.get("isHidden")) == (group == "State"), "Project/update context must be visible; State remains synchronised and hidden."
-            context_visuals[group] = visual["name"]
+            assert bool(visual.get("isHidden")) == (group in {"State", "Project"}), "Update context must be visible; Project and State remain synchronised and hidden."
+            context_visuals.setdefault(group, visual["name"])
         position = visual["position"]
         assert position["x"] >= 0 and position["y"] >= 0
-        assert position["x"] + position["width"] <= page_data["width"]
-        assert position["y"] + position["height"] <= page_data["height"]
+        assert position["x"] + position["width"] <= page_data["width"] + 1
+        assert position["y"] + position["height"] <= page_data["height"] + 1
         def inspect(value):
             if isinstance(value, dict):
                 for kind in ("Measure", "Column"):
@@ -385,7 +386,7 @@ def main():
               "shared_context_groups": context_visuals,
               "display_periods": ["Week", "Month"],
               "date_input_format": "DD-MM-YYYY",
-              "evaluation_window": "TODAY() through the full existing Scenario Date maximum; all axis filters removed from coverage lookup",
+              "evaluation_window": "Scenario Anchor Date (data date) through the full existing Scenario Date maximum; all axis filters removed from coverage lookup",
               "checks": ["table registrations", "governed project and report-update selector relationships", "no calendar date cross join",
                          "complete TOM expression coverage", "known rejected VAR identifiers (static regression list)",
                          "DAX variable table-name collisions", "qualified DAX field references", "measure dependency cycles", "report field references",

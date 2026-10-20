@@ -1,0 +1,48 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "Open Project Menu - Calendar Analysis",
+  "name": "ca91openbm0000000091",
+  "options": {
+    "targetVisualNames": [
+      "ca10menubg0000000010",
+      "ca11state00000000011",
+      "ca12proj000000000012",
+      "ca13closebt000000013"
+    ],
+    "suppressData": true
+  },
+  "explorationState": {
+    "version": "1.0",
+    "activeSection": "ca1da4a175154c398f01",
+    "sections": {
+      "ca1da4a175154c398f01": {
+        "visualContainers": {
+          "ca10menubg0000000010": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {}
+            }
+          },
+          "ca11state00000000011": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {}
+            }
+          },
+          "ca12proj000000000012": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {}
+            }
+          },
+          "ca13closebt000000013": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "objects": {}
+            }
+          }
+        }
+      }
+    }
+  }
+}

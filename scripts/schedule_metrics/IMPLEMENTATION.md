@@ -214,8 +214,8 @@ in neither list.
 The speculative Date alignment diagnostic has been removed at the user's
 request: its counts-table column, detail page, page-menu bookmarks, guide row
 and dedicated measures are retired. Missing Predecessor and Missing Successor
-remain the two activity detail routes. The guide now contains 18 rows. The
-eight scored checks, Date integrity, all existing gauge/trend positions and
+remain the two activity detail routes. The guide now contains 14 rows. The
+10 scored checks, Date integrity, all existing gauge/trend positions and
 the remaining table fields are preserved. The imported classification is not
 presented as a schedule-health metric; source queries remain unchanged.
 

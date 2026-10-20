@@ -140,7 +140,7 @@ def build(output: Path):
     # fallback may suffix even an otherwise unique name in an affected scope.
     inspected_label = "CALCULATETABLE(VALUES(" + CT + "[Inspection Calendar]),TREATAS({" + dax(specs["base"]["key"]) + "}," + CT + "[clndr_id_key]))"
     inspect = filters(["base", "always"]) + ["TREATAS(" + inspected_label + "," + CT + "[Inspection Calendar])"]
-    scalar("inspected_row_finish", {"Finish": "[Comparison Finish Date]", "Status": "[Comparison Status]"}, inspect, {"Finish": oracle("base", {})["finish"].isoformat()}, contains={"Status": "Hypothetical forecast: completion"}, split=True)
+    scalar("inspected_row_finish", {"Finish": "[Comparison Finish Date]", "Status": "[Comparison Status]"}, inspect, {"Finish": oracle("base", {})["finish"].isoformat()}, contains={"Status": "working days"}, split=True)
     scalar("invalid_row_explained", {"Issue": "[Comparison Validation]"}, filters(["invalid_week"]), contains={"Issue": "weekday"})
     scalar("completed_before_unknown_retained", {"Remaining": "[Comparison Target Remaining]", "Issue": "[Comparison Validation]"}, filters(["unknown"], quantity=100), {"Remaining": 0}, contains={"Issue": "complete before unknown"}, split=True)
     unknown_date = min(dt.date.fromisoformat(day) for day, hours in specs["unknown"]["exceptions"].items() if hours is None)

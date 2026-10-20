@@ -1,5 +1,8 @@
 # Date alignment removal
 
+> [!NOTE]
+> **Historical validation record (9 October 2026)**: This document preserves the point-in-time validation evidence from 9 October 2026. Subsequent approved changes on 9–20 October 2026 removed Date alignment, promoted High Float and Remaining Duration (`>44d`) to scored checks, added the `Out of Seq.` and `Baseline Execution Index` gauges, and streamlined `Schedule Metric Guide` to **14 rows** (**10 scored checks**, **55 visuals** on `Sched. Metrics`, and **2 drill-through routes**: `Missing Predecessor` and `Missing Successor`). See [IMPLEMENTATION.md](IMPLEMENTATION.md) and [README.md](README.md) for the current specification and verification commands.
+
 Validation record for the approved removal on 9 October 2026. Earlier validation
 documents retain their historical three-route and 19-row results; this record
 supersedes that feature scope.
