@@ -17,6 +17,45 @@
         {
           "name": "adf145333090dd095a53",
           "type": "Categorical",
+          "filter": {
+            "Version": 2,
+            "From": [
+              {
+                "Name": "0",
+                "Entity": "01 XER_TASK",
+                "Type": 0
+              }
+            ],
+            "Where": [
+              {
+                "Condition": {
+                  "In": {
+                    "Expressions": [
+                      {
+                        "Column": {
+                          "Expression": {
+                            "SourceRef": {
+                              "Source": "0"
+                            }
+                          },
+                          "Property": "IsExcludedFromDataLake"
+                        }
+                      }
+                    ],
+                    "Values": [
+                      [
+                        {
+                          "Literal": {
+                            "Value": "false"
+                          }
+                        }
+                      ]
+                    ]
+                  }
+                }
+              }
+            ]
+          },
           "expression": {
             "Column": {
               "Expression": {
@@ -350,7 +389,7 @@
             "filters": {
               "byExpr": [
                 {
-                  "name": "2fde6c505784d7a25f57",
+                  "name": "aeaea18bedab0e832a35",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -495,7 +534,7 @@
                   "howCreated": 1
                 },
                 {
-                  "name": "73da8b7c94eb8d6a3384",
+                  "name": "1929435d45d12e853e48",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -510,7 +549,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "f9da3928de6069f2b8e0",
+                  "name": "4d214a6145f54408db0e",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -525,7 +564,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "b05d61e62f5b98bfe05d",
+                  "name": "7e59729d285457729793",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -540,7 +579,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "230d3b507fbad1ccf39e",
+                  "name": "044fd19a4d42a13f9d3b",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -555,7 +594,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "f64fa9a5b1734f90d709",
+                  "name": "a6ae7dca555f09b61e6c",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -811,7 +850,7 @@
             "filters": {
               "byExpr": [
                 {
-                  "name": "a0fb51e07bb7f2a15b3a",
+                  "name": "6eace4f377055b408c87",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -826,7 +865,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "4c9abd582fd79c1f62a7",
+                  "name": "5ad24df90d2dc740b75a",
                   "type": "Categorical",
                   "expression": {
                     "Column": {

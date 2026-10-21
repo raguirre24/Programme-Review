@@ -4,10 +4,10 @@
   "position": {
     "x": 12,
     "y": 604,
-    "z": 11000,
+    "z": 16000,
     "height": 464,
     "width": 1764,
-    "tabOrder": 11000
+    "tabOrder": 16000
   },
   "visual": {
     "visualType": "tableEx",
@@ -39,10 +39,10 @@
                       "Entity": "XER Measures"
                     }
                   },
-                  "Property": "ShowTaskName"
+                  "Property": "CA Activity Name"
                 }
               },
-              "queryRef": "XER Measures.ShowTaskName",
+              "queryRef": "XER Measures.CA Activity Name",
               "nativeQueryRef": "Activity Name",
               "active": true,
               "displayName": "Activity Name"
@@ -55,31 +55,26 @@
                       "Entity": "XER Measures"
                     }
                   },
-                  "Property": "ShowCalendar"
+                  "Property": "CA Activity Calendar"
                 }
               },
-              "queryRef": "XER Measures.ShowCalendar",
+              "queryRef": "XER Measures.CA Activity Calendar",
               "nativeQueryRef": "Calendar",
               "active": true,
               "displayName": "Calendar"
             },
             {
               "field": {
-                "Aggregation": {
+                "Measure": {
                   "Expression": {
-                    "Column": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "01 XER_TASK"
-                        }
-                      },
-                      "Property": "Start"
+                    "SourceRef": {
+                      "Entity": "XER Measures"
                     }
                   },
-                  "Function": 3
+                  "Property": "CA Activity Start"
                 }
               },
-              "queryRef": "Min(01 XER_TASK.Start)",
+              "queryRef": "XER Measures.CA Activity Start",
               "nativeQueryRef": "Start",
               "active": true,
               "displayName": "Start",
@@ -87,21 +82,16 @@
             },
             {
               "field": {
-                "Aggregation": {
+                "Measure": {
                   "Expression": {
-                    "Column": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "01 XER_TASK"
-                        }
-                      },
-                      "Property": "Finish"
+                    "SourceRef": {
+                      "Entity": "XER Measures"
                     }
                   },
-                  "Function": 4
+                  "Property": "CA Activity Finish"
                 }
               },
-              "queryRef": "Max(01 XER_TASK.Finish)",
+              "queryRef": "XER Measures.CA Activity Finish",
               "nativeQueryRef": "Finish",
               "active": true,
               "displayName": "Finish",
@@ -122,7 +112,7 @@
               "nativeQueryRef": "Total Float",
               "active": true,
               "displayName": "Total Float",
-              "format": "#,0.0"
+              "format": "#,0"
             },
             {
               "field": {
@@ -139,7 +129,7 @@
               "nativeQueryRef": "Remaining Working Days",
               "active": true,
               "displayName": "Remaining Working Days",
-              "format": "#,0.0"
+              "format": "#,0"
             },
             {
               "field": {
@@ -224,7 +214,7 @@
               "nativeQueryRef": "Calendar vs Working Ratio",
               "active": true,
               "displayName": "Calendar vs Working Ratio",
-              "format": "0.00\"x\""
+              "format": "0.0\"x\""
             },
             {
               "field": {
@@ -255,7 +245,7 @@
                     "Entity": "XER Measures"
                   }
                 },
-                "Property": "CA Activity Non-Working Stretch Days"
+                "Property": "CA Activity Stretch Ratio"
               }
             },
             "direction": "Descending"
@@ -290,7 +280,7 @@
             }
           },
           "selector": {
-            "metadata": "XER Measures.ShowTaskName"
+            "metadata": "XER Measures.CA Activity Name"
           }
         },
         {
@@ -304,7 +294,7 @@
             }
           },
           "selector": {
-            "metadata": "XER Measures.ShowCalendar"
+            "metadata": "XER Measures.CA Activity Calendar"
           }
         },
         {
@@ -318,7 +308,7 @@
             }
           },
           "selector": {
-            "metadata": "Min(01 XER_TASK.Start)"
+            "metadata": "XER Measures.CA Activity Start"
           }
         },
         {
@@ -332,7 +322,7 @@
             }
           },
           "selector": {
-            "metadata": "Max(01 XER_TASK.Finish)"
+            "metadata": "XER Measures.CA Activity Finish"
           }
         },
         {
@@ -438,7 +428,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "315D"
+                  "Value": "309.16413373860183D"
                 }
               }
             }
@@ -500,6 +490,134 @@
             }
           }
         }
+      ],
+      "columnFormatting": [
+        {
+          "properties": {
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "XER Measures.CA Activity Start"
+          }
+        },
+        {
+          "properties": {
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "XER Measures.CA Activity Finish"
+          }
+        },
+        {
+          "properties": {
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "XER Measures.CA Activity Total Float"
+          }
+        },
+        {
+          "properties": {
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "XER Measures.CA Activity Remaining Working Days"
+          }
+        },
+        {
+          "properties": {
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "XER Measures.CA Activity Remaining Elapsed Days"
+          }
+        },
+        {
+          "properties": {
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "XER Measures.CA Activity Standard Non-Working Days"
+          }
+        },
+        {
+          "properties": {
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "XER Measures.CA Activity Exception Blackout Days"
+          }
+        },
+        {
+          "properties": {
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "XER Measures.CA Activity Non-Working Stretch Days"
+          }
+        },
+        {
+          "properties": {
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "XER Measures.CA Activity Stretch Ratio"
+          }
+        }
       ]
     },
     "visualContainerObjects": {
@@ -559,8 +677,13 @@
             },
             "text": {
               "expr": {
-                "Literal": {
-                  "Value": "'Activities by Calendar \u00b7 Remaining Working Days vs Remaining Calendar Days'"
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Measures"
+                    }
+                  },
+                  "Property": "CA Inspector Title"
                 }
               }
             },

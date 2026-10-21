@@ -22,11 +22,17 @@ EXPECTED_CA_MEASURES = [
     "CA Monthly Non-Working Days",
     "CA Monthly Working Hours",
     "CA Monthly Critical Activities",
+    "CA Monthly Active Activities",
+    "CA Monthly Working Days Colour",
+    "CA Monthly Working Days Font Colour",
     "CA Workweek Signature",
     "CA Future Exception Blackout Days",
     "CA Incomplete Activity Count",
     "CA Critical Activity Count",
     "CA Critical Remaining Working Days",
+    "CA Inspector Scope Ready",
+    "CA Inspector Title",
+    "CA Inspector Selection Match",
     "CA Activity Total Float",
     "CA Activity Remaining Working Days",
     "CA Activity Remaining Elapsed Days",
@@ -35,9 +41,22 @@ EXPECTED_CA_MEASURES = [
     "CA Activity Non-Working Stretch Days",
     "CA Activity Stretch Ratio",
     "CA Activity Stretch Diagnosis",
+    "CA Activity Name",
+    "CA Activity Calendar",
+    "CA Activity Start",
+    "CA Activity Finish",
     "CA KPI Active Calendars",
     "CA KPI Critical Exception Blackout Days",
     "CA KPI Max Critical Stretch Days",
+]
+
+STRETCH_MEASURES = [
+    "CA Activity Remaining Elapsed Days",
+    "CA Activity Standard Non-Working Days",
+    "CA Activity Exception Blackout Days",
+    "CA Activity Non-Working Stretch Days",
+    "CA Activity Stretch Ratio",
+    "CA Activity Stretch Diagnosis",
 ]
 
 FORBIDDEN_VARS = {"firstdate", "lastdate", "updates", "key", "ordinal"}
@@ -150,22 +169,33 @@ def verify_conservation_laws() -> dict:
     }
 
 
+def measure_blocks(text: str) -> dict[str, str]:
+    """Map each measure name to its TMDL block (header, expression, properties; not the next object's /// lines).
+
+    Checks are name-based because Power BI Desktop moves newly added measures to the end of the table when it saves.
+    """
+    blocks = {}
+    for header in re.finditer(r"^\tmeasure '?([^'=\n]+?)'? =", text, flags=re.M):
+        following = re.search(r"^\t(?:///|measure |column |partition |annotation |hierarchy )", text[header.end():], flags=re.M)
+        end = header.end() + following.start() if following else len(text)
+        blocks[header.group(1)] = text[header.start():end]
+    return blocks
+
+
 def verify_tmdl_measures() -> int:
     tmdl_path = MODEL_DEF / "tables" / "XER Measures.tmdl"
-    text = tmdl_path.read_text(encoding="utf-8")
+    ca = {name: body for name, body in measure_blocks(tmdl_path.read_text(encoding="utf-8")).items() if name.startswith("CA ")}
 
-    found_measures = re.findall(r"^\tmeasure '?(CA [^'=\n]+)'? =", text, flags=re.M)
-    assert found_measures == EXPECTED_CA_MEASURES, (
-        f"CA measure list mismatch.\nExpected: {EXPECTED_CA_MEASURES}\nFound: {found_measures}"
+    found_measures = sorted(ca)
+    assert found_measures == sorted(EXPECTED_CA_MEASURES), (
+        f"CA measure list mismatch.\nExpected: {sorted(EXPECTED_CA_MEASURES)}\nFound: {found_measures}"
     )
 
-    # Check displayFolder and forbidden variable names inside the CA measures block
-    ca_start = text.index("\tmeasure 'CA Horizon Start Month' =")
-    ca_block = text[ca_start:]
-    folders = re.findall(r"^\t\tdisplayFolder:\s*(.+)$", ca_block, flags=re.M)
-    assert len(folders) == len(EXPECTED_CA_MEASURES) and all(f.strip() == "Calendar Analysis" for f in folders), (
-        "All CA * measures must have displayFolder: Calendar Analysis"
-    )
+    # Check displayFolder and forbidden variable names inside the CA measures
+    for name, body in ca.items():
+        folders = [f.strip() for f in re.findall(r"^\t\tdisplayFolder:\s*(.+)$", body, flags=re.M)]
+        assert folders == ["Calendar Analysis"], f"{name} must have displayFolder: Calendar Analysis, got {folders}"
+    ca_block = "\n".join(ca.values())
 
     var_names = [v.lower() for v in re.findall(r"\bVAR\s+([A-Za-z0-9_]+)\s*=", ca_block)]
     bad_vars = sorted(set(var_names) & FORBIDDEN_VARS)
@@ -188,10 +218,9 @@ def verify_tmdl_measures() -> int:
     # 4. Activity-grain measures must be single-table O(1) over '01 XER_TASK':
     #    - Zero CALCULATETABLE, SELECTCOLUMNS, CROSSFILTER, '11 XER_CALENDAR_DETAILED', 'Scenario Calendar', or 'Scenario Date'
     #    - Zero [CA Activity ...] measure-to-measure macro chaining
-    #    - Strict TaskRows > 0 && ISINSCOPE('01 XER_TASK'[task_code]) sparsity guard on all 8 measures
-    act_start = ca_block.index("\tmeasure 'CA Activity Total Float' =")
-    act_end = ca_block.index("\tmeasure 'CA KPI Active Calendars' =")
-    act_block = ca_block[act_start:act_end]
+    #    - Strict TaskRows > 0 && ISINSCOPE('01 XER_TASK'[task_code]) sparsity guard on all 12 measures
+    activity_names = [name for name in EXPECTED_CA_MEASURES if name.startswith("CA Activity ")]
+    act_block = "\n".join(ca[name] for name in activity_names)
     for forbidden_token in (
         "CALCULATETABLE",
         "SELECTCOLUMNS",
@@ -204,11 +233,92 @@ def verify_tmdl_measures() -> int:
         assert forbidden_token not in act_block, (
             f"Activity-grain CA Activity * measures must not contain '{forbidden_token}' (causes 1024 MB memory spool)"
         )
-    assert act_block.count("VAR TaskRows = COUNTROWS('01 XER_TASK')") == 8, (
-        "All 8 CA Activity * measures must hoist VAR TaskRows = COUNTROWS('01 XER_TASK') for SE sparsity short-circuiting"
+    assert act_block.count("VAR TaskRows = COUNTROWS('01 XER_TASK')") == 12, (
+        "All 12 CA Activity * measures must hoist VAR TaskRows = COUNTROWS('01 XER_TASK') for SE sparsity short-circuiting"
     )
-    assert act_block.count("TaskRows > 0 && ISINSCOPE('01 XER_TASK'[task_code])") == 8, (
-        "All 8 CA Activity * measures must guard evaluation with TaskRows > 0 && ISINSCOPE('01 XER_TASK'[task_code])"
+    assert act_block.count("TaskRows > 0 && ISINSCOPE('01 XER_TASK'[task_code])") == 12, (
+        "All 12 CA Activity * measures must guard evaluation with TaskRows > 0 && ISINSCOPE('01 XER_TASK'[task_code])"
+    )
+
+    # 5. 'Scenario Calendar' / 'Scenario Date' have no relationship to '01 XER_TASK', so a calendar row or month cell
+    #    selected in ca21/ca22 reaches the inspector only through the [CA Inspector Selection Match] gate. Every
+    #    activity-grain guard must include it, it is the only measure they may reference, and the gate must stay a
+    #    storage-engine column filter (no row iteration, no calendar-rule table).
+    assert act_block.count(
+        "TaskRows > 0 && ISINSCOPE('01 XER_TASK'[task_code]) && [CA Inspector Selection Match]"
+    ) == 12, "All 12 CA Activity * guards must include && [CA Inspector Selection Match] so ca21/ca22 selections filter rows"
+    for name in activity_names:
+        referenced = set(re.findall(r"\[CA [^\]]+\]", ca[name]))
+        assert referenced == {"[CA Inspector Selection Match]"}, (
+            f"{name} may only reference [CA Inspector Selection Match], found {sorted(referenced)}"
+        )
+    gate_block = ca["CA Inspector Selection Match"]
+    for required_token in (
+        "ISFILTERED('Scenario Calendar'[Calendar])",
+        "ISFILTERED('Scenario Date'[Month])",
+        "TREATAS(VALUES('Scenario Calendar'[clndr_id_key]), '01 XER_TASK'[calendar_id_key])",
+    ):
+        assert required_token in gate_block, f"[CA Inspector Selection Match] must contain {required_token}"
+    for forbidden_token in ("CALCULATETABLE", "SELECTCOLUMNS", "CROSSFILTER", "FILTER(", "11 XER_CALENDAR_DETAILED"):
+        assert forbidden_token not in gate_block, (
+            f"[CA Inspector Selection Match] must not contain '{forbidden_token}' (keep it a storage-engine column filter)"
+        )
+
+    # 6. The six day-count measures must compute on the activity's own row inside MAXX('01 XER_TASK', ...).
+    #    Group-level MIN/MAX/SUM/SELECTEDVALUE variables inside the IF made the engine look up each activity
+    #    separately: 19 s for J5068's 10,310 activities, against 0.3 s with the row iterator (identical results).
+    for name in STRETCH_MEASURES:
+        body = ca[name]
+        assert "MAXX(" in body and "VAR StartDate = '01 XER_TASK'[Start]" in body, (
+            f"{name} must compute inside MAXX('01 XER_TASK', ...) on row values"
+        )
+        for group_level in (
+            "MIN('01 XER_TASK'[Start])",
+            "MAX('01 XER_TASK'[Finish])",
+            "MAX('01 XER_TASK'[data_date])",
+            "SUM('01 XER_TASK'[remaining_duration])",
+            "SELECTEDVALUE('01 XER_TASK'[Calendar])",
+        ):
+            assert group_level not in body, f"{name} must not use group-level {group_level} (per-activity lookups)"
+
+    # 7. The inspector lists activities only for one project and one update: task_code is unique only within a
+    #    project snapshot, and a portfolio-wide list is very large. The gate returns FALSE first otherwise.
+    for required_token in ("HASONEVALUE(Project_Dimension[ProjectKey])", "HASONEVALUE(CurrentDate[UpdateDate])"):
+        assert required_token in ca["CA Inspector Scope Ready"], f"[CA Inspector Scope Ready] must contain {required_token}"
+    guard_branch = "NOT [CA Inspector Scope Ready], FALSE(),"
+    assert guard_branch in gate_block and gate_block.index(guard_branch) < gate_block.index("CalendarSelected && MonthSelected,"), (
+        "[CA Inspector Selection Match] must return FALSE unless [CA Inspector Scope Ready], before any selection check"
+    )
+    assert "[CA Inspector Scope Ready]" in ca["CA Inspector Title"], "[CA Inspector Title] must follow [CA Inspector Scope Ready]"
+
+    # 8. Matrix colours: a grey cell must mean "clicking it lists no activities", so the monthly activity count shares
+    #    the gate's month overlap; otherwise critical (red) wins over near critical (orange), as in [CriticalStatus].
+    active_block = ca["CA Monthly Active Activities"]
+    assert "TREATAS({ CalKey }, '01 XER_TASK'[calendar_id_key])" in active_block, (
+        "[CA Monthly Active Activities] must match activities by calendar key"
+    )
+    for window_predicate in (
+        "KEEPFILTERS('01 XER_TASK'[Finish] >= MonthStart)",
+        "KEEPFILTERS('01 XER_TASK'[Start] <= MonthEnd)",
+        "KEEPFILTERS('01 XER_TASK'[data_date] <= MonthEnd)",
+    ):
+        assert window_predicate in active_block and window_predicate in gate_block, (
+            f"[CA Monthly Active Activities] and [CA Inspector Selection Match] must share the month overlap {window_predicate}"
+        )
+    colour_block = ca["CA Monthly Working Days Colour"]
+    branch_positions = [
+        colour_block.find(branch)
+        for branch in (
+            "[CA Monthly Active Activities] = 0,",
+            "KEEPFILTERS('01 XER_TASK'[CriticalStatus] = \"Critical\")",
+            "KEEPFILTERS('01 XER_TASK'[CriticalStatus] = \"Near Critical\")",
+        )
+    ]
+    assert -1 not in branch_positions and branch_positions == sorted(branch_positions), (
+        "[CA Monthly Working Days Colour] must test no activity (grey), then critical (red), then near critical (orange)"
+    )
+    assert "[CA Monthly Working Days Colour]" in ca["CA Monthly Working Days Font Colour"], (
+        "[CA Monthly Working Days Font Colour] must follow the cell colour"
     )
 
     return len(found_measures)
@@ -241,7 +351,7 @@ def verify_pbir_page() -> dict:
 
     # Check visuals and bounds
     visual_files = sorted((page_dir / "visuals").glob("*/visual.json"))
-    assert len(visual_files) == 24, f"Expected 24 visuals on Calendar Analysis, found {len(visual_files)}"
+    assert len(visual_files) == 25, f"Expected 25 visuals on Calendar Analysis, found {len(visual_files)}"
 
     sync_groups = set()
     visual_types = {}
@@ -265,6 +375,7 @@ def verify_pbir_page() -> dict:
     assert visual_types["ca22calmatx000000022"] == "pivotTable"
     assert visual_types["ca23actinsp000000023"] == "tableEx"
     assert visual_types["ca24fltslic000000024"] == "slicer"
+    assert visual_types["ca25matxleg000000025"] == "textbox"
 
     # Verify ca24fltslic000000024 uses a valid Power BI RangeSlicer mode ('Before' or 'Between') so it renders a slider, not checkboxes
     flt_vis = json.loads((page_dir / "visuals" / "ca24fltslic000000024" / "visual.json").read_text(encoding="utf-8"))
@@ -280,6 +391,46 @@ def verify_pbir_page() -> dict:
     assert unagg_cols == ["01 XER_TASK.task_code"], (
         f"ca23actinsp000000023 must have ONLY '01 XER_TASK.task_code' as an unaggregated Column, got {unagg_cols}"
     )
+
+    # Every other ca23 field must be a gated CA Activity * measure: an ungated field (ShowTaskName, an implicit
+    # Min/Max column) stays non-blank on every row and stops ca21/ca22 selections from filtering the table.
+    gated_props = [p["field"]["Measure"]["Property"] for p in act_projs if "Measure" in p["field"]]
+    assert len(gated_props) == len(act_projs) - 1 and all(name.startswith("CA Activity ") for name in gated_props), (
+        f"ca23actinsp000000023 fields other than task_code must all be CA Activity * measures, got {gated_props}"
+    )
+    # The matrix colours each Working Days cell from field-value measures (grey with white text, light red, light orange).
+    mat_vis = json.loads((page_dir / "visuals" / "ca22calmatx000000022" / "visual.json").read_text(encoding="utf-8"))
+    colour_rules = {
+        prop: entry["properties"][prop]["solid"]["color"]["expr"]["Measure"]["Property"]
+        for entry in mat_vis["visual"]["objects"].get("values", [])
+        if entry.get("selector", {}).get("metadata") == "XER Measures.CA Monthly Working Days"
+        for prop in ("backColor", "fontColor")
+        if prop in entry.get("properties", {})
+    }
+    assert colour_rules == {"backColor": "CA Monthly Working Days Colour", "fontColor": "CA Monthly Working Days Font Colour"}, (
+        f"ca22calmatx000000022 Working Days cells must take backColor/fontColor from the CA colour measures, got {colour_rules}"
+    )
+    # The legend under the matrix must show a swatch for every colour the cell measure can return.
+    legend = json.loads((page_dir / "visuals" / "ca25matxleg000000025" / "visual.json").read_text(encoding="utf-8"))
+    legend_colours = {
+        run.get("textStyle", {}).get("color", "").upper()
+        for paragraph in legend["visual"]["objects"]["general"][0]["properties"]["paragraphs"]
+        for run in paragraph["textRuns"]
+    }
+    colour_measure = measure_blocks((MODEL_DEF / "tables" / "XER Measures.tmdl").read_text(encoding="utf-8"))["CA Monthly Working Days Colour"]
+    cell_colours = {code.upper() for code in re.findall(r'"(#[0-9A-Fa-f]{6})"', colour_measure)}
+    assert cell_colours and cell_colours <= legend_colours, (
+        f"Legend ca25matxleg000000025 must show every matrix cell colour; missing {sorted(cell_colours - legend_colours)}"
+    )
+    title_expr = act_vis["visual"]["visualContainerObjects"]["title"][0]["properties"]["text"]["expr"]
+    assert title_expr.get("Measure", {}).get("Property") == "CA Inspector Title", (
+        "ca23actinsp000000023 title must be bound to [CA Inspector Title] so it asks for a project when the table is blank"
+    )
+    interactions = {(i["source"], i["target"]): i["type"] for i in page_json.get("visualInteractions", [])}
+    for source in ("ca21calprof000000021", "ca22calmatx000000022"):
+        assert interactions.get((source, "ca23actinsp000000023"), "DataFilter") != "NoFilter", (
+            f"{source} must cross-filter ca23actinsp000000023 (visualInteractions type is NoFilter)"
+        )
 
     # Check bookmarks
     bm_meta = json.loads((REPORT_DEF / "bookmarks" / "bookmarks.json").read_text(encoding="utf-8"))

@@ -4,10 +4,10 @@
   "position": {
     "x": 456,
     "y": 148,
-    "z": 9100,
+    "z": 10000,
     "height": 70,
     "width": 432,
-    "tabOrder": 9100
+    "tabOrder": 10000
   },
   "visual": {
     "visualType": "cardVisual",
@@ -120,6 +120,20 @@
           },
           "selector": {
             "id": "default"
+          }
+        },
+        {
+          "properties": {
+            "labelDisplayUnits": {
+              "expr": {
+                "Literal": {
+                  "Value": "1D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "XER Measures.CA Critical Activity Count"
           }
         }
       ],

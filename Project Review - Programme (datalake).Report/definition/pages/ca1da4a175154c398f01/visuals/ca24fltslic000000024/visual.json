@@ -4,10 +4,10 @@
   "position": {
     "x": 1348,
     "y": 82,
-    "z": 6300,
+    "z": 6000,
     "height": 62,
     "width": 428,
-    "tabOrder": 6300
+    "tabOrder": 6000
   },
   "visual": {
     "visualType": "slicer",
@@ -39,6 +39,13 @@
       "data": [
         {
           "properties": {
+            "numericEnd": {
+              "expr": {
+                "Literal": {
+                  "Value": "50D"
+                }
+              }
+            },
             "mode": {
               "expr": {
                 "Literal": {
@@ -62,7 +69,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Max Total Float (\u2264 50d)'"
+                  "Value": "'Max Total Float ≤ 50d'"
                 }
               }
             },
@@ -140,7 +147,44 @@
       ],
       "general": [
         {
-          "properties": {}
+          "properties": {
+            "filter": {
+              "filter": {
+                "Version": 2,
+                "From": [
+                  {
+                    "Name": "0",
+                    "Entity": "01 XER_TASK",
+                    "Type": 0
+                  }
+                ],
+                "Where": [
+                  {
+                    "Condition": {
+                      "Comparison": {
+                        "ComparisonKind": 4,
+                        "Left": {
+                          "Column": {
+                            "Expression": {
+                              "SourceRef": {
+                                "Source": "0"
+                              }
+                            },
+                            "Property": "total_float"
+                          }
+                        },
+                        "Right": {
+                          "Literal": {
+                            "Value": "50D"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
         }
       ]
     },
@@ -236,5 +280,57 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "dec761ccd4535238b507",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "01 XER_TASK"
+              }
+            },
+            "Property": "total_float"
+          }
+        },
+        "type": "Advanced",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "0",
+              "Entity": "01 XER_TASK",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "Comparison": {
+                  "ComparisonKind": 4,
+                  "Left": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Source": "0"
+                        }
+                      },
+                      "Property": "total_float"
+                    }
+                  },
+                  "Right": {
+                    "Literal": {
+                      "Value": "50L"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
   }
 }

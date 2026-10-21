@@ -25513,6 +25513,16 @@ cultureInfo en-NZ
 			            },
 			            "Weight": 0.582
 			          }
+			        },
+			        {
+			          "Total Float (<= 50d)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
 			        }
 			      ]
 			    },
@@ -59839,7 +59849,7 @@ cultureInfo en-NZ
 			      "State": "Generated",
 			      "Terms": [
 			        {
-			          "Exception Blackout Days (Critical)": {
+			          "Holidays / Exceptions (Critical)": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -59860,7 +59870,7 @@ cultureInfo en-NZ
 			      "State": "Generated",
 			      "Terms": [
 			        {
-			          "Max Critical Activity Stretch (Days)": {
+			          "Max Non-Working Days (Critical)": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -59881,7 +59891,7 @@ cultureInfo en-NZ
 			      "State": "Generated",
 			      "Terms": [
 			        {
-			          "Workweek Rule": {
+			          "Workweek": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -59902,7 +59912,7 @@ cultureInfo en-NZ
 			      "State": "Generated",
 			      "Terms": [
 			        {
-			          "Future Blackouts": {
+			          "Holidays / Exceptions": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -59923,7 +59933,7 @@ cultureInfo en-NZ
 			      "State": "Generated",
 			      "Terms": [
 			        {
-			          "Incomp. Tasks": {
+			          "Incomplete Tasks": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -59944,7 +59954,7 @@ cultureInfo en-NZ
 			      "State": "Generated",
 			      "Terms": [
 			        {
-			          "Crit. Rem. Days": {
+			          "Critical Rem. Days": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -60007,7 +60017,7 @@ cultureInfo en-NZ
 			      "State": "Generated",
 			      "Terms": [
 			        {
-			          "Rem. Work Days": {
+			          "Remaining Working Days": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -60028,7 +60038,7 @@ cultureInfo en-NZ
 			      "State": "Generated",
 			      "Terms": [
 			        {
-			          "Elapsed Days": {
+			          "Remaining Calendar Days": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -60049,7 +60059,7 @@ cultureInfo en-NZ
 			      "State": "Generated",
 			      "Terms": [
 			        {
-			          "Wknd / Roster Off": {
+			          "Weekends / Off-Days": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -60070,7 +60080,7 @@ cultureInfo en-NZ
 			      "State": "Generated",
 			      "Terms": [
 			        {
-			          "Exception Blackouts": {
+			          "Holidays / Exceptions": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -60091,7 +60101,7 @@ cultureInfo en-NZ
 			      "State": "Generated",
 			      "Terms": [
 			        {
-			          "Total Non-Work Days": {
+			          "Total Non-Working Days": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -60112,7 +60122,7 @@ cultureInfo en-NZ
 			      "State": "Generated",
 			      "Terms": [
 			        {
-			          "Stretch Ratio": {
+			          "Calendar vs Working Ratio": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -60133,7 +60143,91 @@ cultureInfo en-NZ
 			      "State": "Generated",
 			      "Terms": [
 			        {
-			          "Calendar Stretch Diagnosis": {
+			          "Calendar Impact Summary": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.ca_activity_name": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CA Activity Name"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Activity Name": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.ca_activity_calendar": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CA Activity Calendar"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Calendar": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.ca_activity_start": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CA Activity Start"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Start": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.ca_activity_finish": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CA Activity Finish"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Finish": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",

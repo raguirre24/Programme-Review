@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.0.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
   "name": "ca1da4a175154c398f01",
   "displayName": "Calendar Analysis",
   "displayOption": "FitToPage",
@@ -192,66 +192,6 @@
           }
         },
         "type": "Categorical",
-        "filter": {
-          "Version": 2,
-          "From": [
-            {
-              "Name": "0",
-              "Entity": "01 XER_TASK",
-              "Type": 0
-            }
-          ],
-          "Where": [
-            {
-              "Condition": {
-                "In": {
-                  "Expressions": [
-                    {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Source": "0"
-                          }
-                        },
-                        "Property": "Float Category"
-                      }
-                    }
-                  ],
-                  "Values": [
-                    [
-                      {
-                        "Literal": {
-                          "Value": "' Float < 0'"
-                        }
-                      }
-                    ],
-                    [
-                      {
-                        "Literal": {
-                          "Value": "'0 \u2264 Float \u2264 10'"
-                        }
-                      }
-                    ],
-                    [
-                      {
-                        "Literal": {
-                          "Value": "'10 < Float \u2264 30'"
-                        }
-                      }
-                    ],
-                    [
-                      {
-                        "Literal": {
-                          "Value": "'30 < Float \u2264 50'"
-                        }
-                      }
-                    ]
-                  ]
-                }
-              }
-            }
-          ]
-        },
         "howCreated": "User"
       }
     ]
@@ -285,17 +225,17 @@
     {
       "source": "ca22calmatx000000022",
       "target": "ca21calprof000000021",
-      "type": "NoFilter"
+      "type": "DataFilter"
     },
     {
       "source": "ca23actinsp000000023",
       "target": "ca21calprof000000021",
-      "type": "NoFilter"
+      "type": "DataFilter"
     },
     {
       "source": "ca23actinsp000000023",
       "target": "ca22calmatx000000022",
-      "type": "NoFilter"
+      "type": "DataFilter"
     },
     {
       "source": "ca21calprof000000021",
@@ -360,17 +300,22 @@
     {
       "source": "ca21calprof000000021",
       "target": "ca23actinsp000000023",
-      "type": "NoFilter"
+      "type": "DataFilter"
     },
     {
       "source": "ca22calmatx000000022",
       "target": "ca23actinsp000000023",
-      "type": "NoFilter"
+      "type": "DataFilter"
     },
     {
       "source": "ca24fltslic000000024",
       "target": "ca03update0000000003",
       "type": "NoFilter"
+    },
+    {
+      "source": "ca21calprof000000021",
+      "target": "ca22calmatx000000022",
+      "type": "DataFilter"
     }
   ]
 }

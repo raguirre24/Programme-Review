@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "ca07openbtn000000007",
   "position": {
     "x": 1787.5862068965516,
     "y": 0,
-    "z": 12000,
-    "height": 41.23152709359606,
+    "z": 17000,
+    "height": 41.231527093596057,
     "width": 133.00492610837438,
-    "tabOrder": 12000
+    "tabOrder": 17000
   },
   "visual": {
     "visualType": "actionButton",

@@ -1,12 +1,12 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.6.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "74ef3f106a880b56a2ad",
   "position": {
-    "x": 1250.5263157894738,
-    "y": 181.89473684210526,
+    "x": 1251.020721412126,
+    "y": 135.5640828856485,
     "z": 5000,
-    "height": 718.73684210526324,
-    "width": 452.21052631578948,
+    "height": 872.325402916347,
+    "width": 452.37145049884884,
     "tabOrder": 6000
   },
   "visual": {
@@ -58,7 +58,14 @@
             "tileShape": {
               "expr": {
                 "Literal": {
-                  "Value": "'pill'"
+                  "Value": "'rectangleRoundedByPixel'"
+                }
+              }
+            },
+            "rectangleRoundedCurve": {
+              "expr": {
+                "Literal": {
+                  "Value": "10L"
                 }
               }
             }

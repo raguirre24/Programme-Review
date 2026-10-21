@@ -4,10 +4,10 @@
   "position": {
     "x": 1344,
     "y": 148,
-    "z": 9300,
+    "z": 12000,
     "height": 70,
     "width": 432,
-    "tabOrder": 9300
+    "tabOrder": 12000
   },
   "visual": {
     "visualType": "cardVisual",
@@ -120,6 +120,20 @@
           },
           "selector": {
             "id": "default"
+          }
+        },
+        {
+          "properties": {
+            "labelDisplayUnits": {
+              "expr": {
+                "Literal": {
+                  "Value": "1D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "XER Measures.CA KPI Max Critical Stretch Days"
           }
         }
       ],

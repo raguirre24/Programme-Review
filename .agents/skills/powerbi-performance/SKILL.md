@@ -86,3 +86,5 @@ VertiPaq Analyzer, read in this order: total size → largest tables → largest
 5. **Refresh Memory & Parallelism Targets**:
    - Target refresh wall duration: **≤ 25 minutes** (hard maximum **40 minutes**); M-engine peak memory **≤ 0.938 GiB**; total peak memory **≤ 7.5 GiB**.
    - Never add `Table.Buffer` or large-file `Binary.Buffer` to the 11 SharePoint CSV loader queries in `expressions.tmdl`.
+6. **Row Iterators for Per-Activity Maths (`Calendar Analysis` activities table)**:
+   - Compute a value derived from several columns of the same activity (start, finish, data date, remaining duration, calendar) inside `MAXX('01 XER_TASK', …)` on row values. Taking `MIN`/`MAX`/`SUM`/`SELECTEDVALUE` of those columns as separate variables inside an `IF` made the engine look up each activity separately: J5068's 10,310 activities took 19 s, against 0.3 s with the row iterator and identical results. Profile one column at a time before blaming the visual or the filters.

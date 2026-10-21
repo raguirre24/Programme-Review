@@ -930,7 +930,7 @@ table 'XER Measures'
 			VAR TaskRows = COUNTROWS('01 XER_TASK')
 			RETURN
 			    IF(
-			        TaskRows > 0 && ISINSCOPE('01 XER_TASK'[task_code]),
+			        TaskRows > 0 && ISINSCOPE('01 XER_TASK'[task_code]) && [CA Inspector Selection Match],
 			        MIN('01 XER_TASK'[total_float])
 			    )
 		formatString: #,0.0
@@ -942,7 +942,7 @@ table 'XER Measures'
 			VAR TaskRows = COUNTROWS('01 XER_TASK')
 			RETURN
 			    IF(
-			        TaskRows > 0 && ISINSCOPE('01 XER_TASK'[task_code]),
+			        TaskRows > 0 && ISINSCOPE('01 XER_TASK'[task_code]) && [CA Inspector Selection Match],
 			        SUM('01 XER_TASK'[remaining_duration])
 			    )
 		formatString: #,0.0
@@ -954,16 +954,19 @@ table 'XER Measures'
 			VAR TaskRows = COUNTROWS('01 XER_TASK')
 			RETURN
 			    IF(
-			        TaskRows > 0 && ISINSCOPE('01 XER_TASK'[task_code]),
-			        VAR StartDate = MIN('01 XER_TASK'[Start])
-			        VAR FinishDate = MAX('01 XER_TASK'[Finish])
-			        VAR DataDate = MAX('01 XER_TASK'[data_date])
-			        VAR EffectiveStart = IF(NOT ISBLANK(StartDate) && NOT ISBLANK(DataDate), MAX(StartDate, DataDate), StartDate)
-			        RETURN
-			            IF(
-			                NOT ISBLANK(EffectiveStart) && NOT ISBLANK(FinishDate) && FinishDate >= EffectiveStart,
-			                INT(FinishDate - EffectiveStart) + 1
-			            )
+			        TaskRows > 0 && ISINSCOPE('01 XER_TASK'[task_code]) && [CA Inspector Selection Match],
+			        MAXX(
+			            '01 XER_TASK',
+			            VAR StartDate = '01 XER_TASK'[Start]
+			            VAR FinishDate = '01 XER_TASK'[Finish]
+			            VAR DataDate = '01 XER_TASK'[data_date]
+			            VAR EffectiveStart = IF(NOT ISBLANK(StartDate) && NOT ISBLANK(DataDate), MAX(StartDate, DataDate), StartDate)
+			            RETURN
+			                IF(
+			                    NOT ISBLANK(EffectiveStart) && NOT ISBLANK(FinishDate) && FinishDate >= EffectiveStart,
+			                    INT(FinishDate - EffectiveStart) + 1
+			                )
+			        )
 			    )
 		formatString: #,0
 		displayFolder: Calendar Analysis
@@ -974,30 +977,33 @@ table 'XER Measures'
 			VAR TaskRows = COUNTROWS('01 XER_TASK')
 			RETURN
 			    IF(
-			        TaskRows > 0 && ISINSCOPE('01 XER_TASK'[task_code]),
-			        VAR CalName = SELECTEDVALUE('01 XER_TASK'[Calendar])
-			        VAR StartDate = MIN('01 XER_TASK'[Start])
-			        VAR FinishDate = MAX('01 XER_TASK'[Finish])
-			        VAR DataDate = MAX('01 XER_TASK'[data_date])
-			        VAR RemWork = SUM('01 XER_TASK'[remaining_duration])
-			        VAR EffectiveStart = IF(NOT ISBLANK(StartDate) && NOT ISBLANK(DataDate), MAX(StartDate, DataDate), StartDate)
-			        RETURN
-			            IF(
-			                NOT ISBLANK(EffectiveStart) && NOT ISBLANK(FinishDate)
-			                    && FinishDate >= EffectiveStart && NOT ISBLANK(RemWork),
-			                VAR ElapsedDays = INT(FinishDate - EffectiveStart) + 1
-			                VAR TotalNonWork = MAX(0, ElapsedDays - ROUND(RemWork, 0))
-			                VAR StartDow = WEEKDAY(EffectiveStart, 2)
-			                VAR FullWeeks = QUOTIENT(ElapsedDays, 7)
-			                VAR ExtraDays = MOD(ElapsedDays, 7)
-			                VAR SatCount = FullWeeks + IF(MOD(6 - StartDow, 7) < ExtraDays, 1, 0)
-			                VAR SunCount = FullWeeks + IF(MOD(7 - StartDow, 7) < ExtraDays, 1, 0)
-			                VAR Is7DayCal = CONTAINSSTRING(CalName, "7") || CONTAINSSTRING(CalName, "24")
-			                VAR Is6DayCal = NOT Is7DayCal && CONTAINSSTRING(CalName, "6")
-			                VAR ExpectedOffDays = IF(Is7DayCal, 0, IF(Is6DayCal, SunCount, SatCount + SunCount))
-			                RETURN
-			                    MIN(TotalNonWork, ExpectedOffDays)
-			            )
+			        TaskRows > 0 && ISINSCOPE('01 XER_TASK'[task_code]) && [CA Inspector Selection Match],
+			        MAXX(
+			            '01 XER_TASK',
+			            VAR CalName = '01 XER_TASK'[Calendar]
+			            VAR StartDate = '01 XER_TASK'[Start]
+			            VAR FinishDate = '01 XER_TASK'[Finish]
+			            VAR DataDate = '01 XER_TASK'[data_date]
+			            VAR RemWork = '01 XER_TASK'[remaining_duration]
+			            VAR EffectiveStart = IF(NOT ISBLANK(StartDate) && NOT ISBLANK(DataDate), MAX(StartDate, DataDate), StartDate)
+			            RETURN
+			                IF(
+			                    NOT ISBLANK(EffectiveStart) && NOT ISBLANK(FinishDate)
+			                        && FinishDate >= EffectiveStart && NOT ISBLANK(RemWork),
+			                    VAR ElapsedDays = INT(FinishDate - EffectiveStart) + 1
+			                    VAR TotalNonWork = MAX(0, ElapsedDays - ROUND(RemWork, 0))
+			                    VAR StartDow = WEEKDAY(EffectiveStart, 2)
+			                    VAR FullWeeks = QUOTIENT(ElapsedDays, 7)
+			                    VAR ExtraDays = MOD(ElapsedDays, 7)
+			                    VAR SatCount = FullWeeks + IF(MOD(6 - StartDow, 7) < ExtraDays, 1, 0)
+			                    VAR SunCount = FullWeeks + IF(MOD(7 - StartDow, 7) < ExtraDays, 1, 0)
+			                    VAR Is7DayCal = CONTAINSSTRING(CalName, "7") || CONTAINSSTRING(CalName, "24")
+			                    VAR Is6DayCal = NOT Is7DayCal && CONTAINSSTRING(CalName, "6")
+			                    VAR ExpectedOffDays = IF(Is7DayCal, 0, IF(Is6DayCal, SunCount, SatCount + SunCount))
+			                    RETURN
+			                        MIN(TotalNonWork, ExpectedOffDays)
+			                )
+			        )
 			    )
 		formatString: #,0
 		displayFolder: Calendar Analysis
@@ -1008,31 +1014,34 @@ table 'XER Measures'
 			VAR TaskRows = COUNTROWS('01 XER_TASK')
 			RETURN
 			    IF(
-			        TaskRows > 0 && ISINSCOPE('01 XER_TASK'[task_code]),
-			        VAR CalName = SELECTEDVALUE('01 XER_TASK'[Calendar])
-			        VAR StartDate = MIN('01 XER_TASK'[Start])
-			        VAR FinishDate = MAX('01 XER_TASK'[Finish])
-			        VAR DataDate = MAX('01 XER_TASK'[data_date])
-			        VAR RemWork = SUM('01 XER_TASK'[remaining_duration])
-			        VAR EffectiveStart = IF(NOT ISBLANK(StartDate) && NOT ISBLANK(DataDate), MAX(StartDate, DataDate), StartDate)
-			        RETURN
-			            IF(
-			                NOT ISBLANK(EffectiveStart) && NOT ISBLANK(FinishDate)
-			                    && FinishDate >= EffectiveStart && NOT ISBLANK(RemWork),
-			                VAR ElapsedDays = INT(FinishDate - EffectiveStart) + 1
-			                VAR TotalNonWork = MAX(0, ElapsedDays - ROUND(RemWork, 0))
-			                VAR StartDow = WEEKDAY(EffectiveStart, 2)
-			                VAR FullWeeks = QUOTIENT(ElapsedDays, 7)
-			                VAR ExtraDays = MOD(ElapsedDays, 7)
-			                VAR SatCount = FullWeeks + IF(MOD(6 - StartDow, 7) < ExtraDays, 1, 0)
-			                VAR SunCount = FullWeeks + IF(MOD(7 - StartDow, 7) < ExtraDays, 1, 0)
-			                VAR Is7DayCal = CONTAINSSTRING(CalName, "7") || CONTAINSSTRING(CalName, "24")
-			                VAR Is6DayCal = NOT Is7DayCal && CONTAINSSTRING(CalName, "6")
-			                VAR ExpectedOffDays = IF(Is7DayCal, 0, IF(Is6DayCal, SunCount, SatCount + SunCount))
-			                VAR StdNonWork = MIN(TotalNonWork, ExpectedOffDays)
-			                RETURN
-			                    MAX(0, TotalNonWork - StdNonWork)
-			            )
+			        TaskRows > 0 && ISINSCOPE('01 XER_TASK'[task_code]) && [CA Inspector Selection Match],
+			        MAXX(
+			            '01 XER_TASK',
+			            VAR CalName = '01 XER_TASK'[Calendar]
+			            VAR StartDate = '01 XER_TASK'[Start]
+			            VAR FinishDate = '01 XER_TASK'[Finish]
+			            VAR DataDate = '01 XER_TASK'[data_date]
+			            VAR RemWork = '01 XER_TASK'[remaining_duration]
+			            VAR EffectiveStart = IF(NOT ISBLANK(StartDate) && NOT ISBLANK(DataDate), MAX(StartDate, DataDate), StartDate)
+			            RETURN
+			                IF(
+			                    NOT ISBLANK(EffectiveStart) && NOT ISBLANK(FinishDate)
+			                        && FinishDate >= EffectiveStart && NOT ISBLANK(RemWork),
+			                    VAR ElapsedDays = INT(FinishDate - EffectiveStart) + 1
+			                    VAR TotalNonWork = MAX(0, ElapsedDays - ROUND(RemWork, 0))
+			                    VAR StartDow = WEEKDAY(EffectiveStart, 2)
+			                    VAR FullWeeks = QUOTIENT(ElapsedDays, 7)
+			                    VAR ExtraDays = MOD(ElapsedDays, 7)
+			                    VAR SatCount = FullWeeks + IF(MOD(6 - StartDow, 7) < ExtraDays, 1, 0)
+			                    VAR SunCount = FullWeeks + IF(MOD(7 - StartDow, 7) < ExtraDays, 1, 0)
+			                    VAR Is7DayCal = CONTAINSSTRING(CalName, "7") || CONTAINSSTRING(CalName, "24")
+			                    VAR Is6DayCal = NOT Is7DayCal && CONTAINSSTRING(CalName, "6")
+			                    VAR ExpectedOffDays = IF(Is7DayCal, 0, IF(Is6DayCal, SunCount, SatCount + SunCount))
+			                    VAR StdNonWork = MIN(TotalNonWork, ExpectedOffDays)
+			                    RETURN
+			                        MAX(0, TotalNonWork - StdNonWork)
+			                )
+			        )
 			    )
 		formatString: #,0
 		displayFolder: Calendar Analysis
@@ -1043,20 +1052,23 @@ table 'XER Measures'
 			VAR TaskRows = COUNTROWS('01 XER_TASK')
 			RETURN
 			    IF(
-			        TaskRows > 0 && ISINSCOPE('01 XER_TASK'[task_code]),
-			        VAR StartDate = MIN('01 XER_TASK'[Start])
-			        VAR FinishDate = MAX('01 XER_TASK'[Finish])
-			        VAR DataDate = MAX('01 XER_TASK'[data_date])
-			        VAR RemWork = SUM('01 XER_TASK'[remaining_duration])
-			        VAR EffectiveStart = IF(NOT ISBLANK(StartDate) && NOT ISBLANK(DataDate), MAX(StartDate, DataDate), StartDate)
-			        RETURN
-			            IF(
-			                NOT ISBLANK(EffectiveStart) && NOT ISBLANK(FinishDate)
-			                    && FinishDate >= EffectiveStart && NOT ISBLANK(RemWork),
-			                VAR ElapsedDays = INT(FinishDate - EffectiveStart) + 1
-			                RETURN
-			                    MAX(0, ElapsedDays - ROUND(RemWork, 0))
-			            )
+			        TaskRows > 0 && ISINSCOPE('01 XER_TASK'[task_code]) && [CA Inspector Selection Match],
+			        MAXX(
+			            '01 XER_TASK',
+			            VAR StartDate = '01 XER_TASK'[Start]
+			            VAR FinishDate = '01 XER_TASK'[Finish]
+			            VAR DataDate = '01 XER_TASK'[data_date]
+			            VAR RemWork = '01 XER_TASK'[remaining_duration]
+			            VAR EffectiveStart = IF(NOT ISBLANK(StartDate) && NOT ISBLANK(DataDate), MAX(StartDate, DataDate), StartDate)
+			            RETURN
+			                IF(
+			                    NOT ISBLANK(EffectiveStart) && NOT ISBLANK(FinishDate)
+			                        && FinishDate >= EffectiveStart && NOT ISBLANK(RemWork),
+			                    VAR ElapsedDays = INT(FinishDate - EffectiveStart) + 1
+			                    RETURN
+			                        MAX(0, ElapsedDays - ROUND(RemWork, 0))
+			                )
+			        )
 			    )
 		formatString: #,0
 		displayFolder: Calendar Analysis
@@ -1067,18 +1079,21 @@ table 'XER Measures'
 			VAR TaskRows = COUNTROWS('01 XER_TASK')
 			RETURN
 			    IF(
-			        TaskRows > 0 && ISINSCOPE('01 XER_TASK'[task_code]),
-			        VAR StartDate = MIN('01 XER_TASK'[Start])
-			        VAR FinishDate = MAX('01 XER_TASK'[Finish])
-			        VAR DataDate = MAX('01 XER_TASK'[data_date])
-			        VAR RemWork = SUM('01 XER_TASK'[remaining_duration])
-			        VAR EffectiveStart = IF(NOT ISBLANK(StartDate) && NOT ISBLANK(DataDate), MAX(StartDate, DataDate), StartDate)
-			        RETURN
-			            IF(
-			                NOT ISBLANK(EffectiveStart) && NOT ISBLANK(FinishDate)
-			                    && FinishDate >= EffectiveStart && NOT ISBLANK(RemWork) && RemWork > 0,
-			                DIVIDE(INT(FinishDate - EffectiveStart) + 1, RemWork)
-			            )
+			        TaskRows > 0 && ISINSCOPE('01 XER_TASK'[task_code]) && [CA Inspector Selection Match],
+			        MAXX(
+			            '01 XER_TASK',
+			            VAR StartDate = '01 XER_TASK'[Start]
+			            VAR FinishDate = '01 XER_TASK'[Finish]
+			            VAR DataDate = '01 XER_TASK'[data_date]
+			            VAR RemWork = '01 XER_TASK'[remaining_duration]
+			            VAR EffectiveStart = IF(NOT ISBLANK(StartDate) && NOT ISBLANK(DataDate), MAX(StartDate, DataDate), StartDate)
+			            RETURN
+			                IF(
+			                    NOT ISBLANK(EffectiveStart) && NOT ISBLANK(FinishDate)
+			                        && FinishDate >= EffectiveStart && NOT ISBLANK(RemWork) && RemWork > 0,
+			                    DIVIDE(INT(FinishDate - EffectiveStart) + 1, RemWork)
+			                )
+			        )
 			    )
 		formatString: 0.00x
 		displayFolder: Calendar Analysis
@@ -1089,49 +1104,52 @@ table 'XER Measures'
 			VAR TaskRows = COUNTROWS('01 XER_TASK')
 			RETURN
 			    IF(
-			        TaskRows > 0 && ISINSCOPE('01 XER_TASK'[task_code]),
-			        VAR CalName = SELECTEDVALUE('01 XER_TASK'[Calendar])
-			        VAR StartDate = MIN('01 XER_TASK'[Start])
-			        VAR FinishDate = MAX('01 XER_TASK'[Finish])
-			        VAR DataDate = MAX('01 XER_TASK'[data_date])
-			        VAR RemWork = SUM('01 XER_TASK'[remaining_duration])
-			        VAR EffectiveStart = IF(NOT ISBLANK(StartDate) && NOT ISBLANK(DataDate), MAX(StartDate, DataDate), StartDate)
-			        RETURN
-			            IF(
-			                NOT ISBLANK(EffectiveStart) && NOT ISBLANK(FinishDate)
-			                    && FinishDate >= EffectiveStart,
-			                VAR ElapsedDays = INT(FinishDate - EffectiveStart) + 1
-			                VAR TotalNonWork = IF(NOT ISBLANK(RemWork), MAX(0, ElapsedDays - ROUND(RemWork, 0)), 0)
-			                VAR StartDow = WEEKDAY(EffectiveStart, 2)
-			                VAR FullWeeks = QUOTIENT(ElapsedDays, 7)
-			                VAR ExtraDays = MOD(ElapsedDays, 7)
-			                VAR SatCount = FullWeeks + IF(MOD(6 - StartDow, 7) < ExtraDays, 1, 0)
-			                VAR SunCount = FullWeeks + IF(MOD(7 - StartDow, 7) < ExtraDays, 1, 0)
-			                VAR Is7DayCal = CONTAINSSTRING(CalName, "7") || CONTAINSSTRING(CalName, "24")
-			                VAR Is6DayCal = NOT Is7DayCal && CONTAINSSTRING(CalName, "6")
-			                VAR ExpectedOffDays = IF(Is7DayCal, 0, IF(Is6DayCal, SunCount, SatCount + SunCount))
-			                VAR StdNonWork = MIN(TotalNonWork, ExpectedOffDays)
-			                VAR ExcBlackouts = MAX(0, TotalNonWork - StdNonWork)
-			                VAR RemWorkText =
-			                    IF(
-			                        ISBLANK(RemWork),
-			                        "0",
-			                        IF(ABS(RemWork - ROUND(RemWork, 0)) < 0.05, FORMAT(ROUND(RemWork, 0), "#,0"), FORMAT(RemWork, "#,0.0"))
-			                    )
-			                RETURN
-			                    SWITCH(
-			                        TRUE(),
-			                        ISBLANK(CalName),
-			                            "Missing calendar (" & FORMAT(ElapsedDays, "#,0") & " calendar days)",
-			                        ExcBlackouts > 0 && StdNonWork > 0,
-			                            "+" & FORMAT(ExcBlackouts, "#,0") & " holidays/exceptions & +" & FORMAT(StdNonWork, "#,0") & " weekends/off-days (" & RemWorkText & " work days in " & FORMAT(ElapsedDays, "#,0") & " calendar days)",
-			                        ExcBlackouts > 0,
-			                            "+" & FORMAT(ExcBlackouts, "#,0") & " holidays/exceptions (" & RemWorkText & " work days in " & FORMAT(ElapsedDays, "#,0") & " calendar days)",
-			                        StdNonWork > 0,
-			                            "Weekends/off-days only: +" & FORMAT(StdNonWork, "#,0") & " days (" & RemWorkText & " work days in " & FORMAT(ElapsedDays, "#,0") & " calendar days)",
-			                        "Continuous working days (0 non-working days in " & FORMAT(ElapsedDays, "#,0") & " calendar days)"
-			                    )
-			            )
+			        TaskRows > 0 && ISINSCOPE('01 XER_TASK'[task_code]) && [CA Inspector Selection Match],
+			        MAXX(
+			            '01 XER_TASK',
+			            VAR CalName = '01 XER_TASK'[Calendar]
+			            VAR StartDate = '01 XER_TASK'[Start]
+			            VAR FinishDate = '01 XER_TASK'[Finish]
+			            VAR DataDate = '01 XER_TASK'[data_date]
+			            VAR RemWork = '01 XER_TASK'[remaining_duration]
+			            VAR EffectiveStart = IF(NOT ISBLANK(StartDate) && NOT ISBLANK(DataDate), MAX(StartDate, DataDate), StartDate)
+			            RETURN
+			                IF(
+			                    NOT ISBLANK(EffectiveStart) && NOT ISBLANK(FinishDate)
+			                        && FinishDate >= EffectiveStart,
+			                    VAR ElapsedDays = INT(FinishDate - EffectiveStart) + 1
+			                    VAR TotalNonWork = IF(NOT ISBLANK(RemWork), MAX(0, ElapsedDays - ROUND(RemWork, 0)), 0)
+			                    VAR StartDow = WEEKDAY(EffectiveStart, 2)
+			                    VAR FullWeeks = QUOTIENT(ElapsedDays, 7)
+			                    VAR ExtraDays = MOD(ElapsedDays, 7)
+			                    VAR SatCount = FullWeeks + IF(MOD(6 - StartDow, 7) < ExtraDays, 1, 0)
+			                    VAR SunCount = FullWeeks + IF(MOD(7 - StartDow, 7) < ExtraDays, 1, 0)
+			                    VAR Is7DayCal = CONTAINSSTRING(CalName, "7") || CONTAINSSTRING(CalName, "24")
+			                    VAR Is6DayCal = NOT Is7DayCal && CONTAINSSTRING(CalName, "6")
+			                    VAR ExpectedOffDays = IF(Is7DayCal, 0, IF(Is6DayCal, SunCount, SatCount + SunCount))
+			                    VAR StdNonWork = MIN(TotalNonWork, ExpectedOffDays)
+			                    VAR ExcBlackouts = MAX(0, TotalNonWork - StdNonWork)
+			                    VAR RemWorkText =
+			                        IF(
+			                            ISBLANK(RemWork),
+			                            "0",
+			                            IF(ABS(RemWork - ROUND(RemWork, 0)) < 0.05, FORMAT(ROUND(RemWork, 0), "#,0"), FORMAT(RemWork, "#,0.0"))
+			                        )
+			                    RETURN
+			                        SWITCH(
+			                            TRUE(),
+			                            ISBLANK(CalName),
+			                                "Missing calendar (" & FORMAT(ElapsedDays, "#,0") & " calendar days)",
+			                            ExcBlackouts > 0 && StdNonWork > 0,
+			                                "+" & FORMAT(ExcBlackouts, "#,0") & " holidays/exceptions & +" & FORMAT(StdNonWork, "#,0") & " weekends/off-days (" & RemWorkText & " work days in " & FORMAT(ElapsedDays, "#,0") & " calendar days)",
+			                            ExcBlackouts > 0,
+			                                "+" & FORMAT(ExcBlackouts, "#,0") & " holidays/exceptions (" & RemWorkText & " work days in " & FORMAT(ElapsedDays, "#,0") & " calendar days)",
+			                            StdNonWork > 0,
+			                                "Weekends/off-days only: +" & FORMAT(StdNonWork, "#,0") & " days (" & RemWorkText & " work days in " & FORMAT(ElapsedDays, "#,0") & " calendar days)",
+			                            "Continuous working days (0 non-working days in " & FORMAT(ElapsedDays, "#,0") & " calendar days)"
+			                        )
+			                )
+			        )
 			    )
 		formatString: @
 		displayFolder: Calendar Analysis
@@ -1241,6 +1259,159 @@ table 'XER Measures'
 		formatString: #,0
 		displayFolder: Calendar Analysis
 		lineageTag: 10c7236c-d74c-5697-a95f-f4ae2ae3523a
+
+	/// Inspector row gate: FALSE unless one project and one update are in context, then re-applies a calendar or month selected in the summary table or matrix, which use 'Scenario Calendar' / 'Scenario Date' (no relationship to '01 XER_TASK').
+	measure 'CA Inspector Selection Match' =
+			VAR CalendarSelected = ISFILTERED('Scenario Calendar'[Calendar])
+			VAR MonthSelected = ISFILTERED('Scenario Date'[Month])
+			VAR MonthStart = MIN('Scenario Date'[Date])
+			VAR MonthEnd = MAX('Scenario Date'[Date])
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        NOT [CA Inspector Scope Ready], FALSE(),
+			        CalendarSelected && MonthSelected,
+			            CALCULATE(
+			                COUNTROWS('01 XER_TASK'),
+			                KEEPFILTERS(TREATAS(VALUES('Scenario Calendar'[clndr_id_key]), '01 XER_TASK'[calendar_id_key])),
+			                // Remaining window overlaps the month: Finish >= MonthStart and MAX(Start, Data Date) <= MonthEnd
+			                KEEPFILTERS('01 XER_TASK'[Finish] >= MonthStart),
+			                KEEPFILTERS('01 XER_TASK'[Start] <= MonthEnd),
+			                KEEPFILTERS('01 XER_TASK'[data_date] <= MonthEnd)
+			            ) > 0,
+			        CalendarSelected,
+			            CALCULATE(
+			                COUNTROWS('01 XER_TASK'),
+			                KEEPFILTERS(TREATAS(VALUES('Scenario Calendar'[clndr_id_key]), '01 XER_TASK'[calendar_id_key]))
+			            ) > 0,
+			        MonthSelected,
+			            CALCULATE(
+			                COUNTROWS('01 XER_TASK'),
+			                KEEPFILTERS('01 XER_TASK'[Finish] >= MonthStart),
+			                KEEPFILTERS('01 XER_TASK'[Start] <= MonthEnd),
+			                KEEPFILTERS('01 XER_TASK'[data_date] <= MonthEnd)
+			            ) > 0,
+			        TRUE()
+			    )
+		isHidden
+		displayFolder: Calendar Analysis
+		lineageTag: 7967bab6-4205-4804-83dc-1f82c52e39ec
+
+	/// Activity name for an inspector row; blank outside the calendar/month selection so unselected rows drop out.
+	measure 'CA Activity Name' =
+			VAR TaskRows = COUNTROWS('01 XER_TASK')
+			RETURN
+			    IF(
+			        TaskRows > 0 && ISINSCOPE('01 XER_TASK'[task_code]) && [CA Inspector Selection Match],
+			        SELECTEDVALUE('01 XER_TASK'[task_name])
+			    )
+		formatString: @
+		displayFolder: Calendar Analysis
+		lineageTag: d1b2ccd3-4926-4ac2-9ce9-c02159880ee7
+
+	/// Activity calendar name for an inspector row; blank outside the calendar/month selection.
+	measure 'CA Activity Calendar' =
+			VAR TaskRows = COUNTROWS('01 XER_TASK')
+			RETURN
+			    IF(
+			        TaskRows > 0 && ISINSCOPE('01 XER_TASK'[task_code]) && [CA Inspector Selection Match],
+			        SELECTEDVALUE('01 XER_TASK'[Calendar])
+			    )
+		formatString: @
+		displayFolder: Calendar Analysis
+		lineageTag: c8a465c1-dbb2-4793-ae73-192814753741
+
+	/// Activity start (actual or forecast) for an inspector row; blank outside the calendar/month selection.
+	measure 'CA Activity Start' =
+			VAR TaskRows = COUNTROWS('01 XER_TASK')
+			RETURN
+			    IF(
+			        TaskRows > 0 && ISINSCOPE('01 XER_TASK'[task_code]) && [CA Inspector Selection Match],
+			        MIN('01 XER_TASK'[Start])
+			    )
+		formatString: dd/mm/yyyy
+		displayFolder: Calendar Analysis
+		lineageTag: 9eef6df0-f11d-4a2f-bc0a-cb81918072e6
+
+	/// Activity forecast finish for an inspector row; blank outside the calendar/month selection.
+	measure 'CA Activity Finish' =
+			VAR TaskRows = COUNTROWS('01 XER_TASK')
+			RETURN
+			    IF(
+			        TaskRows > 0 && ISINSCOPE('01 XER_TASK'[task_code]) && [CA Inspector Selection Match],
+			        MAX('01 XER_TASK'[Finish])
+			    )
+		formatString: dd/mm/yyyy
+		displayFolder: Calendar Analysis
+		lineageTag: 5849f826-7617-4038-8184-28a034678de0
+
+	/// TRUE when exactly one project and one update are in context. task_code is unique only within one project snapshot, so the activity inspector lists rows only then.
+	measure 'CA Inspector Scope Ready' = HASONEVALUE(Project_Dimension[ProjectKey]) && HASONEVALUE(CurrentDate[UpdateDate])
+		isHidden
+		displayFolder: Calendar Analysis
+		lineageTag: 8501d8c3-3bc4-44c3-8835-7c04a50c5be1
+
+	/// Activity inspector title; asks for one project when the table is blank because several are in context.
+	measure 'CA Inspector Title' =
+			IF(
+			    [CA Inspector Scope Ready],
+			    "Activities by Calendar · Remaining Working Days vs Remaining Calendar Days",
+			    "Activities by Calendar · select one project to list activities"
+			)
+		formatString: @
+		displayFolder: Calendar Analysis
+		lineageTag: f78f0c41-1796-4abc-89ab-0f34af4624d7
+
+	/// Incomplete activities on this calendar whose remaining execution window overlaps the month (what the activity table lists for that cell).
+	measure 'CA Monthly Active Activities' =
+			VAR CalKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
+			VAR MonthStart = MIN('Scenario Date'[Date])
+			VAR MonthEnd = MAX('Scenario Date'[Date])
+			RETURN
+			    IF(
+			        COUNTROWS('Scenario Calendar') = 1
+			            && HASONEVALUE('Scenario Date'[Month])
+			            && NOT ISBLANK(CalKey),
+			        COALESCE(
+			            CALCULATE(
+			                COUNTROWS('01 XER_TASK'),
+			                KEEPFILTERS('01 XER_TASK'[status_code] <> "Complete"),
+			                KEEPFILTERS('01 XER_TASK'[TaskType_Classified] = "Activity"),
+			                KEEPFILTERS(TREATAS({ CalKey }, '01 XER_TASK'[calendar_id_key])),
+			                // Same month overlap as [CA Inspector Selection Match]: Finish >= MonthStart and MAX(Start, Data Date) <= MonthEnd
+			                KEEPFILTERS('01 XER_TASK'[Finish] >= MonthStart),
+			                KEEPFILTERS('01 XER_TASK'[Start] <= MonthEnd),
+			                KEEPFILTERS('01 XER_TASK'[data_date] <= MonthEnd)
+			            ),
+			            0
+			        )
+			    )
+		formatString: #,0
+		displayFolder: Calendar Analysis
+		lineageTag: b0a30b58-c88c-4c97-b0d7-195b0d652de4
+
+	/// Matrix cell background: grey when no activity on the calendar falls in the month, light red when a critical one (Total Float <= 0) does, light orange when only near-critical ones (0 < Total Float <= 10) do.
+	measure 'CA Monthly Working Days Colour' =
+			VAR CellDays = [CA Monthly Working Days]
+			RETURN
+			    IF(
+			        NOT ISBLANK(CellDays),
+			        SWITCH(
+			            TRUE(),
+			            [CA Monthly Active Activities] = 0, "#687078",
+			            CALCULATE([CA Monthly Active Activities], KEEPFILTERS('01 XER_TASK'[CriticalStatus] = "Critical")) > 0, "#FFC7CE",
+			            CALCULATE([CA Monthly Active Activities], KEEPFILTERS('01 XER_TASK'[CriticalStatus] = "Near Critical")) > 0, "#FFD9B3"
+			        )
+			    )
+		formatString: @
+		displayFolder: Calendar Analysis
+		lineageTag: c50d0256-e5d8-4cf2-84c2-201de31a22ac
+
+	/// Matrix cell font: white on grey (no-activity) cells.
+	measure 'CA Monthly Working Days Font Colour' = IF([CA Monthly Working Days Colour] = "#687078", "#FFFFFF")
+		formatString: @
+		displayFolder: Calendar Analysis
+		lineageTag: 4e1b6aad-f93b-4622-900a-513632d4dc63
 
 	partition 'XER Measures' = m
 		mode: import
