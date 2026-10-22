@@ -69,7 +69,17 @@ def quoted(values: list[str]) -> str:
     return ", ".join("'" + value.replace("'", "''") + "'" for value in values)
 
 
-def scope_sql(selected="ALL", programme="ALL", excluded="NONE", csv_owned=""):
+def update_limit(value: str) -> int | None:
+    """Mirror the LatestUpdateCount validation: ALL, or a whole number from 1 to 999."""
+    value = value.strip().upper()
+    if value == "ALL":
+        return None
+    if re.fullmatch(r"[0-9]{1,3}", value) and int(value) >= 1:
+        return int(value)
+    raise ValueError("LatestUpdateCount must be ALL or a whole number from 1 to 999")
+
+
+def scope_sql(selected="ALL", programme="ALL", excluded="NONE", csv_owned="", latest_updates="ALL"):
     text = EXPRESSIONS.read_text(encoding="utf-8-sig")
     expression = text.split("expression AthenaScopeSql =", 1)[1].split("\nexpression ", 1)[0]
     programme = programme.strip().upper()
@@ -77,6 +87,11 @@ def scope_sql(selected="ALL", programme="ALL", excluded="NONE", csv_owned=""):
         raise ValueError("Invalid programme type")
     project_token = decode_m_literal(re.search(r'ProjectToken = "((?:""|[^"])*)"', expression)[1])
     programme_token = decode_m_literal(re.search(r'ProgrammeToken = "((?:""|[^"])*)"', expression)[1])
+    limit = update_limit(latest_updates)
+    limit_prefix = decode_m_literal(re.search(
+        r'UpdateLimitFilter = if UpdateLimit = null then "TRUE" else "((?:""|[^"])*)" & Text\.From\(UpdateLimit\)',
+        expression)[1])
+    limit_predicate = "TRUE" if limit is None else limit_prefix + str(limit)
     predicate = programme_token + (" IN ('C', 'T')" if programme == "ALL" else " = '" + programme + "'")
     selected_codes = aliases(tokens(selected))
     excluded_codes = aliases(tokens(excluded, exclusion=True))
@@ -97,6 +112,10 @@ def scope_sql(selected="ALL", programme="ALL", excluded="NONE", csv_owned=""):
             if line != expected:
                 raise AssertionError("Unexpected dynamic predicate structure; review extraction")
             fragments.append("    WHERE " + predicate + " ")
+        elif "UpdateLimitFilter" in line:
+            if line != '"    WHERE " & UpdateLimitFilter & " " &':
+                raise AssertionError("Unexpected update-limit predicate structure; review extraction")
+            fragments.append("    WHERE " + limit_predicate + " ")
         else:
             match = re.fullmatch(r'"((?:""|[^"])*)"\s*&?', line)
             if not match:
@@ -1126,6 +1145,174 @@ class AuditTests(Fixtures):
         self.assertEqual({row[2] for row in rows}, {"CJ:4017"})
         self.assertEqual({row[3] for row in rows}, {"C"})
         self.assertEqual({row[5] for row in rows}, {"J4017"})
+
+
+class UpdateLimitTests(Fixtures):
+    """LatestUpdateCount: the anchor baseline plus the N latest dated updates per project and programme type."""
+
+    def history(self, code="C4017", updates=5, programme="C"):
+        """Add a BL1 anchor dated December 2025 and monthly 2026 updates after it, oldest first."""
+        baseline = self.add(code, "BL1", "2025-12-31", programme)
+        names = []
+        for month in range(1, updates + 1):
+            day = calendar.monthrange(2026, month)[1]
+            names.append(self.add(code, f"26{month:02d}", f"2026-{month:02d}-{day:02d}", programme))
+        return baseline, names
+
+    def test_limit_keeps_baseline_and_latest_updates(self):
+        baseline, updates = self.history(updates=5)
+        self.assertEqual(self.keep(latest_updates="3"), {baseline, *updates[-3:]})
+        self.assertEqual(self.keep(latest_updates="1"), {baseline, updates[-1]})
+
+    def test_limit_above_available_history_loads_what_exists(self):
+        baseline, updates = self.history(updates=3)
+        for value in ("4", "5", "999"):
+            with self.subTest(limit=value):
+                self.assertEqual(self.keep(latest_updates=value), {baseline, *updates})
+        self.assertEqual(self.keep(latest_updates="5"), self.keep())
+
+    def test_all_and_padded_values_are_case_and_whitespace_insensitive(self):
+        baseline, updates = self.history(updates=4)
+        self.assertEqual(self.keep(latest_updates=" all "), self.keep())
+        self.assertEqual(self.keep(latest_updates="ALL"), {baseline, *updates})
+        self.assertEqual(self.keep(latest_updates=" 002 "), {baseline, *updates[-2:]})
+
+    def test_limit_is_per_project_and_programme_type(self):
+        long_base, long_updates = self.history("C4017", 5, "C")
+        short_base, short_updates = self.history("C5001", 2, "C")
+        target_base, target_updates = self.history("C4017", 4, "T")
+        self.assertEqual(self.keep(latest_updates="3"), {
+            long_base, *long_updates[-3:], short_base, *short_updates,
+            target_base, *target_updates[-3:],
+        })
+        self.assertEqual(self.keep(programme="T", latest_updates="3"), {target_base, *target_updates[-3:]})
+        self.assertEqual(self.keep(selected="C5001", latest_updates="1"), {short_base, short_updates[-1]})
+
+    def test_updates_before_the_anchor_never_count(self):
+        self.add("C4017", "2510", "2025-10-31")
+        self.add("C4017", "2511", "2025-11-30")
+        baseline, updates = self.history(updates=2)
+        self.assertEqual(self.keep(latest_updates="3"), {baseline, *updates})
+
+    def test_project_without_baseline_keeps_latest_updates(self):
+        names = [self.add("C4017", f"26{month:02d}", f"2026-{month:02d}-{calendar.monthrange(2026, month)[1]:02d}")
+                 for month in range(1, 5)]
+        self.assertEqual(self.keep(latest_updates="2"), set(names[-2:]))
+        self.assertEqual(self.keep(), set(names))
+
+    def test_limit_drops_undated_files_and_non_anchor_baselines(self):
+        baseline = self.add("C4017", "BL1", "2026-01-31")
+        null_update = self.add("C4017", "2602", None)
+        invalid_update = self.add("C4017", "2603", "not-a-date")
+        dated = self.add("C4017", "2604", "2026-04-30")
+        self.assertEqual(self.keep(selected="C4017"), {baseline, null_update, invalid_update, dated})
+        self.assertEqual(self.keep(selected="C4017", latest_updates="2"), {baseline, dated})
+        anchor = self.add("C5001", "BL2", None)
+        older_baseline = self.add("C5001", "BL1", "2025-06-30")
+        december = self.add("C5001", "2512", "2025-12-31")
+        january = self.add("C5001", "2601", "2026-01-31")
+        self.assertEqual(self.keep(selected="C5001"), {anchor, older_baseline, december, january})
+        self.assertEqual(self.keep(selected="C5001", latest_updates="1"), {anchor, january})
+
+    def test_same_month_files_count_as_one_update(self):
+        baseline = self.add("C4017", "BL1", "2025-12-31")
+        january = self.add("C4017", "2601", "2026-01-31")
+        february = self.add("C4017", "2602", "2026-02-28")
+        reissue = self.add("unused", month="2026-02-28", filename="C4017-C-2602_20260305.xer")
+        self.assertEqual(self.keep(latest_updates="1"), {baseline, february, reissue})
+        self.assertEqual(self.keep(latest_updates="2"), {baseline, january, february, reissue})
+
+    def test_file_with_several_metadata_rows_is_ranked_once(self):
+        baseline = self.add("C4017", "BL1", "2025-12-31")
+        self.add("C4017", "2601", "2026-01-31")
+        february = self.add("C4017", "2602", "2026-02-28")
+        march = self.add("C4017", "2603", "2026-03-31")
+        self.add("unused", month="2026-04-30", filename=march)
+        self.assertEqual(self.keep(latest_updates="2"), {baseline, march, february})
+
+    def test_invalid_limit_values_are_rejected(self):
+        self.history(updates=2)
+        for value in ("0", "000", "-1", "3.5", "abc", "", " ", "1000", "ALL3", "3,4"):
+            with self.subTest(limit=value):
+                with self.assertRaises(ValueError):
+                    self.keep(latest_updates=value)
+        m_text = EXPRESSIONS.read_text(encoding="utf-8-sig").split("expression AthenaScopeSql =", 1)[1].split("\nexpression ", 1)[0]
+        for fragment in ('if UpdateCountRaw = "ALL" then null',
+                         "Text.Length(UpdateCountRaw) >= 1 and Text.Length(UpdateCountRaw) <= 3",
+                         "Text.Length(Text.Remove(UpdateCountRaw, DigitChars)) = 0",
+                         'Number.FromText(UpdateCountRaw, "en-US") >= 1',
+                         'error "LatestUpdateCount must be ALL or a whole number from 1 to 999."'):
+            with self.subTest(m_fragment=fragment):
+                self.assertIn(fragment, m_text)
+
+    def test_parameter_is_declared_as_required_text(self):
+        # The value is a working setting (Desktop may save any valid value), so only the declaration is checked.
+        text = EXPRESSIONS.read_text(encoding="utf-8-sig")
+        declaration = re.search(r'^expression LatestUpdateCount = "([^"]*)" meta \[IsParameterQuery=true, '
+                                r'Type="Text", IsParameterQueryRequired=true\]$', text, re.M)
+        self.assertIsNotNone(declaration)
+        update_limit(declaration[1])
+
+    def test_all_eleven_native_consumers_respect_the_limit(self):
+        baseline, updates = self.history(updates=3)
+        filenames = [baseline, *updates]
+        expected = {baseline, *updates[-2:]}
+        for table in ("03_xer_projwbs", "06_xer_predecessor", "07_xer_actvtype", "08_xer_actvcode",
+                      "09_xer_taskactv", "10_xer_calendar", "12_xer_rsrc", "15_xer_resource_distribution"):
+            self.db.execute('CREATE TABLE prod_projectcontrols_p6."' + table + '" (filename VARCHAR)')
+            self.db.executemany('INSERT INTO prod_projectcontrols_p6."' + table + '" VALUES (?)',
+                                [(name,) for name in filenames])
+        for table in ("02_xer_project", "03_xer_projwbs", "06_xer_predecessor", "07_xer_actvtype",
+                      "08_xer_actvcode", "09_xer_taskactv", "10_xer_calendar", "12_xer_rsrc",
+                      "15_xer_resource_distribution"):
+            with self.subTest(consumer=table):
+                rows = self.db.execute(duck_sql(fn_athena_sql(table, latest_updates="2"))).fetchall()
+                self.assertEqual({row[0] for row in rows}, expected)
+                self.assertEqual(len(rows), len(expected))
+        for name in filenames:
+            self.add_task(name)
+        rows = self.db.execute(task_stage_sql("task_raw", "filename", latest_updates="2")).fetchall()
+        self.assertEqual(sorted(rows), sorted((name,) for name in expected))
+        CalendarAlignmentTests.create_calendar_table(self.db)
+        for name in filenames:
+            CalendarAlignmentTests.insert_calendar(self.db, name, "1", [8] * 5 + [0, 0], {})
+        rows = self.db.execute(duck_sql(calendar_sql(latest_updates="2"))).fetchall()
+        self.assertEqual({row[7].rsplit(".", 1)[0] for row in rows}, expected)
+        self.assertEqual(len(rows), 7 * len(expected))
+
+    def test_task_previous_values_use_only_loaded_updates(self):
+        baseline, (january, february, march) = self.history(updates=3)
+        self.add_task(baseline, "2025-12-31", "2026-06-01")
+        self.add_task(january, "2026-01-31", "2026-07-01")
+        self.add_task(february, "2026-02-28", "2026-08-01")
+        self.add_task(march, "2026-03-31", "2026-09-01")
+        projection = "filename, previous_task_finish, previous_data_date, baseline_finish"
+
+        def by_file(**parameters):
+            return {row[0]: row[1:] for row in self.db.execute(
+                task_stage_sql("task_joined", projection, **parameters)).fetchall()}
+
+        full = by_file()
+        self.assertEqual(full[february], (dt.date(2026, 7, 1), dt.date(2026, 1, 31), dt.date(2026, 6, 1)))
+        limited = by_file(latest_updates="2")
+        self.assertEqual(set(limited), {baseline, february, march})
+        # The oldest loaded update now compares against the baseline, the snapshot loaded before it.
+        self.assertEqual(limited[february], (dt.date(2026, 6, 1), dt.date(2025, 12, 31), dt.date(2026, 6, 1)))
+        self.assertEqual(limited[march], full[march])
+
+    def test_audit_reports_files_outside_the_update_limit(self):
+        before = self.add("C4017", "2511", "2025-11-30")
+        baseline, (january, february, march) = self.history(updates=3)
+        rows = self.db.execute(duck_sql(audit_sql(latest_updates="1"))).fetchall()
+        self.assertEqual({row[0]: row[-1] for row in rows}, {
+            before: "OUTSIDE_BASELINE_WINDOW", baseline: "KEPT",
+            january: "OUTSIDE_UPDATE_LIMIT", february: "OUTSIDE_UPDATE_LIMIT", march: "KEPT",
+        })
+        unlimited = self.db.execute(duck_sql(audit_sql())).fetchall()
+        self.assertEqual({row[0]: row[-1] for row in unlimited}, {
+            before: "OUTSIDE_BASELINE_WINDOW", baseline: "KEPT",
+            january: "KEPT", february: "KEPT", march: "KEPT",
+        })
 
 
 if __name__ == "__main__":

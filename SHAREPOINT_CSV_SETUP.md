@@ -190,6 +190,7 @@ Configure the parameters in this order and set `XerCsvEnabled` last:
 | `SelectedProjects` | `ALL` | Overall report scope; use `ALL` or a finite comma-separated list |
 | `ExcludedProjects` | `NONE` | Optional project codes to exclude from scope; blank or `NONE` for no exclusions |
 | `SelectedProgrammeType` | `C` | `C`, `T`, or `ALL` |
+| `LatestUpdateCount` | `ALL` | Athena only: `ALL`, or the number of latest updates to load after each project's latest baseline (1–999). CSV bundles always load in full |
 | `XerCsvEnabled` | `true` | Activates project-folder navigation and CSV ownership |
 
 Important rules:
@@ -274,7 +275,7 @@ The publisher needs permission to replace both items. Publication can also be bl
 
 ### Configure connections and refresh
 
-1. Open the published semantic model's **Settings** and confirm all nine parameters: `AthenaDsn`, `SharePointSite`, `SelectedProjects`, `ExcludedProjects`, `SelectedProgrammeType`, `XerCsvEnabled`, `XerCsvProjectCodes`, `XerCsvLibrary` and `XerCsvRootFolder`.
+1. Open the published semantic model's **Settings** and confirm all ten parameters: `AthenaDsn`, `SharePointSite`, `SelectedProjects`, `ExcludedProjects`, `SelectedProgrammeType`, `LatestUpdateCount`, `XerCsvEnabled`, `XerCsvProjectCodes`, `XerCsvLibrary` and `XerCsvRootFolder`.
 2. Confirm the semantic-model owner is the durable account intended to maintain refresh credentials. Take over only when authorised and necessary.
 3. Under **Gateway and cloud connections**, map the Athena DSN and, when required by the combined mashup, the SharePoint cloud connection through the approved gateway cluster.
 4. Under **Data source credentials** or its connection entry, authenticate `SharePointSite` with OAuth/Organizational account credentials. Revalidate both sources after publication because changed source definitions can require new credentials.
@@ -394,7 +395,7 @@ Do not solve validation failures by removing manifest rows, changing hashes, ren
 - [ ] Every manifest row uses schema `5.0`; all eleven files have current headers.
 - [ ] `project_code`, bundle ID and programme type match their folder locations.
 - [ ] Project exists in `dbo_project` and has governed `dbo_userpermission` data.
-- [ ] All eight Desktop parameters checked and `XerCsvEnabled` enabled last.
+- [ ] All ten Desktop parameters checked and `XerCsvEnabled` enabled last.
 - [ ] Athena and SharePoint privacy levels set to `Organizational`.
 - [ ] Desktop full refresh succeeds.
 - [ ] CSV-owned projects contain only `CSV::<project>::<programme>::<snapshot_tag>::<native_id>` relationship keys and no vertical pipes.

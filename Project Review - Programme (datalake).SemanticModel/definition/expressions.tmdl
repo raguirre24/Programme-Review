@@ -109,6 +109,17 @@ expression AthenaScopeSql =
 		    ProgType =
 		        if List.Contains({"C", "T", "ALL"}, ProgTypeRaw) then ProgTypeRaw
 		        else error "SelectedProgrammeType must be C, T, or ALL.",
+		    UpdateCountRaw = Text.Upper(Text.Trim(LatestUpdateCount)),
+		    DigitChars = List.Transform({48..57}, each Character.FromNumber(_)),
+		    UpdateLimit =
+		        if UpdateCountRaw = "ALL" then null
+		        else if Text.Length(UpdateCountRaw) >= 1 and Text.Length(UpdateCountRaw) <= 3
+		            and Text.Length(Text.Remove(UpdateCountRaw, DigitChars)) = 0
+		            and Number.FromText(UpdateCountRaw, "en-US") >= 1 then Number.FromText(UpdateCountRaw, "en-US")
+		        else error "LatestUpdateCount must be ALL or a whole number from 1 to 999.",
+		    // ALL keeps the whole baseline window; a number keeps the anchor baseline plus the N latest dated updates
+		    // per project identity and programme type, so a shorter history simply loads what it has.
+		    UpdateLimitFilter = if UpdateLimit = null then "TRUE" else "w.is_anchor OR r.update_rank <= " & Text.From(UpdateLimit),
 		    // Selection is by project family; exclusions and CSV ownership still remove both aliases.
 		    FilterList = fnProjectCodeAliases(ProjectFilterList),
 		    ExclusionList = ProjectExclusionList,
@@ -191,8 +202,9 @@ expression AthenaScopeSql =
 		        "    SELECT project_identity, programme_type, monthupdate AS anchor_date, filename AS anchor_filename " &
 		        "    FROM ranked_baselines " &
 		        "    WHERE bl_rank = 1 " &
-		        "), kept_filenames AS ( " &
-		        "    SELECT DISTINCT f.filename, f.project_code, f.programme_type, f.project_identity, f.tag " &
+		        "), window_files AS ( " &
+		        "    SELECT f.filename, f.monthupdate, f.project_code, f.programme_type, f.project_identity, f.tag, f.is_baseline, " &
+		        "        COALESCE(f.filename = lb.anchor_filename, FALSE) AS is_anchor " &
 		        "    FROM file_info f " &
 		        "    LEFT JOIN latest_baseline lb " &
 		        "        ON f.project_identity = lb.project_identity AND f.programme_type = lb.programme_type " &
@@ -200,6 +212,19 @@ expression AthenaScopeSql =
 		        "        OR f.filename = lb.anchor_filename " &
 		        "        OR (f.is_baseline = FALSE AND f.monthupdate > lb.anchor_date) " &
 		        "        OR f.monthupdate IS NULL " &
+		        "), ranked_updates AS ( " &
+		        "    SELECT filename, " &
+		        "        DENSE_RANK() OVER ( " &
+		        "            PARTITION BY project_identity, programme_type ORDER BY MAX(monthupdate) DESC " &
+		        "        ) AS update_rank " &
+		        "    FROM window_files " &
+		        "    WHERE is_baseline = FALSE AND monthupdate IS NOT NULL " &
+		        "    GROUP BY filename, project_identity, programme_type " &
+		        "), kept_filenames AS ( " &
+		        "    SELECT DISTINCT w.filename, w.project_code, w.programme_type, w.project_identity, w.tag " &
+		        "    FROM window_files w " &
+		        "    LEFT JOIN ranked_updates r ON r.filename = w.filename " &
+		        "    WHERE " & UpdateLimitFilter & " " &
 		        ")  "
 		in
 		    Sql
@@ -1337,11 +1362,13 @@ expression AthenaProgrammeSelectionAudit =
 		        "CASE WHEN r.project_identity IS NULL THEN 'NO_NAMED_PROJECT_MATCH' " &
 		        "WHEN f.project_code <> p.preferred_project_code THEN " &
 		        "    CASE WHEN p.preferred_project_code LIKE 'C%' THEN 'C_HISTORY_PREFERRED' ELSE 'J_HISTORY_PREFERRED' END " &
-		        "WHEN kf.filename IS NOT NULL THEN 'KEPT' ELSE 'OUTSIDE_BASELINE_WINDOW' END AS selection_reason " &
+		        "WHEN kf.filename IS NOT NULL THEN 'KEPT' " &
+		        "WHEN wf.filename IS NOT NULL THEN 'OUTSIDE_UPDATE_LIMIT' ELSE 'OUTSIDE_BASELINE_WINDOW' END AS selection_reason " &
 		        "FROM identified_files f " &
 		        "LEFT JOIN registered_projects r ON f.project_identity = r.project_identity " &
 		        "LEFT JOIN preferred_projects p ON f.project_identity = p.project_identity AND f.programme_type = p.programme_type " &
-		        "LEFT JOIN kept_filenames kf ON f.filename = kf.filename",
+		        "LEFT JOIN kept_filenames kf ON f.filename = kf.filename " &
+		        "LEFT JOIN (SELECT DISTINCT filename FROM window_files) wf ON f.filename = wf.filename",
 		    Result = if XerCsvRouting[HasAthenaProjects] then Value.NativeQuery(AthenaDB, Sql, null) else Empty
 		in
 		    Result
@@ -1630,4 +1657,12 @@ expression fnXerCalendarDetectExceptionShift =
 	queryGroup: XER
 
 	annotation PBI_ResultType = Function
+
+expression LatestUpdateCount = "3" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: bb6b0d07-57cb-497d-9dec-49e7626c9c01
+	queryGroup: Database
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
 
