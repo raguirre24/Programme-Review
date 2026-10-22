@@ -30,8 +30,8 @@ flowchart TD
 
     subgraph Report Layer PBIR
         ReportRoot[`Project Review - Programme (datalake).Report`]
-        Pages[15 PBIR Report Pages\n12 visible + 3 drill-through]
-        Bookmarks[40 Bookmarks JSON]
+        Pages[17 PBIR Report Pages\n14 visible + 3 drill-through]
+        Bookmarks[44 Bookmarks JSON]
         Themes[JSON Theme Schemas\n`Contract_Theme.json`, `Target_Theme.json`]
         Backgrounds[Background Canvas Images\n`Contract.png`, `Target.png`]
     end
@@ -119,7 +119,7 @@ flowchart TD
 - Location: `Project Review - Programme (datalake).SemanticModel/definition/`
 - **Format**: **TMDL** (Tabular Model Definition Language) - plain-text, source-controlled definitions (`61` table TMDL files, `40` relationships, `1` RLS role).
 - **Core Entity & Governance Tables**:
-  - `01 XER_TASK`: Task activities, dates (`act_end_date`, `early_end_date`, `late_end_date`, `Finish`), duration, critical status, constraint types, variance categories.
+  - `01 XER_TASK`: Task activities, dates (`act_end_date`, `early_end_date`, `late_end_date`, `Finish`), duration, critical status, constraint types, variance categories. Calculated columns `Finish Without Exceptions` and `Calendar Delay Days` (display folder `Calendar Stretch`): the finish the remaining work would have on its calendar's own workweek without dated exceptions such as holidays, shutdowns and rostered days off (the wording avoids "normal week", which differs by calendar; the `CEILING(remaining_duration)`-th working day from `MAX(Start, data_date)` on `RELATED('10 XER_CALENDARS'[Workweek Mask])`, an O(1) closed form; dated exceptions ignored) and `MAX(0, Finish − Finish Without Exceptions)`, the calendar days holidays and shutdowns add. Both are blank for complete or non-Activity rows and unusable workweeks; as columns they give the Calendar Stretch Top-15 filter and KPIs storage-engine predicates instead of measure filters.
   - `02 XER_PROJECT`: Project-level metadata and settings.
   - `03 XER_PROJWBS`: Work Breakdown Structure hierarchy.
   - `04 XER_BASELINE`: Calculated baseline schedule snapshots (earliest `UpdateDate` per project/programme) for variance comparison.
@@ -135,6 +135,7 @@ flowchart TD
   - `Scenario *` (14 Resource Playground tables): `Scenario Date`, `Scenario Start`, `Scenario Target`, `Scenario Calendar`, `Scenario Comparison Calendar`, `Scenario Quantity`, `Scenario Quantity Scale`, `Scenario Rate`, `Scenario Rate Basis`, `Scenario Limit`, `Scenario Limit Mode`, `Scenario Mode`, `Scenario Period`, `Scenario Unit`.
 - **Measure Tables**:
   - `XER Measures`: Core DAX measures for task calculations, plus 34 `CA *` measures (`displayFolder: Calendar Analysis`) for closed-form monthly calendar working/non-working day availability, workweek signatures, dated exception blackouts, and `O(1)` activity-level calendar stretch decomposition (`Remaining Working Days` vs `Remaining Calendar Days` = `Weekends / Off-Days` + `Holidays / Exceptions`; weekends/off-days count the calendar's own non-working weekdays from `RELATED('10 XER_CALENDARS'[Workweek Mask])` with a closed-form string formula, never the calendar name, and holidays/exceptions are the remaining non-working days, blank when the weekday rules are unusable; guarded by `COUNTROWS('01 XER_TASK') > 0` sparsity short-circuiting with zero bi-directional `CROSSFILTER`). The 12 activity-grain measures (8 stretch measures plus the `CA Activity Name` / `Calendar` / `Start` / `Finish` display measures) also AND in the hidden `CA Inspector Selection Match` gate, their only measure reference. The 6 day-count measures compute on each activity's own row inside `MAXX('01 XER_TASK', …)`; group-level `MIN`/`MAX`/`SUM` variables forced per-activity lookups (19 s against 0.3 s for 10,310 activities). The gate returns FALSE unless `CA Inspector Scope Ready` (exactly one project and one update, because `task_code` is unique only within a project snapshot), and `CA Inspector Title` then asks for a project. The monthly matrix colours each Working Days cell with `CA Monthly Working Days Colour` and `CA Monthly Working Days Font Colour`: grey with white text when `CA Monthly Active Activities` (the gate's month overlap, so a grey cell lists no activities) is 0, light red when any of those activities is critical (`CriticalStatus` "Critical", TF ≤ 0) and light orange when only near-critical ones are ("Near Critical", 0 < TF ≤ 10). The legend text box `ca25matxleg000000025` sits under the matrix. Because `Scenario Calendar` and `Scenario Date` have no relationship to `'01 XER_TASK'`, the gate re-applies a calendar or month selected in the summary table or matrix: a `TREATAS` on `calendar_id_key`, plus a month overlap of the remaining window (`MAX(Start, Data Date)` → `Finish`).
+  - `XER Measures` also holds 16 `CS *` measures (`displayFolder: Calendar Stretch`) for the Calendar Stretch page. Five `CS Activity *` measures (calendar delay, effective start, finish without exceptions, ISO `Timeline Dates` and `Shutdown Bands` for Deneb) compute on row values inside `MAXX('01 XER_TASK', …)` behind `TaskRows > 0 && ISINSCOPE(task_code) && [CA Inspector Scope Ready]`; `Shutdown Bands` reads the activity's table-11 exceptions (as loaded) only for delayed rows and returns runs of 7+ consecutive non-working days. Five `CS KPI *` measures use `KEEPFILTERS` predicates on `Calendar Delay Days` (portfolio-safe, no scope gate). `CS Scope Prompt` subtitles the charts. The cliff-edge set (`CS Cliff Task Code` (hidden; the clicked activity, else the largest delay), `CS Cliff Finish Date` (hidden), `CS Cliff Finish Shift Days`, `CS Cliff Title`, `CS Cliff Callout`) evaluates, per `'Scenario Date'[Date]` within 60 days of the remaining start (BLANK outside, no visual filter), the finish if the remaining work started that day: closed-form weekday counts plus sparse exception deltas, the exception-free closed form when no delta precedes it, otherwise 13 unrolled bisection levels. The search stops at the scheduled finish + 400 days when the latest window start (remaining start + 60) still completes by then (a storage-engine reach test, identical for every axis date and so cached), which keeps the exception deltas few without changing any result; otherwise it runs to the axis end (for example cutover calendars with long embargoes). The callout evaluates the whole window in one pass over `'Scenario Date'` (as the chart does, sharing the date-independent work) and picks the latest earlier start that finishes 7+ days sooner and the earliest later start that finishes 7+ days later. The unrolled DAX is rendered by `scripts/calendar_analysis/stretch_dax.py`. The Deneb spec converts parsed dates to UTC timestamps (`time(utcParse(...))`) before adding a day: adding a number to a JavaScript `Date` concatenates text and left the timeline blank.
   - `XER  Counts`: Task, milestone, constraint, and logic count metrics (note double space in table name).
   - `XER Metrics`: Schedule health indicator metrics (`SM Score` and 10 scored checks with graduated points, plus legacy `Schedule Quality Score` and trend-by-update measures evaluated over `UpdateHistory[UpdateDate]` up to `CurrentDate`).
   - `XER S-Curve`: Cumulative baseline vs actual vs forecast curves.
@@ -149,7 +150,7 @@ flowchart TD
 - Location: `Project Review - Programme (datalake).Report/definition/`
 - **Format**: **PBIR** (Power BI Report definition) - modern JSON-structured folder layout.
 - **Page Management (`pages/pages.json`)**:
-  - Lists 16 report pages (13 visible operational/analytical pages + 3 hidden drill-through pages) and sets the active/landing page (`2cc544dc10a1e237ae90` - `Home`):
+  - Lists 17 report pages (14 visible operational/analytical pages + 3 hidden drill-through pages) and sets the active/landing page (`2cc544dc10a1e237ae90` - `Home`):
     1. `2cc544dc10a1e237ae90`: `Home` (Visible, 17 visuals)
     2. `1351c9e89c045d35e160`: `Summary` (Visible, 22 visuals)
     3. `90b784e28b9f50741b0b`: `Programme` (Visible, 57 visuals)
@@ -159,16 +160,17 @@ flowchart TD
     7. `099895b98057d0135349`: `Resources` (Visible, 21 visuals)
     8. `4c53a34bba9dcc7f3e8c`: `Resource Simulator` (Visible, 50 visuals)
     9. `ca1da4a175154c398f01`: `Calendar Analysis` (Visible, 25 visuals, enforcing `Float Category <= 50` and incomplete status across all visuals with a `Max Total Float (<= 50d)` slider slicer; selecting a calendar in the Project Calendars Summary (`ca21calprof000000021`), or a row, month or cell in the Monthly Working Days matrix (`ca22calmatx000000022`), cross-filters the Activities by Calendar table (`ca23actinsp000000023`) through `CA Inspector Selection Match`; that table lists activities only when one project and one update are selected; matrix cells are light red for months with critical activities, light orange for near-critical only and grey for no activities, explained by a legend under the matrix)
-    10. `eb4b0a43085cad901574`: `Cross-WBS Analysis` (HiddenInViewMode, 25 visuals)
-    11. `327b48a7fbd37ce0a51c`: `Sched. Metrics` (Visible, 55 visuals)
-    12. `ea24ab599f13f4ea4572`: `Float Analysis` (Visible, 19 visuals)
-    13. `97f7d216ba38e55033da`: `Duration Analysis` (Visible, 19 visuals)
-    14. `1eb7703c500eb2ba5a6c`: `Constraint Analysis` (Visible, 22 visuals)
-    15. `4f15f55676d2add4e922`: `Missing Successor` (HiddenInViewMode, 12 visuals)
-    16. `061f748900951ae92ba9`: `Missing Predecessor` (HiddenInViewMode, 12 visuals)
+    10. `csstretchpage0000001`: `Calendar Stretch` (Visible, 26 visuals, generated by `scripts/calendar_analysis/generate_stretch_page.py`; same page filters as Calendar Analysis but its cloned `Max Total Float` slider starts unrestricted; header, slicers (sync groups Project, State, last_recalc_date, Level_2) and project menu (bookmarks `cs91openbm0000000091`/`cs92closebm000000092`) cloned from Calendar Analysis; four KPI cards; a stacked `barChart` 'work vs wait' (working days / weekends and off-days / holidays and shutdowns) and a Deneb (Vega-Lite) delay timeline (dark bar to the finish without calendar exceptions, red calendar-driven delay, shutdowns drawn over the bars as pale dashed boxes), both limited to the Top 15 activities by `MAX('01 XER_TASK'[Calendar Delay Days])` with a TopN column filter plus `Calendar Delay Days > 0`; a `scatterChart` outlier finder (log working days against delay, coloured by `CriticalStatus`); and a stepped `lineChart` cliff-edge chart over `'Scenario Date'[Date]` with a word-wrapped `card` callout. Clicking an activity in the bars, timeline or scatter selects it for the cliff chart and callout; the cliff chart filters nothing; no visual has a measure filter)
+    11. `eb4b0a43085cad901574`: `Cross-WBS Analysis` (HiddenInViewMode, 25 visuals)
+    12. `327b48a7fbd37ce0a51c`: `Sched. Metrics` (Visible, 55 visuals)
+    13. `ea24ab599f13f4ea4572`: `Float Analysis` (Visible, 19 visuals)
+    14. `97f7d216ba38e55033da`: `Duration Analysis` (Visible, 19 visuals)
+    15. `1eb7703c500eb2ba5a6c`: `Constraint Analysis` (Visible, 22 visuals)
+    16. `4f15f55676d2add4e922`: `Missing Successor` (HiddenInViewMode, 12 visuals)
+    17. `061f748900951ae92ba9`: `Missing Predecessor` (HiddenInViewMode, 12 visuals)
   - Each page folder contains `page.json` (page settings and canvas layout) and a `visuals/` subdirectory containing individual visual JSON definitions.
 - **Bookmarks**:
-  - `bookmarks/*.bookmark.json` defines 42 interactive state bookmarks (navigational toggles, panel switches, and visual state snapshots).
+  - `bookmarks/*.bookmark.json` defines 44 interactive state bookmarks (navigational toggles, panel switches, and visual state snapshots).
 
 ### Resource Playground (`Resource Calendars` Page)
 
@@ -185,7 +187,7 @@ flowchart TD
 ### Schedule Metrics & Drill-Through Validation Suite (`scripts/schedule_metrics/`)
 
 - Page `327b48a7fbd37ce0a51c` (`Sched. Metrics`, 55 visuals) and its two hidden drill-through pages (`Missing Predecessor` `061f748900951ae92ba9`, `Missing Successor` `4f15f55676d2add4e922`) evaluate 10 scored schedule-health checks (`1` point at target, `0` at limit, proportional between, averaged in `SM Score`) plus coverage diagnostics.
-- `Is Unscheduled = false` is applied as a page-level filter on the other 13 operational pages and intentionally omitted from `Sched. Metrics`, `Missing Predecessor`, and `Missing Successor` so schedule quality checks evaluate the full eligible activity population.
+- `Is Unscheduled = false` is applied as a page-level filter on the other 14 operational pages and intentionally omitted from `Sched. Metrics`, `Missing Predecessor`, and `Missing Successor` so schedule quality checks evaluate the full eligible activity population.
 - `Schedule Metric Guide` is a hidden 14-row static `DATATABLE` generated from `scripts/schedule_metrics/metric_guide.json` via `python scripts/schedule_metrics/build_metric_guide.py --content-only`.
 - `scripts/schedule_metrics/validate_static.py` verifies TMDL/PBIR invariants offline; PowerShell scripts (`Validate-Live.ps1`, `Validate-ReviewBands.ps1`, `Validate-Detail-Loaded.ps1`, `Validate-Drillthrough.ps1`, `Validate-Guide.ps1`) verify live DAX evaluation and drill-through reconciliation against an open Power BI Desktop instance. See [scripts/schedule_metrics/README.md](scripts/schedule_metrics/README.md) and [scripts/schedule_metrics/IMPLEMENTATION.md](scripts/schedule_metrics/IMPLEMENTATION.md).
 
@@ -220,7 +222,7 @@ Programme-Review/
 ├── Backgrounds/                                        # Canvas background images (Contract.png, Target.png)
 ├── Themes/                                             # JSON theme definitions (Contract_Theme.json, Target_Theme.json)
 ├── scripts/                                            # Automation & verification scripts
-│   ├── calendar_analysis/                              # Calendar Analysis static/TOM/conservation-law validator, plus read-only live table-11 alignment and P6 reconciliation check (validate_calendar_live.py, Export-CalendarLiveData.ps1)
+│   ├── calendar_analysis/                              # Calendar Analysis static/TOM/conservation-law validator, plus read-only live table-11 alignment and P6 reconciliation check (validate_calendar_live.py, Export-CalendarLiveData.ps1); Calendar Stretch generator (generate_stretch_page.py, stretch_dax.py, calendar_stretch_timeline.vl.json), static/oracle validator (validate_calendar_stretch.py) and live check (validate_calendar_stretch_live.py, Invoke-ReadOnlyDax.ps1)
 │   ├── resource_playground/                            # Scenario generators, static/TOM checks, and live harnesses
 │   ├── schedule_metrics/                               # Schedule metrics guide generator, static validator, and XMLA tests
 │   ├── switch_theme.js                                 # Script to switch page canvas background images
@@ -239,13 +241,13 @@ Programme-Review/
 │       └── tables/                                     # TMDL table & measure files (61 TMDL files)
 └── Project Review - Programme (datalake).Report/       # PBIR Report root
     ├── definition.pbir                                 # Report metadata pointing to SemanticModel
-    ├── CustomVisuals/                                  # Custom visual packages (3 custom visuals)
+    ├── CustomVisuals/                                  # Custom visual packages (3 custom visuals; AppSource Deneb is registered in report.json publicCustomVisuals instead)
     ├── StaticResources/                                # Embedded image resources
     └── definition/                                     # PBIR report definition folder
-        ├── report.json                                 # Global report settings & theme bindings
+        ├── report.json                                 # Global report settings, theme bindings & publicCustomVisuals (Deneb)
         ├── version.json                                # PBIR format version
-        ├── bookmarks/                                  # Report bookmark JSON files (42 bookmarks)
-        └── pages/                                      # 16 Report pages (page.json & visual folders)
+        ├── bookmarks/                                  # Report bookmark JSON files (44 bookmarks)
+        └── pages/                                      # 17 Report pages (page.json & visual folders)
 ```
 
 ---

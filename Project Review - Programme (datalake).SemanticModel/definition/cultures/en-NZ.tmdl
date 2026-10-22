@@ -470,6 +470,16 @@ cultureInfo en-NZ
 			            },
 			            "Weight": 0.9
 			          }
+			        },
+			        {
+			          "Activity": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
 			        }
 			      ]
 			    },
@@ -40169,6 +40179,16 @@ cultureInfo en-NZ
 			            },
 			            "Weight": 0.736
 			          }
+			        },
+			        {
+			          "Possible start": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
 			        }
 			      ],
 			      "SemanticType": "Time"
@@ -60004,6 +60024,16 @@ cultureInfo en-NZ
 			            },
 			            "Weight": 0.9
 			          }
+			        },
+			        {
+			          "Total float (working days)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
 			        }
 			      ]
 			    },
@@ -60018,6 +60048,16 @@ cultureInfo en-NZ
 			      "Terms": [
 			        {
 			          "Remaining Working Days": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        },
+			        {
+			          "Working days": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -60081,6 +60121,16 @@ cultureInfo en-NZ
 			      "Terms": [
 			        {
 			          "Holidays / Exceptions": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        },
+			        {
+			          "Holidays / shutdowns": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -60172,6 +60222,16 @@ cultureInfo en-NZ
 			            },
 			            "Weight": 0.9
 			          }
+			        },
+			        {
+			          "Name": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
 			        }
 			      ]
 			    },
@@ -60228,6 +60288,247 @@ cultureInfo en-NZ
 			      "Terms": [
 			        {
 			          "Finish": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.cs_kpi_delayed_activities": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CS KPI Delayed Activities"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Delayed > 30 days": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.cs_kpi_severely_delayed_activities": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CS KPI Severely Delayed Activities"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Delayed > 90 days": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.cs_kpi_critical_delay_days": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CS KPI Critical Delay Days"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Delay days on critical & near-critical": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.cs_kpi_max_delay_days": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CS KPI Max Delay Days"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Largest calendar-driven delay (days)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.cs_kpi_worst_stretch_ratio": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CS KPI Worst Stretch Ratio"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Worst calendar vs working ratio": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.cs_activity_calendar_delay_days": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CS Activity Calendar Delay Days"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Calendar-driven delay (days)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        },
+			        {
+			          "Delay Days": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.cs_activity_timeline_dates": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CS Activity Timeline Dates"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Timeline Dates": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.cs_activity_shutdown_bands": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CS Activity Shutdown Bands"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Shutdown Bands": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.cs_cliff_callout": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CS Cliff Callout"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Cliff edge": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.cs_cliff_finish_shift_days": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CS Cliff Finish Shift Days"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Finish change vs scheduled (days)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_measures.cs_cliff_finish_date": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Measures",
+			          "ConceptualProperty": "CS Cliff Finish Date"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Finish if started that day": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",

@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "Close Project Menu - Calendar Stretch",
+  "name": "cs92closebm000000092",
+  "options": {
+    "targetVisualNames": [
+      "cs10menubg0000000010",
+      "cs11state00000000011",
+      "cs12proj000000000012",
+      "cs13closebt000000013"
+    ],
+    "suppressData": true
+  },
+  "explorationState": {
+    "version": "1.0",
+    "activeSection": "csstretchpage0000001",
+    "sections": {
+      "csstretchpage0000001": {
+        "visualContainers": {
+          "cs10menubg0000000010": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "cs11state00000000011": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "cs12proj000000000012": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "cs13closebt000000013": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -172,8 +172,8 @@ def validate_removed_date_alignment(report: Path, objects: dict) -> None:
     removed_page = "db92ae49184b6932662e"
     page_dirs = {path.name for path in (report / "pages").iterdir() if path.is_dir()}
     page_index = json.loads((report / "pages/pages.json").read_text(encoding="utf-8-sig"))
-    assert len(page_dirs) == 16 and removed_page not in page_dirs, "Removed page remains or retained page count differs"
-    assert set(page_index["pageOrder"]) == page_dirs and len(page_index["pageOrder"]) == 16, "Page order is not the 16 retained pages"
+    assert len(page_dirs) == 17 and removed_page not in page_dirs, "Removed page remains or retained page count differs"
+    assert set(page_index["pageOrder"]) == page_dirs and len(page_index["pageOrder"]) == 17, "Page order is not the 17 retained pages"
     assert page_index.get("activePageName") in page_dirs, "Active page points to a removed page"
     removed = {
         ("XER Metrics", name) for name in (

@@ -88,3 +88,7 @@ VertiPaq Analyzer, read in this order: total size → largest tables → largest
    - Never add `Table.Buffer` or large-file `Binary.Buffer` to the 11 SharePoint CSV loader queries in `expressions.tmdl`.
 6. **Row Iterators for Per-Activity Maths (`Calendar Analysis` activities table)**:
    - Compute a value derived from several columns of the same activity (start, finish, data date, remaining duration, calendar) inside `MAXX('01 XER_TASK', …)` on row values. Taking `MIN`/`MAX`/`SUM`/`SELECTEDVALUE` of those columns as separate variables inside an `IF` made the engine look up each activity separately: J5068's 10,310 activities took 19 s, against 0.3 s with the row iterator and identical results. Profile one column at a time before blaming the visual or the filters.
+7. **Top N by a Column Aggregate (`Calendar Stretch`)**:
+   - Rank-limited visuals over `task_code` use a visual `TopN` filter ordered by a column aggregate (`MAX('01 XER_TASK'[Calendar Delay Days])`) plus column `Advanced` filters: storage-engine work only. Never a measure-based Top N or measure filter; if the ranking needs per-row maths, make it a row-local calculated column first.
+   - Per-date measures bound their own window (BLANK outside 60 days of the remaining start) and exit before any table-11 access, so the 4,000-date `'Scenario Date'` axis stays cheap.
+   - Profile per-date kernels stage by stage with query-scoped `DEFINE MEASURE` overrides and interleaved repeats (`Invoke-ReadOnlyDax.ps1`): background load on the dev machine swings single timings by 2-3x.

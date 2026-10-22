@@ -807,6 +807,51 @@ table '01 XER_TASK'
 
 		annotation UnderlyingDateTimeDataType = Date
 
+	/// Finish without calendar exceptions: the CEILING(remaining_duration)-th working day counted from MAX(Start, data_date) on the activity calendar's own workweek ('10 XER_CALENDARS'[Workweek Mask]), ignoring dated exceptions (holidays, shutdowns, rostered days off). Blank for complete or non-Activity rows, unusable or all non-working workweeks, or no remaining work.
+	column 'Finish Without Exceptions' =
+			VAR StartDate = '01 XER_TASK'[Start]
+			VAR DataDate = '01 XER_TASK'[data_date]
+			VAR RemWork = '01 XER_TASK'[remaining_duration]
+			VAR WorkweekMask = RELATED('10 XER_CALENDARS'[Workweek Mask])
+			VAR WorkDays = LEN(SUBSTITUTE(WorkweekMask, "0", ""))
+			// A part day still occupies a working day.
+			VAR NeedDays = IF(NOT ISBLANK(RemWork), INT(CEILING(ROUND(RemWork, 4), 1)))
+			VAR EffectiveStart = IF(NOT ISBLANK(StartDate) && NOT ISBLANK(DataDate), MAX(StartDate, DataDate), StartDate)
+			RETURN
+			    IF(
+			        '01 XER_TASK'[status_code] <> "Complete"
+			            && '01 XER_TASK'[TaskType_Classified] = "Activity"
+			            && NOT ISBLANK(EffectiveStart) && NOT ISBLANK('01 XER_TASK'[Finish])
+			            && LEN(WorkweekMask) = 7 && WorkDays > 0 && NeedDays >= 1,
+			        // Every 7 days from EffectiveStart hold WorkDays working days, so the last one falls in week
+			        // FullWeeks at the LastWeekRank-th "1" of the mask read from EffectiveStart's weekday.
+			        VAR FullWeeks = QUOTIENT(NeedDays - 1, WorkDays)
+			        VAR LastWeekRank = NeedDays - FullWeeks * WorkDays
+			        VAR WeekFromStart = MID(WorkweekMask & WorkweekMask, WEEKDAY(EffectiveStart, 2), 7)
+			        VAR LastOffset = FIND("X", SUBSTITUTE(WeekFromStart, "1", "X", LastWeekRank))
+			        RETURN EffectiveStart + FullWeeks * 7 + LastOffset - 1
+			    )
+		formatString: dd/mm/yyyy
+		displayFolder: Calendar Stretch
+		lineageTag: d4951ddc-38d7-52f3-82e8-6074ec959885
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	/// Calendar days that dated calendar exceptions (holidays, shutdowns, rostered days off) add to the remaining work: MAX(0, Finish - Finish Without Exceptions). Blank where Finish Without Exceptions is blank.
+	column 'Calendar Delay Days' =
+			VAR ExceptionFreeFinish = '01 XER_TASK'[Finish Without Exceptions]
+			RETURN
+			    IF(NOT ISBLANK(ExceptionFreeFinish), MAX(0, INT('01 XER_TASK'[Finish] - ExceptionFreeFinish)))
+		formatString: #,0
+		displayFolder: Calendar Stretch
+		lineageTag: 0b12c4d0-d174-5f62-b843-64366911813b
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
 	partition '01 XER_TASK' = m
 		mode: import
 		queryGroup: XER

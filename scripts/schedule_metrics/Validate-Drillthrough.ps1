@@ -139,7 +139,7 @@ function Get-PbirMeasureReferences($Node) {
 
 Assert-Drill ($routes.Count -eq 2) 'Exactly two drill-through routes must remain.' -Static
 Assert-Drill (-not (Test-Path -LiteralPath (Join-Path $reportRoot 'pages/db92ae49184b6932662e'))) 'Removed Date alignment page still exists.' -Static
-Assert-Drill (@(Get-ChildItem -LiteralPath (Join-Path $reportRoot 'pages') -Directory).Count -eq 15) 'Expected 15 retained report pages.' -Static
+Assert-Drill (@(Get-ChildItem -LiteralPath (Join-Path $reportRoot 'pages') -Directory).Count -eq 17) 'Expected 17 retained report pages.' -Static
 foreach ($name in $removedMeasures) {
     Assert-Drill ($null -eq $disk.Tables['XER Metrics'].Measures.Find($name)) "Removed measure remains in source: $name" -Static
 }
