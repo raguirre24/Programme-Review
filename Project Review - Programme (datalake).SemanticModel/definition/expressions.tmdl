@@ -1607,9 +1607,19 @@ expression fnXerCalendarDetectExceptionShift =
 		            Hours = Record.FieldOrDefault(RuleHours, row[clndr_id_key] & "|" & Text.From(Number.Mod(row[day_of_week_num] - 1 + offset + 7, 7) + 1), null)
 		        in
 		            if Hours <> null and Number.Abs(Hours - row[work_hours]) < 0.0001 then 1 else 0,
-		    // One pass: {as stored, moved a day later, moved a day earlier}.
-		    Votes = List.Accumulate(Table.ToRecords(Exceptions), {0, 0, 0}, (state as list, row as record) as list =>
-		        {state{0} + Repeats(row, 0), state{1} + Repeats(row, 1), state{2} + Repeats(row, -1)}),
+		    // Votes {as stored, moved a day later, moved a day earlier}: per-row flags summed by one Table.Group. Never a
+		    // List.Accumulate with a list state: its lazy items chain row to row and overflowed the stack on the gateway.
+		    Flags = Table.AddColumn(
+		        Table.AddColumn(
+		            Table.AddColumn(Exceptions, "__AsStored", each Repeats(_, 0), Int64.Type),
+		            "__DayLater", each Repeats(_, 1), Int64.Type),
+		        "__DayEarlier", each Repeats(_, -1), Int64.Type),
+		    Totals = Table.Group(Flags, {}, {
+		        {"AsStored", each List.Sum([__AsStored]), type nullable number},
+		        {"DayLater", each List.Sum([__DayLater]), type nullable number},
+		        {"DayEarlier", each List.Sum([__DayEarlier]), type nullable number}}),
+		    TotalsRow = Table.First(Totals, [AsStored = 0, DayLater = 0, DayEarlier = 0]),
+		    Votes = List.Transform({TotalsRow[AsStored], TotalsRow[DayLater], TotalsRow[DayEarlier]}, each if _ = null then 0 else _),
 		    Ranked = List.Sort(Votes),
 		    Best = Ranked{0},
 		    RunnerUp = Ranked{1},
