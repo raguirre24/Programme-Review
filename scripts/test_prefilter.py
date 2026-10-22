@@ -30,6 +30,7 @@ DEFINITION = Path(os.environ.get("PREFILTER_DEFINITION", str(
 )))
 EXPRESSIONS = DEFINITION / "expressions.tmdl"
 TASK = DEFINITION / "tables" / "01 XER_TASK.tmdl"
+CALENDAR = DEFINITION / "tables" / "11 XER_CALENDAR_DETAILED.tmdl"
 M_STRING = re.compile(r'"((?:""|[^"])*)"')
 
 
@@ -114,6 +115,21 @@ def task_sql(**parameters):
         match = re.fullmatch(r'\s*"((?:""|[^"])*)",?\s*', line)
         if not match:
             raise AssertionError("Unexpected TASK SQL fragment: " + line)
+        fragments.append(decode_m_literal(match[1]))
+    return scope_sql(**parameters) + " " + " ".join(fragments)
+
+
+def calendar_sql(**parameters):
+    """Extract table 11's native SQL (scope CTEs plus the exception-date alignment vote)."""
+    text = CALENDAR.read_text(encoding="utf-8-sig")
+    body = text.split("AthenaScopeSql,", 1)[1].split("\n\t\t\t\t                },", 1)[0]
+    fragments = []
+    for line in body.splitlines():
+        if not line.strip():
+            continue
+        match = re.fullmatch(r'\s*"((?:""|[^"])*)",?\s*', line)
+        if not match:
+            raise AssertionError("Unexpected CALENDAR SQL fragment: " + line)
         fragments.append(decode_m_literal(match[1]))
     return scope_sql(**parameters) + " " + " ".join(fragments)
 
@@ -624,7 +640,7 @@ class ProjectRegistryTests(Fixtures):
         self.assertEqual(shared_tables, {
             "02_xer_project", "03_xer_projwbs", "06_xer_predecessor",
             "07_xer_actvtype", "08_xer_actvcode", "09_xer_taskactv",
-            "10_xer_calendar", "11_xer_calendar_detailed", "12_xer_rsrc",
+            "10_xer_calendar", "12_xer_rsrc",
             "15_xer_resource_distribution",
         })
         old = self.add("C4017", "BL1", "2025-01-31")
@@ -644,7 +660,13 @@ class ProjectRegistryTests(Fixtures):
             self.add_task(name)
         rows = self.db.execute(task_stage_sql("task_raw", "filename")).fetchall()
         self.assertEqual(sorted(rows), sorted([(baseline,), (update,)]))
-        self.assertEqual(len(shared_tables) + 1, 11)
+        CalendarAlignmentTests.create_calendar_table(self.db)
+        for name in filenames:
+            CalendarAlignmentTests.insert_calendar(self.db, name, "1", [8] * 5 + [0, 0], {})
+        rows = self.db.execute(duck_sql(calendar_sql())).fetchall()
+        self.assertEqual({row[7].rsplit(".", 1)[0] for row in rows}, {baseline, update})
+        self.assertEqual(len(rows), 14)
+        self.assertEqual(len(shared_tables) + 2, 11)
 
 
 class TaskTests(Fixtures):
@@ -936,6 +958,155 @@ class BaselineDateIntegrationTests(Fixtures):
         })
 
 
+class CalendarAlignmentTests(Fixtures):
+    """Table 11's per-file vote on dated-exception alignment (the Athena feed stores them a day early).
+
+    Fixtures write each exception at true date + stored_offset with day_of_week_num derived from the stored date,
+    exactly as the faulty feed does, then check the ExceptionDateShiftDays the SQL returns for every row.
+    """
+
+    COLUMNS = ("clndr_name", "clndr_type", "date", "day_of_week", "working_day", "work_hours",
+               "exception_type", "clndr_id_key", "monthupdate", "day_of_week_num", "working_day_int", "filename")
+    DAY_NAMES = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+    FIVE_DAY = [8, 8, 8, 8, 8, 0, 0]
+
+    @classmethod
+    def create_calendar_table(cls, db):
+        db.execute('CREATE TABLE prod_projectcontrols_p6."11_xer_calendar_detailed" (' +
+                   ", ".join('"' + col + '" VARCHAR' for col in cls.COLUMNS) + ")")
+
+    @classmethod
+    def insert_calendar(cls, db, filename, calendar_id, week_hours, exceptions, stored_offset=0,
+                        duplicate_rules=False):
+        """Seven weekday rules plus dated exceptions {true_date: hours}, all values as text like the feed."""
+        key = f"{filename}.{calendar_id}"
+        rows = []
+        for number, hours in enumerate(week_hours, start=1):
+            rule = ("Calendar " + calendar_id, "Project", None, cls.DAY_NAMES[number - 1],
+                    "Y" if hours else "N", str(float(hours)), "Standard", key, "2026-01-31",
+                    str(number), "1" if hours else "0", filename)
+            rows.extend([rule, rule] if duplicate_rules else [rule])
+        for true_date, hours in exceptions.items():
+            stored = true_date + dt.timedelta(days=stored_offset)
+            rows.append(("Calendar " + calendar_id, "Project", stored.isoformat(), cls.DAY_NAMES[stored.weekday()],
+                         "Y" if hours else "N", str(float(hours)),
+                         "Exception - Working" if hours else "Exception - Non-Working", key, "2026-01-31",
+                         str(stored.isoweekday()), "1" if hours else "0", filename))
+        db.executemany('INSERT INTO prod_projectcontrols_p6."11_xer_calendar_detailed" VALUES (' +
+                       ", ".join("?" * len(cls.COLUMNS)) + ")", rows)
+        return key
+
+    @staticmethod
+    def shutdown(first, last, weekdays=range(5)):
+        """Non-working exceptions on the listed weekdays (Monday = 0) between two true dates."""
+        days = (last - first).days + 1
+        return {first + dt.timedelta(days=i): 0 for i in range(days)
+                if (first + dt.timedelta(days=i)).weekday() in weekdays}
+
+    def setUp(self):
+        super().setUp()
+        self.create_calendar_table(self.db)
+        self.winter = self.shutdown(dt.date(2027, 4, 19), dt.date(2027, 10, 1))
+        self.winter[dt.date(2027, 3, 26)] = 0  # Good Friday
+        self.winter[dt.date(2027, 11, 2)] = 0  # Melbourne Cup (Tuesday)
+
+    def shifts(self):
+        rows = self.db.execute(duck_sql(calendar_sql())).fetchall()
+        result = {}
+        for row in rows:
+            result.setdefault(row[7], set()).add(row[12])
+        return result, rows
+
+    def test_exceptions_stored_a_day_early_move_a_day_later(self):
+        name = self.add("C4017", "2602", "2026-02-28")
+        key = self.insert_calendar(self.db, name, "644", self.FIVE_DAY, self.winter, stored_offset=-1)
+        shifts, rows = self.shifts()
+        self.assertEqual(shifts, {key: {1}})
+        self.assertEqual(len(rows), 7 + len(self.winter))
+        # The SQL only votes: dates, weekday numbers and names leave Athena unchanged for M to move.
+        stored = {row[2] for row in rows if row[2] is not None}
+        self.assertEqual(stored, {(d - dt.timedelta(days=1)).isoformat() for d in self.winter})
+
+    def test_aligned_file_keeps_its_dates(self):
+        name = self.add("C4017", "2602", "2026-02-28")
+        key = self.insert_calendar(self.db, name, "644", self.FIVE_DAY, self.winter)
+        self.assertEqual(self.shifts()[0], {key: {0}})
+
+    def test_exceptions_stored_a_day_late_move_a_day_earlier(self):
+        name = self.add("C4017", "2602", "2026-02-28")
+        key = self.insert_calendar(self.db, name, "644", self.FIVE_DAY, self.winter, stored_offset=1)
+        self.assertEqual(self.shifts()[0], {key: {-1}})
+
+    def test_six_day_calendar_with_alternate_saturday_exceptions(self):
+        name = self.add("C4017", "2602", "2026-02-28")
+        exceptions = self.shutdown(dt.date(2027, 1, 2), dt.date(2027, 12, 31), weekdays={5})
+        exceptions = {d: 0 for i, d in enumerate(sorted(exceptions)) if i % 2 == 0}
+        exceptions.update(self.winter)
+        key = self.insert_calendar(self.db, name, "1007", [8] * 6 + [0], exceptions, stored_offset=-1)
+        self.assertEqual(self.shifts()[0], {key: {1}})
+
+    def test_snapshots_vote_independently(self):
+        early = self.add("C4017", "2602", "2026-02-28")
+        fixed = self.add("C4017", "2603", "2026-03-31")
+        early_key = self.insert_calendar(self.db, early, "644", self.FIVE_DAY, self.winter, stored_offset=-1)
+        fixed_key = self.insert_calendar(self.db, fixed, "644", self.FIVE_DAY, self.winter)
+        self.assertEqual(self.shifts()[0], {early_key: {1}, fixed_key: {0}})
+
+    def test_file_without_evidence_takes_the_scope_vote(self):
+        voting = self.add("C4017", "2602", "2026-02-28")
+        silent = self.add("C1001", "2602", "2026-02-28")
+        voting_key = self.insert_calendar(self.db, voting, "644", self.FIVE_DAY, self.winter, stored_offset=-1)
+        # Every day works on a 7-day calendar, so its non-working exceptions never repeat a rule: no evidence.
+        silent_key = self.insert_calendar(self.db, silent, "652", [8] * 7, self.winter, stored_offset=-1)
+        self.assertEqual(self.shifts()[0], {voting_key: {1}, silent_key: {1}})
+
+    def test_no_evidence_anywhere_keeps_source_dates(self):
+        name = self.add("C4017", "2602", "2026-02-28")
+        key = self.insert_calendar(self.db, name, "652", [8] * 7, self.winter, stored_offset=-1)
+        self.assertEqual(self.shifts()[0], {key: {0}})
+
+    def test_weak_evidence_is_not_a_clear_winner(self):
+        name = self.add("C4017", "2602", "2026-02-28")
+        few = {dt.date(2027, 4, 19): 0, dt.date(2027, 4, 26): 0, dt.date(2027, 5, 3): 0}  # three Mondays
+        key = self.insert_calendar(self.db, name, "644", self.FIVE_DAY, few, stored_offset=-1)
+        self.assertEqual(self.shifts()[0], {key: {0}})
+
+    def test_duplicate_weekday_rules_do_not_vote(self):
+        name = self.add("C4017", "2602", "2026-02-28")
+        key = self.insert_calendar(self.db, name, "644", self.FIVE_DAY, self.winter, stored_offset=-1,
+                                   duplicate_rules=True)
+        shifts, rows = self.shifts()
+        self.assertEqual(shifts, {key: {0}})
+        self.assertEqual(len(rows), 14 + len(self.winter))
+
+    def test_invalid_and_blank_key_rows_are_kept_and_follow_their_file(self):
+        name = self.add("C4017", "2602", "2026-02-28")
+        key = self.insert_calendar(self.db, name, "644", self.FIVE_DAY, self.winter, stored_offset=-1)
+        self.db.executemany('INSERT INTO prod_projectcontrols_p6."11_xer_calendar_detailed" VALUES (' +
+                            ", ".join("?" * len(self.COLUMNS)) + ")", [
+                                ("Bad", "Project", "2027-06-01", "Tuesday", None, None, "Exception - Invalid",
+                                 key, "2026-01-31", "2", None, name),
+                                ("Orphan", "Project", "2027-06-02", "Wednesday", "N", "0", "Exception - Non-Working",
+                                 "", "2026-01-31", "3", "0", name),
+                            ])
+        shifts, rows = self.shifts()
+        self.assertEqual(shifts, {key: {1}, "": {1}})
+        self.assertEqual(len(rows), 9 + len(self.winter))
+
+    def test_unregistered_snapshots_are_excluded(self):
+        kept = self.add("C4017", "2602", "2026-02-28")
+        dropped = self.add("C1046", "2602", "2026-02-28", register=False)
+        kept_key = self.insert_calendar(self.db, kept, "644", self.FIVE_DAY, self.winter, stored_offset=-1)
+        self.insert_calendar(self.db, dropped, "644", self.FIVE_DAY, self.winter)
+        self.assertEqual(set(self.shifts()[0]), {kept_key})
+
+    def test_vote_thresholds_match_the_csv_m_function(self):
+        sql = calendar_sql()
+        self.assertIn("best_repeats * 2 <= runner_up_repeats AND runner_up_repeats - best_repeats >= 10", sql)
+        m_text = EXPRESSIONS.read_text(encoding="utf-8-sig").split("expression fnXerCalendarDetectExceptionShift =", 1)[1]
+        self.assertIn("Decided = Best * 2 <= RunnerUp and RunnerUp - Best >= 10", m_text.split("\nexpression ", 1)[0])
+
+
 class AuditTests(Fixtures):
     def test_actual_audit_sql_explains_all_three_selection_outcomes(self):
         c = self.add("C4017", "2609", "2026-09-30")
@@ -966,5 +1137,6 @@ if __name__ == "__main__":
         DEFINITION = arguments.definition
         EXPRESSIONS = DEFINITION / "expressions.tmdl"
         TASK = DEFINITION / "tables" / "01 XER_TASK.tmdl"
+        CALENDAR = DEFINITION / "tables" / "11 XER_CALENDAR_DETAILED.tmdl"
     sys.argv = [sys.argv[0], *unittest_arguments]
     unittest.main(verbosity=2)

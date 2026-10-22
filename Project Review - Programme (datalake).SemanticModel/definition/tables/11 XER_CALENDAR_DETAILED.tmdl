@@ -113,6 +113,17 @@ table '11 XER_CALENDAR_DETAILED'
 
 		annotation SummarizationSetBy = Automatic
 
+	/// Days added at load to this source file's dated exceptions (date, day_of_week_num and day_of_week together): +1 when its exceptions were stored a day early, -1 a day late, 0 when aligned. Undated weekday rules are never moved.
+	column ExceptionDateShiftDays
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: ec2eaa58-2fed-4d09-be7e-080ee6a760e5
+		summarizeBy: none
+		sourceColumn: ExceptionDateShiftDays
+
+		annotation SummarizationSetBy = Automatic
+
 	partition '11 XER_CALENDAR_DETAILED' = m
 		mode: import
 		queryGroup: XER
@@ -120,13 +131,83 @@ table '11 XER_CALENDAR_DETAILED'
 				let
 				    // Rules plus dated overrides, not a dense date table; preserve duplicates and unknown calendar values.
 				    Contract = Record.Field(XerCsvTableContracts, "11_XER_CALENDAR_DETAILED"),
-				    ModelColumns = List.Combine({Contract[Columns], {"IsCsvSource", "ProjectKey"}}),
-				    Source = fnAthenaSource("11_xer_calendar_detailed", Text.Combine({"t.""clndr_name""", "t.""clndr_type""", "t.""date""", "t.""day_of_week""", "t.""working_day""", "t.""work_hours""", "t.""exception_type""", "t.""clndr_id_key""", "t.""monthupdate"" AS ""MonthUpdate""", "t.""day_of_week_num""", "t.""working_day_int""", "TRIM(UPPER(SPLIT_PART(t.""filename"", '-', 1))) AS ""__ProjectCode"""}, ", ")),
+				    ModelColumns = List.Combine({Contract[Columns], {"ExceptionDateShiftDays", "IsCsvSource", "ProjectKey"}}),
+				    // The Athena feed stores dated exceptions one day early (found 2026-10; tables 06/15 were calculated correctly upstream).
+				    // P6 stores an exception only for a date whose hours differ from its weekday rule, so per source file the SQL keeps the
+				    // alignment (as stored, a day later or a day earlier) that leaves the fewest exceptions repeating their weekday hours.
+				    // A file needs a clear winner (at most half the runner-up's repeats and at least 10 fewer); otherwise it takes the
+				    // whole scope's vote. Already-correct files therefore stay unshifted, and the vote reads only the source's own
+				    // day_of_week_num, so it does not depend on how Athena types the date column.
+				    Source =
+				        Value.NativeQuery(
+				            AthenaDB,
+				            Text.Combine(
+				                {
+				                    AthenaScopeSql,
+				                    ", calendar_rows AS (",
+				                    "SELECT t.""clndr_name"" AS clndr_name, t.""clndr_type"" AS clndr_type, t.""date"" AS ""date"", t.""day_of_week"" AS day_of_week,",
+				                    "t.""working_day"" AS working_day, t.""work_hours"" AS work_hours, t.""exception_type"" AS exception_type, t.""clndr_id_key"" AS clndr_id_key,",
+				                    "t.""monthupdate"" AS ""MonthUpdate"", t.""day_of_week_num"" AS day_of_week_num, t.""working_day_int"" AS working_day_int,",
+				                    "TRIM(UPPER(SPLIT_PART(t.""filename"", '-', 1))) AS ""__ProjectCode"", t.""filename"" AS calendar_filename,",
+				                    "NULLIF(TRIM(CAST(t.""clndr_id_key"" AS VARCHAR)), '') AS calendar_key,",
+				                    "NULLIF(TRIM(CAST(t.""date"" AS VARCHAR)), '') IS NULL AS is_undated,",
+				                    "TRY_CAST(t.""day_of_week_num"" AS INTEGER) AS weekday_number, TRY_CAST(t.""work_hours"" AS DOUBLE) AS daily_hours,",
+				                    "TRIM(CAST(t.""exception_type"" AS VARCHAR)) AS row_type",
+				                    "FROM prod_projectcontrols_p6.""11_xer_calendar_detailed"" t",
+				                    "INNER JOIN kept_filenames kf ON t.""filename"" = kf.""filename""",
+				                    "), weekday_rules AS (",
+				                    "SELECT calendar_filename, calendar_key, weekday_number, MIN(daily_hours) AS rule_hours",
+				                    "FROM calendar_rows",
+				                    "WHERE is_undated AND row_type = 'Standard' AND calendar_key IS NOT NULL",
+				                    "AND weekday_number BETWEEN 1 AND 7 AND daily_hours IS NOT NULL",
+				                    "GROUP BY calendar_filename, calendar_key, weekday_number",
+				                    "HAVING COUNT(*) = 1",
+				                    "), file_votes AS (",
+				                    "SELECT e.calendar_filename,",
+				                    "SUM(CASE WHEN r.weekday_number = e.weekday_number AND ABS(r.rule_hours - e.daily_hours) < 0.0001 THEN 1 ELSE 0 END) AS repeats_as_stored,",
+				                    "SUM(CASE WHEN r.weekday_number = MOD(e.weekday_number, 7) + 1 AND ABS(r.rule_hours - e.daily_hours) < 0.0001 THEN 1 ELSE 0 END) AS repeats_day_later,",
+				                    "SUM(CASE WHEN r.weekday_number = MOD(e.weekday_number + 5, 7) + 1 AND ABS(r.rule_hours - e.daily_hours) < 0.0001 THEN 1 ELSE 0 END) AS repeats_day_earlier",
+				                    "FROM calendar_rows e",
+				                    "INNER JOIN weekday_rules r ON r.calendar_filename = e.calendar_filename AND r.calendar_key = e.calendar_key",
+				                    "WHERE NOT e.is_undated AND e.calendar_key IS NOT NULL AND e.weekday_number BETWEEN 1 AND 7",
+				                    "AND e.daily_hours IS NOT NULL AND COALESCE(e.row_type, '') <> 'Exception - Invalid'",
+				                    "GROUP BY e.calendar_filename",
+				                    "), alignment_votes AS (",
+				                    "SELECT calendar_filename, FALSE AS is_scope, repeats_as_stored, repeats_day_later, repeats_day_earlier FROM file_votes",
+				                    "UNION ALL",
+				                    "SELECT CAST(NULL AS VARCHAR), TRUE, SUM(repeats_as_stored), SUM(repeats_day_later), SUM(repeats_day_earlier) FROM file_votes",
+				                    "), alignment_ranked AS (",
+				                    "SELECT calendar_filename, is_scope, repeats_as_stored, repeats_day_later, repeats_day_earlier,",
+				                    "LEAST(repeats_as_stored, repeats_day_later, repeats_day_earlier) AS best_repeats,",
+				                    "repeats_as_stored + repeats_day_later + repeats_day_earlier",
+				                    "- LEAST(repeats_as_stored, repeats_day_later, repeats_day_earlier)",
+				                    "- GREATEST(repeats_as_stored, repeats_day_later, repeats_day_earlier) AS runner_up_repeats",
+				                    "FROM alignment_votes",
+				                    "), alignment_decisions AS (",
+				                    "SELECT calendar_filename, is_scope,",
+				                    "CASE WHEN best_repeats * 2 <= runner_up_repeats AND runner_up_repeats - best_repeats >= 10 THEN",
+				                    "CASE WHEN repeats_as_stored = best_repeats THEN 0 WHEN repeats_day_later = best_repeats THEN 1 ELSE -1 END",
+				                    "END AS shift_days",
+				                    "FROM alignment_ranked",
+				                    ")",
+				                    "SELECT c.clndr_name AS clndr_name, c.clndr_type AS clndr_type, c.""date"" AS ""date"", c.day_of_week AS day_of_week,",
+				                    "c.working_day AS working_day, c.work_hours AS work_hours, c.exception_type AS exception_type, c.clndr_id_key AS clndr_id_key,",
+				                    "c.""MonthUpdate"" AS ""MonthUpdate"", c.day_of_week_num AS day_of_week_num, c.working_day_int AS working_day_int,",
+				                    "c.""__ProjectCode"" AS ""__ProjectCode"", COALESCE(f.shift_days, s.shift_days, 0) AS ""ExceptionDateShiftDays""",
+				                    "FROM calendar_rows c",
+				                    "LEFT JOIN alignment_decisions f ON NOT f.is_scope AND f.calendar_filename = c.calendar_filename",
+				                    "LEFT JOIN alignment_decisions s ON s.is_scope"
+				                },
+				                " "
+				            ),
+				            null
+				        ),
 				    NullBlanks = Table.TransformColumns(Source, List.Transform(Contract[Columns], (columnName as text) as list => {columnName, each if _ = null or _ = "" then null else _})),
-				    AthenaTyped = Table.TransformColumnTypes(NullBlanks, Contract[Types], "en-NZ"),
-				    AthenaWithProject = Table.AddColumn(AthenaTyped, "ProjectKey", each fnProjectIdentity([__ProjectCode]), type nullable text),
-				    AthenaFinal = Table.AddColumn(Table.SelectColumns(AthenaWithProject, List.Combine({Contract[Columns], {"ProjectKey"}})), "IsCsvSource", each false, type logical),
-				    Empty = Table.AddColumn(Table.AddColumn(fnXerCsvEmptyTable("11_XER_CALENDAR_DETAILED"), "IsCsvSource", each false, type logical), "ProjectKey", each null, type nullable text),
+				    AthenaTyped = Table.TransformColumnTypes(NullBlanks, List.Combine({Contract[Types], {{"ExceptionDateShiftDays", Int64.Type}}}), "en-NZ"),
+				    AthenaAligned = fnXerCalendarApplyExceptionShift(AthenaTyped),
+				    AthenaWithProject = Table.AddColumn(AthenaAligned, "ProjectKey", each fnProjectIdentity([__ProjectCode]), type nullable text),
+				    AthenaFinal = Table.AddColumn(Table.SelectColumns(AthenaWithProject, List.Combine({Contract[Columns], {"ExceptionDateShiftDays", "ProjectKey"}})), "IsCsvSource", each false, type logical),
+				    Empty = Table.AddColumn(Table.AddColumn(Table.AddColumn(fnXerCsvEmptyTable("11_XER_CALENDAR_DETAILED"), "ExceptionDateShiftDays", each 0, Int64.Type), "IsCsvSource", each false, type logical), "ProjectKey", each null, type nullable text),
 				    AthenaBranch = if XerCsvRouting[HasAthenaProjects] then AthenaFinal else Empty,
 				    Combined = if XerCsvRouting[IsActive] then Table.Combine({AthenaBranch, fnXerCsvLoadTable("11_XER_CALENDAR_DETAILED")}) else AthenaBranch,
 				    Final = Table.SelectColumns(Combined, ModelColumns, MissingField.Error)

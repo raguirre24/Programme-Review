@@ -1073,7 +1073,10 @@ expression fnXerCsvReadBundleTable =
 		            UniqueChecked = if List.Count(InvalidUniqueKeys) = 0 then Converted else error Error.Record("XerCsvData", "Current CSV bundle contains duplicate primary keys.", [BundleId = bundle[BundleId], TableName = tableName, Keys = Text.Combine(List.Transform(InvalidUniqueKeys, each Text.Combine(_, ", ")), "; ")]),
 		            Selected = Table.SelectColumns(UniqueChecked, Contract[Columns], MissingField.Error),
 		            CalendarChecked = if tableName = "11_XER_CALENDAR_DETAILED" then fnXerCsvValidateCalendarDetails(Selected, bundle) else Selected,
-		            WithProject = if tableName = "11_XER_CALENDAR_DETAILED" then Table.AddColumn(CalendarChecked, "ProjectKey", each fnProjectIdentity(bundle[ProjectCode]), type nullable text) else CalendarChecked,
+		            // Same dated-exception alignment as the Athena branch, voted per bundle (one snapshot).
+		            CalendarShift = fnXerCalendarDetectExceptionShift(CalendarChecked),
+		            CalendarAligned = if tableName = "11_XER_CALENDAR_DETAILED" then fnXerCalendarApplyExceptionShift(Table.AddColumn(CalendarChecked, "ExceptionDateShiftDays", each CalendarShift, Int64.Type)) else CalendarChecked,
+		            WithProject = if tableName = "11_XER_CALENDAR_DETAILED" then Table.AddColumn(CalendarAligned, "ProjectKey", each fnProjectIdentity(bundle[ProjectCode]), type nullable text) else CalendarAligned,
 		            WithSource = Table.AddColumn(WithProject, "IsCsvSource", each true, type logical)
 		        in
 		            WithSource
@@ -1092,9 +1095,9 @@ expression fnXerCsvLoadTable =
 		        let
 		            Contract = if Record.HasFields(XerCsvTableContracts, tableName) then Record.Field(XerCsvTableContracts, tableName) else error Error.Record("XerCsvContract", "Unknown Programme Review CSV table.", [TableName = tableName]),
 		            ContractModelColumns = Record.FieldOrDefault(Contract, "ModelColumns", Contract[Columns]),
-		            ModelColumns = List.Combine({ContractModelColumns, {"IsCsvSource"}, if tableName = "11_XER_CALENDAR_DETAILED" then {"ProjectKey"} else {}}),
+		            ModelColumns = List.Combine({ContractModelColumns, {"IsCsvSource"}, if tableName = "11_XER_CALENDAR_DETAILED" then {"ExceptionDateShiftDays", "ProjectKey"} else {}}),
 		            EmptySource = Table.AddColumn(fnXerCsvEmptyTable(tableName), "IsCsvSource", each true, type logical),
-		            Empty = if tableName = "11_XER_CALENDAR_DETAILED" then Table.AddColumn(EmptySource, "ProjectKey", each null, type nullable text) else EmptySource,
+		            Empty = if tableName = "11_XER_CALENDAR_DETAILED" then Table.AddColumn(Table.AddColumn(EmptySource, "ExceptionDateShiftDays", each 0, Int64.Type), "ProjectKey", each null, type nullable text) else EmptySource,
 		            Combined = if XerCsvRouting[IsActive] then Table.Combine(List.Transform(XerCsvSelectedBundles, each fnXerCsvReadBundleTable(_, tableName))) else Empty,
 		            Result = Table.SelectColumns(Combined, ModelColumns, MissingField.Error)
 		        in
@@ -1555,6 +1558,65 @@ expression fnXerCsvValidateCalendarDetails =
 		in
 		    Result
 	lineageTag: 3e4a582b-6556-49a8-bd8a-d01a249627f6
+	queryGroup: XER
+
+	annotation PBI_ResultType = Function
+
+expression fnXerCalendarApplyExceptionShift =
+		(source as table) as table =>
+		let
+		    // Moves each dated table-11 row by its ExceptionDateShiftDays: date, weekday number and weekday name together,
+		    // so day_of_week_num = WEEKDAY(date, 2) still holds. Undated weekday rules, blank dates and unrecognised
+		    // weekday values keep their source values; an inconsistent source row stays inconsistent for downstream checks.
+		    DayNames = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"},
+		    IsShifted = (row as record) as logical => row[date] <> null and row[ExceptionDateShiftDays] <> null and row[ExceptionDateShiftDays] <> 0,
+		    WithDate = Table.AddColumn(source, "__AlignedDate", each if IsShifted(_) then Date.AddDays([date], [ExceptionDateShiftDays]) else [date], type nullable date),
+		    WithNumber = Table.AddColumn(WithDate, "__AlignedDayOfWeekNum", each
+		        if IsShifted(_) and [day_of_week_num] <> null and [day_of_week_num] >= 1 and [day_of_week_num] <= 7
+		        then Number.Mod([day_of_week_num] - 1 + [ExceptionDateShiftDays] + 7, 7) + 1
+		        else [day_of_week_num], Int64.Type),
+		    WithName = Table.AddColumn(WithNumber, "__AlignedDayOfWeek", each
+		        let
+		            Position = if [day_of_week] = null then -1 else List.PositionOf(DayNames, Text.Trim([day_of_week]), Occurrence.First, Comparer.OrdinalIgnoreCase)
+		        in
+		            if IsShifted(_) and Position >= 0 then DayNames{Number.Mod(Position + [ExceptionDateShiftDays] + 7, 7)} else [day_of_week], type nullable text),
+		    Replaced = Table.RemoveColumns(WithName, {"date", "day_of_week_num", "day_of_week"}),
+		    Result = Table.RenameColumns(Replaced, {{"__AlignedDate", "date"}, {"__AlignedDayOfWeekNum", "day_of_week_num"}, {"__AlignedDayOfWeek", "day_of_week"}})
+		in
+		    Result
+	lineageTag: d0549439-b3be-42ac-bd0c-897171ba983d
+	queryGroup: XER
+
+	annotation PBI_ResultType = Function
+
+expression fnXerCalendarDetectExceptionShift =
+		(source as table) as number =>
+		let
+		    // Same vote as the table-11 Athena SQL, for one CSV bundle. P6 stores an exception only for a date whose hours differ
+		    // from its weekday rule, so the right alignment leaves the fewest exceptions repeating their standard weekday hours.
+		    // Returns +1 (exceptions stored a day early), -1 (a day late) or 0. A clear winner needs at most half the runner-up's
+		    // repeats and at least 10 fewer; otherwise the bundle keeps its source dates.
+		    IsWeekday = (value as any) as logical => value <> null and value >= 1 and value <= 7,
+		    Rules = Table.SelectRows(source, each [date] = null and [exception_type] = "Standard" and [clndr_id_key] <> null and [clndr_id_key] <> "" and IsWeekday([day_of_week_num]) and [work_hours] <> null),
+		    RuleGroups = Table.Group(Rules, {"clndr_id_key", "day_of_week_num"}, {{"RuleRows", Table.RowCount, Int64.Type}, {"RuleHours", each List.Min([work_hours]), type nullable number}}),
+		    UniqueRules = Table.SelectRows(RuleGroups, each [RuleRows] = 1),
+		    RuleHours = Record.FromList(UniqueRules[RuleHours], List.Transform(Table.ToRecords(UniqueRules), each [clndr_id_key] & "|" & Text.From([day_of_week_num]))),
+		    Exceptions = Table.SelectRows(source, each [date] <> null and [clndr_id_key] <> null and [clndr_id_key] <> "" and IsWeekday([day_of_week_num]) and [work_hours] <> null and [exception_type] <> "Exception - Invalid"),
+		    Repeats = (row as record, offset as number) as number =>
+		        let
+		            Hours = Record.FieldOrDefault(RuleHours, row[clndr_id_key] & "|" & Text.From(Number.Mod(row[day_of_week_num] - 1 + offset + 7, 7) + 1), null)
+		        in
+		            if Hours <> null and Number.Abs(Hours - row[work_hours]) < 0.0001 then 1 else 0,
+		    // One pass: {as stored, moved a day later, moved a day earlier}.
+		    Votes = List.Accumulate(Table.ToRecords(Exceptions), {0, 0, 0}, (state as list, row as record) as list =>
+		        {state{0} + Repeats(row, 0), state{1} + Repeats(row, 1), state{2} + Repeats(row, -1)}),
+		    Ranked = List.Sort(Votes),
+		    Best = Ranked{0},
+		    RunnerUp = Ranked{1},
+		    Decided = Best * 2 <= RunnerUp and RunnerUp - Best >= 10
+		in
+		    if not Decided or Votes{0} = Best then 0 else if Votes{1} = Best then 1 else -1
+	lineageTag: 71e6f450-d2db-438b-95e6-60d598c6b242
 	queryGroup: XER
 
 	annotation PBI_ResultType = Function

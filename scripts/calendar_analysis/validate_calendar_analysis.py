@@ -169,6 +169,61 @@ def verify_conservation_laws() -> dict:
     }
 
 
+def verify_workweek_mask_formula() -> int:
+    """The activity split's closed-form off-day count must equal a day-by-day count for every workweek and window.
+
+    DAX: FullWeeks * (7 - LEN(SUBSTITUTE(Mask, "0", ""))) + ExtraDays - LEN(SUBSTITUTE(MID(Mask & Mask, StartDow, ExtraDays), "0", ""))
+    """
+    checked = 0
+    for bits in range(128):
+        mask = format(bits, "07b")
+        for start_dow in range(1, 8):
+            for span in range(1, 50):
+                full_weeks, extra_days = divmod(span, 7)
+                segment = (mask + mask)[start_dow - 1:start_dow - 1 + extra_days]
+                closed_form = full_weeks * mask.count("0") + extra_days - len(segment.replace("0", ""))
+                brute = sum(1 for offset in range(span) if mask[(start_dow - 1 + offset) % 7] == "0")
+                assert closed_form == brute, f"Workweek mask formula wrong for {mask}, start {start_dow}, span {span}"
+                checked += 1
+    return checked
+
+
+def verify_calendar_alignment_wiring() -> None:
+    """Table 11 dated exceptions are realigned at load on both sources, and activity splits read real workweeks."""
+    expressions = (MODEL_DEF / "expressions.tmdl").read_text(encoding="utf-8")
+    table11 = (MODEL_DEF / "tables" / "11 XER_CALENDAR_DETAILED.tmdl").read_text(encoding="utf-8")
+    table10 = (MODEL_DEF / "tables" / "10 XER_CALENDARS.tmdl").read_text(encoding="utf-8")
+    for function in ("fnXerCalendarApplyExceptionShift", "fnXerCalendarDetectExceptionShift"):
+        assert f"expression {function} =" in expressions, f"Missing M function {function}"
+    apply_block = expressions.split("expression fnXerCalendarApplyExceptionShift =", 1)[1].split("\nexpression ", 1)[0]
+    for token in ("Date.AddDays([date], [ExceptionDateShiftDays])", "__AlignedDayOfWeekNum", "__AlignedDayOfWeek"):
+        assert token in apply_block, f"fnXerCalendarApplyExceptionShift must move date and both weekday columns ({token})"
+    # Athena: SQL votes per file, M applies it after typing; the shift column is part of the model contract.
+    assert "fnAthenaSource(\"11_xer_calendar_detailed\"" not in table11, "Table 11 must use its own alignment SQL"
+    assert "AthenaAligned = fnXerCalendarApplyExceptionShift(AthenaTyped)" in table11
+    assert '"ExceptionDateShiftDays", "IsCsvSource", "ProjectKey"' in table11
+    assert "column ExceptionDateShiftDays" in table11
+    # CSV: same vote per bundle, then the same apply function.
+    assert "CalendarShift = fnXerCalendarDetectExceptionShift(CalendarChecked)" in expressions
+    assert "fnXerCalendarApplyExceptionShift(Table.AddColumn(CalendarChecked, \"ExceptionDateShiftDays\"" in expressions
+    assert '{"ExceptionDateShiftDays", "ProjectKey"}' in expressions, "CSV table 11 model columns must carry ExceptionDateShiftDays"
+    # Workweek comes from table 11's seven weekday rules, never from the calendar name.
+    assert "column 'Workweek Mask' =" in table10 and "RELATEDTABLE('11 XER_CALENDAR_DETAILED')" in table10
+    blocks = measure_blocks((MODEL_DEF / "tables" / "XER Measures.tmdl").read_text(encoding="utf-8"))
+    for name in (
+        "CA Activity Standard Non-Working Days",
+        "CA Activity Exception Blackout Days",
+        "CA Activity Stretch Diagnosis",
+        "CA KPI Critical Exception Blackout Days",
+    ):
+        body = blocks[name]
+        assert "'10 XER_CALENDARS'[Workweek Mask]" in body, f"{name} must read '10 XER_CALENDARS'[Workweek Mask]"
+        assert "MID(WorkweekMask & WorkweekMask, StartDow, ExtraDays)" in body, f"{name} must use the mask off-day formula"
+    ca_text = "\n".join(body for name, body in blocks.items() if name.startswith("CA "))
+    for guess in ("CONTAINSSTRING(CalName", "SatCount", "SunCount", "Is7DayCal"):
+        assert guess not in ca_text, f"CA measures must not infer workweeks from calendar names ({guess})"
+
+
 def measure_blocks(text: str) -> dict[str, str]:
     """Map each measure name to its TMDL block (header, expression, properties; not the next object's /// lines).
 
@@ -446,6 +501,8 @@ def verify_pbir_page() -> dict:
 
 def main() -> None:
     conservation = verify_conservation_laws()
+    mask_cases = verify_workweek_mask_formula()
+    verify_calendar_alignment_wiring()
     ca_measure_count = verify_tmdl_measures()
     pbir_summary = verify_pbir_page()
 
@@ -465,6 +522,8 @@ def main() -> None:
             {
                 "status": "PASS",
                 "ca_measures_verified": ca_measure_count,
+                "workweek_mask_cases": mask_cases,
+                "table11_alignment_wiring": "PASS",
                 "tom_metadata_round_trip": integration_out["metadata_round_trip"]["status"],
                 "pbir": pbir_summary,
                 "conservation_laws": conservation,

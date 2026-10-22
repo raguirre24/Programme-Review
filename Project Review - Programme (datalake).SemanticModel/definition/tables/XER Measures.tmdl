@@ -972,7 +972,7 @@ table 'XER Measures'
 		displayFolder: Calendar Analysis
 		lineageTag: 902a19af-c354-5d50-b3d8-9ead430a8b3e
 
-	/// Routine non-working days (weekends or standard roster off-days) inside the activity's remaining execution window.
+	/// Routine non-working days (weekends or rostered off-days in the calendar's own seven weekday rules, '10 XER_CALENDARS'[Workweek Mask]) inside the activity's remaining execution window, capped at its non-working total. Blank when the calendar's weekday rules are unusable.
 	measure 'CA Activity Standard Non-Working Days' =
 			VAR TaskRows = COUNTROWS('01 XER_TASK')
 			RETURN
@@ -980,7 +980,7 @@ table 'XER Measures'
 			        TaskRows > 0 && ISINSCOPE('01 XER_TASK'[task_code]) && [CA Inspector Selection Match],
 			        MAXX(
 			            '01 XER_TASK',
-			            VAR CalName = '01 XER_TASK'[Calendar]
+			            VAR WorkweekMask = RELATED('10 XER_CALENDARS'[Workweek Mask])
 			            VAR StartDate = '01 XER_TASK'[Start]
 			            VAR FinishDate = '01 XER_TASK'[Finish]
 			            VAR DataDate = '01 XER_TASK'[data_date]
@@ -989,17 +989,16 @@ table 'XER Measures'
 			            RETURN
 			                IF(
 			                    NOT ISBLANK(EffectiveStart) && NOT ISBLANK(FinishDate)
-			                        && FinishDate >= EffectiveStart && NOT ISBLANK(RemWork),
+			                        && FinishDate >= EffectiveStart && NOT ISBLANK(RemWork) && LEN(WorkweekMask) = 7,
 			                    VAR ElapsedDays = INT(FinishDate - EffectiveStart) + 1
 			                    VAR TotalNonWork = MAX(0, ElapsedDays - ROUND(RemWork, 0))
 			                    VAR StartDow = WEEKDAY(EffectiveStart, 2)
 			                    VAR FullWeeks = QUOTIENT(ElapsedDays, 7)
 			                    VAR ExtraDays = MOD(ElapsedDays, 7)
-			                    VAR SatCount = FullWeeks + IF(MOD(6 - StartDow, 7) < ExtraDays, 1, 0)
-			                    VAR SunCount = FullWeeks + IF(MOD(7 - StartDow, 7) < ExtraDays, 1, 0)
-			                    VAR Is7DayCal = CONTAINSSTRING(CalName, "7") || CONTAINSSTRING(CalName, "24")
-			                    VAR Is6DayCal = NOT Is7DayCal && CONTAINSSTRING(CalName, "6")
-			                    VAR ExpectedOffDays = IF(Is7DayCal, 0, IF(Is6DayCal, SunCount, SatCount + SunCount))
+			                    // Off weekdays in each full week, plus those among the leftover days running from StartDow.
+			                    VAR ExpectedOffDays =
+			                        FullWeeks * (7 - LEN(SUBSTITUTE(WorkweekMask, "0", "")))
+			                            + ExtraDays - LEN(SUBSTITUTE(MID(WorkweekMask & WorkweekMask, StartDow, ExtraDays), "0", ""))
 			                    RETURN
 			                        MIN(TotalNonWork, ExpectedOffDays)
 			                )
@@ -1009,7 +1008,7 @@ table 'XER Measures'
 		displayFolder: Calendar Analysis
 		lineageTag: 13c054a8-9452-5706-a208-6d1b245ec494
 
-	/// Net non-working blackout days added by dated calendar exceptions (holidays, shutdowns, weather) inside the activity's remaining execution window.
+	/// Net non-working blackout days added by dated calendar exceptions (holidays, shutdowns, weather, alternate rostered Saturdays) inside the activity's remaining execution window: its non-working total less the calendar's routine off-days. Blank when the calendar's weekday rules are unusable.
 	measure 'CA Activity Exception Blackout Days' =
 			VAR TaskRows = COUNTROWS('01 XER_TASK')
 			RETURN
@@ -1017,7 +1016,7 @@ table 'XER Measures'
 			        TaskRows > 0 && ISINSCOPE('01 XER_TASK'[task_code]) && [CA Inspector Selection Match],
 			        MAXX(
 			            '01 XER_TASK',
-			            VAR CalName = '01 XER_TASK'[Calendar]
+			            VAR WorkweekMask = RELATED('10 XER_CALENDARS'[Workweek Mask])
 			            VAR StartDate = '01 XER_TASK'[Start]
 			            VAR FinishDate = '01 XER_TASK'[Finish]
 			            VAR DataDate = '01 XER_TASK'[data_date]
@@ -1026,17 +1025,15 @@ table 'XER Measures'
 			            RETURN
 			                IF(
 			                    NOT ISBLANK(EffectiveStart) && NOT ISBLANK(FinishDate)
-			                        && FinishDate >= EffectiveStart && NOT ISBLANK(RemWork),
+			                        && FinishDate >= EffectiveStart && NOT ISBLANK(RemWork) && LEN(WorkweekMask) = 7,
 			                    VAR ElapsedDays = INT(FinishDate - EffectiveStart) + 1
 			                    VAR TotalNonWork = MAX(0, ElapsedDays - ROUND(RemWork, 0))
 			                    VAR StartDow = WEEKDAY(EffectiveStart, 2)
 			                    VAR FullWeeks = QUOTIENT(ElapsedDays, 7)
 			                    VAR ExtraDays = MOD(ElapsedDays, 7)
-			                    VAR SatCount = FullWeeks + IF(MOD(6 - StartDow, 7) < ExtraDays, 1, 0)
-			                    VAR SunCount = FullWeeks + IF(MOD(7 - StartDow, 7) < ExtraDays, 1, 0)
-			                    VAR Is7DayCal = CONTAINSSTRING(CalName, "7") || CONTAINSSTRING(CalName, "24")
-			                    VAR Is6DayCal = NOT Is7DayCal && CONTAINSSTRING(CalName, "6")
-			                    VAR ExpectedOffDays = IF(Is7DayCal, 0, IF(Is6DayCal, SunCount, SatCount + SunCount))
+			                    VAR ExpectedOffDays =
+			                        FullWeeks * (7 - LEN(SUBSTITUTE(WorkweekMask, "0", "")))
+			                            + ExtraDays - LEN(SUBSTITUTE(MID(WorkweekMask & WorkweekMask, StartDow, ExtraDays), "0", ""))
 			                    VAR StdNonWork = MIN(TotalNonWork, ExpectedOffDays)
 			                    RETURN
 			                        MAX(0, TotalNonWork - StdNonWork)
@@ -1108,6 +1105,7 @@ table 'XER Measures'
 			        MAXX(
 			            '01 XER_TASK',
 			            VAR CalName = '01 XER_TASK'[Calendar]
+			            VAR WorkweekMask = RELATED('10 XER_CALENDARS'[Workweek Mask])
 			            VAR StartDate = '01 XER_TASK'[Start]
 			            VAR FinishDate = '01 XER_TASK'[Finish]
 			            VAR DataDate = '01 XER_TASK'[data_date]
@@ -1122,11 +1120,9 @@ table 'XER Measures'
 			                    VAR StartDow = WEEKDAY(EffectiveStart, 2)
 			                    VAR FullWeeks = QUOTIENT(ElapsedDays, 7)
 			                    VAR ExtraDays = MOD(ElapsedDays, 7)
-			                    VAR SatCount = FullWeeks + IF(MOD(6 - StartDow, 7) < ExtraDays, 1, 0)
-			                    VAR SunCount = FullWeeks + IF(MOD(7 - StartDow, 7) < ExtraDays, 1, 0)
-			                    VAR Is7DayCal = CONTAINSSTRING(CalName, "7") || CONTAINSSTRING(CalName, "24")
-			                    VAR Is6DayCal = NOT Is7DayCal && CONTAINSSTRING(CalName, "6")
-			                    VAR ExpectedOffDays = IF(Is7DayCal, 0, IF(Is6DayCal, SunCount, SatCount + SunCount))
+			                    VAR ExpectedOffDays =
+			                        FullWeeks * (7 - LEN(SUBSTITUTE(WorkweekMask, "0", "")))
+			                            + ExtraDays - LEN(SUBSTITUTE(MID(WorkweekMask & WorkweekMask, StartDow, ExtraDays), "0", ""))
 			                    VAR StdNonWork = MIN(TotalNonWork, ExpectedOffDays)
 			                    VAR ExcBlackouts = MAX(0, TotalNonWork - StdNonWork)
 			                    VAR RemWorkText =
@@ -1140,6 +1136,8 @@ table 'XER Measures'
 			                            TRUE(),
 			                            ISBLANK(CalName),
 			                                "Missing calendar (" & FORMAT(ElapsedDays, "#,0") & " calendar days)",
+			                            LEN(WorkweekMask) <> 7,
+			                                "Calendar weekday rules unavailable: " & FORMAT(TotalNonWork, "#,0") & " non-working days (" & RemWorkText & " work days in " & FORMAT(ElapsedDays, "#,0") & " calendar days)",
 			                            ExcBlackouts > 0 && StdNonWork > 0,
 			                                "+" & FORMAT(ExcBlackouts, "#,0") & " holidays/exceptions & +" & FORMAT(StdNonWork, "#,0") & " weekends/off-days (" & RemWorkText & " work days in " & FORMAT(ElapsedDays, "#,0") & " calendar days)",
 			                            ExcBlackouts > 0,
@@ -1170,14 +1168,14 @@ table 'XER Measures'
 		displayFolder: Calendar Analysis
 		lineageTag: dba01ee1-cf35-5f02-8ae8-03d7da1ef6b6
 
-	/// Total dated exception blackout days absorbed inside the remaining execution windows of incomplete critical activities (Total Float <= 0).
+	/// Total dated exception blackout days absorbed inside the remaining execution windows of incomplete critical activities (Total Float <= 0), measured against each calendar's own weekday rules; activities whose calendar rules are unusable add nothing.
 	measure 'CA KPI Critical Exception Blackout Days' =
 			VAR CriticalTasks =
 			    CALCULATETABLE(
 			        SUMMARIZE(
 			            '01 XER_TASK',
 			            '01 XER_TASK'[task_id_key],
-			            '01 XER_TASK'[Calendar],
+			            '10 XER_CALENDARS'[Workweek Mask],
 			            '01 XER_TASK'[Start],
 			            '01 XER_TASK'[Finish],
 			            '01 XER_TASK'[data_date],
@@ -1193,7 +1191,7 @@ table 'XER Measures'
 			    COALESCE(
 			        SUMX(
 			            CriticalTasks,
-			            VAR CalName = '01 XER_TASK'[Calendar]
+			            VAR WorkweekMask = '10 XER_CALENDARS'[Workweek Mask]
 			            VAR StartDate = '01 XER_TASK'[Start]
 			            VAR FinishDate = '01 XER_TASK'[Finish]
 			            VAR DataDate = '01 XER_TASK'[data_date]
@@ -1201,17 +1199,16 @@ table 'XER Measures'
 			            VAR EffectiveStart = IF(NOT ISBLANK(StartDate) && NOT ISBLANK(DataDate), MAX(StartDate, DataDate), StartDate)
 			            RETURN
 			                IF(
-			                    NOT ISBLANK(EffectiveStart) && NOT ISBLANK(FinishDate) && FinishDate >= EffectiveStart && NOT ISBLANK(RemWork),
+			                    NOT ISBLANK(EffectiveStart) && NOT ISBLANK(FinishDate) && FinishDate >= EffectiveStart && NOT ISBLANK(RemWork)
+			                        && LEN(WorkweekMask) = 7,
 			                    VAR SpanDays = INT(FinishDate - EffectiveStart) + 1
 			                    VAR TotalNonWork = MAX(0, SpanDays - ROUND(RemWork, 0))
 			                    VAR StartDow = WEEKDAY(EffectiveStart, 2)
 			                    VAR FullWeeks = QUOTIENT(SpanDays, 7)
 			                    VAR ExtraDays = MOD(SpanDays, 7)
-			                    VAR SatCount = FullWeeks + IF(MOD(6 - StartDow, 7) < ExtraDays, 1, 0)
-			                    VAR SunCount = FullWeeks + IF(MOD(7 - StartDow, 7) < ExtraDays, 1, 0)
-			                    VAR Is7DayCal = CONTAINSSTRING(CalName, "7") || CONTAINSSTRING(CalName, "24")
-			                    VAR Is6DayCal = NOT Is7DayCal && CONTAINSSTRING(CalName, "6")
-			                    VAR ExpectedOffDays = IF(Is7DayCal, 0, IF(Is6DayCal, SunCount, SatCount + SunCount))
+			                    VAR ExpectedOffDays =
+			                        FullWeeks * (7 - LEN(SUBSTITUTE(WorkweekMask, "0", "")))
+			                            + ExtraDays - LEN(SUBSTITUTE(MID(WorkweekMask & WorkweekMask, StartDow, ExtraDays), "0", ""))
 			                    VAR StdNonWork = MIN(TotalNonWork, ExpectedOffDays)
 			                    RETURN MAX(0, TotalNonWork - StdNonWork),
 			                    0

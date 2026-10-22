@@ -106,4 +106,4 @@ Fixes, in order of preference:
    - When `XerCsvEnabled = false` or `XerCsvProjectCodes` is blank, the CSV branch returns a typed empty table without calling `SharePoint.Contents`.
    - Conversely, when `SelectedProjects` is a finite list that is 100% covered by `XerCsvRouting`, the Athena branch returns a typed empty table without opening `AthenaDB`.
 5. **Testing SQL Inside M Expressions**:
-   - After any edit to `AthenaScopeSql` in `expressions.tmdl` or the native SQL in `01 XER_TASK.tmdl`, run `python scripts/test_prefilter.py`.
+   - After any edit to `AthenaScopeSql` in `expressions.tmdl` or the native SQL in `01 XER_TASK.tmdl` or `11 XER_CALENDAR_DETAILED.tmdl`, run `python scripts/test_prefilter.py`.

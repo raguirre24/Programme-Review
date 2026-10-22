@@ -26,6 +26,42 @@ table '10 XER_CALENDARS'
 
 		annotation SummarizationSetBy = Automatic
 
+	/// Standard workweek Monday to Sunday from table 11's seven undated weekday rules: "1" working (hours > 0), "0" non-working. Blank unless exactly one usable rule exists for each weekday. Calendar Analysis activity measures read it with RELATED, so they never guess a workweek from the calendar name.
+	column 'Workweek Mask' =
+			VAR Rules =
+			    FILTER(
+			        RELATEDTABLE('11 XER_CALENDAR_DETAILED'),
+			        ISBLANK('11 XER_CALENDAR_DETAILED'[date])
+			            && '11 XER_CALENDAR_DETAILED'[exception_type] == "Standard"
+			    )
+			VAR UsableRules =
+			    FILTER(
+			        Rules,
+			        NOT ISBLANK('11 XER_CALENDAR_DETAILED'[work_hours])
+			            && '11 XER_CALENDAR_DETAILED'[work_hours] >= 0
+			            && '11 XER_CALENDAR_DETAILED'[day_of_week_num] >= 1
+			            && '11 XER_CALENDAR_DETAILED'[day_of_week_num] <= 7
+			    )
+			VAR Complete =
+			    COUNTROWS(Rules) = 7
+			        && COUNTROWS(UsableRules) = 7
+			        && COUNTROWS(DISTINCT(SELECTCOLUMNS(UsableRules, "__Dow", '11 XER_CALENDAR_DETAILED'[day_of_week_num]))) = 7
+			RETURN
+			    IF(
+			        Complete,
+			        CONCATENATEX(
+			            UsableRules,
+			            IF('11 XER_CALENDAR_DETAILED'[work_hours] > 0, "1", "0"),
+			            "",
+			            '11 XER_CALENDAR_DETAILED'[day_of_week_num], ASC
+			        )
+			    )
+		isHidden
+		lineageTag: f131db81-b62d-41c9-b4ae-e4d99e564e0d
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
 	partition '10 XER_CALENDARS' = m
 		mode: import
 		queryGroup: XER

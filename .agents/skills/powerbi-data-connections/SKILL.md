@@ -104,4 +104,4 @@ Create these parameters in every model: `pEnvironment`, plus one per connection 
 3. **Whole-Project CSV Routing & Service Refresh Rules**:
    - `XerCsvRouting` routes explicitly listed `XerCsvProjectCodes` to SharePoint CSV bundles and excludes both `C` and `J` aliases from `AthenaScopeSql`.
    - Switching `XerCsvProjectCodes` in the Power BI Service requires a full transactional model refresh (`type=full`, `commitMode=transactional`, low `maxParallelism` such as `2` or `3`); never use partial or single-table refresh when changing source ownership.
-   - Whenever modifying `AthenaScopeSql` or `01 XER_TASK` SQL, run `python scripts/test_prefilter.py` to validate the translated Trino SQL against the DuckDB fixture suite across all 11 consumer queries.
+   - Whenever modifying `AthenaScopeSql`, `01 XER_TASK` SQL or `11 XER_CALENDAR_DETAILED` SQL, run `python scripts/test_prefilter.py` to validate the translated Trino SQL against the DuckDB fixture suite across all 11 consumer queries.
