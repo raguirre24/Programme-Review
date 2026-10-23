@@ -3,6 +3,7 @@
   "displayName": "Close Project Menu - Calendar Analysis",
   "name": "ca92closebm000000092",
   "options": {
+    "applyOnlyToTargetVisuals": true,
     "targetVisualNames": [
       "ca10menubg0000000010",
       "ca11state00000000011",

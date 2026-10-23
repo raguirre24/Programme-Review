@@ -19,7 +19,9 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 DEFINITION = REPO / "Project Review - Programme (datalake).Report" / "definition"
-RESOURCES = "099895b98057d0135349"
+# Source of the shared context slicers and the histogram chart template: the merged Resources page
+# (merge_resources_page.py moved the former Resources page's histogram here).
+RESOURCES = "4c53a34bba9dcc7f3e8c"
 MEASURES = "Resource Scenario Measures"
 SCHEMA = "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/"
 
@@ -197,8 +199,8 @@ def context_slicers() -> None:
     """Reuse the report's existing synced context without including it in Reset."""
     source = DEFINITION / "pages" / RESOURCES / "visuals"
     for label, old_id, caption, x, width in [
-        ("context-project", "a4265e6358b19cd956ac", "Project", 422, 810),
-        ("context-update", "720a90a0d00b39375588", "Monthly update", 1244, 518),
+        ("context-project", "d80c22aa4fc16a4ee9d2", "Project", 422, 810),
+        ("context-update", "ad7400649f94db2c6276", "Monthly update", 1244, 518),
     ]:
         item = read(source / old_id / "visual.json")
         item["name"] = identifier(label)
@@ -221,7 +223,7 @@ def context_slicers() -> None:
         for f in item.get("filterConfig", {}).get("filters", []):
             f["name"] = identifier(label + "-filter-" + f["name"])
         VISUALS[label] = item
-    state = read(source / "59f0493f357917eb627a" / "visual.json")
+    state = read(source / "bf2c5a9d2aaf3cf456d7" / "visual.json")
     state["name"] = identifier("context-state")
     state["isHidden"] = True
     state.pop("parentGroupName", None)
@@ -338,7 +340,7 @@ def build_page(output_dir: Path | None = None) -> None:
 
     textbox("calendar-basis", "Calendar basis: weekly rules and dated exceptions in the selected update. Future holidays are included only when present in that calendar.",
             422, 1026, 1340, 42, size=11)
-    reset = read(source / "422b7d5c5696862377d2" / "visual.json")
+    reset = read(source / "fa323b6b39cecca295b5" / "visual.json")  # project-menu close button as the button template
     reset["name"] = identifier("reset-button")
     reset["position"] = {"x": 24, "y": 990, "z": 13000, "height": 44, "width": 368, "tabOrder": 13}
     reset.pop("isHidden", None)
@@ -347,7 +349,7 @@ def build_page(output_dir: Path | None = None) -> None:
     VISUALS["reset-button"] = reset
 
     # Both automatic page navigators retain their existing show/hide policy.
-    for label, old in [("home-navigation", "fb6dc1ae9a97dc777817"), ("page-navigation", "139185c162e95a768ece")]:
+    for label, old in [("home-navigation", "f65942cc79122e1d5341"), ("page-navigation", "74e2064f8f7b491836ed")]:
         item = read(source / old / "visual.json")
         item["name"] = identifier(label)
         item["position"]["tabOrder"] = 40 if label == "home-navigation" else 41
@@ -369,9 +371,9 @@ def build_page(output_dir: Path | None = None) -> None:
 
     metadata_path = DEFINITION / "pages" / "pages.json"
     metadata = read(metadata_path)
-    order = [p for p in metadata["pageOrder"] if p != PAGE]
-    order.insert(order.index(RESOURCES) + 1, PAGE)
-    metadata["pageOrder"] = order
+    # PAGE is the merged Resources page itself (RESOURCES), so it keeps its place in the page order.
+    if PAGE not in metadata["pageOrder"]:
+        metadata["pageOrder"].append(PAGE)
     write(output_definition / "pages" / "pages.json", metadata)
 
     states = {}

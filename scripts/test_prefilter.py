@@ -202,6 +202,30 @@ def duck_sql(sql):
     return sqlglot.parse_one(sql, read="trino").sql(dialect="duckdb")
 
 
+def inlined_table_scans(sql):
+    """Count base-table scans once every CTE reference is expanded, as Athena (Trino) inlines CTEs."""
+    tree = sqlglot.parse_one(sql, read="trino")
+    ctes = {cte.alias_or_name: cte.this for cte in tree.args["with_"].expressions}
+    expanded = {}
+
+    def scans(node):
+        total = {}
+        for table in node.find_all(sqlglot.exp.Table):
+            parts = expand(table.name) if table.name in ctes else {table.name: 1}
+            for name, count in parts.items():
+                total[name] = total.get(name, 0) + count
+        return total
+
+    def expand(name):
+        if name not in expanded:
+            expanded[name] = scans(ctes[name])
+        return expanded[name]
+
+    body = tree.copy()
+    body.set("with_", None)
+    return scans(body)
+
+
 def task_stage_sql(stage, projection="*", **parameters):
     """Retain actual CTE ASTs through the requested stage, replace final SELECT."""
     parsed = sqlglot.parse_one(task_sql(**parameters), read="trino")
@@ -1145,6 +1169,29 @@ class AuditTests(Fixtures):
         self.assertEqual({row[2] for row in rows}, {"CJ:4017"})
         self.assertEqual({row[3] for row in rows}, {"C"})
         self.assertEqual({row[5] for row in rows}, {"J4017"})
+
+
+class ScopePlanTests(unittest.TestCase):
+    """Athena inlines each CTE reference; a second reference inside the scope multiplies its metadata scans in every
+    consumer (TASK expands the scope about 30 times). Doubling them failed the Service refresh with "Query exhausted
+    resources at this scale factor", so the chain to kept_filenames must read each metadata table once."""
+
+    def test_scope_reads_each_metadata_table_once(self):
+        for limit in ("ALL", "5"):
+            with self.subTest(limit=limit):
+                scans = inlined_table_scans(scope_sql(latest_updates=limit) + "SELECT filename FROM kept_filenames")
+                self.assertEqual(scans, {"02_xer_project": 1, "dbo_project": 1})
+
+    def test_consumers_carry_one_metadata_read_per_scope_copy(self):
+        scans = inlined_table_scans(fn_athena_sql("06_xer_predecessor", latest_updates="5"))
+        self.assertEqual(scans, {"06_xer_predecessor": 1, "02_xer_project": 1, "dbo_project": 1})
+        scans = inlined_table_scans(calendar_sql(latest_updates="5"))
+        self.assertEqual(scans["02_xer_project"], scans["11_xer_calendar_detailed"])
+        self.assertEqual(scans["dbo_project"], scans["11_xer_calendar_detailed"])
+        scans = inlined_table_scans(task_sql(latest_updates="5"))
+        self.assertEqual(scans["02_xer_project"], scans["01_xer_task"])
+        # TASK also joins dbo_project twice per copy for project names (j_proj, c_proj).
+        self.assertEqual(scans["dbo_project"], 3 * scans["01_xer_task"])
 
 
 class UpdateLimitTests(Fixtures):

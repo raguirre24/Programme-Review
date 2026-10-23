@@ -778,7 +778,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#2B2E34'"
+                      "Value": "'#0F172A'"
                     }
                   }
                 }
@@ -789,7 +789,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#7A1008'"
+                      "Value": "'#1E3A8A'"
                     }
                   }
                 }
@@ -800,7 +800,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#636975'"
+                      "Value": "'#065F46'"
                     }
                   }
                 }
@@ -811,7 +811,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#DE2E21'"
+                      "Value": "'#FCD34D'"
                     }
                   }
                 }
@@ -822,7 +822,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#FF5A47'"
+                      "Value": "'#BFDBFE'"
                     }
                   }
                 }
@@ -833,7 +833,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#ABB1BD'"
+                      "Value": "'#A7F3D0'"
                     }
                   }
                 }
@@ -844,7 +844,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#F3F4F6'"
+                      "Value": "'#F1F5F9'"
                     }
                   }
                 }
@@ -891,7 +891,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#000000'"
+                      "Value": "'#111827'"
                     }
                   }
                 }
@@ -901,9 +901,30 @@
               "solid": {
                 "color": {
                   "expr": {
-                    "ThemeDataColor": {
-                      "ColorId": 1,
-                      "Percent": 0
+                    "Literal": {
+                      "Value": "'#111827'"
+                    }
+                  }
+                }
+              }
+            },
+            "level3Colour": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#111827'"
+                    }
+                  }
+                }
+              }
+            },
+            "level6Colour": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#111827'"
                     }
                   }
                 }

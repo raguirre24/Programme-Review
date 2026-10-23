@@ -384,10 +384,10 @@ def verify_pbir_page() -> dict:
     order = pages_meta["pageOrder"]
     assert PAGE_ID in order, f"Page {PAGE_ID} missing from pages.json"
     rc_idx = order.index("4c53a34bba9dcc7f3e8c")
-    assert order[rc_idx + 1] == PAGE_ID, "Calendar Analysis must follow Resource Simulator in pageOrder"
+    assert order[rc_idx + 1] == PAGE_ID, "Calendar Analysis must follow Resources in pageOrder"
 
     rc_page_json = json.loads((REPORT_DEF / "pages" / "4c53a34bba9dcc7f3e8c" / "page.json").read_text(encoding="utf-8"))
-    assert rc_page_json["displayName"] == "Resource Simulator"
+    assert rc_page_json["displayName"] == "Resources"
 
     page_dir = REPORT_DEF / "pages" / PAGE_ID
     page_json = json.loads((page_dir / "page.json").read_text(encoding="utf-8"))
@@ -406,7 +406,8 @@ def verify_pbir_page() -> dict:
 
     # Check visuals and bounds
     visual_files = sorted((page_dir / "visuals").glob("*/visual.json"))
-    assert len(visual_files) == 25, f"Expected 25 visuals on Calendar Analysis, found {len(visual_files)}"
+    # 25 Calendars-view and shared visuals, 9 Delay-view visuals and the view navigator (generate_stretch_view.py).
+    assert len(visual_files) == 35, f"Expected 35 visuals on Calendar Analysis, found {len(visual_files)}"
 
     sync_groups = set()
     visual_types = {}
@@ -491,6 +492,14 @@ def verify_pbir_page() -> dict:
     bm_meta = json.loads((REPORT_DEF / "bookmarks" / "bookmarks.json").read_text(encoding="utf-8"))
     bm_names = {item["name"] for item in bm_meta["items"]}
     assert {"ca91openbm0000000091", "ca92closebm000000092"} <= bm_names, "Missing Calendar Analysis bookmarks"
+    # Calendars / Delay view switch (contracts in validate_calendar_stretch.py); the project menu must not reset the view.
+    view_groups = [item for item in bm_meta["items"] if item.get("name") == "ca95viewgrp000000095"]
+    assert view_groups and view_groups[0].get("children") == ["ca93calview000000093", "ca94delayvw000000094"], (
+        "Calendar Analysis needs the 'Calendars' / 'Delay' bookmark group")
+    assert visual_types["ca26viewnav000000026"] == "bookmarkNavigator"
+    for menu_bookmark in ("ca91openbm0000000091", "ca92closebm000000092"):
+        menu_options = json.loads((REPORT_DEF / "bookmarks" / f"{menu_bookmark}.bookmark.json").read_text(encoding="utf-8"))["options"]
+        assert menu_options.get("applyOnlyToTargetVisuals") is True, f"{menu_bookmark} must apply only to the project menu visuals"
 
     return {
         "page_id": PAGE_ID,

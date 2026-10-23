@@ -6,7 +6,7 @@ expression SharePointSite = "https://accionaau-my.sharepoint.com/personal/ricard
 
 	annotation PBI_ResultType = Text
 
-expression SelectedProjects = "J2060" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+expression SelectedProjects = "C6012, J2060" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
 	lineageTag: a1b2c3d4-5e6f-7a8b-9c0d-ef1234567890
 	queryGroup: Database
 
@@ -119,7 +119,7 @@ expression AthenaScopeSql =
 		        else error "LatestUpdateCount must be ALL or a whole number from 1 to 999.",
 		    // ALL keeps the whole baseline window; a number keeps the anchor baseline plus the N latest dated updates
 		    // per project identity and programme type, so a shorter history simply loads what it has.
-		    UpdateLimitFilter = if UpdateLimit = null then "TRUE" else "w.is_anchor OR r.update_rank <= " & Text.From(UpdateLimit),
+		    UpdateLimitFilter = if UpdateLimit = null then "TRUE" else "is_anchor OR update_rank <= " & Text.From(UpdateLimit),
 		    // Selection is by project family; exclusions and CSV ownership still remove both aliases.
 		    FilterList = fnProjectCodeAliases(ProjectFilterList),
 		    ExclusionList = ProjectExclusionList,
@@ -138,6 +138,9 @@ expression AthenaScopeSql =
 		    // A CJ identity has only C/J aliases; MAX selects J. An EXACT identity has one code.
 		    // Require a named dbo_project match before preference and baseline ranking.
 		    // Each native table query reuses this SQL; it is not a cross-query cache.
+		    // Athena inlines every CTE reference and TASK expands this scope about 30 times, so the chain to kept_filenames
+		    // references each CTE once (window functions, not self-joins). A second reference doubled the metadata scans and
+		    // the Service refresh failed with "Query exhausted resources at this scale factor" (2026-10).
 		    Sql =
 		        "WITH candidate_files AS ( " &
 		        "    SELECT DISTINCT filename, " &
@@ -166,22 +169,22 @@ expression AthenaScopeSql =
 		        "    SELECT f.filename, f.monthupdate, f.project_code, f.programme_type, f.project_identity " &
 		        "    FROM identified_files f " &
 		        "    INNER JOIN registered_projects r ON r.project_identity = f.project_identity " &
-		        "), preferred_projects AS ( " &
-		        "    SELECT project_identity, programme_type, " &
-		        "        CASE WHEN project_identity = 'CJ:6012' THEN MIN(project_code) " &
-		        "            ELSE MAX(project_code) END AS preferred_project_code " &
+		        "), preference_ranked_files AS ( " &
+		        "    SELECT filename, monthupdate, project_code, programme_type, project_identity, " &
+		        "        CASE WHEN project_identity = 'CJ:6012' " &
+		        "            THEN MIN(project_code) OVER (PARTITION BY project_identity, programme_type) " &
+		        "            ELSE MAX(project_code) OVER (PARTITION BY project_identity, programme_type) END AS preferred_project_code " &
 		        "    FROM eligible_files " &
-		        "    GROUP BY project_identity, programme_type " &
+		        "), preferred_projects AS ( " &
+		        "    SELECT DISTINCT project_identity, programme_type, preferred_project_code " &
+		        "    FROM preference_ranked_files " &
 		        "), preferred_files AS ( " &
-		        "    SELECT f.filename, f.monthupdate, f.project_code, f.programme_type, f.project_identity, " &
+		        "    SELECT filename, monthupdate, project_code, programme_type, project_identity, " &
 		        "        REGEXP_REPLACE( " &
-		        "            REGEXP_REPLACE(TRIM(UPPER(f.filename)), '(_[0-9]{8})?\.XER$', ''), " &
+		        "            REGEXP_REPLACE(TRIM(UPPER(filename)), '(_[0-9]{8})?\.XER$', ''), " &
 		        "            '^[^-]+-[^-]+-', '') AS tag " &
-		        "    FROM eligible_files f " &
-		        "    INNER JOIN preferred_projects p " &
-		        "        ON f.project_identity = p.project_identity " &
-		        "        AND f.programme_type = p.programme_type " &
-		        "        AND f.project_code = p.preferred_project_code " &
+		        "    FROM preference_ranked_files " &
+		        "    WHERE project_code = preferred_project_code " &
 		        "), file_info AS ( " &
 		        "    SELECT filename, monthupdate, project_code, programme_type, project_identity, tag, " &
 		        "        REGEXP_LIKE(tag, '^BL[0-9]+(-[A-Z])?$') AS is_baseline, " &
@@ -190,40 +193,37 @@ expression AthenaScopeSql =
 		        "        NULLIF(REGEXP_EXTRACT(tag, '^BL[0-9]+-([A-Z])$', 1), '') AS bl_revision " &
 		        "    FROM preferred_files " &
 		        "), ranked_baselines AS ( " &
-		        "    SELECT filename, project_identity, programme_type, monthupdate, " &
-		        "        ROW_NUMBER() OVER ( " &
-		        "            PARTITION BY project_identity, programme_type " &
+		        "    SELECT filename, monthupdate, project_code, programme_type, project_identity, tag, is_baseline, " &
+		        "        CASE WHEN is_baseline THEN ROW_NUMBER() OVER ( " &
+		        "            PARTITION BY project_identity, programme_type, is_baseline " &
 		        "            ORDER BY bl_number DESC NULLS LAST, bl_revision DESC NULLS LAST, " &
 		        "                monthupdate DESC NULLS LAST, filename DESC " &
-		        "        ) AS bl_rank " &
+		        "        ) END AS bl_rank " &
 		        "    FROM file_info " &
-		        "    WHERE is_baseline = TRUE " &
-		        "), latest_baseline AS ( " &
-		        "    SELECT project_identity, programme_type, monthupdate AS anchor_date, filename AS anchor_filename " &
+		        "), anchored_files AS ( " &
+		        "    SELECT filename, monthupdate, project_code, programme_type, project_identity, tag, is_baseline, " &
+		        "        MAX(CASE WHEN bl_rank = 1 THEN filename END) OVER (PARTITION BY project_identity, programme_type) AS anchor_filename, " &
+		        "        MAX(CASE WHEN bl_rank = 1 THEN monthupdate END) OVER (PARTITION BY project_identity, programme_type) AS anchor_date " &
 		        "    FROM ranked_baselines " &
-		        "    WHERE bl_rank = 1 " &
 		        "), window_files AS ( " &
-		        "    SELECT f.filename, f.monthupdate, f.project_code, f.programme_type, f.project_identity, f.tag, f.is_baseline, " &
-		        "        COALESCE(f.filename = lb.anchor_filename, FALSE) AS is_anchor " &
-		        "    FROM file_info f " &
-		        "    LEFT JOIN latest_baseline lb " &
-		        "        ON f.project_identity = lb.project_identity AND f.programme_type = lb.programme_type " &
-		        "    WHERE lb.anchor_date IS NULL " &
-		        "        OR f.filename = lb.anchor_filename " &
-		        "        OR (f.is_baseline = FALSE AND f.monthupdate > lb.anchor_date) " &
-		        "        OR f.monthupdate IS NULL " &
+		        "    SELECT filename, monthupdate, project_code, programme_type, project_identity, tag, is_baseline, " &
+		        "        COALESCE(filename = anchor_filename, FALSE) AS is_anchor, " &
+		        "        MAX(monthupdate) OVER (PARTITION BY filename) AS file_month " &
+		        "    FROM anchored_files " &
+		        "    WHERE anchor_date IS NULL " &
+		        "        OR filename = anchor_filename " &
+		        "        OR (is_baseline = FALSE AND monthupdate > anchor_date) " &
+		        "        OR monthupdate IS NULL " &
 		        "), ranked_updates AS ( " &
-		        "    SELECT filename, " &
-		        "        DENSE_RANK() OVER ( " &
-		        "            PARTITION BY project_identity, programme_type ORDER BY MAX(monthupdate) DESC " &
-		        "        ) AS update_rank " &
+		        "    SELECT filename, project_code, programme_type, project_identity, tag, is_anchor, " &
+		        "        CASE WHEN is_baseline = FALSE AND file_month IS NOT NULL THEN DENSE_RANK() OVER ( " &
+		        "            PARTITION BY project_identity, programme_type, is_baseline = FALSE AND file_month IS NOT NULL " &
+		        "            ORDER BY file_month DESC " &
+		        "        ) END AS update_rank " &
 		        "    FROM window_files " &
-		        "    WHERE is_baseline = FALSE AND monthupdate IS NOT NULL " &
-		        "    GROUP BY filename, project_identity, programme_type " &
 		        "), kept_filenames AS ( " &
-		        "    SELECT DISTINCT w.filename, w.project_code, w.programme_type, w.project_identity, w.tag " &
-		        "    FROM window_files w " &
-		        "    LEFT JOIN ranked_updates r ON r.filename = w.filename " &
+		        "    SELECT DISTINCT filename, project_code, programme_type, project_identity, tag " &
+		        "    FROM ranked_updates " &
 		        "    WHERE " & UpdateLimitFilter & " " &
 		        ")  "
 		in

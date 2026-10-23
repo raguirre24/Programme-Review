@@ -19,22 +19,10 @@
       "name": "d85911f94d2be6576068"
     },
     {
-      "name": "21f27f8d8881933c3479"
-    },
-    {
-      "name": "7497750c116260029497"
-    },
-    {
       "name": "7ba233f17b73db50f64d"
     },
     {
       "name": "ee89dfac45f8e8775b22"
-    },
-    {
-      "name": "4310153686a4d92c6613"
-    },
-    {
-      "name": "75858eb0aea26f8888e2"
     },
     {
       "name": "1a93e9bf0e2fc3eaa8d3"
@@ -71,12 +59,6 @@
     },
     {
       "name": "39fae1e9fa924881f6b5"
-    },
-    {
-      "name": "dbbe1f1552457b289208"
-    },
-    {
-      "name": "f756559112979fc8347b"
     },
     {
       "name": "26964cc22a9a41a4b93e"
@@ -123,8 +105,9 @@
     },
     {
       "name": "c4ae381d0adac7597341",
-      "displayName": "Resource Playground view",
+      "displayName": "Resources view",
       "children": [
+        "11900b03b65f2acadf0c",
         "3fc3d41f00865b324fc4",
         "e1c605698b0ada439b54"
       ]
@@ -136,10 +119,21 @@
       "name": "ca92closebm000000092"
     },
     {
-      "name": "cs91openbm0000000091"
+      "name": "ca95viewgrp000000095",
+      "displayName": "Calendar Analysis view",
+      "children": [
+        "ca93calview000000093",
+        "ca94delayvw000000094"
+      ]
     },
     {
-      "name": "cs92closebm000000092"
+      "name": "847f214a00f74b03f7de",
+      "displayName": "Analysis view",
+      "children": [
+        "7faf074f3bb198b3db9f",
+        "2e9174319be7b5f95c47",
+        "8f59f8159387c6c7df79"
+      ]
     }
   ]
 }

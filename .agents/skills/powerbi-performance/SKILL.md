@@ -74,10 +74,10 @@ VertiPaq Analyzer, read in this order: total size → largest tables → largest
 
 ## This workspace: Performance & Memory Guardrails
 
-1. **No Materialised Calendar-by-Date Expansion (`Resource Calendars`)**:
+1. **No Materialised Calendar-by-Date Expansion (`Resources` page, Simulator view)**:
    - `11 XER_CALENDAR_DETAILED` stores only 7 undated `WEEKDAY` rows plus sparse dated `EXCEPTION` rows per calendar. `Resource Scenario Measures` computes working hours, capacities, and finish dates on the fly from weekday counts and exception deltas. Never materialise a calendar × date table in Power Query or DAX.
 2. **Avoid Visual-Level Row Measure Filters on `Scenario Date`**:
-   - Adding a visual-level measure filter (`Scenario Show Period Row` or `Scenario Show Daily Row`) to the `Resource Calendars` chart or daily table caused native queries to exceed the memory budget. Suppress out-of-window rows inside the projected display wrapper measures (`Scenario Chart Quantity`, `Scenario Chart Cumulative Quantity`, `Comparison Chart Quantity`, `Scenario Daily Display *`) and keep totals disabled on the daily detail table.
+   - Adding a visual-level measure filter (`Scenario Show Period Row` or `Scenario Show Daily Row`) to the Simulator view's chart or daily table caused native queries to exceed the memory budget. Suppress out-of-window rows inside the projected display wrapper measures (`Scenario Chart Quantity`, `Scenario Chart Cumulative Quantity`, `Comparison Chart Quantity`, `Scenario Daily Display *`) and keep totals disabled on the daily detail table.
 3. **Scalar Bounds for Calculated Date Tables**:
    - In `Resource Calendar.tmdl`, compute `MinDate` and `MaxDate` as scalar `VAR` values over `'15_XER_RESOURCE_DISTRIBUTION'[Period]` before calling `CALENDAR(MinDate, MaxDate)` — never materialise a `UNION` of fact rows to find date bounds.
    - Omit near-unique surrogate keys that have no report or relationship use (for example, `task_pred_id_key` is excluded from `06 XER_PREDECESSOR` and `06a XER_SUCCESSOR`).
@@ -88,7 +88,7 @@ VertiPaq Analyzer, read in this order: total size → largest tables → largest
    - Never add `Table.Buffer` or large-file `Binary.Buffer` to the 11 SharePoint CSV loader queries in `expressions.tmdl`.
 6. **Row Iterators for Per-Activity Maths (`Calendar Analysis` activities table)**:
    - Compute a value derived from several columns of the same activity (start, finish, data date, remaining duration, calendar) inside `MAXX('01 XER_TASK', …)` on row values. Taking `MIN`/`MAX`/`SUM`/`SELECTEDVALUE` of those columns as separate variables inside an `IF` made the engine look up each activity separately: J5068's 10,310 activities took 19 s, against 0.3 s with the row iterator and identical results. Profile one column at a time before blaming the visual or the filters.
-7. **Top N by a Column Aggregate (`Calendar Stretch`)**:
+7. **Top N by a Column Aggregate (Calendar Analysis, Delay view)**:
    - Rank-limited visuals over `task_code` use a visual `TopN` filter ordered by a column aggregate (`MAX('01 XER_TASK'[Calendar Delay Days])`) plus column `Advanced` filters: storage-engine work only. Never a measure-based Top N or measure filter; if the ranking needs per-row maths, make it a row-local calculated column first.
    - Per-date measures bound their own window (BLANK outside 60 days of the remaining start) and exit before any table-11 access, so the 4,000-date `'Scenario Date'` axis stays cheap.
    - Profile per-date kernels stage by stage with query-scoped `DEFINE MEASURE` overrides and interleaved repeats (`Invoke-ReadOnlyDax.ps1`): background load on the dev machine swings single timings by 2-3x.

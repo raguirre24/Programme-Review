@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "03e21a133719c93400ba",
   "position": {
-    "x": 422,
-    "y": 90,
+    "x": 19.176846137476058,
+    "y": 83.680783145350077,
     "z": 41000,
-    "height": 52,
-    "width": 240,
+    "height": 44,
+    "width": 450,
     "tabOrder": 38000
   },
   "visual": {
@@ -32,7 +32,7 @@
             "selectedBookmark": {
               "expr": {
                 "Literal": {
-                  "Value": "'e1c605698b0ada439b54'"
+                  "Value": "'11900b03b65f2acadf0c'"
                 }
               }
             }
@@ -104,7 +104,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Resource Playground view'"
+                  "Value": "'Resources view'"
                 }
               }
             },
@@ -183,7 +183,7 @@
             "altText": {
               "expr": {
                 "Literal": {
-                  "Value": "'Calendar comparison view navigation'"
+                  "Value": "'Resources view: Histogram, Simulator or Compare'"
                 }
               }
             }

@@ -85,7 +85,10 @@ table 15_XER_RESOURCE_DISTRIBUTION
 			
 			VAR Qty = '15_XER_RESOURCE_DISTRIBUTION'[monthly_quantity]
 			VAR RsrcType = '15_XER_RESOURCE_DISTRIBUTION'[rsrc_type]
-			VAR QtyPerHr = VALUE(LOOKUPVALUE('12_XER_RSRC'[def_qty_per_hr], '12_XER_RSRC'[rsrc_id_key], '15_XER_RESOURCE_DISTRIBUTION'[rsrc_id_key]))
+			VAR RateText = LOOKUPVALUE('12_XER_RSRC'[def_qty_per_hr], '12_XER_RSRC'[rsrc_id_key], '15_XER_RESOURCE_DISTRIBUTION'[rsrc_id_key])
+			// A blank or non-numeric default rate (Athena returns '' for some resources) means no rate, as for a zero rate;
+			// VALUE('') would put the whole column, and every table built on it, in error.
+			VAR QtyPerHr = IF(LEN(TRIM(RateText)) > 0, IFERROR(VALUE(RateText), BLANK()))
 			RETURN
 			    IF(
 			        RsrcType = "RT_Labor",

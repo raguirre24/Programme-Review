@@ -28,6 +28,10 @@ RESET_TARGET_IDS = {
     "f0c4beaebbd1f349d8fa", "34ac98823f173c5173e2", "179c68eefe44759dc6a6", "7c85a4199efc0955fcf9",
     "c3f32af88a59421d9975", "5b3c0db966d719181dd4", "cf0eeaddb7f90594dee2", PERIOD_VISUAL_ID,
 }
+# Synced slicers of the Histogram view (merge_resources_page.py), outside the Playground's shared context.
+HISTOGRAM_SYNC_GROUPS = {
+    "42e5e3dd0509ccb14090": "Level_2", "4b282f020b022db79006": "CriticalStatus", "e9af69e6897909605e00": "rsrc_type",
+}
 CONTEXT_GROUPS = {
     "Project": ("Project_Dimension", "Project"),
     "State": ("Project_Dimension", "State"),
@@ -314,7 +318,10 @@ def main():
         if visual["name"] == CALENDAR_VISUAL_ID:
             calendar_visual = visual
         sync = visual["visual"].get("syncGroup")
-        if sync:
+        if sync and visual["name"] in HISTOGRAM_SYNC_GROUPS:
+            # Histogram view slicers (former Resources page) keep their own report-wide sync groups.
+            assert sync["groupName"] == HISTOGRAM_SYNC_GROUPS[visual["name"]], ("histogram slicer sync group", visual["name"])
+        elif sync:
             group = sync["groupName"]
             assert group in CONTEXT_GROUPS, ("unexpected shared context group", group)
             assert sync.get("fieldChanges") is True and sync.get("filterChanges") is True

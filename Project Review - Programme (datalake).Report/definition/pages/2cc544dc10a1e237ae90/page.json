@@ -5,26 +5,6 @@
   "displayOption": "FitToPage",
   "height": 1080,
   "width": 1920,
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "8b5a37208e355985ac7d",
-        "ordinal": 0,
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "01 XER_TASK"
-              }
-            },
-            "Property": "Is Unscheduled"
-          }
-        },
-        "type": "Categorical",
-        "howCreated": "User"
-      }
-    ]
-  },
   "objects": {
     "displayArea": [
       {

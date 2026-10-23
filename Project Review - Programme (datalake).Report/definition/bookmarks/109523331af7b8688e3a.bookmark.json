@@ -4,7 +4,7 @@
   "name": "109523331af7b8688e3a",
   "options": {
     "targetVisualNames": [
-      "e473b21d676622c41e5d"
+      "d0f42d6f6db694358c27"
     ],
     "suppressActiveSection": true,
     "suppressDisplay": true
@@ -72,25 +72,6 @@
     },
     "sections": {
       "2cc544dc10a1e237ae90": {
-        "filters": {
-          "byExpr": [
-            {
-              "name": "8b5a37208e355985ac7d",
-              "type": "Categorical",
-              "expression": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "01 XER_TASK"
-                    }
-                  },
-                  "Property": "Is Unscheduled"
-                }
-              },
-              "howCreated": 1
-            }
-          ]
-        },
         "visualContainers": {
           "1dffccbf36381f9ff820": {
             "singleVisual": {
@@ -389,7 +370,7 @@
             "filters": {
               "byExpr": [
                 {
-                  "name": "aeaea18bedab0e832a35",
+                  "name": "532b1f2c6f083fc842d1",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -519,22 +500,7 @@
             "filters": {
               "byExpr": [
                 {
-                  "name": "9772131160054a44e59a",
-                  "type": "Categorical",
-                  "expression": {
-                    "Column": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "03 XER_PROJWBS"
-                        }
-                      },
-                      "Property": "Has_Unscheduled_Task_In_Path"
-                    }
-                  },
-                  "howCreated": 1
-                },
-                {
-                  "name": "1929435d45d12e853e48",
+                  "name": "667b9c738fd42a741869",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -549,7 +515,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "4d214a6145f54408db0e",
+                  "name": "aeb4f3bc8731d9a556d6",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -564,7 +530,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "7e59729d285457729793",
+                  "name": "e03040ee8fc4823baaa9",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -579,7 +545,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "044fd19a4d42a13f9d3b",
+                  "name": "9fb57276aa2c44960c96",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -594,7 +560,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "a6ae7dca555f09b61e6c",
+                  "name": "6d57e5c50d308ab4106b",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -850,7 +816,7 @@
             "filters": {
               "byExpr": [
                 {
-                  "name": "6eace4f377055b408c87",
+                  "name": "33451b66ca9f49132d55",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -865,7 +831,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "5ad24df90d2dc740b75a",
+                  "name": "4d91ef9215ad2b61db26",
                   "type": "Categorical",
                   "expression": {
                     "Column": {

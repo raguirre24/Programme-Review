@@ -1,8 +1,9 @@
-"""Static, oracle and PBIR verification for the Calendar Stretch page (calendar-driven delay visuals).
+"""Static, oracle and PBIR verification for Calendar Stretch: the calendar-driven delay columns, measures and the Delay
+view of the Calendar Analysis page.
 
 Checks the two '01 XER_TASK' columns and the CS measures in TMDL, mirrors their algorithms in Python against
 day-by-day brute force (finish without exceptions, shutdown bands, cliff-edge search and its horizon), asserts the canonical
-J2060 seasonal-asphalt case, and checks the PBIR page, filters, interactions, bookmarks and the Deneb spec.
+J2060 seasonal-asphalt case, and checks the Delay view's visuals, filters, interactions, view bookmarks and the Deneb spec.
 Read-only; the DAX itself is exercised against the open model by validate_calendar_stretch_live.py.
 """
 
@@ -20,7 +21,7 @@ import sys
 sys.dont_write_bytecode = True
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
-import generate_stretch_page as page_generator  # noqa: E402
+import generate_stretch_view as view_generator  # noqa: E402
 import stretch_dax  # noqa: E402
 from validate_calendar_analysis import measure_blocks, verify_workweek_mask_formula  # noqa: E402
 
@@ -351,70 +352,79 @@ def desktop_neutral(value):
 
 
 def verify_pbir() -> dict:
-    outputs = page_generator.build(3)
-    for relative, value in outputs.items():
+    gen = view_generator
+    outputs = gen.build()
+    page_dir = REPORT_DEF / "pages" / gen.PAGE
+    # Files the generator owns must match it; Desktop/Deneb round-trip details aside.
+    owned = [Path("pages") / gen.PAGE / "visuals" / name / "visual.json" for name in gen.DELAY_VIEW + [gen.NAVIGATOR]]
+    owned += [Path("bookmarks") / f"{name}.bookmark.json" for name in (gen.CALENDARS_BOOKMARK, gen.DELAY_BOOKMARK)]
+    for relative in owned:
         path = REPORT_DEF / relative
-        assert path.exists() and desktop_neutral(json.loads(path.read_text(encoding="utf-8-sig"))) == desktop_neutral(value), (
-            f"{relative} differs from generate_stretch_page.py beyond Desktop/Deneb round-trip details; run it with --check")
+        assert path.exists() and desktop_neutral(json.loads(path.read_text(encoding="utf-8-sig"))) == desktop_neutral(outputs[relative]), (
+            f"{relative} differs from generate_stretch_view.py beyond Desktop/Deneb round-trip details; run it with --check")
 
+    # The separate Calendar Stretch page and its project-menu bookmarks are gone.
     order = json.loads((REPORT_DEF / "pages" / "pages.json").read_text(encoding="utf-8-sig"))["pageOrder"]
-    assert order.index(page_generator.PAGE) == order.index(page_generator.SOURCE_PAGE) + 1, "Calendar Stretch must follow Calendar Analysis"
-    page_dir = REPORT_DEF / "pages" / page_generator.PAGE
+    assert gen.FORMER_PAGE not in order and not (REPORT_DEF / "pages" / gen.FORMER_PAGE).exists(), "The Calendar Stretch page must be removed"
+    assert gen.PAGE in order
+    for name in gen.FORMER_BOOKMARKS:
+        assert not (REPORT_DEF / "bookmarks" / f"{name}.bookmark.json").exists(), f"Bookmark {name} of the removed page remains"
     page = json.loads((page_dir / "page.json").read_text(encoding="utf-8-sig"))
-    assert page["displayName"] == "Calendar Stretch" and page["width"] == 1920 and page["height"] == 1080
+    assert page["displayName"] == "Calendar Analysis" and page["width"] == 1920 and page["height"] == 1080
     page_filters = {f["field"]["Column"]["Property"]: f for f in page["filterConfig"]["filters"]}
     assert {"Is Unscheduled", "TaskType_Classified", "status_code", "Float Category"} <= set(page_filters)
 
     visuals = {path.parent.name: json.loads(path.read_text(encoding="utf-8-sig")) for path in (page_dir / "visuals").glob("*/visual.json")}
-    assert len(visuals) == 26, f"Expected 26 visuals, found {len(visuals)}"
+    delay = {name: visuals[name] for name in gen.DELAY_VIEW}
     types = {name: v["visual"]["visualType"] for name, v in visuals.items()}
-    assert types[page_generator.BARS] == "barChart" and types[page_generator.SCATTER] == "scatterChart"
-    assert types[page_generator.TIMELINE] == page_generator.DENEB and types[page_generator.CLIFF] == "lineChart"
-    assert types[page_generator.CALLOUT] == "card"
-    sync = {v["visual"]["syncGroup"]["groupName"] for v in visuals.values() if "syncGroup" in v["visual"]}
-    assert sync == {"Project", "State", "last_recalc_date", "Level_2"}, f"Sync groups {sync}"
-    slider = visuals["cs24fltslic000000024"]
-    assert "filterConfig" not in slider and "numericEnd" not in slider["visual"]["objects"]["data"][0]["properties"], (
-        "The Calendar Stretch float slider starts unrestricted")
+    assert types[gen.BARS] == "barChart" and types[gen.SCATTER] == "scatterChart"
+    assert types[gen.TIMELINE] == gen.DENEB and types[gen.CLIFF] == "lineChart"
+    assert types[gen.CALLOUT] == "card" and types[gen.NAVIGATOR] == "bookmarkNavigator"
+    # Calendars is the saved view: its visuals show, the Delay visuals wait for the Delay bookmark.
+    assert all(v.get("isHidden") is True for v in delay.values()), "Delay visuals must be hidden in the saved (Calendars) view"
+    assert not any(visuals[name].get("isHidden") for name in gen.CALENDARS_VIEW + [gen.NAVIGATOR]), "Calendars view must be visible by default"
 
-    filter_names = []
-    for name, v in visuals.items():
+    filter_names = [f["name"] for v in visuals.values() for f in v.get("filterConfig", {}).get("filters", [])]
+    assert len(filter_names) == len(set(filter_names)), "Filter names must be unique on the page"
+    for name, v in delay.items():
         filters = v.get("filterConfig", {}).get("filters", [])
-        filter_names += [f["name"] for f in filters]
         assert "Measure" not in json.dumps(filters), f"{name} has a measure filter; use column filters only"
         assert "'Scenario Calendar'" not in json.dumps(v) and "Scenario Calendar" not in json.dumps(v.get("visual", {}).get("query", {})), (
             f"{name} must not bind Scenario Calendar (it would change the CA Inspector Selection Match gate)")
         assert '"Property": "Month"' not in json.dumps(v.get("visual", {}).get("query", {})), f"{name} must not bind 'Scenario Date'[Month]"
-    assert len(filter_names) == len(set(filter_names)), "Filter names must be unique on the page"
-    for name in (page_generator.BARS, page_generator.TIMELINE):
+    for name in (gen.BARS, gen.TIMELINE):
         filters = {f["type"]: f for f in visuals[name]["filterConfig"]["filters"]}
         query = filters["TopN"]["filter"]["From"][0]["Expression"]["Subquery"]["Query"]
         assert query["Top"] == 15 and query["OrderBy"][0]["Direction"] == 2
         aggregation = query["OrderBy"][0]["Expression"]["Aggregation"]
         assert aggregation["Function"] == 4 and aggregation["Expression"]["Column"]["Property"] == "Calendar Delay Days"
-    for name in (page_generator.BARS, page_generator.TIMELINE, page_generator.SCATTER):
+    for name in (gen.BARS, gen.TIMELINE, gen.SCATTER):
         advanced = [f for f in visuals[name]["filterConfig"]["filters"] if f["type"] == "Advanced"]
         condition = advanced[0]["filter"]["Where"][0]["Condition"]["Comparison"]
         assert condition["ComparisonKind"] == 1 and condition["Right"]["Literal"]["Value"] == "0L"
-    scatter = visuals[page_generator.SCATTER]["visual"]
+    scatter = visuals[gen.SCATTER]["visual"]
     assert scatter["objects"]["categoryAxis"][0]["properties"]["logAxisScale"]["expr"]["Literal"]["Value"] == "true"
-    cliff = visuals[page_generator.CLIFF]["visual"]
+    cliff = visuals[gen.CLIFF]["visual"]
     assert cliff["query"]["queryState"]["Category"]["projections"][0]["queryRef"] == "Scenario Date.Date"
     assert cliff["objects"]["lineStyles"][0]["properties"]["lineChartType"]["expr"]["Literal"]["Value"] == "'step'"
 
     interactions = {(i["source"], i["target"]): i["type"] for i in page["visualInteractions"]}
-    for source in (page_generator.BARS, page_generator.TIMELINE, page_generator.SCATTER):
-        for target in (page_generator.CALLOUT, page_generator.CLIFF):
+    for source in (gen.BARS, gen.TIMELINE, gen.SCATTER):
+        for target in (gen.CALLOUT, gen.CLIFF):
             assert interactions.get((source, target)) == "DataFilter", f"{source} must select the cliff activity"
-        for target in page_generator.KPIS:
+        for target in gen.KPIS:
             assert interactions.get((source, target)) == "NoFilter"
     for target in visuals:
-        if target != page_generator.CLIFF:
-            assert interactions.get((page_generator.CLIFF, target)) == "NoFilter", f"Cliff chart must not filter {target}"
+        if target != gen.CLIFF:
+            assert interactions.get((gen.CLIFF, target)) == "NoFilter", f"Cliff chart must not filter {target}"
+    for calendars_visual in gen.CALENDARS_VIEW:
+        for delay_visual in gen.DELAY_VIEW:
+            assert interactions.get((calendars_visual, delay_visual)) == interactions.get((delay_visual, calendars_visual)) == "NoFilter", (
+                f"Views must not filter each other ({calendars_visual} / {delay_visual})")
 
     report = json.loads((REPORT_DEF / "report.json").read_text(encoding="utf-8-sig"))
-    assert page_generator.DENEB in report.get("publicCustomVisuals", []), "Deneb must be registered in report.json"
-    deneb = visuals[page_generator.TIMELINE]["visual"]
+    assert gen.DENEB in report.get("publicCustomVisuals", []), "Deneb must be registered in report.json"
+    deneb = visuals[gen.TIMELINE]["visual"]
     vega = deneb["objects"]["vega"][0]["properties"]
     assert vega["provider"]["expr"]["Literal"]["Value"] == "'vegaLite'"
     assert vega["enableSelection"]["expr"]["Literal"]["Value"] == "true"
@@ -429,13 +439,17 @@ def verify_pbir() -> dict:
     for name in names:
         assert not set(name) & set(".[]\\\""), f"Deneb field name {name!r} contains characters Deneb rewrites"
 
-    bookmarks = {item["name"] for item in json.loads((REPORT_DEF / "bookmarks" / "bookmarks.json").read_text(encoding="utf-8-sig"))["items"]}
-    assert set(page_generator.BOOKMARKS.values()) <= bookmarks
-    for bookmark in page_generator.BOOKMARKS.values():
-        data = json.loads((REPORT_DEF / "bookmarks" / f"{bookmark}.bookmark.json").read_text(encoding="utf-8-sig"))
-        assert data["explorationState"]["activeSection"] == page_generator.PAGE
-        assert data["options"]["targetVisualNames"] == ["cs10menubg0000000010", "cs11state00000000011", "cs12proj000000000012", "cs13closebt000000013"]
-    return {"page": page_generator.PAGE, "visuals": len(visuals), "deneb_fields": sorted(names)}
+    metadata = json.loads((REPORT_DEF / "bookmarks" / "bookmarks.json").read_text(encoding="utf-8-sig"))["items"]
+    groups = [item for item in metadata if item.get("name") == gen.VIEW_GROUP]
+    assert groups and groups[0].get("children") == [gen.CALENDARS_BOOKMARK, gen.DELAY_BOOKMARK], "View group must hold Calendars, Delay"
+    assert not {item.get("name") for item in metadata} & set(gen.FORMER_BOOKMARKS)
+    navigator = visuals[gen.NAVIGATOR]["visual"]["objects"]["bookmarks"][0]["properties"]
+    assert navigator["selectedBookmark"]["expr"]["Literal"]["Value"] == f"'{gen.CALENDARS_BOOKMARK}'", "The navigator must start on Calendars"
+    for bookmark in gen.MENU_BOOKMARKS:
+        options = json.loads((REPORT_DEF / "bookmarks" / f"{bookmark}.bookmark.json").read_text(encoding="utf-8-sig"))["options"]
+        assert options.get("applyOnlyToTargetVisuals") is True, f"{bookmark} must not reset the selected view"
+        assert options["targetVisualNames"] == ["ca10menubg0000000010", "ca11state00000000011", "ca12proj000000000012", "ca13closebt000000013"]
+    return {"page": gen.PAGE, "delay_visuals": len(delay), "page_visuals": len(visuals), "deneb_fields": sorted(names)}
 
 
 def main() -> None:

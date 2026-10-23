@@ -1,8 +1,9 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
-  "displayName": "Open Project Menu - Float Analysis",
+  "displayName": "Open Project Menu - Analysis",
   "name": "9218d93701ca451431aa",
   "options": {
+    "applyOnlyToTargetVisuals": true,
     "targetVisualNames": [
       "eaf7e2cc480bee8a5d49",
       "519501f73536aa481135",

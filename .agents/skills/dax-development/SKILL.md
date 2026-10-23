@@ -105,7 +105,7 @@ Use for families of variations (YTD/PY/Δ across many base measures) instead of 
    - In `06 XER_PREDECESSOR[pred_type]`, always include `"PR_FS1"` alongside `"PR_FS"` when filtering Finish-to-Start links.
    - Durations, floats, and lags in `01 XER_TASK` and `06 XER_PREDECESSOR` are **already in working days** — never divide them by 8.
 4. **Display Wrapper Measures Instead of Visual-Level Measure Filters**:
-   - On high-grain axes such as `Scenario Date` (on the `Resource Calendars` page), visual-level row measure filters (`Scenario Show Daily Row` / `Scenario Show Period Row`) exceed the native query memory budget. Always bind visuals to bounded display wrapper measures (`Scenario Daily Display *`, `Scenario Chart Quantity`, `Scenario Chart Cumulative Quantity`, `Comparison Chart Quantity`) that return `BLANK()` outside the active planning window.
+   - On high-grain axes such as `Scenario Date` (on the `Resources` page, Simulator view), visual-level row measure filters (`Scenario Show Daily Row` / `Scenario Show Period Row`) exceed the native query memory budget. Always bind visuals to bounded display wrapper measures (`Scenario Daily Display *`, `Scenario Chart Quantity`, `Scenario Chart Cumulative Quantity`, `Comparison Chart Quantity`) that return `BLANK()` outside the active planning window.
 5. **Detail Scope Toggle (`Schedule Metric Detail`)**:
    - Measures in `Schedule Metric Detail` (`SM Detail *`) check `ISFILTERED('Schedule Metric Detail'[DetailScope])`: when unfiltered on the main counts table, they return the activity's own metric; when filtered to `"Baseline coverage"` in the detail panel, they evaluate the baseline comparison across the whole project/programme.
 6. **Calendar Stretch (`CS *`) Patterns**:

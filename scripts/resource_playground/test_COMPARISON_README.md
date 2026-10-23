@@ -1,5 +1,7 @@
 # Calendar comparison validation
 
+> **Page merge (23 October 2026)**: the Playground is now the **Simulator** and **Compare** views of the **Resources** page (`4c53a34bba9dcc7f3e8c`, 58 visuals). The former Resources page became its **Histogram** view (the saved view), switched by header view buttons; `scripts/resource_playground/merge_resources_page.py` owns the switch. Earlier sections describe the separate `Resource Calendars` page as it was then.
+
 > [!NOTE]
 > **Current contract (20 October 2026 — `df14c05`)**: `Resource Scenario Measures` now contains **66 measures** (`57` `Scenario *` + `9` `Comparison *`, including `Scenario Anchor Date` and the 9 `* Display` card wrappers) and `Resource Calendars` (`4c53a34bba9dcc7f3e8c`) contains **50 visuals** (including the 11 shared report header/navigation/guide visuals). Both `verify_integration.py` and `verify_comparison_integration.py` validate this 66-measure / 50-visual contract. The notes below describe the 17 October 2026 comparison fixture (`resource-playground-comparison-20261017`).
 

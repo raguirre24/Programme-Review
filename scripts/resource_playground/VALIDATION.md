@@ -1,5 +1,7 @@
 # Validation boundaries
 
+> **Page merge (23 October 2026)**: the Playground is now the **Simulator** and **Compare** views of the **Resources** page (`4c53a34bba9dcc7f3e8c`, 58 visuals). The former Resources page became its **Histogram** view (the saved view), switched by header view buttons; `scripts/resource_playground/merge_resources_page.py` owns the switch. `verify_comparison_integration.py` now expects 58 visuals and the three view bookmarks; earlier sections describe the separate `Resource Calendars` page as it was then.
+
 `validation-runtime.ps1` is an **offline** validator despite its filename. It never connects to Analysis Services, refreshes data or executes DAX. It deserialises TMDL with Microsoft TOM, checks scenario field references and variable names, detects measure dependency cycles, parses M with Microsoft's parser and compares report-authoring diagnostics to an optional baseline.
 
 ## Resource update — 20 October 2026 (`df14c05`)

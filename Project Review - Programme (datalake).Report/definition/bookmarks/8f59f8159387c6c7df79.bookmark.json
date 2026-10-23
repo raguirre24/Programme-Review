@@ -1,0 +1,205 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "Constraint",
+  "name": "8f59f8159387c6c7df79",
+  "options": {
+    "targetVisualNames": [
+      "0f6740cb8070910e7441",
+      "2c9a96d5ea55dd693008",
+      "3d6eaba8af0d76028d95",
+      "49e872ccee5ff973eea3",
+      "51f3c27d80d54a9852a8",
+      "58211dc0ca774e65a107",
+      "5da707f9b0d8db0d2b6e",
+      "7e92ee6a3b8c6b1c0b4d",
+      "84866ab77b4a247fc84b",
+      "85d9a29b54cb54003334",
+      "88d7b628ca5bdd710039",
+      "8d4942bbdcedd4a00594",
+      "90274c44b981ead054c2",
+      "92a3e137070d4b221c37",
+      "a443a42b6ed02244a6dc",
+      "b2626bd96758358bf97e",
+      "c96df61f3fa0f6ec086c",
+      "ee988fbebaa08d8521b4",
+      "f0c9695069063ce1e7a5",
+      "fc64d8be0e0201a8612b",
+      "fd85806e21428c03cbe2"
+    ],
+    "suppressData": true,
+    "suppressActiveSection": true,
+    "applyOnlyToTargetVisuals": true
+  },
+  "explorationState": {
+    "version": "1.0",
+    "activeSection": "ea24ab599f13f4ea4572",
+    "sections": {
+      "ea24ab599f13f4ea4572": {
+        "visualContainers": {
+          "0f6740cb8070910e7441": {
+            "singleVisual": {
+              "visualType": "P6WBSMatrix8BDB3B26BB4B497EA3E044ADBDE081D0",
+              "objects": {}
+            }
+          },
+          "2c9a96d5ea55dd693008": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {}
+            }
+          },
+          "3d6eaba8af0d76028d95": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "49e872ccee5ff973eea3": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "51f3c27d80d54a9852a8": {
+            "singleVisual": {
+              "visualType": "cardVisual",
+              "objects": {}
+            }
+          },
+          "58211dc0ca774e65a107": {
+            "singleVisual": {
+              "visualType": "P6WBSMatrix8BDB3B26BB4B497EA3E044ADBDE081D0",
+              "objects": {}
+            }
+          },
+          "5da707f9b0d8db0d2b6e": {
+            "singleVisual": {
+              "visualType": "lineChart",
+              "objects": {}
+            }
+          },
+          "7e92ee6a3b8c6b1c0b4d": {
+            "singleVisual": {
+              "visualType": "cardVisual",
+              "objects": {}
+            }
+          },
+          "84866ab77b4a247fc84b": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "85d9a29b54cb54003334": {
+            "singleVisual": {
+              "visualType": "cardVisual",
+              "objects": {}
+            }
+          },
+          "88d7b628ca5bdd710039": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "8d4942bbdcedd4a00594": {
+            "singleVisual": {
+              "visualType": "lineChart",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "90274c44b981ead054c2": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "92a3e137070d4b221c37": {
+            "singleVisual": {
+              "visualType": "lineChart",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "a443a42b6ed02244a6dc": {
+            "singleVisual": {
+              "visualType": "hundredPercentStackedAreaChart",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "b2626bd96758358bf97e": {
+            "singleVisual": {
+              "visualType": "P6WBSMatrix8BDB3B26BB4B497EA3E044ADBDE081D0",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "c96df61f3fa0f6ec086c": {
+            "singleVisual": {
+              "visualType": "P6WBSMatrix8BDB3B26BB4B497EA3E044ADBDE081D0",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "ee988fbebaa08d8521b4": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {}
+            }
+          },
+          "f0c9695069063ce1e7a5": {
+            "singleVisual": {
+              "visualType": "hundredPercentStackedAreaChart",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "fc64d8be0e0201a8612b": {
+            "singleVisual": {
+              "visualType": "cardVisual",
+              "objects": {}
+            }
+          },
+          "fd85806e21428c03cbe2": {
+            "singleVisual": {
+              "visualType": "advancedSlicerVisual",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

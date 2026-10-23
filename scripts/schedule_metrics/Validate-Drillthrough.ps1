@@ -139,7 +139,7 @@ function Get-PbirMeasureReferences($Node) {
 
 Assert-Drill ($routes.Count -eq 2) 'Exactly two drill-through routes must remain.' -Static
 Assert-Drill (-not (Test-Path -LiteralPath (Join-Path $reportRoot 'pages/db92ae49184b6932662e'))) 'Removed Date alignment page still exists.' -Static
-Assert-Drill (@(Get-ChildItem -LiteralPath (Join-Path $reportRoot 'pages') -Directory).Count -eq 17) 'Expected 17 retained report pages.' -Static
+Assert-Drill (@(Get-ChildItem -LiteralPath (Join-Path $reportRoot 'pages') -Directory).Count -eq 13) 'Expected 13 retained report pages.' -Static
 foreach ($name in $removedMeasures) {
     Assert-Drill ($null -eq $disk.Tables['XER Metrics'].Measures.Find($name)) "Removed measure remains in source: $name" -Static
 }
@@ -155,9 +155,17 @@ Assert-Drill (($reportFilters -join ' ') -match "\[IsExcludedFromDataLake\].*FAL
 
 # Preserve the original scheduled-only behaviour of every other existing page.
 $healthPages = @($sourcePageID) + @($routes | ForEach-Object { $_.Page })
+# Home shows every activity, including unscheduled ones (its page filter was removed in October 2026).
+$unfilteredPages = @('2cc544dc10a1e237ae90')
+foreach ($pageID in $unfilteredPages) {
+    $page = Read-Pbir (Join-Path $reportRoot "pages/$pageID/page.json")
+    Assert-Drill (@(Get-PbirFilters $page | Where-Object { $_ -match '\[Is Unscheduled\]' }).Count -eq 0 -and
+        -not ($page['filterConfig'] -and @($page['filterConfig']['filters'] | Where-Object { $_['field']['Column'] -and $_['field']['Column']['Property'] -eq 'Is Unscheduled' }).Count)) `
+        "Page $($page['displayName']) must not filter Is Unscheduled." -Static
+}
 $normalPages = 0
 foreach ($directory in Get-ChildItem -LiteralPath (Join-Path $reportRoot 'pages') -Directory) {
-    if ($directory.Name -in $healthPages) { continue }
+    if ($directory.Name -in $healthPages -or $directory.Name -in $unfilteredPages) { continue }
     $page = Read-Pbir (Join-Path $directory.FullName 'page.json')
     $filters = Get-ColumnFilterEntries $page 'Is Unscheduled'
     Assert-Drill ($filters.Count -eq 1) "Normal page $($page['displayName']) lost or duplicated its scheduled-only exclusion." -Static

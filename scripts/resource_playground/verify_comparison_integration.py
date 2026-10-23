@@ -11,6 +11,7 @@ import sys
 
 sys.dont_write_bytecode = True
 import verify_integration as base
+import merge_resources_page as merge
 
 PAGE = "4c53a34bba9dcc7f3e8c"
 TABLE = "Scenario Comparison Calendar"
@@ -22,7 +23,8 @@ HEADER_NAV_VISUALS = {
     "bf2c5a9d2aaf3cf456d7", "c3fd436b960b0d6d8f8c", "d80c22aa4fc16a4ee9d2",
     "f07b62160a6bcaded91e", "fa323b6b39cecca295b5",
 }
-BOOKMARKS = ["3fc3d41f00865b324fc4", "e1c605698b0ada439b54"]
+# Histogram (former Resources page), Simulator (single calendar) and Compare views of the merged Resources page.
+BOOKMARKS = list(merge.VIEWS)
 
 
 def canonical(expression):
@@ -94,7 +96,8 @@ def field_name(field):
 def validate_report(report_root):
     page_root = report_root / "pages" / PAGE
     visuals = {p.parent.name: json.loads(p.read_text(encoding="utf-8-sig")) for p in (page_root / "visuals").glob("*/visual.json")}
-    assert len(visuals) == 50 and set(IDS.values()) <= visuals.keys(), "Exact 50 visuals (including comparison and header/navigation visuals) required."
+    assert len(visuals) == 58 and set(IDS.values()) <= visuals.keys(), (
+        "Exact 58 visuals (Playground, comparison, the 8 Histogram visuals and header/navigation visuals) required.")
     selector, chart, results = (visuals[IDS[n]] for n in ["selector", "chart", "results"])
     assert [field_name(f) for f in projections(selector, "Values")] == [("Column", TABLE, "Calendar")]
     selection = selector["visual"]["objects"]["selection"][0]["properties"]
@@ -125,8 +128,29 @@ def validate_report(report_root):
         assert set(state) == {"visualContainers"}
         assert all(set(v) <= {"singleVisual", "isHidden"} for v in state["visualContainers"].values()), "Display bookmarks must not capture filters or highlight selections."
         assert "filter" not in json.dumps(state).lower()
+        caption, shown = merge.VIEWS[bookmark_id]
+        assert bookmark["displayName"] == caption and sorted(options["targetVisualNames"]) == sorted(merge.TOGGLED), (
+            f"View bookmark {caption} must target exactly the 43 toggled visuals")
+        visible = {name for name, value in state["visualContainers"].items() if value["singleVisual"].get("display", {}).get("mode") != "hidden"}
+        assert visible == set(shown), (f"View bookmark {caption} shows the wrong visuals", sorted(visible ^ set(shown)))
         states.append(state)
-    assert states[0] != states[1], "Single and Compare must have different display states."
+    assert len({json.dumps(state, sort_keys=True) for state in states}) == len(states), "Histogram, Simulator and Compare must differ."
+    metadata = json.loads((report_root / "bookmarks" / "bookmarks.json").read_text(encoding="utf-8-sig"))["items"]
+    groups = [item for item in metadata if item.get("name") == merge.VIEW_GROUP]
+    assert groups and groups[0].get("children") == BOOKMARKS, "The Resources view group must hold Histogram, Simulator, Compare."
+    navigator = visuals[IDS["view-navigation"]]["visual"]["objects"]["bookmarks"][0]["properties"]
+    assert navigator["selectedBookmark"]["expr"]["Literal"]["Value"] == f"'{merge.HISTOGRAM_BOOKMARK}'", "Resources must open on Histogram."
+    # Saved view: Histogram visible, Simulator and Compare hidden.
+    assert all(not visuals[name].get("isHidden") for name in merge.HISTOGRAM_VIEW)
+    assert all(visuals[name].get("isHidden") is True for name in merge.SIMULATOR_SIDE)
+    for histogram_visual in merge.HISTOGRAM_VIEW:
+        for simulator_visual in merge.SIMULATOR_SIDE:
+            assert interactions.get((histogram_visual, simulator_visual)) == interactions.get((simulator_visual, histogram_visual)) == "NoFilter", (
+                "Histogram and Simulator/Compare visuals must not filter each other", histogram_visual, simulator_visual)
+    page_index = json.loads((report_root / "pages" / "pages.json").read_text(encoding="utf-8-sig"))
+    assert merge.FORMER_PAGE not in page_index["pageOrder"] and not (report_root / "pages" / merge.FORMER_PAGE).exists(), (
+        "The former Resources page must be removed.")
+    assert page["displayName"] == merge.PAGE_NAME
     reset = json.loads((report_root / "bookmarks" / (base.RESET_BOOKMARK_ID + ".bookmark.json")).read_text(encoding="utf-8-sig"))
     expected_targets = base.RESET_TARGET_IDS | {IDS["selector"], IDS["results"]}
     assert set(reset["options"]["targetVisualNames"]) == expected_targets and len(reset["options"]["targetVisualNames"]) == 14
@@ -135,7 +159,7 @@ def validate_report(report_root):
     filters = reset_states[IDS["selector"]]["filters"]["byExpr"]
     assert len(filters) == 1 and "filter" not in filters[0]
     assert filters[0]["expression"]["Column"]["Property"] == "Calendar"
-    return {"visuals": len(visuals), "selector": IDS["selector"], "results": IDS["results"], "display_bookmarks": 2, "reset_targets": 14}
+    return {"visuals": len(visuals), "selector": IDS["selector"], "results": IDS["results"], "display_bookmarks": len(BOOKMARKS), "reset_targets": 14}
 
 
 def main():

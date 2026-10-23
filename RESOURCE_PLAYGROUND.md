@@ -1,5 +1,7 @@
 # Resource Playground
 
+> **Page merge (23 October 2026)**: the Playground is now the **Simulator** and **Compare** views of the **Resources** page (`4c53a34bba9dcc7f3e8c`, 58 visuals). The former Resources page became its **Histogram** view (the saved view), switched by header view buttons; `scripts/resource_playground/merge_resources_page.py` owns the switch. Earlier sections describe the separate `Resource Calendars` page as it was then.
+
 The **Resource Playground** (`Resource Calendars`) page follows **Resources**. It distributes a hypothetical quantity using the selected version of `11 XER_CALENDAR_DETAILED`. The existing Resources calculations are unchanged (four card-display wrapper measures `Actual Quantity Card`, `Remaining Quantity Card`, `Total Quantity Card`, and `Total Baseline Quantity Card` were added in `Resources.tmdl` so cards show `0` rather than `(Blank)`). This is a planning estimate, not a P6 scheduling or resource-levelling calculation.
 
 ## Using the page
@@ -78,13 +80,13 @@ Invalid or duplicate weekday rules, unresolved undated markers and ambiguous cal
 
 ## Files and regeneration
 
-The 14 `Scenario ...` tables and the `Resource Scenario Measures` measure carrier (66 measures) are registered in the semantic model. Report page ID is `4c53a34bba9dcc7f3e8c` (`Resource Calendars`, 50 visuals); reset bookmark ID is `e899bf3a9c2d243f33bf` (14 target visuals). Existing Resources visuals are unchanged.
+The 14 `Scenario ...` tables and the `Resource Scenario Measures` measure carrier (66 measures) are registered in the semantic model. Report page ID is `4c53a34bba9dcc7f3e8c` (now `Resources`, 58 visuals with the Histogram view; `Resource Calendars` with 50 visuals before the merge); reset bookmark ID is `e899bf3a9c2d243f33bf` (14 target visuals). Existing Resources visuals are unchanged.
 
 The source generators under `scripts/resource_playground/` are:
 
 - `generate_scaffold.py`: disconnected input tables, calendar selector, field parameter, table registration and selector relationship.
 - `generate_measures.py`: scenario measures, with shared generation of the weekday/exception interval kernels.
-- `generate_page.py` and `patch_comparison_page.py`: the native page, comparison visuals, and reset bookmark.
+- `generate_page.py`: the native page draft and reset bookmark; `merge_resources_page.py`: the Histogram / Simulator / Compare switch. The one-off comparison patch (`patch_comparison_page.py`, which added the comparison visuals) was retired in October 2026; git history keeps it.
 
 Keep generators and deployed files together when changing this feature. Once production files exist, generators require an explicit `--output-dir` for review drafts and refuse to overwrite the deployed feature. Compare the draft expressions using TOM, then apply targeted changes that preserve Desktop's metadata, lineage tags and visual IDs. Native input capability and serialisation evidence is in [INPUT_CONTROL_EVIDENCE.md](scripts/resource_playground/INPUT_CONTROL_EVIDENCE.md).
 
