@@ -86,6 +86,7 @@ ref table UpdateHistory
 ref table 'Schedule Metric Detail'
 ref table 'Schedule Metric Guide'
 ref table 'Scenario Comparison Calendar'
+ref table 'Calendar Period'
 
 ref role 'Project Access'
 

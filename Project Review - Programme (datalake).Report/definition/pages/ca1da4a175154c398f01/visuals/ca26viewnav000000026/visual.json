@@ -4,10 +4,10 @@
   "position": {
     "x": 12.203447542030219,
     "y": 85.42413279421153,
-    "z": 24000,
+    "z": 34000,
     "height": 55,
     "width": 320,
-    "tabOrder": 24000
+    "tabOrder": 34000
   },
   "visual": {
     "visualType": "bookmarkNavigator",
@@ -32,7 +32,7 @@
             "selectedBookmark": {
               "expr": {
                 "Literal": {
-                  "Value": "'ca93calview000000093'"
+                  "Value": "'ca94delayvw000000094'"
                 }
               }
             }
@@ -143,7 +143,7 @@
             "altText": {
               "expr": {
                 "Literal": {
-                  "Value": "'Calendar Analysis view: Calendars (summary, monthly matrix and activities) or Delay (calendar-driven delay charts)'"
+                  "Value": "'Calendar Analysis view: Calendars (summary, monthly or weekly matrix and activities) or Delay (calendar-driven delay charts)'"
                 }
               }
             }

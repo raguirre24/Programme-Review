@@ -428,24 +428,24 @@ table 'XER Measures'
 		displayFolder: Calendar Analysis
 		lineageTag: f2b4b16d-307a-53aa-aa21-65b4d7b3ed4d
 
-	/// Resolved working days for the calendar and month (7 weekday rules plus net dated exception overrides), bounded to the active project forecast horizon.
+	/// Resolved working days for the calendar in the matrix column's period, a month or a week ('Calendar Period'): 7 weekday rules plus net dated exception overrides, for periods overlapping the forecast horizon months (data date month to latest finish month).
 	measure 'CA Monthly Working Days' =
 			VAR CalKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
 			VAR ProjKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
 			VAR CsvFlag = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
-			VAR MonthStart = MIN('Scenario Date'[Date])
-			VAR MonthEnd = MAX('Scenario Date'[Date])
+			VAR PeriodStart = MIN('Scenario Date'[Date])
+			VAR PeriodEnd = MAX('Scenario Date'[Date])
 			VAR HorizonStart = [CA Horizon Start Month]
 			VAR HorizonEnd = [CA Horizon End Month]
 			VAR ActiveTasks = [CA Incomplete Activity Count]
 			RETURN
 			    IF(
 			        COUNTROWS('Scenario Calendar') = 1
-			            && HASONEVALUE('Scenario Date'[Month])
+			            && (HASONEVALUE('Scenario Date'[Month]) || HASONEVALUE('Scenario Date'[Week]))
 			            && NOT ISBLANK(CalKey)
 			            && NOT ISBLANK(ActiveTasks) && ActiveTasks > 0
 			            && NOT ISBLANK(HorizonStart) && NOT ISBLANK(HorizonEnd)
-			            && MonthStart >= HorizonStart && MonthStart <= HorizonEnd,
+			            && PeriodEnd >= HorizonStart && PeriodStart <= EOMONTH(HorizonEnd, 0),
 			        VAR CalendarRows =
 			            CALCULATETABLE(
 			                '11 XER_CALENDAR_DETAILED',
@@ -467,17 +467,17 @@ table 'XER Measures'
 			                && COUNTROWS(DISTINCT(SELECTCOLUMNS(WeekRows, "__Dow", '11 XER_CALENDAR_DETAILED'[day_of_week_num]))) = 7
 			        VAR InvalidUndated =
 			            COUNTROWS(FILTER(CalendarRows, ISBLANK('11 XER_CALENDAR_DETAILED'[date]) && '11 XER_CALENDAR_DETAILED'[exception_type] <> "Standard")) > 0
-			        VAR MonthExceptions =
+			        VAR PeriodExceptions =
 			            FILTER(
 			                CalendarRows,
 			                NOT ISBLANK('11 XER_CALENDAR_DETAILED'[date])
-			                    && '11 XER_CALENDAR_DETAILED'[date] >= MonthStart
-			                    && '11 XER_CALENDAR_DETAILED'[date] <= MonthEnd
+			                    && '11 XER_CALENDAR_DETAILED'[date] >= PeriodStart
+			                    && '11 XER_CALENDAR_DETAILED'[date] <= PeriodEnd
 			            )
-			        VAR InvalidMonthExceptions =
+			        VAR InvalidPeriodExceptions =
 			            COUNTROWS(
 			                FILTER(
-			                    MonthExceptions,
+			                    PeriodExceptions,
 			                    ISBLANK('11 XER_CALENDAR_DETAILED'[work_hours])
 			                        || '11 XER_CALENDAR_DETAILED'[work_hours] < 0
 			                        || '11 XER_CALENDAR_DETAILED'[exception_type] == "Exception - Invalid"
@@ -485,9 +485,9 @@ table 'XER Measures'
 			            ) > 0
 			        RETURN
 			            IF(
-			                ValidWeekdays && NOT InvalidUndated && NOT InvalidMonthExceptions,
-			                VAR SpanDays = INT(MonthEnd - MonthStart) + 1
-			                VAR StartDow = WEEKDAY(MonthStart, 2)
+			                ValidWeekdays && NOT InvalidUndated && NOT InvalidPeriodExceptions,
+			                VAR SpanDays = INT(PeriodEnd - PeriodStart) + 1
+			                VAR StartDow = WEEKDAY(PeriodStart, 2)
 			                VAR FullWeeks = QUOTIENT(SpanDays, 7)
 			                VAR ExtraDays = MOD(SpanDays, 7)
 			                VAR StandardDays =
@@ -499,7 +499,7 @@ table 'XER Measures'
 			                    )
 			                VAR ExceptionDelta =
 			                    SUMX(
-			                        MonthExceptions,
+			                        PeriodExceptions,
 			                        VAR ExcDow = WEEKDAY('11 XER_CALENDAR_DETAILED'[date], 2)
 			                        VAR NormalHours = MAXX(FILTER(WeekRows, '11 XER_CALENDAR_DETAILED'[day_of_week_num] = ExcDow), '11 XER_CALENDAR_DETAILED'[work_hours])
 			                        VAR ExcHours = '11 XER_CALENDAR_DETAILED'[work_hours]
@@ -1257,36 +1257,36 @@ table 'XER Measures'
 		displayFolder: Calendar Analysis
 		lineageTag: 10c7236c-d74c-5697-a95f-f4ae2ae3523a
 
-	/// Inspector row gate: FALSE unless one project and one update are in context, then re-applies a calendar or month selected in the summary table or matrix, which use 'Scenario Calendar' / 'Scenario Date' (no relationship to '01 XER_TASK').
+	/// Inspector row gate: FALSE unless one project and one update are in context, then re-applies a calendar or a month or week selected in the summary table or matrix, which use 'Scenario Calendar' / 'Scenario Date' (no relationship to '01 XER_TASK').
 	measure 'CA Inspector Selection Match' =
 			VAR CalendarSelected = ISFILTERED('Scenario Calendar'[Calendar])
-			VAR MonthSelected = ISFILTERED('Scenario Date'[Month])
-			VAR MonthStart = MIN('Scenario Date'[Date])
-			VAR MonthEnd = MAX('Scenario Date'[Date])
+			VAR PeriodSelected = ISFILTERED('Scenario Date'[Month]) || ISFILTERED('Scenario Date'[Week])
+			VAR PeriodStart = MIN('Scenario Date'[Date])
+			VAR PeriodEnd = MAX('Scenario Date'[Date])
 			RETURN
 			    SWITCH(
 			        TRUE(),
 			        NOT [CA Inspector Scope Ready], FALSE(),
-			        CalendarSelected && MonthSelected,
+			        CalendarSelected && PeriodSelected,
 			            CALCULATE(
 			                COUNTROWS('01 XER_TASK'),
 			                KEEPFILTERS(TREATAS(VALUES('Scenario Calendar'[clndr_id_key]), '01 XER_TASK'[calendar_id_key])),
-			                // Remaining window overlaps the month: Finish >= MonthStart and MAX(Start, Data Date) <= MonthEnd
-			                KEEPFILTERS('01 XER_TASK'[Finish] >= MonthStart),
-			                KEEPFILTERS('01 XER_TASK'[Start] <= MonthEnd),
-			                KEEPFILTERS('01 XER_TASK'[data_date] <= MonthEnd)
+			                // Remaining window overlaps the month or week: Finish >= PeriodStart and MAX(Start, Data Date) <= PeriodEnd
+			                KEEPFILTERS('01 XER_TASK'[Finish] >= PeriodStart),
+			                KEEPFILTERS('01 XER_TASK'[Start] <= PeriodEnd),
+			                KEEPFILTERS('01 XER_TASK'[data_date] <= PeriodEnd)
 			            ) > 0,
 			        CalendarSelected,
 			            CALCULATE(
 			                COUNTROWS('01 XER_TASK'),
 			                KEEPFILTERS(TREATAS(VALUES('Scenario Calendar'[clndr_id_key]), '01 XER_TASK'[calendar_id_key]))
 			            ) > 0,
-			        MonthSelected,
+			        PeriodSelected,
 			            CALCULATE(
 			                COUNTROWS('01 XER_TASK'),
-			                KEEPFILTERS('01 XER_TASK'[Finish] >= MonthStart),
-			                KEEPFILTERS('01 XER_TASK'[Start] <= MonthEnd),
-			                KEEPFILTERS('01 XER_TASK'[data_date] <= MonthEnd)
+			                KEEPFILTERS('01 XER_TASK'[Finish] >= PeriodStart),
+			                KEEPFILTERS('01 XER_TASK'[Start] <= PeriodEnd),
+			                KEEPFILTERS('01 XER_TASK'[data_date] <= PeriodEnd)
 			            ) > 0,
 			        TRUE()
 			    )
@@ -1359,15 +1359,15 @@ table 'XER Measures'
 		displayFolder: Calendar Analysis
 		lineageTag: f78f0c41-1796-4abc-89ab-0f34af4624d7
 
-	/// Incomplete activities on this calendar whose remaining execution window overlaps the month (what the activity table lists for that cell).
+	/// Incomplete activities on this calendar whose remaining execution window overlaps the matrix column's month or week (what the activity table lists for that cell).
 	measure 'CA Monthly Active Activities' =
 			VAR CalKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
-			VAR MonthStart = MIN('Scenario Date'[Date])
-			VAR MonthEnd = MAX('Scenario Date'[Date])
+			VAR PeriodStart = MIN('Scenario Date'[Date])
+			VAR PeriodEnd = MAX('Scenario Date'[Date])
 			RETURN
 			    IF(
 			        COUNTROWS('Scenario Calendar') = 1
-			            && HASONEVALUE('Scenario Date'[Month])
+			            && (HASONEVALUE('Scenario Date'[Month]) || HASONEVALUE('Scenario Date'[Week]))
 			            && NOT ISBLANK(CalKey),
 			        COALESCE(
 			            CALCULATE(
@@ -1375,10 +1375,10 @@ table 'XER Measures'
 			                KEEPFILTERS('01 XER_TASK'[status_code] <> "Complete"),
 			                KEEPFILTERS('01 XER_TASK'[TaskType_Classified] = "Activity"),
 			                KEEPFILTERS(TREATAS({ CalKey }, '01 XER_TASK'[calendar_id_key])),
-			                // Same month overlap as [CA Inspector Selection Match]: Finish >= MonthStart and MAX(Start, Data Date) <= MonthEnd
-			                KEEPFILTERS('01 XER_TASK'[Finish] >= MonthStart),
-			                KEEPFILTERS('01 XER_TASK'[Start] <= MonthEnd),
-			                KEEPFILTERS('01 XER_TASK'[data_date] <= MonthEnd)
+			                // Same period overlap as [CA Inspector Selection Match]: Finish >= PeriodStart and MAX(Start, Data Date) <= PeriodEnd
+			                KEEPFILTERS('01 XER_TASK'[Finish] >= PeriodStart),
+			                KEEPFILTERS('01 XER_TASK'[Start] <= PeriodEnd),
+			                KEEPFILTERS('01 XER_TASK'[data_date] <= PeriodEnd)
 			            ),
 			            0
 			        )
@@ -1387,7 +1387,7 @@ table 'XER Measures'
 		displayFolder: Calendar Analysis
 		lineageTag: b0a30b58-c88c-4c97-b0d7-195b0d652de4
 
-	/// Matrix cell background: grey when no activity on the calendar falls in the month, light red when a critical one (Total Float <= 0) does, light orange when only near-critical ones (0 < Total Float <= 10) do.
+	/// Matrix cell background: light grey when no activity on the calendar falls in the column's month or week (the cell recedes); solid red when activities fall in a period with 0 working days (their work is paused); otherwise light red when a critical one (Total Float <= 0) does, light amber when only near-critical ones (0 < Total Float <= 10) do, and white. Red and amber also differ in lightness, so they stay apart with red-green colour blindness.
 	measure 'CA Monthly Working Days Colour' =
 			VAR CellDays = [CA Monthly Working Days]
 			RETURN
@@ -1395,17 +1395,31 @@ table 'XER Measures'
 			        NOT ISBLANK(CellDays),
 			        SWITCH(
 			            TRUE(),
-			            [CA Monthly Active Activities] = 0, "#687078",
+			            [CA Monthly Active Activities] = 0, "#E7E6E6",
+			            CellDays = 0, "#C00000",
 			            CALCULATE([CA Monthly Active Activities], KEEPFILTERS('01 XER_TASK'[CriticalStatus] = "Critical")) > 0, "#FFC7CE",
-			            CALCULATE([CA Monthly Active Activities], KEEPFILTERS('01 XER_TASK'[CriticalStatus] = "Near Critical")) > 0, "#FFD9B3"
+			            CALCULATE([CA Monthly Active Activities], KEEPFILTERS('01 XER_TASK'[CriticalStatus] = "Near Critical")) > 0, "#FFEB9C"
 			        )
 			    )
 		formatString: @
 		displayFolder: Calendar Analysis
 		lineageTag: c50d0256-e5d8-4cf2-84c2-201de31a22ac
 
-	/// Matrix cell font: white on grey (no-activity) cells.
-	measure 'CA Monthly Working Days Font Colour' = IF([CA Monthly Working Days Colour] = "#687078", "#FFFFFF")
+	/// Matrix cell font: a dark shade of each cell colour (grey, dark red, dark amber), white on the solid red paused months, and red for the 0 of a closed month or week with nothing scheduled; each at least 4.5:1 contrast. The theme text colour on white cells.
+	measure 'CA Monthly Working Days Font Colour' =
+			VAR Fill = [CA Monthly Working Days Colour]
+			RETURN
+			    IF(
+			        Fill = "#E7E6E6" && [CA Monthly Working Days] = 0,
+			        "#C00000",
+			        SWITCH(
+			            Fill,
+			            "#E7E6E6", "#595959",
+			            "#C00000", "#FFFFFF",
+			            "#FFC7CE", "#9C0006",
+			            "#FFEB9C", "#9C5700"
+			        )
+			    )
 		formatString: @
 		displayFolder: Calendar Analysis
 		lineageTag: 4e1b6aad-f93b-4622-900a-513632d4dc63
@@ -1938,6 +1952,16 @@ table 'XER Measures'
 		formatString: @
 		displayFolder: Calendar Stretch
 		lineageTag: 8a126f1e-6c24-5b69-ad29-24bbd6ccd878
+
+	/// Title of the Calendar page's working-days matrix: monthly or weekly, from the 'Calendar Period' switch. It reads the identity column 'Period Fields': the display column [Period] is part of the field parameter's composite key and cannot be read alone.
+	measure 'CA Working Days Matrix Title' =
+			VAR SelectedFields = SELECTEDVALUE('Calendar Period'[Period Fields])
+			RETURN
+			    IF(SelectedFields = NAMEOF('Scenario Date'[Week]), "Weekly", "Monthly")
+			        & " Working Days by Calendar (Data Date to Project Finish) · click a cell to inspect activities"
+		formatString: @
+		displayFolder: Calendar Analysis
+		lineageTag: 51fa1c56-4293-5029-a649-0e671f9b8a57
 
 	partition 'XER Measures' = m
 		mode: import

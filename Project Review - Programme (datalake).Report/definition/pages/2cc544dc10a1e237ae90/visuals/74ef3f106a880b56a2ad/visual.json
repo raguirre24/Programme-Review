@@ -65,7 +65,7 @@
             "rectangleRoundedCurve": {
               "expr": {
                 "Literal": {
-                  "Value": "10L"
+                  "Value": "20L"
                 }
               }
             }

@@ -15,7 +15,6 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
-import subprocess
 import sys
 
 sys.dont_write_bytecode = True
@@ -101,9 +100,11 @@ def main() -> None:
         assert options.get("applyOnlyToTargetVisuals") is True, f"{name} must apply only to the project menu visuals"
         assert not set(options["targetVisualNames"]) & set(merge.TOGGLED)
 
-    check = subprocess.run([sys.executable, str(HERE / "merge_analysis_page.py"), "--check", "--definition", str(definition)],
-                           capture_output=True, text=True, encoding="utf-8")
-    assert check.returncode == 0, f"merge_analysis_page.py --check differs from the report:\n{check.stdout[-1500:]}"
+    # Parity with the merge script, ignoring what Desktop rewrites on save (as its --check does).
+    merge.DEFINITION = definition
+    differing = [relative.as_posix() for relative, value in merge.build().items() if value is not None and (
+        not (definition / relative).exists() or merge.desktop_neutral(read(definition / relative)) != merge.desktop_neutral(value))]
+    assert not differing, f"merge_analysis_page.py output differs from the report: {differing[:5]}"
     print(json.dumps({"status": "PASS", "page": merge.PAGE, "visuals": len(visuals), "views": [c for c, _ in merge.VIEWS.values()],
                       "activity_only_visuals": len(merge.ACTIVITY_ONLY), "merge_parity": "PASS"}, indent=2))
 

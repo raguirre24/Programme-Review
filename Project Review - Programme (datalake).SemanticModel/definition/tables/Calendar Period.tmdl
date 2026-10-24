@@ -1,0 +1,50 @@
+/// Native field parameter switching the Calendar page's working-days matrix columns between month and week.
+table 'Calendar Period'
+	lineageTag: 29807eca-533f-599a-b62b-de498472e911
+
+	column Period
+		dataType: string
+		lineageTag: f522bd85-c59c-5451-b3c6-c9806014e8a3
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Period Order'
+
+		relatedColumnDetails
+			groupByColumn: 'Period Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Period Fields'
+		dataType: string
+		isHidden
+		lineageTag: e371e8e0-1259-5606-965d-f648857e9510
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Period Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Period Order'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 4044779e-3eed-5144-80ce-7517a161600a
+		summarizeBy: none
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Calendar Period' = calculated
+		mode: import
+		source =
+				{
+				    ( "Monthly", NAMEOF ( 'Scenario Date'[Month] ), 1 ),
+				    ( "Weekly", NAMEOF ( 'Scenario Date'[Week] ), 2 )
+				}
+

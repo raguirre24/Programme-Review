@@ -853,7 +853,7 @@
             "payload": {
               "expr": {
                 "Literal": {
-                  "Value": "'{\"version\":1,\"signature\":\"[[[\\\"03 XER_PROJWBS.Level_1\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_2\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_3\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_4\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_5\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_6\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_7\\\",true,false]],[[\\\"01 XER_TASK.task_code\\\",false,true]]]\",\"expansion\":{\"level\":-1,\"overrides\":{}},\"sort\":{\"key\":\"\",\"direction\":\"none\"},\"widths\":{}}'"
+                  "Value": "'{\"version\":1,\"signature\":\"[[[\\\"03 XER_PROJWBS.Level_1\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_2\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_3\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_4\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_5\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_6\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_7\\\",true,false]],[[\\\"01 XER_TASK.task_code\\\",false,true]]]\",\"expansion\":{\"level\":-1,\"overrides\":{}},\"sort\":{\"key\":\"__label__\",\"direction\":\"desc\"},\"widths\":{}}'"
                 }
               }
             }
@@ -908,7 +908,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#0F172A'"
+                      "Value": "'#1D1D1B'"
                     }
                   }
                 }
@@ -919,7 +919,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#1E3A8A'"
+                      "Value": "'#CF2E26'"
                     }
                   }
                 }
@@ -930,7 +930,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#065F46'"
+                      "Value": "'#0F4C5C'"
                     }
                   }
                 }
@@ -941,7 +941,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#FCD34D'"
+                      "Value": "'#FDE047'"
                     }
                   }
                 }
@@ -952,7 +952,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#BFDBFE'"
+                      "Value": "'#FED7AA'"
                     }
                   }
                 }
@@ -963,7 +963,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#A7F3D0'"
+                      "Value": "'#CBD5E1'"
                     }
                   }
                 }
@@ -974,7 +974,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#F1F5F9'"
+                      "Value": "'#FAF9F6'"
                     }
                   }
                 }
@@ -1021,7 +1021,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#111827'"
+                      "Value": "'#1D1D1B'"
                     }
                   }
                 }
@@ -1032,7 +1032,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#111827'"
+                      "Value": "'#1D1D1B'"
                     }
                   }
                 }
@@ -1043,7 +1043,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#111827'"
+                      "Value": "'#1D1D1B'"
                     }
                   }
                 }
@@ -1054,7 +1054,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#111827'"
+                      "Value": "'#1D1D1B'"
                     }
                   }
                 }

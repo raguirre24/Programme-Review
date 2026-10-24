@@ -4,10 +4,10 @@
   "position": {
     "x": 1492,
     "y": 90,
-    "z": 18000,
+    "z": 26000,
     "height": 52,
     "width": 270,
-    "tabOrder": 15000
+    "tabOrder": 23000
   },
   "visual": {
     "visualType": "slicer",
@@ -361,6 +361,19 @@
               "expr": {
                 "Literal": {
                   "Value": "4D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "spacing": [
+        {
+          "properties": {
+            "spaceAbovePlotArea": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
                 }
               }
             }

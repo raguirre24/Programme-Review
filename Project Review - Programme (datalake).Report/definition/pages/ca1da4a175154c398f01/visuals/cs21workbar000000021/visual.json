@@ -1,16 +1,185 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "cs21workbar000000021",
   "position": {
     "x": 12,
     "y": 226,
-    "z": 13000,
+    "z": 18000,
     "height": 420,
     "width": 620,
-    "tabOrder": 13000
+    "tabOrder": 18000
   },
   "visual": {
     "visualType": "barChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "01 XER_TASK"
+                    }
+                  },
+                  "Property": "task_code"
+                }
+              },
+              "queryRef": "01 XER_TASK.task_code",
+              "nativeQueryRef": "Activity",
+              "active": true,
+              "displayName": "Activity"
+            }
+          ]
+        },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Measures"
+                    }
+                  },
+                  "Property": "CS Activity Calendar Delay Days"
+                }
+              },
+              "queryRef": "XER Measures.CS Activity Calendar Delay Days",
+              "nativeQueryRef": "Calendar-driven delay (days)",
+              "displayName": "Calendar-driven delay (days)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Measures"
+                    }
+                  },
+                  "Property": "CA Activity Name"
+                }
+              },
+              "queryRef": "XER Measures.CA Activity Name",
+              "nativeQueryRef": "Activity name",
+              "displayName": "Activity name"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Measures"
+                    }
+                  },
+                  "Property": "CA Activity Calendar"
+                }
+              },
+              "queryRef": "XER Measures.CA Activity Calendar",
+              "nativeQueryRef": "Calendar",
+              "displayName": "Calendar"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Measures"
+                    }
+                  },
+                  "Property": "CA Activity Stretch Ratio"
+                }
+              },
+              "queryRef": "XER Measures.CA Activity Stretch Ratio",
+              "nativeQueryRef": "Calendar vs working ratio",
+              "displayName": "Calendar vs working ratio"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Measures"
+                    }
+                  },
+                  "Property": "CA Activity Total Float"
+                }
+              },
+              "queryRef": "XER Measures.CA Activity Total Float",
+              "nativeQueryRef": "Total float (working days)",
+              "displayName": "Total float (working days)"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Measures"
+                    }
+                  },
+                  "Property": "CA Activity Remaining Working Days"
+                }
+              },
+              "queryRef": "XER Measures.CA Activity Remaining Working Days",
+              "nativeQueryRef": "Working days",
+              "displayName": "Working days"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Measures"
+                    }
+                  },
+                  "Property": "CA Activity Standard Non-Working Days"
+                }
+              },
+              "queryRef": "XER Measures.CA Activity Standard Non-Working Days",
+              "nativeQueryRef": "Weekends / off-days",
+              "displayName": "Weekends / off-days"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Measures"
+                    }
+                  },
+                  "Property": "CA Activity Exception Blackout Days"
+                }
+              },
+              "queryRef": "XER Measures.CA Activity Exception Blackout Days",
+              "nativeQueryRef": "Holidays / shutdowns",
+              "displayName": "Holidays / shutdowns"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "XER Measures"
+                  }
+                },
+                "Property": "CS Activity Calendar Delay Days"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
     "objects": {
       "dataPoint": [
         {
@@ -254,176 +423,7 @@
         }
       ]
     },
-    "drillFilterOtherVisuals": true,
-    "query": {
-      "queryState": {
-        "Category": {
-          "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "01 XER_TASK"
-                    }
-                  },
-                  "Property": "task_code"
-                }
-              },
-              "queryRef": "01 XER_TASK.task_code",
-              "nativeQueryRef": "Activity",
-              "active": true,
-              "displayName": "Activity"
-            }
-          ]
-        },
-        "Y": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "XER Measures"
-                    }
-                  },
-                  "Property": "CA Activity Remaining Working Days"
-                }
-              },
-              "queryRef": "XER Measures.CA Activity Remaining Working Days",
-              "nativeQueryRef": "Working days",
-              "displayName": "Working days"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "XER Measures"
-                    }
-                  },
-                  "Property": "CA Activity Standard Non-Working Days"
-                }
-              },
-              "queryRef": "XER Measures.CA Activity Standard Non-Working Days",
-              "nativeQueryRef": "Weekends / off-days",
-              "displayName": "Weekends / off-days"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "XER Measures"
-                    }
-                  },
-                  "Property": "CA Activity Exception Blackout Days"
-                }
-              },
-              "queryRef": "XER Measures.CA Activity Exception Blackout Days",
-              "nativeQueryRef": "Holidays / shutdowns",
-              "displayName": "Holidays / shutdowns"
-            }
-          ]
-        },
-        "Tooltips": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "XER Measures"
-                    }
-                  },
-                  "Property": "CS Activity Calendar Delay Days"
-                }
-              },
-              "queryRef": "XER Measures.CS Activity Calendar Delay Days",
-              "nativeQueryRef": "Calendar-driven delay (days)",
-              "displayName": "Calendar-driven delay (days)"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "XER Measures"
-                    }
-                  },
-                  "Property": "CA Activity Name"
-                }
-              },
-              "queryRef": "XER Measures.CA Activity Name",
-              "nativeQueryRef": "Activity name",
-              "displayName": "Activity name"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "XER Measures"
-                    }
-                  },
-                  "Property": "CA Activity Calendar"
-                }
-              },
-              "queryRef": "XER Measures.CA Activity Calendar",
-              "nativeQueryRef": "Calendar",
-              "displayName": "Calendar"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "XER Measures"
-                    }
-                  },
-                  "Property": "CA Activity Stretch Ratio"
-                }
-              },
-              "queryRef": "XER Measures.CA Activity Stretch Ratio",
-              "nativeQueryRef": "Calendar vs working ratio",
-              "displayName": "Calendar vs working ratio"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "XER Measures"
-                    }
-                  },
-                  "Property": "CA Activity Total Float"
-                }
-              },
-              "queryRef": "XER Measures.CA Activity Total Float",
-              "nativeQueryRef": "Total float (working days)",
-              "displayName": "Total float (working days)"
-            }
-          ]
-        }
-      },
-      "sortDefinition": {
-        "sort": [
-          {
-            "field": {
-              "Measure": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "XER Measures"
-                  }
-                },
-                "Property": "CS Activity Calendar Delay Days"
-              }
-            },
-            "direction": "Descending"
-          }
-        ]
-      }
-    }
+    "drillFilterOtherVisuals": true
   },
   "filterConfig": {
     "filters": [

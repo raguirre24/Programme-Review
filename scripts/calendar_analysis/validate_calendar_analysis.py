@@ -32,6 +32,7 @@ EXPECTED_CA_MEASURES = [
     "CA Critical Remaining Working Days",
     "CA Inspector Scope Ready",
     "CA Inspector Title",
+    "CA Working Days Matrix Title",
     "CA Inspector Selection Match",
     "CA Activity Total Float",
     "CA Activity Remaining Working Days",
@@ -125,7 +126,7 @@ def eval_window_calendar(
 
 
 def verify_conservation_laws() -> dict:
-    """Verify Monthly Civil Partition and Activity Stretch Decomposition across 5d/6d/7d calendars and blackouts."""
+    """Verify Monthly and Weekly Partitions and Activity Stretch Decomposition across 5d/6d/7d calendars and blackouts."""
     week_5d = {1: 8.0, 2: 8.0, 3: 8.0, 4: 8.0, 5: 8.0, 6: 0.0, 7: 0.0}
     week_6d = {1: 10.0, 2: 10.0, 3: 10.0, 4: 10.0, 5: 10.0, 6: 8.0, 7: 0.0}
     week_7d = {d: 12.0 for d in range(1, 8)}
@@ -146,6 +147,12 @@ def verify_conservation_laws() -> dict:
         m_end = date(yr, mo, last_day)
         for wk in (week_5d, week_6d, week_7d):
             eval_window_calendar(m_start, m_end, wk, sept_with_overtime)
+    # Weekly matrix columns: Monday-to-Sunday weeks (the 'Scenario Date'[Week] start), across the September blackout.
+    week_start = date(2026, 8, 24)
+    for _ in range(8):
+        for wk in (week_5d, week_6d, week_7d):
+            eval_window_calendar(week_start, week_start + timedelta(days=6), wk, sept_with_overtime)
+        week_start += timedelta(days=7)
 
     # User prompt canonical scenario:
     # Critical activity with 5 remaining working days starting Fri 28 Aug 2026, hitting the 11-weekday
@@ -224,6 +231,16 @@ def verify_calendar_alignment_wiring() -> None:
         assert guess not in ca_text, f"CA measures must not infer workweeks from calendar names ({guess})"
 
 
+def contrast_ratio(first: str, second: str) -> float:
+    """WCAG 2 contrast ratio of two #RRGGBB colours."""
+    def luminance(colour: str) -> float:
+        channels = [int(colour[index:index + 2], 16) / 255 for index in (1, 3, 5)]
+        linear = [c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4 for c in channels]
+        return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2]
+    lighter, darker = sorted((luminance(first), luminance(second)), reverse=True)
+    return (lighter + 0.05) / (darker + 0.05)
+
+
 def measure_blocks(text: str) -> dict[str, str]:
     """Map each measure name to its TMDL block (header, expression, properties; not the next object's /// lines).
 
@@ -295,7 +312,7 @@ def verify_tmdl_measures() -> int:
         "All 12 CA Activity * measures must guard evaluation with TaskRows > 0 && ISINSCOPE('01 XER_TASK'[task_code])"
     )
 
-    # 5. 'Scenario Calendar' / 'Scenario Date' have no relationship to '01 XER_TASK', so a calendar row or month cell
+    # 5. 'Scenario Calendar' / 'Scenario Date' have no relationship to '01 XER_TASK', so a calendar row or month/week cell
     #    selected in ca21/ca22 reaches the inspector only through the [CA Inspector Selection Match] gate. Every
     #    activity-grain guard must include it, it is the only measure they may reference, and the gate must stay a
     #    storage-engine column filter (no row iteration, no calendar-rule table).
@@ -311,6 +328,7 @@ def verify_tmdl_measures() -> int:
     for required_token in (
         "ISFILTERED('Scenario Calendar'[Calendar])",
         "ISFILTERED('Scenario Date'[Month])",
+        "ISFILTERED('Scenario Date'[Week])",
         "TREATAS(VALUES('Scenario Calendar'[clndr_id_key]), '01 XER_TASK'[calendar_id_key])",
     ):
         assert required_token in gate_block, f"[CA Inspector Selection Match] must contain {required_token}"
@@ -341,40 +359,72 @@ def verify_tmdl_measures() -> int:
     for required_token in ("HASONEVALUE(Project_Dimension[ProjectKey])", "HASONEVALUE(CurrentDate[UpdateDate])"):
         assert required_token in ca["CA Inspector Scope Ready"], f"[CA Inspector Scope Ready] must contain {required_token}"
     guard_branch = "NOT [CA Inspector Scope Ready], FALSE(),"
-    assert guard_branch in gate_block and gate_block.index(guard_branch) < gate_block.index("CalendarSelected && MonthSelected,"), (
+    assert guard_branch in gate_block and gate_block.index(guard_branch) < gate_block.index("CalendarSelected && PeriodSelected,"), (
         "[CA Inspector Selection Match] must return FALSE unless [CA Inspector Scope Ready], before any selection check"
     )
     assert "[CA Inspector Scope Ready]" in ca["CA Inspector Title"], "[CA Inspector Title] must follow [CA Inspector Scope Ready]"
 
-    # 8. Matrix colours: a grey cell must mean "clicking it lists no activities", so the monthly activity count shares
-    #    the gate's month overlap; otherwise critical (red) wins over near critical (orange), as in [CriticalStatus].
+    # 8. Matrix colours: a grey cell must mean "clicking it lists no activities", so the month or week activity count shares
+    #    the gate's period overlap; otherwise critical (red) wins over near critical (orange), as in [CriticalStatus].
     active_block = ca["CA Monthly Active Activities"]
     assert "TREATAS({ CalKey }, '01 XER_TASK'[calendar_id_key])" in active_block, (
         "[CA Monthly Active Activities] must match activities by calendar key"
     )
     for window_predicate in (
-        "KEEPFILTERS('01 XER_TASK'[Finish] >= MonthStart)",
-        "KEEPFILTERS('01 XER_TASK'[Start] <= MonthEnd)",
-        "KEEPFILTERS('01 XER_TASK'[data_date] <= MonthEnd)",
+        "KEEPFILTERS('01 XER_TASK'[Finish] >= PeriodStart)",
+        "KEEPFILTERS('01 XER_TASK'[Start] <= PeriodEnd)",
+        "KEEPFILTERS('01 XER_TASK'[data_date] <= PeriodEnd)",
     ):
         assert window_predicate in active_block and window_predicate in gate_block, (
-            f"[CA Monthly Active Activities] and [CA Inspector Selection Match] must share the month overlap {window_predicate}"
+            f"[CA Monthly Active Activities] and [CA Inspector Selection Match] must share the period overlap {window_predicate}"
         )
     colour_block = ca["CA Monthly Working Days Colour"]
     branch_positions = [
         colour_block.find(branch)
         for branch in (
             "[CA Monthly Active Activities] = 0,",
+            "CellDays = 0,",
             "KEEPFILTERS('01 XER_TASK'[CriticalStatus] = \"Critical\")",
             "KEEPFILTERS('01 XER_TASK'[CriticalStatus] = \"Near Critical\")",
         )
     ]
     assert -1 not in branch_positions and branch_positions == sorted(branch_positions), (
-        "[CA Monthly Working Days Colour] must test no activity (grey), then critical (red), then near critical (orange)"
+        "[CA Monthly Working Days Colour] must test no activity (grey), then work paused by a 0-day month (solid red), "
+        "then critical (light red), then near critical (light amber)"
     )
     assert "[CA Monthly Working Days Colour]" in ca["CA Monthly Working Days Font Colour"], (
         "[CA Monthly Working Days Font Colour] must follow the cell colour"
     )
+    # 9. Every cell colour has its own number colour with at least 4.5:1 contrast (WCAG AA for normal text).
+    cell_fills = set(re.findall(r'"(#[0-9A-Fa-f]{6})"', colour_block))
+    number_colours = dict(re.findall(r'"(#[0-9A-Fa-f]{6})",\s*"(#[0-9A-Fa-f]{6})"', ca["CA Monthly Working Days Font Colour"]))
+    assert cell_fills == set(number_colours), (
+        f"Each matrix cell colour needs a number colour: cells {sorted(cell_fills)}, numbers for {sorted(number_colours)}")
+    for fill, number in number_colours.items():
+        assert contrast_ratio(fill, number) >= 4.5, f"Matrix numbers {number} on {fill} are below 4.5:1 contrast"
+    # 10. A closed month with nothing scheduled keeps its grey cell but shows its 0 in red.
+    closed = re.search(r'Fill = "(#[0-9A-Fa-f]{6})" && \[CA Monthly Working Days\] = 0,\s*"(#[0-9A-Fa-f]{6})"',
+                       ca["CA Monthly Working Days Font Colour"])
+    assert closed and contrast_ratio(*closed.groups()) >= 4.5, "Zero working days on a grey cell must show a readable red 0"
+    # 11. The matrix columns are a month or a week ('Calendar Period' field parameter): the cell measures accept either,
+    #     a week is shown when it overlaps the horizon months, and the title names the selected period.
+    either_period = "(HASONEVALUE('Scenario Date'[Month]) || HASONEVALUE('Scenario Date'[Week]))"
+    for name in ("CA Monthly Working Days", "CA Monthly Active Activities"):
+        assert either_period in ca[name], f"[{name}] must evaluate for one month or one week: {either_period}"
+    assert "PeriodEnd >= HorizonStart && PeriodStart <= EOMONTH(HorizonEnd, 0)" in ca["CA Monthly Working Days"], (
+        "[CA Monthly Working Days] must show every month or week overlapping the forecast horizon months")
+    assert "SELECTEDVALUE('Calendar Period'[Period Fields])" in ca["CA Working Days Matrix Title"] \
+        and "NAMEOF('Scenario Date'[Week])" in ca["CA Working Days Matrix Title"], (
+        "[CA Working Days Matrix Title] must name the 'Calendar Period' selection")
+    # [Period] is grouped by [Period Fields] (a composite key): DAX that reads it alone fails at query time.
+    measures_text = (MODEL_DEF / "tables" / "XER Measures.tmdl").read_text(encoding="utf-8")
+    assert "'Calendar Period'[Period]" not in measures_text, (
+        "Read the 'Calendar Period' selection from [Period Fields]; [Period] alone raises a composite-key error")
+    period_table = (MODEL_DEF / "tables" / "Calendar Period.tmdl").read_text(encoding="utf-8")
+    for token in ('"Monthly", NAMEOF ( \'Scenario Date\'[Month] ), 1', '"Weekly", NAMEOF ( \'Scenario Date\'[Week] ), 2',
+                  "extendedProperty ParameterMetadata", "groupByColumn: 'Period Fields'"):
+        assert token in period_table, f"'Calendar Period' must be a Monthly/Weekly field parameter ({token})"
+    assert "ref table 'Calendar Period'" in (MODEL_DEF / "model.tmdl").read_text(encoding="utf-8")
 
     return len(found_measures)
 
@@ -384,14 +434,14 @@ def verify_pbir_page() -> dict:
     order = pages_meta["pageOrder"]
     assert PAGE_ID in order, f"Page {PAGE_ID} missing from pages.json"
     rc_idx = order.index("4c53a34bba9dcc7f3e8c")
-    assert order[rc_idx + 1] == PAGE_ID, "Calendar Analysis must follow Resources in pageOrder"
+    assert order[rc_idx + 1] == PAGE_ID, "Calendar must follow Resources in pageOrder"
 
     rc_page_json = json.loads((REPORT_DEF / "pages" / "4c53a34bba9dcc7f3e8c" / "page.json").read_text(encoding="utf-8"))
     assert rc_page_json["displayName"] == "Resources"
 
     page_dir = REPORT_DEF / "pages" / PAGE_ID
     page_json = json.loads((page_dir / "page.json").read_text(encoding="utf-8"))
-    assert page_json["displayName"] == "Calendar Analysis"
+    assert page_json["displayName"] == "Calendar"
     assert page_json["width"] == 1920 and page_json["height"] == 1080
 
     # Check page-level filters (Is Unscheduled = false, TaskType_Classified = 'Activity', status_code, Float Category <= 50)
@@ -406,8 +456,8 @@ def verify_pbir_page() -> dict:
 
     # Check visuals and bounds
     visual_files = sorted((page_dir / "visuals").glob("*/visual.json"))
-    # 25 Calendars-view and shared visuals, 9 Delay-view visuals and the view navigator (generate_stretch_view.py).
-    assert len(visual_files) == 35, f"Expected 35 visuals on Calendar Analysis, found {len(visual_files)}"
+    # 26 Calendars-view and shared visuals, 9 Delay-view visuals and the view navigator (generate_stretch_view.py).
+    assert len(visual_files) == 36, f"Expected 36 visuals on Calendar Analysis, found {len(visual_files)}"
 
     sync_groups = set()
     visual_types = {}
@@ -454,7 +504,8 @@ def verify_pbir_page() -> dict:
     assert len(gated_props) == len(act_projs) - 1 and all(name.startswith("CA Activity ") for name in gated_props), (
         f"ca23actinsp000000023 fields other than task_code must all be CA Activity * measures, got {gated_props}"
     )
-    # The matrix colours each Working Days cell from field-value measures (grey with white text, light red, light orange).
+    # The matrix colours each Working Days cell from field-value measures (light grey, light red, light amber, each with a
+    # darker number colour).
     mat_vis = json.loads((page_dir / "visuals" / "ca22calmatx000000022" / "visual.json").read_text(encoding="utf-8"))
     colour_rules = {
         prop: entry["properties"][prop]["solid"]["color"]["expr"]["Measure"]["Property"]
@@ -466,6 +517,29 @@ def verify_pbir_page() -> dict:
     assert colour_rules == {"backColor": "CA Monthly Working Days Colour", "fontColor": "CA Monthly Working Days Font Colour"}, (
         f"ca22calmatx000000022 Working Days cells must take backColor/fontColor from the CA colour measures, got {colour_rules}"
     )
+    # Monthly | Weekly: the matrix columns come from the 'Calendar Period' field parameter, switched by tile slicer ca27
+    # in the matrix title row (default Monthly), and the title follows the selection.
+    columns = mat_vis["visual"]["query"]["queryState"]["Columns"]
+    assert [p["queryRef"] for p in columns["projections"]] == ["Scenario Date.Month"], "ca22 columns must start on months"
+    parameters = columns.get("fieldParameters", [])
+    assert len(parameters) == 1 and parameters[0]["parameterExpr"]["Column"]["Expression"]["SourceRef"]["Entity"] == "Calendar Period" \
+        and parameters[0]["parameterExpr"]["Column"]["Property"] == "Period Fields", "ca22 columns must follow 'Calendar Period'"
+    matrix_title = mat_vis["visual"]["visualContainerObjects"]["title"][0]["properties"]["text"]["expr"]
+    assert matrix_title.get("Measure", {}).get("Property") == "CA Working Days Matrix Title", (
+        "ca22calmatx000000022 title must be bound to [CA Working Days Matrix Title]")
+    switch = json.loads((page_dir / "visuals" / "ca27periodslc0000027" / "visual.json").read_text(encoding="utf-8"))
+    assert visual_types["ca27periodslc0000027"] == "slicer"
+    assert [p["queryRef"] for p in switch["visual"]["query"]["queryState"]["Values"]["projections"]] == ["Calendar Period.Period"]
+    switch_objects = switch["visual"]["objects"]
+    assert switch_objects["data"][0]["properties"]["mode"]["expr"]["Literal"]["Value"] == "'Basic'"
+    assert switch_objects["general"][0]["properties"]["orientation"]["expr"]["Literal"]["Value"] == "1D", "ca27 must show tiles"
+    assert switch_objects["selection"][0]["properties"]["strictSingleSelect"]["expr"]["Literal"]["Value"] == "true"
+    default = switch_objects["general"][0]["properties"]["filter"]["filter"]["Where"][0]["Condition"]["In"]["Values"]
+    assert default == [[{"Literal": {"Value": "'''Scenario Date''[Month]'"}}]], "ca27 must default to Monthly"
+    matrix_pos, switch_pos = mat_vis["position"], switch["position"]
+    assert matrix_pos["x"] <= switch_pos["x"] and switch_pos["x"] + switch_pos["width"] <= matrix_pos["x"] + matrix_pos["width"] - 70 \
+        and matrix_pos["y"] <= switch_pos["y"] and switch_pos["y"] + switch_pos["height"] <= matrix_pos["y"] + 34 \
+        and switch_pos["z"] > matrix_pos["z"], "ca27 must sit in the matrix title row, clear of the matrix header icons"
     # The legend under the matrix must show a swatch for every colour the cell measure can return.
     legend = json.loads((page_dir / "visuals" / "ca25matxleg000000025" / "visual.json").read_text(encoding="utf-8"))
     legend_colours = {

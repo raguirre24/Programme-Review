@@ -13,6 +13,7 @@
       "ca22calmatx000000022",
       "ca23actinsp000000023",
       "ca25matxleg000000025",
+      "ca27periodslc0000027",
       "cs17kpi1dly000000017",
       "cs18kpi2crt000000018",
       "cs19kpi3max000000019",
@@ -77,6 +78,12 @@
           "ca25matxleg000000025": {
             "singleVisual": {
               "visualType": "textbox",
+              "objects": {}
+            }
+          },
+          "ca27periodslc0000027": {
+            "singleVisual": {
+              "visualType": "slicer",
               "objects": {}
             }
           },

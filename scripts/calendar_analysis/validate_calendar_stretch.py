@@ -1,5 +1,5 @@
 """Static, oracle and PBIR verification for Calendar Stretch: the calendar-driven delay columns, measures and the Delay
-view of the Calendar Analysis page.
+view of the Calendar page.
 
 Checks the two '01 XER_TASK' columns and the CS measures in TMDL, mirrors their algorithms in Python against
 day-by-day brute force (finish without exceptions, shutdown bands, cliff-edge search and its horizon), asserts the canonical
@@ -335,12 +335,13 @@ def verify_tmdl() -> int:
 # PBIR contracts
 # ---------------------------------------------------------------------------------------------------------------
 
-DESKTOP_MANAGED_KEYS = {"$schema", "active", "stateManagement", "developer"}
+DESKTOP_MANAGED_KEYS = {"$schema", "z", "tabOrder", "active", "stateManagement", "developer"}
 
 
 def desktop_neutral(value):
     """Drop what Power BI Desktop and Deneb add or bump when they save a generated visual: the visualContainer $schema
-    version, projection 'active' flags, and Deneb's managed state (stateManagement, developer, vega.properties.version)."""
+    version, stacking and tab order (z, tabOrder), projection 'active' flags, and Deneb's managed state (stateManagement,
+    developer, vega.properties.version)."""
     if isinstance(value, dict):
         result = {key: desktop_neutral(item) for key, item in value.items() if key not in DESKTOP_MANAGED_KEYS}
         for entry in result.get("vega", []) if isinstance(result.get("vega"), list) else []:
@@ -370,7 +371,7 @@ def verify_pbir() -> dict:
     for name in gen.FORMER_BOOKMARKS:
         assert not (REPORT_DEF / "bookmarks" / f"{name}.bookmark.json").exists(), f"Bookmark {name} of the removed page remains"
     page = json.loads((page_dir / "page.json").read_text(encoding="utf-8-sig"))
-    assert page["displayName"] == "Calendar Analysis" and page["width"] == 1920 and page["height"] == 1080
+    assert page["displayName"] == "Calendar" and page["width"] == 1920 and page["height"] == 1080
     page_filters = {f["field"]["Column"]["Property"]: f for f in page["filterConfig"]["filters"]}
     assert {"Is Unscheduled", "TaskType_Classified", "status_code", "Float Category"} <= set(page_filters)
 

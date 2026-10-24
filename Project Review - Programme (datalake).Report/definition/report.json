@@ -115,6 +115,9 @@
       }
     ]
   },
+  "publicCustomVisuals": [
+    "deneb7E15AEF80B9E4D4F8E12924291ECE89A"
+  ],
   "resourcePackages": [
     {
       "name": "RegisteredResources",
@@ -150,23 +153,23 @@
       ]
     },
     {
-      "name": "LongestPathVisual",
-      "type": "CustomVisual",
-      "items": [
-        {
-          "name": "LongestPathVisual.pbiviz.json",
-          "path": "LongestPathVisual.pbiviz.json",
-          "type": "CustomVisualMetadata"
-        }
-      ]
-    },
-    {
       "name": "P6WBSMatrix8BDB3B26BB4B497EA3E044ADBDE081D0",
       "type": "CustomVisual",
       "items": [
         {
           "name": "P6WBSMatrix8BDB3B26BB4B497EA3E044ADBDE081D0.pbiviz.json",
           "path": "P6WBSMatrix8BDB3B26BB4B497EA3E044ADBDE081D0.pbiviz.json",
+          "type": "CustomVisualMetadata"
+        }
+      ]
+    },
+    {
+      "name": "LongestPathVisual",
+      "type": "CustomVisual",
+      "items": [
+        {
+          "name": "LongestPathVisual.pbiviz.json",
+          "path": "LongestPathVisual.pbiviz.json",
           "type": "CustomVisualMetadata"
         }
       ]
@@ -190,8 +193,5 @@
     "isFilterSelectionsButtonEnabled": false,
     "isFieldWellButtonEnabled": false,
     "isApplyAllButtonEnabled": false
-  },
-  "publicCustomVisuals": [
-    "deneb7E15AEF80B9E4D4F8E12924291ECE89A"
-  ]
+  }
 }

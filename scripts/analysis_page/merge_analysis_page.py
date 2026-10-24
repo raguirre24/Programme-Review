@@ -18,7 +18,7 @@ and their group, the scope and names of the surviving project-menu bookmarks, bo
 former pages and their four project-menu bookmarks are removed. Once the former pages are gone the moved visuals are
 read from the merged page, so a re-run is idempotent.
 
-Modes: --check compares with the report (exit 1 on difference), --output-dir writes a review copy outside the report,
+Modes: --check compares content with the report, ignoring what Desktop rewrites on save (exit 1 on difference), --output-dir writes a review copy outside the report,
 --apply writes into the report (close Power BI Desktop without saving first). --definition points every mode at another
 report definition folder, for example a scratch copy.
 """
@@ -84,6 +84,22 @@ def read(path: Path) -> dict:
 
 def rendered(value: dict) -> str:
     return json.dumps(value, ensure_ascii=False, indent=2) + "\n"
+
+
+# What Power BI Desktop rewrites when it saves, so --check and --apply compare content rather than formatting: the
+# visualContainer $schema version, stacking and tab order (z, tabOrder), projection 'active' flags and Deneb's state.
+DESKTOP_MANAGED_KEYS = {"$schema", "z", "tabOrder", "active", "stateManagement", "developer"}
+
+
+def desktop_neutral(value):
+    if isinstance(value, dict):
+        result = {key: desktop_neutral(item) for key, item in value.items() if key not in DESKTOP_MANAGED_KEYS}
+        for entry in result.get("vega", []) if isinstance(result.get("vega"), list) else []:
+            entry.get("properties", {}).pop("version", None)
+        return result
+    if isinstance(value, list):
+        return [desktop_neutral(item) for item in value]
+    return value
 
 
 def expr(value: str) -> dict:
@@ -202,7 +218,12 @@ def build() -> dict[Path, dict | None]:
                 filters.append(task_type_filter(identifier(f"{name}:activity-only"), ["Activity"]))
         outputs[Path("pages") / PAGE / "visuals" / name / "visual.json"] = item
 
-    outputs[Path("pages") / PAGE / "visuals" / NAVIGATOR / "visual.json"] = view_navigator()
+    navigator = view_navigator()
+    placed = page_dir / "visuals" / NAVIGATOR / "visual.json"
+    if placed.exists():
+        # Once placed, the buttons' position is the report author's: keep a navigator moved in Desktop where it is.
+        navigator["position"] = read(placed)["position"]
+    outputs[Path("pages") / PAGE / "visuals" / NAVIGATOR / "visual.json"] = navigator
 
     page["displayName"] = PAGE_NAME
     for entry in page["filterConfig"]["filters"]:
@@ -270,7 +291,7 @@ def main() -> None:
                     shutil.rmtree(path) if path.is_dir() else path.unlink()
             continue
         text = rendered(value)
-        if not path.exists() or path.read_text(encoding="utf-8-sig") != text:
+        if not path.exists() or desktop_neutral(json.loads(path.read_text(encoding="utf-8-sig"))) != desktop_neutral(value):
             changed.append(relative.as_posix())
             if not args.check:
                 path.parent.mkdir(parents=True, exist_ok=True)

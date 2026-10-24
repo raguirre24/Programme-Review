@@ -3,11 +3,11 @@
   "name": "76632dab0ff8b86a8c55",
   "position": {
     "x": 24,
-    "y": 258,
-    "z": 9000,
+    "y": 312.8,
+    "z": 14000,
     "height": 76,
     "width": 228,
-    "tabOrder": 6000
+    "tabOrder": 11000
   },
   "visual": {
     "visualType": "textSlicer",
@@ -143,7 +143,7 @@
                         },
                         "Right": {
                           "Literal": {
-                            "Value": "10000L"
+                            "Value": "1050L"
                           }
                         }
                       }

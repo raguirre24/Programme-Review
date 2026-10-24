@@ -11,7 +11,8 @@ the header title, the view navigator, page.json (name and interactions), the thr
 bookmarks.json and pages.json. The move is one-off: once the former page is gone the Histogram visuals are read from the
 merged page, so a re-run is idempotent.
 
-Modes: --check compares the generated files with the report (exit 1 on difference), --output-dir writes a review copy
+Modes: --check compares the generated files' content with the report, ignoring what Desktop rewrites on save (exit 1
+on difference), --output-dir writes a review copy
 outside the report, --apply writes them into the report (close Power BI Desktop without saving first). --definition
 points every mode at another report definition folder, for example a scratch copy.
 """
@@ -89,6 +90,22 @@ def rendered(value: dict) -> str:
     return json.dumps(value, ensure_ascii=False, indent=2) + "\n"
 
 
+# What Power BI Desktop rewrites when it saves, so --check and --apply compare content rather than formatting: the
+# visualContainer $schema version, stacking and tab order (z, tabOrder), projection 'active' flags and Deneb's state.
+DESKTOP_MANAGED_KEYS = {"$schema", "z", "tabOrder", "active", "stateManagement", "developer"}
+
+
+def desktop_neutral(value):
+    if isinstance(value, dict):
+        result = {key: desktop_neutral(item) for key, item in value.items() if key not in DESKTOP_MANAGED_KEYS}
+        for entry in result.get("vega", []) if isinstance(result.get("vega"), list) else []:
+            entry.get("properties", {}).pop("version", None)
+        return result
+    if isinstance(value, list):
+        return [desktop_neutral(item) for item in value]
+    return value
+
+
 def interactions(page: dict) -> list[dict]:
     """Keep the Simulator and Compare pairs, add the former page's pairs, and keep the views from filtering each other."""
     histogram = set(HISTOGRAM_VIEW)
@@ -144,8 +161,10 @@ def build() -> dict[Path, dict | None]:
     outputs[Path("pages") / PAGE / "visuals" / TITLE / "visual.json"] = title
 
     navigator = simulator[NAVIGATOR]
-    # Header row right of the logo: the former spot overlaps the Histogram view's WBS slicer.
-    navigator["position"].update({"x": 200, "y": 20, "width": 450, "height": 44})
+    if former_dir.exists():
+        # On the merge, move it to the header row right of the logo: its old spot overlaps the Histogram view's WBS slicer.
+        # Afterwards its position is the report author's, so a navigator moved in Desktop stays where it is.
+        navigator["position"].update({"x": 200, "y": 20, "width": 450, "height": 44})
     navigator["visual"]["objects"]["bookmarks"] = props(
         bookmarkGroup=string(VIEW_GROUP), allowDeselectionBookmark=expr("false"), selectedBookmark=string(HISTOGRAM_BOOKMARK))
     vco = navigator["visual"]["visualContainerObjects"]
@@ -208,7 +227,7 @@ def main() -> None:
                     shutil.rmtree(path) if path.is_dir() else path.unlink()
             continue
         text = rendered(value)
-        if not path.exists() or path.read_text(encoding="utf-8-sig") != text:
+        if not path.exists() or desktop_neutral(json.loads(path.read_text(encoding="utf-8-sig"))) != desktop_neutral(value):
             changed.append(relative.as_posix())
             if not args.check:
                 path.parent.mkdir(parents=True, exist_ok=True)

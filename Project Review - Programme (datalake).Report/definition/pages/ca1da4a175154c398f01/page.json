@@ -569,6 +569,11 @@
     },
     {
       "source": "cs26cliffch000000026",
+      "target": "ca27periodslc0000027",
+      "type": "NoFilter"
+    },
+    {
+      "source": "cs26cliffch000000026",
       "target": "cs17kpi1dly000000017",
       "type": "NoFilter"
     },
@@ -1284,6 +1289,91 @@
     },
     {
       "source": "ca25matxleg000000025",
+      "target": "cs26cliffch000000026",
+      "type": "NoFilter"
+    },
+    {
+      "source": "ca27periodslc0000027",
+      "target": "cs17kpi1dly000000017",
+      "type": "NoFilter"
+    },
+    {
+      "source": "cs17kpi1dly000000017",
+      "target": "ca27periodslc0000027",
+      "type": "NoFilter"
+    },
+    {
+      "source": "ca27periodslc0000027",
+      "target": "cs18kpi2crt000000018",
+      "type": "NoFilter"
+    },
+    {
+      "source": "cs18kpi2crt000000018",
+      "target": "ca27periodslc0000027",
+      "type": "NoFilter"
+    },
+    {
+      "source": "ca27periodslc0000027",
+      "target": "cs19kpi3max000000019",
+      "type": "NoFilter"
+    },
+    {
+      "source": "cs19kpi3max000000019",
+      "target": "ca27periodslc0000027",
+      "type": "NoFilter"
+    },
+    {
+      "source": "ca27periodslc0000027",
+      "target": "cs20kpi4rat000000020",
+      "type": "NoFilter"
+    },
+    {
+      "source": "cs20kpi4rat000000020",
+      "target": "ca27periodslc0000027",
+      "type": "NoFilter"
+    },
+    {
+      "source": "ca27periodslc0000027",
+      "target": "cs21workbar000000021",
+      "type": "NoFilter"
+    },
+    {
+      "source": "cs21workbar000000021",
+      "target": "ca27periodslc0000027",
+      "type": "NoFilter"
+    },
+    {
+      "source": "ca27periodslc0000027",
+      "target": "cs22timeline00000022",
+      "type": "NoFilter"
+    },
+    {
+      "source": "cs22timeline00000022",
+      "target": "ca27periodslc0000027",
+      "type": "NoFilter"
+    },
+    {
+      "source": "ca27periodslc0000027",
+      "target": "cs23scatter000000023",
+      "type": "NoFilter"
+    },
+    {
+      "source": "cs23scatter000000023",
+      "target": "ca27periodslc0000027",
+      "type": "NoFilter"
+    },
+    {
+      "source": "ca27periodslc0000027",
+      "target": "cs25cliffco000000025",
+      "type": "NoFilter"
+    },
+    {
+      "source": "cs25cliffco000000025",
+      "target": "ca27periodslc0000027",
+      "type": "NoFilter"
+    },
+    {
+      "source": "ca27periodslc0000027",
       "target": "cs26cliffch000000026",
       "type": "NoFilter"
     }

@@ -1,16 +1,39 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "cs25cliffco000000025",
   "position": {
     "x": 644,
     "y": 658,
-    "z": 16000,
+    "z": 25000,
     "height": 62,
     "width": 1132,
-    "tabOrder": 16000
+    "tabOrder": 25000
   },
   "visual": {
     "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Measures"
+                    }
+                  },
+                  "Property": "CS Cliff Callout"
+                }
+              },
+              "queryRef": "XER Measures.CS Cliff Callout",
+              "nativeQueryRef": "Cliff edge",
+              "displayName": "Cliff edge"
+            }
+          ]
+        }
+      }
+    },
     "objects": {
       "labels": [
         {
@@ -92,30 +115,7 @@
         }
       ]
     },
-    "drillFilterOtherVisuals": true,
-    "query": {
-      "queryState": {
-        "Values": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "XER Measures"
-                    }
-                  },
-                  "Property": "CS Cliff Callout"
-                }
-              },
-              "queryRef": "XER Measures.CS Cliff Callout",
-              "nativeQueryRef": "Cliff edge",
-              "displayName": "Cliff edge"
-            }
-          ]
-        }
-      }
-    }
+    "drillFilterOtherVisuals": true
   },
   "isHidden": true
 }

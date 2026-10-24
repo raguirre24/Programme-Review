@@ -4,10 +4,10 @@
   "position": {
     "x": 699.60591133004925,
     "y": 226.10837438423644,
-    "z": 14000,
+    "z": 19000,
     "height": 327.192118226601,
     "width": 1076.0098522167486,
-    "tabOrder": 14000
+    "tabOrder": 19000
   },
   "visual": {
     "visualType": "pivotTable",
@@ -27,9 +27,26 @@
                 }
               },
               "queryRef": "Scenario Date.Month",
-              "nativeQueryRef": "Month",
+              "nativeQueryRef": "Monthly",
               "active": true,
-              "displayName": "Month"
+              "displayName": "Monthly"
+            }
+          ],
+          "fieldParameters": [
+            {
+              "parameterExpr": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Calendar Period"
+                    }
+                  },
+                  "Property": "Period Fields"
+                }
+              },
+              "index": 0,
+              "length": 1,
+              "sortDirection": "Ascending"
             }
           ]
         },
@@ -86,6 +103,19 @@
                   }
                 },
                 "Property": "Calendar"
+              }
+            },
+            "direction": "Ascending"
+          },
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Scenario Date"
+                  }
+                },
+                "Property": "Month"
               }
             },
             "direction": "Ascending"
@@ -1632,8 +1662,13 @@
             },
             "text": {
               "expr": {
-                "Literal": {
-                  "Value": "'Monthly Working Days by Calendar (Data Date to Project Finish) · click a cell to inspect activities'"
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Measures"
+                    }
+                  },
+                  "Property": "CA Working Days Matrix Title"
                 }
               }
             },

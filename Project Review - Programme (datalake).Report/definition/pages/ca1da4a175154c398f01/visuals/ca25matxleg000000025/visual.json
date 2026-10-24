@@ -4,10 +4,10 @@
   "position": {
     "x": 699.60591133004925,
     "y": 553.30049261083741,
-    "z": 14500,
+    "z": 21000,
     "height": 42.5615763546798,
     "width": 1076.0098522167486,
-    "tabOrder": 14500
+    "tabOrder": 21000
   },
   "visual": {
     "visualType": "textbox",
@@ -36,7 +36,7 @@
                     }
                   },
                   {
-                    "value": " Critical activity (TF ≤ 0)     ",
+                    "value": " Critical (TF ≤ 0)   ",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "10pt",
@@ -48,27 +48,11 @@
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "14pt",
-                      "color": "#FFD9B3"
+                      "color": "#FFEB9C"
                     }
                   },
                   {
-                    "value": " Near-critical activity (0 < TF ≤ 10)     ",
-                    "textStyle": {
-                      "fontFamily": "Segoe UI",
-                      "fontSize": "10pt",
-                      "color": "#252525"
-                    }
-                  },
-                  {
-                    "value": "■",
-                    "textStyle": {
-                      "fontFamily": "Segoe UI",
-                      "fontSize": "14pt",
-                      "color": "#687078"
-                    }
-                  },
-                  {
-                    "value": " No activities     ",
+                    "value": " Near-critical (0 < TF ≤ 10)   ",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "10pt",
@@ -84,7 +68,56 @@
                     }
                   },
                   {
-                    "value": " Non-critical activities only",
+                    "value": " Non-critical only   ",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "10pt",
+                      "color": "#252525"
+                    }
+                  },
+                  {
+                    "value": "■",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "14pt",
+                      "color": "#E7E6E6"
+                    }
+                  },
+                  {
+                    "value": " No activities   ",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "10pt",
+                      "color": "#252525"
+                    }
+                  },
+                  {
+                    "value": "■",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "14pt",
+                      "color": "#C00000"
+                    }
+                  },
+                  {
+                    "value": " Work paused (0 working days)   ",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "10pt",
+                      "color": "#252525"
+                    }
+                  },
+                  {
+                    "value": "0",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "10pt",
+                      "color": "#C00000"
+                    }
+                  },
+                  {
+                    "value": " Closed, nothing scheduled",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "10pt",

@@ -1,15 +1,17 @@
-"""Generate the Delay view of the Calendar Analysis page (calendar-driven delay), switched with its Calendars view.
+"""Generate the Delay view of the Calendar page (calendar-driven delay), switched with its Calendars view.
 
 The Delay view adds four KPI cards, a stacked 'work vs wait' bar chart, a Deneb delay timeline, an outlier scatter, and a
-cliff-edge line chart with its callout to the Calendar Analysis page. They stay hidden until the 'Delay' button of the
-view navigator in the page header is pressed; 'Calendars' shows the KPIs, summary, matrix, legend and inspector again.
+cliff-edge line chart with its callout to the Calendar page. They stay hidden until the 'Delay' button of the
+view navigator in the page header is pressed; 'Calendars' shows the KPIs, summary, matrix with its Monthly | Weekly
+switch, legend and inspector again.
 Both views share the header, slicers (including the Max Total Float slider) and project menu, and neither view filters
 the other. Written files: the nine Delay visuals and the navigator, the page's interactions, the 'Calendars' and 'Delay'
 bookmarks and their group, the scope of the project-menu bookmarks, bookmarks.json, pages.json, and report.json when
 Deneb is not yet in publicCustomVisuals. It also removes the former Calendar Stretch page and its two project-menu bookmarks. No other
 visual is written.
 
-Modes: --check compares the generated files with the report (exit 1 on difference), --output-dir writes a review copy
+Modes: --check compares the generated files' content with the report, ignoring what Desktop rewrites on save (exit 1
+on difference), --output-dir writes a review copy
 outside the report, --apply writes them into the report (close Power BI Desktop without saving first).
 """
 
@@ -46,6 +48,7 @@ DELAY_VIEW = KPIS + [BARS, TIMELINE, SCATTER, CALLOUT, CLIFF]
 CALENDARS_VIEW = [
     "ca17kpi1cal000000017", "ca18kpi2crt000000018", "ca19kpi3blk000000019", "ca20kpi4str000000020",
     "ca21calprof000000021", "ca22calmatx000000022", "ca23actinsp000000023", "ca25matxleg000000025",
+    "ca27periodslc0000027",
 ]
 NAVIGATOR = "ca26viewnav000000026"
 CALENDARS_BOOKMARK, DELAY_BOOKMARK, VIEW_GROUP = "ca93calview000000093", "ca94delayvw000000094", "ca95viewgrp000000095"
@@ -57,6 +60,22 @@ def read(path: Path) -> dict:
 
 def rendered(value: dict) -> str:
     return json.dumps(value, ensure_ascii=False, indent=2) + "\n"
+
+
+# What Power BI Desktop rewrites when it saves, so --check and --apply compare content rather than formatting: the
+# visualContainer $schema version, stacking and tab order (z, tabOrder), projection 'active' flags and Deneb's state.
+DESKTOP_MANAGED_KEYS = {"$schema", "z", "tabOrder", "active", "stateManagement", "developer"}
+
+
+def desktop_neutral(value):
+    if isinstance(value, dict):
+        result = {key: desktop_neutral(item) for key, item in value.items() if key not in DESKTOP_MANAGED_KEYS}
+        for entry in result.get("vega", []) if isinstance(result.get("vega"), list) else []:
+            entry.get("properties", {}).pop("version", None)
+        return result
+    if isinstance(value, list):
+        return [desktop_neutral(item) for item in value]
+    return value
 
 
 def hex_colour(value: str) -> dict:
@@ -316,7 +335,7 @@ def view_navigator() -> dict:
     vco["background"] = props(show=expr("false"))
     vco["visualHeader"] = props(show=expr("false"))
     vco["general"] = props(altText=string(
-        "Calendar Analysis view: Calendars (summary, monthly matrix and activities) or Delay (calendar-driven delay charts)"))
+        "Calendar Analysis view: Calendars (summary, monthly or weekly matrix and activities) or Delay (calendar-driven delay charts)"))
     return item
 
 
@@ -370,6 +389,9 @@ def build() -> dict[Path, dict | None]:
         # Calendars is the saved view; the Delay bookmark shows these.
         item["isHidden"] = True
     navigator = view_navigator()
+    if NAVIGATOR in existing:
+        # Once placed, the buttons' position is the report author's: keep a navigator moved in Desktop where it is.
+        navigator["position"] = existing[NAVIGATOR]["position"]
 
     outputs: dict[Path, dict | None] = {}
     for item in [*delay.values(), navigator]:
@@ -438,7 +460,7 @@ def main() -> None:
                     shutil.rmtree(path) if path.is_dir() else path.unlink()
             continue
         text = rendered(value)
-        if not path.exists() or path.read_text(encoding="utf-8-sig") != text:
+        if not path.exists() or desktop_neutral(json.loads(path.read_text(encoding="utf-8-sig"))) != desktop_neutral(value):
             changed.append(relative.as_posix())
             if not args.check:
                 path.parent.mkdir(parents=True, exist_ok=True)
