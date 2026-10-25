@@ -307,7 +307,7 @@ def cliff_chart() -> dict:
     visual["objects"] = {
         "lineStyles": props(lineChartType=string("step"), showMarker=expr("false"), strokeWidth=expr("3D")),
         "categoryAxis": props(axisType=string("Scalar"), showAxisTitle=expr("true"), titleText=string("Possible start of the remaining work")),
-        "valueAxis": props(showAxisTitle=expr("true"), titleText=string("Finish change vs scheduled (calendar days)")),
+        "valueAxis": props(showAxisTitle=expr("true"), titleText=string("Finish change vs scheduled")),
         "dataPoint": series_colours({"CS Cliff Finish Shift Days": "#C00000"}),
         "y1AxisReferenceLine": [{"properties": {
             "show": expr("true"), "displayName": string("Scheduled finish"), "value": expr("0D"),
