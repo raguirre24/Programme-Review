@@ -22,6 +22,8 @@ $snapshotCount = 0
 # Ten scored checks; high float is no longer presented or scored.
 # Points: 1 at or better than Target, 0 at or past Limit, linear between.
 # Baseline coverage is a ratio from the detail table, supplied directly (Direct).
+# Only that rule has a Direct key; strict mode rejects reading a missing key
+# with dot notation, so test it with ContainsKey('Direct').
 $coverageInput = 'Schedule Metric Detail[SM Detail Value]'
 $policy = @(
     @{ Label='Missing Logic'; Rate='SM Missing Logic %'; Numerator='SM Missing Logic Count'; Denominator='Task_Count'; Excluded=$null; Target=.05; Limit=.10; Direction='low' },
@@ -33,7 +35,7 @@ $policy = @(
     @{ Label='High Duration'; Rate='HighDur%'; Numerator='Dur >44'; Denominator='Task_Count'; Excluded='SM Missing Duration Count'; Target=.05; Limit=.10; Direction='low' },
     @{ Label='Invalid Dates'; Rate='SM Invalid Dates %'; Numerator='SM Invalid Dates Count'; Denominator='SM Date Eligible Count'; Excluded=$null; Target=0; Limit=.01; Direction='low' },
     @{ Label='Out Of Sequence'; Rate='SM Out Of Sequence %'; Numerator='Out Of Sequence Count'; Denominator='SM In Progress Count'; Excluded=$null; Target=0; Limit=.10; Direction='low' },
-    @{ Label='Baseline Coverage'; Rate='SM Detail Value'; Direct=$coverageInput; Target=.90; Limit=.60; Direction='high' }
+    @{ Label='Baseline Coverage'; Rate='SM Detail Value'; Direct=$coverageInput; Excluded=$null; Target=.90; Limit=.60; Direction='high' }
 )
 $inputNames = @('Task_Count','SM Eligible Relationship Count','SM Date Eligible Count','SM Missing Logic Count','Leads<0d',
     'Lags>5d','SM FS Count','SM Restrictive Primary Count','Float >44','Task_Count_Negative_Float','Dur >44',
@@ -69,7 +71,7 @@ function Get-ExpectedBandColour($Points) {
 function Get-ReviewExpectation([hashtable]$Inputs) {
     $expected = [ordered]@{ Rates=@{}; Points=@{}; Colours=@{}; Assessed=0; Passed=0; Review=0; Priority=0; Partial=0; PointsTotal=0.0 }
     foreach ($rule in $policy) {
-        if ($rule.Direct) {
+        if ($rule.ContainsKey('Direct')) {
             $rate = if ($null -ne $Inputs[$rule.Direct]) { [double]$Inputs[$rule.Direct] } else { $null }
         } else {
             $known = [double]$Inputs[$rule.Denominator]
@@ -176,7 +178,7 @@ try {
             $midpoint = ($rule.Target + $rule.Limit) / 2
             $values = @(0,1,($rule.Target-.00001),$rule.Target,($rule.Target+.00001),$midpoint,($rule.Limit-.00001),$rule.Limit,($rule.Limit+.00001)) | Where-Object {$_ -ge 0 -and $_ -le 1} | Sort-Object -Unique
             foreach ($value in $values) {
-                $change = if ($rule.Direct) { @{$rule.Direct=[double]$value} } else { @{$rule.Numerator=[int][Math]::Round($value*100000)} }
+                $change = if ($rule.ContainsKey('Direct')) { @{$rule.Direct=[double]$value} } else { @{$rule.Numerator=[int][Math]::Round($value*100000)} }
                 $cases.Add(@{Name="$($rule.Label) exact/adjacent boundary $value";Changes=$change})
             }
         }

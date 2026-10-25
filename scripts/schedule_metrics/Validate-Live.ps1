@@ -28,6 +28,14 @@ function Get-MetricProjections([string[]]$Names, [string]$Suffix = '') {
         (Quote-DaxString $_) + ',[' + ($_ + $Suffix).Replace(']', ']]') + ']'
     }) -join ",`n")
 }
+# Strict mode rejects .Value on a missing column; a rate with no exclusion
+# measure has a $null name and reads as nothing excluded.
+function Get-ProjectedValue($Row, [string]$Name) {
+    if (-not $Name) { return $null }
+    $property = $Row.PSObject.Properties["[$Name]"]
+    Assert-ScheduleMetric ($null -ne $property) "Query result has no [$Name] column."
+    return $property.Value
+}
 
 try {
     $definitions = ''
@@ -146,9 +154,9 @@ TREATAS({$pointDate},CurrentDate[UpdateDate]),$pageFilters)
         }
         foreach ($name in $observedRates.Keys) {
             $spec = $observedRates[$name]
-            $count = $row.PSObject.Properties["[$($spec[0])]"].Value
-            $eligible = $row.PSObject.Properties["[$($spec[1])]"].Value
-            $excluded = $row.PSObject.Properties["[$($spec[2])]"].Value
+            $count = Get-ProjectedValue $row $spec[0]
+            $eligible = Get-ProjectedValue $row $spec[1]
+            $excluded = Get-ProjectedValue $row $spec[2]
             $known = [double]$eligible - [double]$excluded
             Assert-ScheduleMetric ($known -ge 0) "$name has more excluded than eligible records."
             $expected = if ($known -gt 0 -and $null -ne $count) { [double]$count / $known } else { 0.0 }
@@ -167,17 +175,17 @@ TREATAS({$pointDate},CurrentDate[UpdateDate]),$pageFilters)
             $value = $row.PSObject.Properties["[$name]"].Value
             if ($null -eq $value) { $bandPoints[$name]=$null; continue }
             $assessed++
-            $target = $scoreLimits[$name]; $limit = $reviewLimits[$name]
+            $bandTarget = $scoreLimits[$name]; $limit = $reviewLimits[$name]
             $points = if ($name -in $higherIsBetter) {
-                if ($value -ge $target) { 1.0 } elseif ($value -le $limit) { 0.0 } else { ([double]$value - $limit) / ($target - $limit) }
+                if ($value -ge $bandTarget) { 1.0 } elseif ($value -le $limit) { 0.0 } else { ([double]$value - $limit) / ($bandTarget - $limit) }
             } else {
-                if ($value -le $target) { 1.0 } elseif ($value -ge $limit) { 0.0 } else { ($limit - [double]$value) / ($limit - $target) }
+                if ($value -le $bandTarget) { 1.0 } elseif ($value -ge $limit) { 0.0 } else { ($limit - [double]$value) / ($limit - $bandTarget) }
             }
             if ($points -ge 1) { $passed++ } elseif ($points -gt 0) { $review++ } else { $priority++ }
             $pointsTotal += $points
             $bandPoints[$name] = $points
             if ($observedRates.Contains($name)) {
-                $excluded = $row.PSObject.Properties["[$($observedRates[$name][2])]"].Value
+                $excluded = Get-ProjectedValue $row $observedRates[$name][2]
                 if ($excluded -gt 0) { $partial++ }
             }
         }
@@ -216,8 +224,8 @@ TREATAS({$pointDate},CurrentDate[UpdateDate]),$pageFilters)
             }
             foreach ($label in $tooltipSpecs.Keys) {
                 $spec = $observedRates[$tooltipSpecs[$label]]
-                $num = [double]$row.PSObject.Properties["[$($spec[0])]"].Value
-                $den = [double]$row.PSObject.Properties["[$($spec[1])]"].Value - [double]$row.PSObject.Properties["[$($spec[2])]"].Value
+                $num = [double](Get-ProjectedValue $row $spec[0])
+                $den = [double](Get-ProjectedValue $row $spec[1]) - [double](Get-ProjectedValue $row $spec[2])
                 $fragment = $label + ': ' + $num.ToString('#,0', [Globalization.CultureInfo]::InvariantCulture) + '/' + $den.ToString('#,0', [Globalization.CultureInfo]::InvariantCulture)
                 Assert-ScheduleMetric ($tooltip.Contains($fragment)) "Tooltip disagrees with $label numerator/denominator: $fragment."
                 $tooltipCountChecks++

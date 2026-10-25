@@ -48,8 +48,21 @@ cutoffs, checks that each update compares with the latest BL-tagged file on or
 before it, plus provenance, partial/full coverage and repeated-code disclosure
 fixtures (a repeated code is disclosed, not penalised). The cutoff
 runner uses the report's actual project dimension to test available, unavailable,
-earlier, multiple and absent explicit date selections. An unavailable selected
-update must leave current gauges BLANK while retaining valid earlier history.
+earlier, multiple and absent explicit date selections. Because the Desktop
+development subset changes, it derives its cases from the loaded projects and
+updates: the primary project is the one that supports the most scenarios, and
+the project with the next most updates supplies the other-project cases. An
+unavailable update is a loaded date (held by another project) that the primary
+project lacks; selecting it must leave current gauges BLANK while retaining
+valid earlier history. Scenarios the loaded data cannot support (every project
+has the same updates, a project has fewer than three updates, or only one
+project is loaded) are reported as warnings and under `SkippedScenarios`; with
+no usable project the runner reports `Status: skipped`.
+
+The PowerShell runners use `Set-StrictMode -Version Latest`. PowerShell 7.5
+then also rejects reading a missing hashtable key with dot notation, so test
+optional keys with `ContainsKey` and check a result column exists before
+reading its `.Value`.
 
 The drill-through runner validates the two retained Missing Predecessor and
 Missing Successor routes. `-SkipWbs` retains snapshot count, fixture, leaf-evidence,
