@@ -37,19 +37,22 @@ function Get-CutoffPlan($Projects, $Inventory) {
         $dates = @($group.Group | ForEach-Object { [datetime]$_.'01 XER_TASK[UpdateDate]' } | Sort-Object -Unique)
         $absent = @($allDates | Where-Object { $_ -notin $dates })
         [pscustomobject]@{ Code=$group.Name; Name=$names[0]; Dates=$dates; Absent=$absent
-            Later=@($absent | Where-Object { $_ -gt $dates[-1] }) }
+            Gaps=@($absent | Where-Object { $_ -gt $dates[0] }); Later=@($absent | Where-Object { $_ -gt $dates[-1] }) }
     })
     $plan = @{ Cases=[Collections.Generic.List[object]]::new(); Skipped=[Collections.Generic.List[string]]::new(); Projects=@() }
     if (-not $candidates.Count) { return $plan }
-    # Primary: the project that exercises the most scenarios (an unavailable
-    # later update enables two), then the most updates, then project code.
-    $primary = @($candidates | Sort-Object @{ e={ [Math]::Min($_.Dates.Count, 3) + [int]($_.Later.Count -gt 0) + [int]($_.Absent.Count -gt 0) }; Descending=$true },
+    # Primary: the project that exercises the most scenarios, preferring an
+    # unavailable update with earlier history (best of all, one after the
+    # latest), then the most updates, then project code.
+    $primary = @($candidates | Sort-Object @{ e={ [Math]::Min($_.Dates.Count, 3) + [int]($_.Later.Count -gt 0) + [int]($_.Gaps.Count -gt 0) + [int]($_.Absent.Count -gt 0) }; Descending=$true },
         @{ e={ $_.Dates.Count }; Descending=$true }, Code)[0]
     $dates = $primary.Dates
     if ($primary.Later.Count) {
         $plan.Cases.Add((New-CutoffCase $primary @($primary.Later[0]) 'unavailable later cutoff keeps every earlier snapshot' -Unavailable))
+    } elseif ($primary.Gaps.Count) {
+        $plan.Cases.Add((New-CutoffCase $primary @($primary.Gaps[-1]) 'unavailable gap cutoff keeps only earlier snapshots' -Unavailable))
     } elseif ($primary.Absent.Count) {
-        $plan.Cases.Add((New-CutoffCase $primary @($primary.Absent[-1]) 'unavailable gap cutoff keeps only earlier snapshots' -Unavailable))
+        $plan.Cases.Add((New-CutoffCase $primary @($primary.Absent[-1]) 'unavailable cutoff before the first update keeps no history' -Unavailable))
     } else { $plan.Skipped.Add('unavailable cutoff: every loaded update exists for every loaded project') }
     $plan.Cases.Add((New-CutoffCase $primary @($dates[-1]) 'available latest cutoff'))
     if ($dates.Count -ge 2) {

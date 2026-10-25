@@ -53,8 +53,9 @@ development subset changes, it derives its cases from the loaded projects and
 updates: the primary project is the one that supports the most scenarios, and
 the project with the next most updates supplies the other-project cases. An
 unavailable update is a loaded date (held by another project) that the primary
-project lacks; selecting it must leave current gauges BLANK while retaining
-valid earlier history. Scenarios the loaded data cannot support (every project
+project lacks, preferably after its latest update or at least after its first;
+selecting it must leave current gauges BLANK while retaining valid earlier
+history. Scenarios the loaded data cannot support (every project
 has the same updates, a project has fewer than three updates, or only one
 project is loaded) are reported as warnings and under `SkippedScenarios`; with
 no usable project the runner reports `Status: skipped`.
