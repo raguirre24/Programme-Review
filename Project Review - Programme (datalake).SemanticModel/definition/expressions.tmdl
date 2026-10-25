@@ -119,6 +119,7 @@ expression AthenaScopeSql =
 		        else error "LatestUpdateCount must be ALL or a whole number from 1 to 999.",
 		    // ALL keeps the whole baseline window; a number keeps the anchor baseline plus the N latest dated updates
 		    // per project identity and programme type, so a shorter history simply loads what it has.
+		    // scoped_files carries the whole window with is_kept; TASK reads it so its comparison columns match ALL.
 		    UpdateLimitFilter = if UpdateLimit = null then "TRUE" else "is_anchor OR update_rank <= " & Text.From(UpdateLimit),
 		    // Selection is by project family; exclusions and CSV ownership still remove both aliases.
 		    FilterList = fnProjectCodeAliases(ProjectFilterList),
@@ -221,10 +222,14 @@ expression AthenaScopeSql =
 		        "            ORDER BY file_month DESC " &
 		        "        ) END AS update_rank " &
 		        "    FROM window_files " &
-		        "), kept_filenames AS ( " &
-		        "    SELECT DISTINCT filename, project_code, programme_type, project_identity, tag " &
+		        "), scoped_files AS ( " &
+		        "    SELECT DISTINCT filename, project_code, programme_type, project_identity, tag, " &
+		        "        COALESCE(" & UpdateLimitFilter & ", FALSE) AS is_kept " &
 		        "    FROM ranked_updates " &
-		        "    WHERE " & UpdateLimitFilter & " " &
+		        "), kept_filenames AS ( " &
+		        "    SELECT filename, project_code, programme_type, project_identity, tag " &
+		        "    FROM scoped_files " &
+		        "    WHERE is_kept " &
 		        ")  "
 		in
 		    Sql
@@ -393,6 +398,19 @@ expression XerCsvTableContracts =
 		            "Baseline Effective_Late_End", "Adjusted Baseline Finish", "Adjusted Baseline Start",
 		            "Adjusted Baseline Source Month", "Adjusted Baseline Source"
 		        },
+		        // Model memory: id_name, PreviousDataDate, Previous Remaining Working Days and the adjusted-baseline source
+		        // columns stay in the CSV file contract but are not loaded (no report or DAX use).
+		        ModelColumns = {
+		            "status_code", "task_code", "total_float", "task_type", "early_start_date", "calendar_id_key",
+		            "task_id_key", "driving_path_flag", "remaining_duration", "early_end_date", "monthupdate", "task_name",
+		            "data_date", "act_end_date", "Finish", "proj_id_key", "wbs_id_key", "free_float", "cstr_type", "cstr_date", "Start",
+		            "filename", "late_end_date", "ProjectCode", "UpdateDate", "ProjectName", "Finish_Variance_Previous_Month",
+		            "Driven_DataDate", "Variance_Finish_BL", "Variance_Finish_Adjusted_BL", "Baseline Finish", "Baseline Start",
+		            "Previous Month Start", "Previous Month Finish", "Planned Not Completed Last Period",
+		            "Start_Variance_Previous_Month", "Planned Last Period",
+		            "Completed Last Period", "Completed of Planned Last Period", "Baseline Effective_Early_End",
+		            "Baseline Effective_Late_End", "Adjusted Baseline Finish", "Adjusted Baseline Start"
+		        },
 		        Types = {
 		            {"status_code", type nullable text}, {"task_code", type nullable text}, {"total_float", type nullable number},
 		            {"task_type", type nullable text}, {"id_name", type nullable text}, {"early_start_date", type nullable date},
@@ -439,6 +457,8 @@ expression XerCsvTableContracts =
 		    #"03_XER_PROJWBS" = [
 		        FileName = "03_XER_PROJWBS.csv",
 		        Columns = {"wbs_name", "wbs_id_key", "parent_wbs_id_key", "seq_num", "proj_node_flag", "ProjectCode"},
+		        // Model memory: seq_num and proj_node_flag are not loaded; ProjectCode is loaded only to derive ProjectKey.
+		        ModelColumns = {"wbs_name", "wbs_id_key", "parent_wbs_id_key", "ProjectCode"},
 		        Types = {{"wbs_name", type nullable text}, {"wbs_id_key", type nullable text}, {"parent_wbs_id_key", type nullable text}, {"seq_num", Int64.Type}, {"proj_node_flag", type nullable text}, {"ProjectCode", type nullable text}},
 		        DateColumns = {}, LogicalColumns = {}, IntegerColumns = {"seq_num"}, NumberColumns = {},
 		        RequiredColumns = {"wbs_name", "wbs_id_key", "ProjectCode"},
@@ -451,7 +471,7 @@ expression XerCsvTableContracts =
 		    #"06_XER_PREDECESSOR" = [
 		        FileName = "06_XER_PREDECESSOR.csv",
 		        Columns = {"task_id_key", "pred_type", "predecessor_status_code", "task_type", "predecessor_task_type", "lag", "start", "finish", "predecessor_start", "predecessor_finish", "free_float", "free_float_status", "free_float_basis", "free_float_reason", "pred_task_id_key", "status_code", "total_float", "task_pred_id_key", "ProjectCode"},
-		        ModelColumns = {"task_id_key", "pred_type", "predecessor_status_code", "task_type", "predecessor_task_type", "lag", "start", "finish", "predecessor_start", "predecessor_finish", "free_float", "free_float_status", "free_float_basis", "free_float_reason", "pred_task_id_key", "status_code", "total_float", "ProjectCode"},
+		        ModelColumns = {"task_id_key", "pred_type", "predecessor_status_code", "task_type", "predecessor_task_type", "lag", "start", "finish", "predecessor_start", "predecessor_finish", "free_float", "free_float_status", "free_float_basis", "free_float_reason", "pred_task_id_key", "status_code", "total_float"},
 		        Types = {{"task_id_key", type nullable text}, {"pred_type", type nullable text}, {"predecessor_status_code", type nullable text}, {"task_type", type nullable text}, {"predecessor_task_type", type nullable text}, {"lag", type nullable number}, {"start", type nullable date}, {"finish", type nullable date}, {"predecessor_start", type nullable date}, {"predecessor_finish", type nullable date}, {"free_float", type nullable number}, {"free_float_status", type nullable text}, {"free_float_basis", type nullable text}, {"free_float_reason", type nullable text}, {"pred_task_id_key", type nullable text}, {"status_code", type nullable text}, {"total_float", type nullable number}, {"task_pred_id_key", type nullable text}, {"ProjectCode", type nullable text}},
 		        DateColumns = {"start", "finish", "predecessor_start", "predecessor_finish"}, LogicalColumns = {}, IntegerColumns = {}, NumberColumns = {"lag", "free_float", "total_float"},
 		        RequiredColumns = {"pred_type", "task_id_key", "pred_task_id_key", "ProjectCode", "task_pred_id_key"},

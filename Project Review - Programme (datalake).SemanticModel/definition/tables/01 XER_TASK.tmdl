@@ -212,6 +212,8 @@ table '01 XER_TASK'
 
 	column wbs_id_key
 		dataType: string
+		isHidden
+		isAvailableInMdx: false
 		lineageTag: 0fdde693-247e-4f91-aed7-fb733134d297
 		summarizeBy: none
 		sourceColumn: wbs_id_key
@@ -220,6 +222,8 @@ table '01 XER_TASK'
 
 	column task_id_key
 		dataType: string
+		isHidden
+		isAvailableInMdx: false
 		lineageTag: a7f183c6-8fe9-422c-8ae7-26f32fcfcbc6
 		summarizeBy: none
 		sourceColumn: task_id_key
@@ -426,14 +430,6 @@ table '01 XER_TASK'
 
 		annotation UnderlyingDateTimeDataType = Date
 
-	column id_name
-		dataType: string
-		lineageTag: d0dc52e6-6090-487c-872f-32eb17da22ba
-		summarizeBy: none
-		sourceColumn: id_name
-
-		annotation SummarizationSetBy = Automatic
-
 	column total_float
 		dataType: double
 		lineageTag: ef9db39d-29a7-43b4-8108-47bb512bfba8
@@ -563,19 +559,6 @@ table '01 XER_TASK'
 
 		annotation SummarizationSetBy = Automatic
 
-	column PreviousDataDate
-		dataType: dateTime
-		formatString: dd/mm/yyyy
-		lineageTag: 53e4dfbc-8348-4392-8f3b-d2ca94275449
-		summarizeBy: none
-		sourceColumn: PreviousDataDate
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation PBI_FormatHint = {"isDateTimeCustom":true}
-
-		annotation UnderlyingDateTimeDataType = Date
-
 	column 'Baseline Finish'
 		dataType: dateTime
 		formatString: Long Date
@@ -628,16 +611,6 @@ table '01 XER_TASK'
 		sourceColumn: Planned Not Completed Last Period
 
 		annotation SummarizationSetBy = Automatic
-
-	column 'Previous Remaining Working Days'
-		dataType: double
-		lineageTag: 0d5688df-858b-47c4-b611-da391cd42339
-		summarizeBy: sum
-		sourceColumn: Previous Remaining Working Days
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	column 'Planned Last Period'
 		dataType: int64
@@ -709,25 +682,6 @@ table '01 XER_TASK'
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
-
-	column 'Adjusted Baseline Source Month'
-		dataType: dateTime
-		formatString: Long Date
-		lineageTag: 161ff24c-74bf-4180-938b-18010505da4e
-		summarizeBy: none
-		sourceColumn: Adjusted Baseline Source Month
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation UnderlyingDateTimeDataType = Date
-
-	column 'Adjusted Baseline Source'
-		dataType: string
-		lineageTag: 507f4253-f171-4828-9bdb-db511c4ea777
-		summarizeBy: none
-		sourceColumn: Adjusted Baseline Source
-
-		annotation SummarizationSetBy = Automatic
 
 	column 'Is Unscheduled' = IF ( ISBLANK ( '01 XER_TASK'[early_end_date] ) && ISBLANK ( '01 XER_TASK'[act_end_date] ), TRUE (), FALSE () )
 		formatString: """TRUE"";""TRUE"";""FALSE"""
@@ -866,7 +820,7 @@ table '01 XER_TASK'
 				                    ", task_raw AS (",
 				                    "SELECT",
 				                    "t.""status_code"" AS status_code, t.""task_code"" AS task_code, TRY_CAST(t.""total_float"" AS DOUBLE) AS total_float, t.""task_type"" AS task_type,",
-				                    "t.""id_name"" AS id_name, TRY_CAST(SUBSTR(CAST(t.""early_start_date"" AS VARCHAR), 1, 10) AS DATE) AS early_start_date, t.""calendar_id_key"" AS calendar_id_key, t.""task_id_key"" AS task_id_key,",
+				                    "TRY_CAST(SUBSTR(CAST(t.""early_start_date"" AS VARCHAR), 1, 10) AS DATE) AS early_start_date, t.""calendar_id_key"" AS calendar_id_key, t.""task_id_key"" AS task_id_key,",
 				                    "t.""driving_path_flag"" AS driving_path_flag, TRY_CAST(t.""remainingduration"" AS DOUBLE) AS remainingduration, TRY_CAST(SUBSTR(CAST(t.""early_end_date"" AS VARCHAR), 1, 10) AS DATE) AS early_end_date,",
 				                    "TRY_CAST(SUBSTR(CAST(t.""monthupdate"" AS VARCHAR), 1, 10) AS DATE) AS monthupdate,",
 				                    "t.""task_name"" AS task_name, TRY_CAST(SUBSTR(CAST(t.""data_date"" AS VARCHAR), 1, 10) AS DATE) AS data_date, TRY_CAST(SUBSTR(CAST(t.""act_end_date"" AS VARCHAR), 1, 10) AS DATE) AS act_end_date, TRY_CAST(SUBSTR(CAST(t.""finish"" AS VARCHAR), 1, 10) AS DATE) AS finish,",
@@ -875,9 +829,9 @@ table '01 XER_TASK'
 				                    "kf.project_code AS raw_project_code,",
 				                    "CASE WHEN REGEXP_LIKE(kf.project_code, '^C[0-9]+$') THEN CONCAT('J', SUBSTR(kf.project_code, 2)) ELSE kf.project_code END AS j_project_code,",
 				                    "CASE WHEN REGEXP_LIKE(kf.project_code, '^J[0-9]+$') THEN CONCAT('C', SUBSTR(kf.project_code, 2)) ELSE kf.project_code END AS c_project_code,",
-				                    "kf.programme_type, kf.tag AS update_tag, kf.project_identity",
+				                    "kf.programme_type, kf.tag AS update_tag, kf.project_identity, kf.is_kept",
 				                    "FROM prod_projectcontrols_p6.""01_xer_task"" t",
-				                    "INNER JOIN kept_filenames kf ON t.""filename"" = kf.""filename""",
+				                    "INNER JOIN scoped_files kf ON t.""filename"" = kf.""filename""",
 				                    "), task_update_parts AS (",
 				                    "SELECT *,",
 				                    "REGEXP_LIKE(update_tag, '^BL[0-9]+(-[A-Z])?$') AS is_bl,",
@@ -960,11 +914,6 @@ table '01 XER_TASK'
 				                    "), project_updates_prev AS (",
 				                    "SELECT project_group_key, update_date, LAG(update_date) OVER (PARTITION BY project_group_key ORDER BY update_date) AS previous_project_update_date",
 				                    "FROM project_updates",
-				                    "), project_data_dates AS (",
-				                    "SELECT DISTINCT project_group_key, data_date FROM task_prepared WHERE data_date IS NOT NULL",
-				                    "), project_data_dates_prev AS (",
-				                    "SELECT project_group_key, data_date, LAG(data_date) OVER (PARTITION BY project_group_key ORDER BY data_date) AS previous_data_date",
-				                    "FROM project_data_dates",
 				                    "), baseline_first_update AS (",
 				                    "SELECT project_group_key, MIN(update_date) AS first_update_date FROM task_prepared GROUP BY project_group_key",
 				                    "), baseline_lookup AS (",
@@ -980,23 +929,19 @@ table '01 XER_TASK'
 				                    "FROM task_prepared n",
 				                    "INNER JOIN adjusted_first_month f ON f.project_group_key = n.project_group_key AND f.task_code = n.task_code AND f.first_added_month = n.monthupdate",
 				                    "GROUP BY n.project_group_key, n.task_code, f.first_added_month",
-				                    "), project_first_month AS (",
-				                    "SELECT project_group_key, MIN(monthupdate) AS project_first_month FROM task_prepared GROUP BY project_group_key",
 				                    "), task_joined AS (",
 				                    "SELECT n.*, sp.previous_task_update_date, sp.previous_task_start, sp.previous_task_finish, sp.previous_task_data_date,",
 				                    "sp.previous_task_remainingduration, sp.previous_task_effective_start, sp.previous_task_effective_finish, sp.previous_task_status,",
 				                    "pu.previous_project_update_date, pps.snapshot_finish AS project_previous_task_finish, pps.snapshot_data_date AS project_previous_task_data_date,",
-				                    "pps.snapshot_status AS project_previous_task_status, pdd.previous_data_date,",
+				                    "pps.snapshot_status AS project_previous_task_status,",
 				                    "bl.baseline_start, bl.baseline_finish, bl.baseline_effective_early_end, bl.baseline_effective_late_end,",
-				                    "adj.adjusted_baseline_start, adj.adjusted_baseline_finish, adj.first_added_month, pfm.project_first_month",
+				                    "adj.adjusted_baseline_start, adj.adjusted_baseline_finish",
 				                    "FROM task_prepared n",
 				                    "LEFT JOIN task_snapshot_prev sp ON sp.project_group_key = n.project_group_key AND sp.task_code = n.task_code AND sp.update_date = n.update_date",
 				                    "LEFT JOIN project_updates_prev pu ON pu.project_group_key = n.project_group_key AND pu.update_date = n.update_date",
 				                    "LEFT JOIN task_snapshot pps ON pps.project_group_key = n.project_group_key AND pps.task_code = n.task_code AND pps.update_date = pu.previous_project_update_date",
-				                    "LEFT JOIN project_data_dates_prev pdd ON pdd.project_group_key = n.project_group_key AND pdd.data_date = n.data_date",
 				                    "LEFT JOIN baseline_lookup bl ON bl.project_group_key = n.project_group_key AND bl.task_code = n.task_code",
 				                    "LEFT JOIN adjusted_lookup adj ON adj.project_group_key = n.project_group_key AND adj.task_code = n.task_code",
-				                    "LEFT JOIN project_first_month pfm ON pfm.project_group_key = n.project_group_key",
 				                    "), network_inputs AS (",
 				                    "SELECT *,",
 				                    "CAST(previous_task_finish AS DATE) AS finish_var_start_date, CAST(finish AS DATE) AS finish_var_end_date,",
@@ -1026,7 +971,7 @@ table '01 XER_TASK'
 				                    "CAST(FLOOR(adj_baseline_var_days / 7.0) AS INTEGER) AS adj_baseline_var_full_weeks, CAST(MOD(adj_baseline_var_days, 7) AS INTEGER) AS adj_baseline_var_remainder, day_of_week(adj_baseline_var_min_date) AS adj_baseline_var_dow",
 				                    "FROM network_parts",
 				                    ")",
-				                    "SELECT status_code, task_code, total_float, task_type, id_name, early_start_date, calendar_id_key, task_id_key, driving_path_flag, remainingduration,",
+				                    "SELECT status_code, task_code, total_float, task_type, early_start_date, calendar_id_key, task_id_key, driving_path_flag, remainingduration,",
 				                    "early_end_date, monthupdate, task_name, data_date, act_end_date, finish, proj_id_key, wbs_id_key, free_float, cstr_type, cstr_date, start, filename, late_end_date,",
 				                    "raw_project_code AS ""ProjectCode"", update_date AS ""UpdateDate"", project_name AS ""ProjectName"",",
 				                    "CASE WHEN finish_var_start_date IS NULL OR finish_var_end_date IS NULL THEN 0 WHEN finish_var_start_date = finish_var_end_date THEN 0 ELSE (CASE WHEN finish_var_end_date >= finish_var_start_date THEN 1 ELSE -1 END) * (finish_var_full_weeks * 5 + GREATEST(0, LEAST(finish_var_remainder, 6 - finish_var_dow)) + GREATEST(0, finish_var_remainder - (8 - finish_var_dow))) END AS ""Finish_Variance_Previous_Month"",",
@@ -1036,14 +981,13 @@ table '01 XER_TASK'
 				                    "baseline_finish AS ""Baseline Finish"", baseline_start AS ""Baseline Start"", COALESCE(previous_task_start, start) AS ""Previous Month Start"", COALESCE(previous_task_finish, finish) AS ""Previous Month Finish"",",
 				                    "CASE WHEN previous_project_update_date IS NOT NULL AND project_previous_task_finish > project_previous_task_data_date AND project_previous_task_finish <= data_date AND COALESCE(status_code, '') <> 'Complete' THEN 1 ELSE 0 END AS ""Planned Not Completed Last Period"",",
 				                    "CASE WHEN start_var_start_date IS NULL OR start_var_end_date IS NULL THEN 0 WHEN start_var_start_date = start_var_end_date THEN 0 ELSE (CASE WHEN start_var_end_date >= start_var_start_date THEN 1 ELSE -1 END) * (start_var_full_weeks * 5 + GREATEST(0, LEAST(start_var_remainder, 6 - start_var_dow)) + GREATEST(0, start_var_remainder - (8 - start_var_dow))) END AS ""Start_Variance_Previous_Month"",",
-				                    "previous_data_date AS ""PreviousDataDate"", previous_task_remainingduration AS ""Previous Remaining Working Days"",",
 				                    "CASE WHEN previous_project_update_date IS NOT NULL AND project_previous_task_finish > project_previous_task_data_date AND project_previous_task_finish <= data_date THEN 1 ELSE 0 END AS ""Planned Last Period"",",
 				                    "CASE WHEN status_code = 'Complete' AND project_previous_task_status <> 'Complete' AND project_previous_task_status IS NOT NULL THEN 1 ELSE 0 END AS ""Completed Last Period"",",
 				                    "CASE WHEN previous_project_update_date IS NOT NULL AND project_previous_task_finish > project_previous_task_data_date AND project_previous_task_finish <= data_date AND status_code = 'Complete' THEN 1 ELSE 0 END AS ""Completed of Planned Last Period"",",
 				                    "baseline_effective_early_end AS ""Baseline Effective_Early_End"", baseline_effective_late_end AS ""Baseline Effective_Late_End"",",
-				                    "adjusted_baseline_finish AS ""Adjusted Baseline Finish"", adjusted_baseline_start AS ""Adjusted Baseline Start"", first_added_month AS ""Adjusted Baseline Source Month"",",
-				                    "CASE WHEN first_added_month IS NULL THEN NULL WHEN project_first_month IS NULL THEN 'Unknown' WHEN first_added_month = project_first_month THEN 'Original Baseline' WHEN first_added_month > project_first_month THEN 'Later Update' ELSE 'Unknown' END AS ""Adjusted Baseline Source""",
-				                    "FROM network_calcs"
+				                    "adjusted_baseline_finish AS ""Adjusted Baseline Finish"", adjusted_baseline_start AS ""Adjusted Baseline Start""",
+				                    "FROM network_calcs",
+				                    "WHERE is_kept"
 				                },
 				                " "
 				            ),
@@ -1076,16 +1020,13 @@ table '01 XER_TASK'
 				                {"Previous Month Finish", type date},
 				                {"Planned Not Completed Last Period", Int64.Type},
 				                {"Start_Variance_Previous_Month", Int64.Type},
-				                {"PreviousDataDate", type date},
-				                {"Previous Remaining Working Days", type number},
 				                {"Planned Last Period", Int64.Type},
 				                {"Completed Last Period", Int64.Type},
 				                {"Completed of Planned Last Period", Int64.Type},
 				                {"Baseline Effective_Early_End", type date},
 				                {"Baseline Effective_Late_End", type date},
 				                {"Adjusted Baseline Finish", type date},
-				                {"Adjusted Baseline Start", type date},
-				                {"Adjusted Baseline Source Month", type date}
+				                {"Adjusted Baseline Start", type date}
 				            }
 				        ),
 				
@@ -1099,10 +1040,11 @@ table '01 XER_TASK'
 				            }
 				        ),
 				
-				    ContractColumns = Record.Field(XerCsvTableContracts, "01_XER_TASK")[Columns],
+				    Contract = Record.Field(XerCsvTableContracts, "01_XER_TASK"),
+				    ContractColumns = Record.FieldOrDefault(Contract, "ModelColumns", Contract[Columns]),
 				    ModelColumns = List.Combine({ContractColumns, {"IsCsvSource"}}),
 				    AthenaFinal = Table.SelectColumns(Renamed, ContractColumns),
-				    AthenaBranch = if XerCsvRouting[HasAthenaProjects] then Table.AddColumn(AthenaFinal, "IsCsvSource", each false, type logical) else Table.AddColumn(fnXerCsvEmptyTable("01_XER_TASK"), "IsCsvSource", each false, type logical),
+				    AthenaBranch = if XerCsvRouting[HasAthenaProjects] then Table.AddColumn(AthenaFinal, "IsCsvSource", each false, type logical) else Table.AddColumn(Table.SelectColumns(fnXerCsvEmptyTable("01_XER_TASK"), ContractColumns), "IsCsvSource", each false, type logical),
 				    Combined = if XerCsvRouting[IsActive] then Table.Combine({AthenaBranch, fnXerCsvLoadTable("01_XER_TASK")}) else AthenaBranch,
 				    WithProgrammeType = Table.AddColumn(Combined, "ProgrammeType", each
 				        let Parts = Text.Split(Text.Upper(Text.Trim([filename])), "-")

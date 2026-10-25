@@ -3,6 +3,8 @@ table 15_XER_RESOURCE_DISTRIBUTION
 
 	column task_id_key
 		dataType: string
+		isHidden
+		isAvailableInMdx: false
 		lineageTag: 5407ad4a-1bd8-4072-9689-24bffc1fe1d3
 		summarizeBy: none
 		sourceColumn: task_id_key

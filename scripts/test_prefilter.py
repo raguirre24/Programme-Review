@@ -113,9 +113,10 @@ def scope_sql(selected="ALL", programme="ALL", excluded="NONE", csv_owned="", la
                 raise AssertionError("Unexpected dynamic predicate structure; review extraction")
             fragments.append("    WHERE " + predicate + " ")
         elif "UpdateLimitFilter" in line:
-            if line != '"    WHERE " & UpdateLimitFilter & " " &':
+            match = re.fullmatch(r'"((?:""|[^"])*)" & UpdateLimitFilter & "((?:""|[^"])*)" &', line)
+            if not match:
                 raise AssertionError("Unexpected update-limit predicate structure; review extraction")
-            fragments.append("    WHERE " + limit_predicate + " ")
+            fragments.append(decode_m_literal(match[1]) + limit_predicate + decode_m_literal(match[2]))
         else:
             match = re.fullmatch(r'"((?:""|[^"])*)"\s*&?', line)
             if not match:
@@ -1318,8 +1319,12 @@ class UpdateLimitTests(Fixtures):
                 self.assertEqual(len(rows), len(expected))
         for name in filenames:
             self.add_task(name)
+        # TASK reads the whole window, so its comparison columns match ALL, and returns only the kept files.
         rows = self.db.execute(task_stage_sql("task_raw", "filename", latest_updates="2")).fetchall()
-        self.assertEqual(sorted(rows), sorted((name,) for name in expected))
+        self.assertEqual(sorted(rows), sorted((name,) for name in filenames))
+        cursor = self.db.execute(duck_sql(task_sql(latest_updates="2")))
+        position = [column[0] for column in cursor.description].index("filename")
+        self.assertEqual(sorted(row[position] for row in cursor.fetchall()), sorted(expected))
         CalendarAlignmentTests.create_calendar_table(self.db)
         for name in filenames:
             CalendarAlignmentTests.insert_calendar(self.db, name, "1", [8] * 5 + [0, 0], {})
@@ -1327,25 +1332,32 @@ class UpdateLimitTests(Fixtures):
         self.assertEqual({row[7].rsplit(".", 1)[0] for row in rows}, expected)
         self.assertEqual(len(rows), 7 * len(expected))
 
-    def test_task_previous_values_use_only_loaded_updates(self):
+    def test_capped_task_rows_match_the_full_window(self):
         baseline, (january, february, march) = self.history(updates=3)
         self.add_task(baseline, "2025-12-31", "2026-06-01")
         self.add_task(january, "2026-01-31", "2026-07-01")
         self.add_task(february, "2026-02-28", "2026-08-01")
         self.add_task(march, "2026-03-31", "2026-09-01")
-        projection = "filename, previous_task_finish, previous_data_date, baseline_finish"
+        # A400 is first added in January, which a two-update cap does not load.
+        for name, month, finish in ((january, "2026-01-31", "2026-10-01"), (february, "2026-02-28", "2026-11-01"),
+                                    (march, "2026-03-31", "2026-12-01")):
+            self.add_task(name, month, finish, task_code="A400", task_id_key=name + "_4")
 
-        def by_file(**parameters):
-            return {row[0]: row[1:] for row in self.db.execute(
-                task_stage_sql("task_joined", projection, **parameters)).fetchall()}
+        def output(**parameters):
+            cursor = self.db.execute(duck_sql(task_sql(**parameters)))
+            names = [column[0] for column in cursor.description]
+            return {(row[names.index("filename")], row[names.index("task_code")]): dict(zip(names, row))
+                    for row in cursor.fetchall()}
 
-        full = by_file()
-        self.assertEqual(full[february], (dt.date(2026, 7, 1), dt.date(2026, 1, 31), dt.date(2026, 6, 1)))
-        limited = by_file(latest_updates="2")
-        self.assertEqual(set(limited), {baseline, february, march})
-        # The oldest loaded update now compares against the baseline, the snapshot loaded before it.
-        self.assertEqual(limited[february], (dt.date(2026, 6, 1), dt.date(2025, 12, 31), dt.date(2026, 6, 1)))
-        self.assertEqual(limited[march], full[march])
+        full = output()
+        limited = output(latest_updates="2")
+        self.assertEqual({name for name, _ in limited}, {baseline, february, march})
+        for key, row in limited.items():
+            with self.subTest(row=key):
+                self.assertEqual(row, full[key])
+        # Without the full window, February would compare against the baseline and A400 would take February's finish.
+        self.assertEqual(limited[(february, "A100")]["Previous Month Finish"], dt.date(2026, 7, 1))
+        self.assertEqual(limited[(march, "A400")]["Adjusted Baseline Finish"], dt.date(2026, 10, 1))
 
     def test_audit_reports_files_outside_the_update_limit(self):
         before = self.add("C4017", "2511", "2025-11-30")

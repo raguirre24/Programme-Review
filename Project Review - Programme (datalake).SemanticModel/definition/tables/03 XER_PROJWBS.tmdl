@@ -9,18 +9,12 @@ table '03 XER_PROJWBS'
 
 		annotation SummarizationSetBy = Automatic
 
-	column Path = PATH ('03 XER_PROJWBS'[wbs_id_key],'03 XER_PROJWBS'[parent_wbs_id_key])
-		lineageTag: c68d4b25-9ae6-4e49-95fd-33c8709f83f4
-		summarizeBy: none
-
-		annotation SummarizationSetBy = Automatic
-
 	column Level_1 =
 			
 			VAR WBS1_Name = LOOKUPVALUE(
 			    '03 XER_PROJWBS'[wbs_name],
 			    '03 XER_PROJWBS'[wbs_id_key],
-			    PATHITEM('03 XER_PROJWBS'[Path], 1)
+			    PATHITEM(PATH('03 XER_PROJWBS'[wbs_id_key], '03 XER_PROJWBS'[parent_wbs_id_key]), 1)
 			)
 			RETURN
 			  WBS1_Name
@@ -34,7 +28,7 @@ table '03 XER_PROJWBS'
 			VAR WBS4_Name = LOOKUPVALUE(
 			    '03 XER_PROJWBS'[wbs_name],
 			    '03 XER_PROJWBS'[wbs_id_key],
-			    PATHITEM('03 XER_PROJWBS'[Path], 2)
+			    PATHITEM(PATH('03 XER_PROJWBS'[wbs_id_key], '03 XER_PROJWBS'[parent_wbs_id_key]), 2)
 			)
 			RETURN
 			WBS4_Name
@@ -48,7 +42,7 @@ table '03 XER_PROJWBS'
 			VAR WBS4_Name = LOOKUPVALUE(
 			    '03 XER_PROJWBS'[wbs_name],
 			    '03 XER_PROJWBS'[wbs_id_key],
-			    PATHITEM('03 XER_PROJWBS'[Path], 3)
+			    PATHITEM(PATH('03 XER_PROJWBS'[wbs_id_key], '03 XER_PROJWBS'[parent_wbs_id_key]), 3)
 			)
 			RETURN
 			WBS4_Name
@@ -62,7 +56,7 @@ table '03 XER_PROJWBS'
 			VAR WBS4_Name = LOOKUPVALUE(
 			    '03 XER_PROJWBS'[wbs_name],
 			    '03 XER_PROJWBS'[wbs_id_key],
-			    PATHITEM('03 XER_PROJWBS'[Path], 4)
+			    PATHITEM(PATH('03 XER_PROJWBS'[wbs_id_key], '03 XER_PROJWBS'[parent_wbs_id_key]), 4)
 			)
 			RETURN
 			WBS4_Name
@@ -76,7 +70,7 @@ table '03 XER_PROJWBS'
 			VAR WBS4_Name = LOOKUPVALUE(
 			    '03 XER_PROJWBS'[wbs_name],
 			    '03 XER_PROJWBS'[wbs_id_key],
-			    PATHITEM('03 XER_PROJWBS'[Path], 5)
+			    PATHITEM(PATH('03 XER_PROJWBS'[wbs_id_key], '03 XER_PROJWBS'[parent_wbs_id_key]), 5)
 			)
 			RETURN
 			WBS4_Name
@@ -87,6 +81,7 @@ table '03 XER_PROJWBS'
 
 	column wbs_id_key
 		dataType: string
+		isHidden
 		lineageTag: 3a27a59d-4b99-4bf7-86e5-7a5ea800570c
 		summarizeBy: none
 		sourceColumn: wbs_id_key
@@ -95,17 +90,10 @@ table '03 XER_PROJWBS'
 
 	column parent_wbs_id_key
 		dataType: string
+		isHidden
 		lineageTag: e13affb1-04d1-45d4-b82f-88970a968134
 		summarizeBy: none
 		sourceColumn: parent_wbs_id_key
-
-		annotation SummarizationSetBy = Automatic
-
-	column ProjectCode
-		dataType: string
-		lineageTag: 5a0c250b-75e8-481f-8458-7fd22b012dad
-		summarizeBy: none
-		sourceColumn: ProjectCode
 
 		annotation SummarizationSetBy = Automatic
 
@@ -129,7 +117,7 @@ table '03 XER_PROJWBS'
 			VAR WBS4_Name = LOOKUPVALUE(
 			    '03 XER_PROJWBS'[wbs_name],
 			    '03 XER_PROJWBS'[wbs_id_key],
-			    PATHITEM('03 XER_PROJWBS'[Path], 6)
+			    PATHITEM(PATH('03 XER_PROJWBS'[wbs_id_key], '03 XER_PROJWBS'[parent_wbs_id_key]), 6)
 			)
 			RETURN
 			WBS4_Name
@@ -154,29 +142,12 @@ table '03 XER_PROJWBS'
 			VAR WBS4_Name = LOOKUPVALUE(
 			    '03 XER_PROJWBS'[wbs_name],
 			    '03 XER_PROJWBS'[wbs_id_key],
-			    PATHITEM('03 XER_PROJWBS'[Path], 7)
+			    PATHITEM(PATH('03 XER_PROJWBS'[wbs_id_key], '03 XER_PROJWBS'[parent_wbs_id_key]), 7)
 			)
 			RETURN
 			WBS4_Name
 		lineageTag: b3bb9d0d-3dde-4283-a5a6-55de2d8c80d9
 		summarizeBy: none
-
-		annotation SummarizationSetBy = Automatic
-
-	column seq_num
-		dataType: int64
-		formatString: 0
-		lineageTag: 488d7a4e-37a6-4a3d-bc72-b90b886787c3
-		summarizeBy: none
-		sourceColumn: seq_num
-
-		annotation SummarizationSetBy = Automatic
-
-	column proj_node_flag
-		dataType: string
-		lineageTag: 1c62063d-5964-4f74-a9e0-c11011ad5c80
-		summarizeBy: none
-		sourceColumn: proj_node_flag
 
 		annotation SummarizationSetBy = Automatic
 
@@ -193,8 +164,6 @@ table '03 XER_PROJWBS'
 				                    "t.""wbs_name""",
 				                    "t.""wbs_id_key""",
 				                    "t.""parent_wbs_id_key""",
-				                    "TRY_CAST(t.""seq_num"" AS INTEGER) AS ""seq_num""",
-				                    "t.""proj_node_flag""",
 				                    "TRIM(UPPER(SPLIT_PART(t.""filename"", '-', 1))) AS ""ProjectCode"""
 				                },
 				                ", "
@@ -241,52 +210,16 @@ table '03 XER_PROJWBS'
 				            }
 				        ),
 				
-				    CleanFlags =
-				        Table.TransformColumns(
-				            CleanProjectCode,
-				            {
-				                {
-				                    "proj_node_flag",
-				                    each
-				                        if _ = null then
-				                            null
-				                        else if Text.Trim(Text.From(_)) = "" then
-				                            null
-				                        else
-				                            Text.Trim(Text.From(_)),
-				                    type nullable text
-				                }
-				            }
-				        ),
+				    Contract = Record.Field(XerCsvTableContracts, "03_XER_PROJWBS"),
+				    ModelColumns = Record.FieldOrDefault(Contract, "ModelColumns", Contract[Columns]),
 				
-				    TypedAthena =
-				        Table.TransformColumnTypes(
-				            CleanFlags,
-				            {
-				                {"seq_num", Int64.Type},
-				                {"proj_node_flag", type nullable text}
-				            },
-				            "en-NZ"
-				        ),
-				
-				    AthenaFinal =
-				        Table.SelectColumns(
-				            TypedAthena,
-				            {
-				                "wbs_name",
-				                "wbs_id_key",
-				                "parent_wbs_id_key",
-				                "seq_num",
-				                "proj_node_flag",
-				                "ProjectCode"
-				            }
-				        ),
+				    AthenaFinal = Table.SelectColumns(CleanProjectCode, ModelColumns),
 				
 				    AthenaBranch =
 				        if XerCsvRouting[HasAthenaProjects] then
 				            Table.AddColumn(AthenaFinal, "IsCsvSource", each false, type logical)
 				        else
-				            Table.AddColumn(fnXerCsvEmptyTable("03_XER_PROJWBS"), "IsCsvSource", each false, type logical),
+				            Table.AddColumn(Table.SelectColumns(fnXerCsvEmptyTable("03_XER_PROJWBS"), ModelColumns), "IsCsvSource", each false, type logical),
 				
 				    Combined =
 				        if XerCsvRouting[IsActive] then
@@ -317,15 +250,9 @@ table '03 XER_PROJWBS'
 				            }
 				        ),
 				
-				    ContractFinal =
-				        Table.SelectColumns(
-				            CleanCombinedParentWBS,
-				            List.Combine({
-				                Record.Field(XerCsvTableContracts, "03_XER_PROJWBS")[Columns],
-				                {"IsCsvSource"}
-				            })
-				        ),
-				    Final = Table.AddColumn(ContractFinal, "ProjectKey", each fnProjectIdentity([ProjectCode]), type nullable text)
+				    ContractFinal = Table.SelectColumns(CleanCombinedParentWBS, List.Combine({ModelColumns, {"IsCsvSource"}})),
+				    WithProjectKey = Table.AddColumn(ContractFinal, "ProjectKey", each fnProjectIdentity([ProjectCode]), type nullable text),
+				    Final = Table.RemoveColumns(WithProjectKey, {"ProjectCode"})
 				in
 				    Final
 

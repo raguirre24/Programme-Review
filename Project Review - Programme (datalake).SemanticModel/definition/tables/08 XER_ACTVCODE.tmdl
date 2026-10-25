@@ -3,6 +3,8 @@ table '08 XER_ACTVCODE'
 
 	column actv_code_id_key
 		dataType: string
+		isHidden
+		isAvailableInMdx: false
 		lineageTag: aa91c058-ab23-4be7-8598-2ba4fb95fab6
 		summarizeBy: none
 		sourceColumn: actv_code_id_key

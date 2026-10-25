@@ -1,49 +1,15 @@
 table '04 XER_BASELINE'
 	lineageTag: af4b1256-6095-4e3f-9357-ed2535c6aeb5
 
-	measure 'BL Month Update' =
-			
-			VAR ActiveProgrammes =
-			    SUMMARIZE('01 XER_TASK', '01 XER_TASK'[ProjectCode], '01 XER_TASK'[ProgrammeType])
-			RETURN
-			CALCULATE(
-			    MIN('04 XER_BASELINE'[First_Project_Month]),
-			    REMOVEFILTERS('04 XER_BASELINE'),
-			    TREATAS(ActiveProgrammes, '04 XER_BASELINE'[ProjectCode], '04 XER_BASELINE'[ProgrammeType])
-			)
-		formatString: mmmm yyyy
-		lineageTag: 376f681b-acae-4523-9944-fe379b3099df
-
-		annotation PBI_FormatHint = {"isDateTimeCustom":true}
-
 	column task_id_key
+		isHidden
+		isAvailableInMdx: false
 		lineageTag: e06edf12-2c30-41d2-a790-8e28cdc16ad4
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [task_id_key]
 
 		annotation SummarizationSetBy = Automatic
-
-	column wbs_id_key
-		lineageTag: 536631ca-a62c-4207-aeec-68c8e7e02e6e
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: [wbs_id_key]
-
-		annotation SummarizationSetBy = Automatic
-
-	column Start
-		formatString: dd/mm/yyyy
-		lineageTag: 64a16804-4689-468a-b5ad-bbb651421cbf
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: [Start]
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation UnderlyingDateTimeDataType = Date
-
-		annotation PBI_FormatHint = {"isDateTimeCustom":true}
 
 	column Finish
 		formatString: dd/mm/yyyy
@@ -58,73 +24,14 @@ table '04 XER_BASELINE'
 
 		annotation PBI_FormatHint = {"isDateTimeCustom":true}
 
-	column Effective_Early_End
-		formatString: dd/mm/yyyy
-		lineageTag: b1705b97-e97b-455f-9e6e-08243ce4ac62
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: [Effective_Early_End]
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation UnderlyingDateTimeDataType = Date
-
-		annotation PBI_FormatHint = {"isDateTimeCustom":true}
-
-	column Effective_Late_End
-		formatString: dd/mm/yyyy
-		lineageTag: c79c6ceb-f630-4c38-b310-bc39b9154f63
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: [Effective_Late_End]
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation UnderlyingDateTimeDataType = Date
-
-		annotation PBI_FormatHint = {"isDateTimeCustom":true}
-
-	column First_Project_Month
-		formatString: Long Date
-		lineageTag: 302bb091-9726-4557-9028-4083acea3e80
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: [First_Project_Month]
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation UnderlyingDateTimeDataType = Date
-
-	column task_code
-		lineageTag: b4cd6fee-b535-4735-9374-056a8dd7398c
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: [task_code]
-
-		annotation SummarizationSetBy = Automatic
-
-	column ProjectCode
-		lineageTag: 630ee949-0941-4377-8043-8ffff8e540fd
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: 01 XER_TASK[ProjectCode]
-
-		annotation SummarizationSetBy = Automatic
-
-	column ProgrammeType
-		isHidden
-		lineageTag: e90c9211-03ab-41de-bfc2-79d4ab44169f
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: 01 XER_TASK[ProgrammeType]
-
-		annotation SummarizationSetBy = Automatic
-
 	partition '04 XER_BASELINE' = calculated
 		mode: import
 		source =
 				
-				VAR ProjectStartMonths =
+				// Baseline rows: each project and programme type's earliest update, selected in one FILTER pass over the tasks.
+				// No CALCULATE, CALCULATETABLE or context transition here: they depend on 01's relationships, including the
+				// one-to-one link back to this table, and Desktop rejects that as a circular dependency.
+				VAR FirstUpdates =
 				    SUMMARIZE(
 				        '01 XER_TASK',
 				        '01 XER_TASK'[ProjectCode],
@@ -132,27 +39,13 @@ table '04 XER_BASELINE'
 				        "First_Project_Month", MIN( '01 XER_TASK'[UpdateDate] )
 				    )
 				RETURN
-				    GENERATE(
-				        ProjectStartMonths,
-				        VAR CurrentProject = '01 XER_TASK'[ProjectCode]
-				        VAR CurrentProgrammeType = '01 XER_TASK'[ProgrammeType]
-				        VAR BaselineDate = [First_Project_Month]
-				        RETURN
-				            SELECTCOLUMNS(
-				                FILTER(
-				                    '01 XER_TASK',
-				                    '01 XER_TASK'[ProjectCode] = CurrentProject &&
-				                    '01 XER_TASK'[ProgrammeType] = CurrentProgrammeType &&
-				                    '01 XER_TASK'[UpdateDate] = BaselineDate
-				                ),
-				                "task_id_key", '01 XER_TASK'[task_id_key],
-				                "wbs_id_key", '01 XER_TASK'[wbs_id_key],
-				                "Start", '01 XER_TASK'[Start],
-				                "Finish", '01 XER_TASK'[Finish],
-				                "task_code", '01 XER_TASK'[task_code],
-				                "Effective_Early_End", '01 XER_TASK'[Effective_Early_End],
-				                "Effective_Late_End", '01 XER_TASK'[Effective_Late_End]
-				            )
+				    SELECTCOLUMNS(
+				        FILTER(
+				            '01 XER_TASK',
+				            ( '01 XER_TASK'[ProjectCode], '01 XER_TASK'[ProgrammeType], '01 XER_TASK'[UpdateDate] ) IN FirstUpdates
+				        ),
+				        "task_id_key", '01 XER_TASK'[task_id_key],
+				        "Finish", '01 XER_TASK'[Finish]
 				    )
 
 	annotation PBI_Id = 960966e01ba34e338059b5ad6d0b01ab

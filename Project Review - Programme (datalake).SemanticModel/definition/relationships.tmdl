@@ -120,11 +120,6 @@ relationship e81d7f65-2d60-b6db-b4ab-f119711781d0
 	fromColumn: '04 XER_BASELINE'.task_id_key
 	toColumn: '01 XER_TASK'.task_id_key
 
-relationship 5c8b693d-a2f5-0cd9-90a0-b28dbe53a35e
-	isActive: false
-	fromColumn: '04 XER_BASELINE'.wbs_id_key
-	toColumn: '03 XER_PROJWBS'.wbs_id_key
-
 relationship e73a8806-c5ce-e209-4731-02775b648430
 	isActive: false
 	joinOnDateBehavior: datePartOnly

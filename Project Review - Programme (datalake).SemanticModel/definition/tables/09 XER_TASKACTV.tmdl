@@ -3,6 +3,8 @@ table '09 XER_TASKACTV'
 
 	column task_id_key
 		dataType: string
+		isHidden
+		isAvailableInMdx: false
 		lineageTag: aa832528-9581-4ba1-a2ce-a7252347d9ad
 		summarizeBy: none
 		sourceColumn: task_id_key
@@ -11,6 +13,8 @@ table '09 XER_TASKACTV'
 
 	column actv_code_id_key
 		dataType: string
+		isHidden
+		isAvailableInMdx: false
 		lineageTag: 3c2f13a5-99d8-47ac-8ea1-7da85c37deef
 		summarizeBy: none
 		sourceColumn: actv_code_id_key

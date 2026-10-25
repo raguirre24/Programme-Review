@@ -73,7 +73,7 @@ Order of preference for any derived data: **source (SQL/view) â†’ Power Query â†
 
 ## This workspace: 61-Table Semantic Model Architecture
 
-1. **Table Inventory (`61` Tables, `38` Relationships, `1` RLS Role)**:
+1. **Table Inventory (`62` Tables, `39` Relationships, `1` RLS Role)**:
    - **11 Imported XER Tables**: `01 XER_TASK`, `02 XER_PROJECT`, `03 XER_PROJWBS`, `06 XER_PREDECESSOR`, `07 XER_ACTVTYPE`, `08 XER_ACTVCODE`, `09 XER_TASKACTV`, `10 XER_CALENDARS`, `11 XER_CALENDAR_DETAILED`, `12_XER_RSRC`, `15_XER_RESOURCE_DISTRIBUTION`.
    - **Governance & Audit**: `dbo_project`, `dbo_userpermission`, `Logos`, `XER CSV Manifest`, and calculated `XER CSV Refresh Audit`.
    - **Governed Project Dimension (`Project_Dimension`)**: 1 row per canonical `ProjectKey` (`CJ:<digits>` for numeric `C`/`J` codes, `EXACT:<code>` otherwise). Secured by the `Project Access` RLS role (`roles/Project Access.tmdl`), which normalises Acciona guest UPNs (`#ext#` and `@acciona.com`) and checks `HasAllAccess || HasStateAccess || HasProjectAccess`.

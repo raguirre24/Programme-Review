@@ -889,15 +889,15 @@
                 },
                 {
                   "name": "ad569725288055a625b3",
-                  "type": "Categorical",
+                  "type": "Advanced",
                   "expression": {
-                    "Column": {
+                    "Measure": {
                       "Expression": {
                         "SourceRef": {
-                          "Entity": "06 XER_PREDECESSOR"
+                          "Entity": "WBS Measures"
                         }
                       },
-                      "Property": "predecessor_name"
+                      "Property": "Predecessor Name"
                     }
                   },
                   "howCreated": 0

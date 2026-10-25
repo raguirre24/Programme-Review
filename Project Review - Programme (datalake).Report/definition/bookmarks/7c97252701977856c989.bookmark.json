@@ -1001,15 +1001,15 @@
                 },
                 {
                   "name": "06203f170b10ad789d04",
-                  "type": "Categorical",
+                  "type": "Advanced",
                   "expression": {
-                    "Column": {
+                    "Measure": {
                       "Expression": {
                         "SourceRef": {
-                          "Entity": "06 XER_PREDECESSOR"
+                          "Entity": "WBS Measures"
                         }
                       },
-                      "Property": "predecessor_name"
+                      "Property": "Predecessor Name"
                     }
                   },
                   "howCreated": 0

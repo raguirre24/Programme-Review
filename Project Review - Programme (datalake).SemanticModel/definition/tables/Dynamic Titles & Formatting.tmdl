@@ -1,14 +1,6 @@
 table 'Dynamic Titles & Formatting'
 	lineageTag: 90e746fb-9a32-4cfc-b7b2-3d277b4be9cc
 
-	measure ProjectTitle = ```
-			
-			SELECTEDVALUE('01 XER_TASK'[ProjectName], "N/A") & " : " & 
-			FORMAT([CurrentDate], "MMMM yyyy") & " Update vs " & 
-			FORMAT([BL Month Update], "MMMM yyyy") & " Baseline"
-			```
-		lineageTag: 470d1c51-6bde-4f63-be0c-866808e36c21
-
 	measure SelectedTitle =
 			
 			VAR SelectedProject = SELECTEDVALUE(Project_Dimension[Project])

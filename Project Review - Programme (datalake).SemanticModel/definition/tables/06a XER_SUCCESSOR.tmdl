@@ -2,6 +2,8 @@ table '06a XER_SUCCESSOR'
 	lineageTag: 9d737f42-d49d-40f2-a064-a52a3ce4d1ab
 
 	column task_id_key
+		isHidden
+		isAvailableInMdx: false
 		lineageTag: b4ef9967-6630-4311-bf9f-71e47ddee1ba
 		summarizeBy: none
 		isNameInferred

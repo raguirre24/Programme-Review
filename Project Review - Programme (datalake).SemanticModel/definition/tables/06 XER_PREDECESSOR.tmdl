@@ -3,6 +3,8 @@ table '06 XER_PREDECESSOR'
 
 	column task_id_key
 		dataType: string
+		isHidden
+		isAvailableInMdx: false
 		lineageTag: 413cd052-da64-489c-9ccb-a4ace2599412
 		summarizeBy: none
 		sourceColumn: task_id_key
@@ -47,33 +49,7 @@ table '06 XER_PREDECESSOR'
 
 		annotation SummarizationSetBy = Automatic
 
-	column Successor_Level_2 = ```
-			
-			VAR SuccTaskID = '06 XER_PREDECESSOR'[task_id_key]
-			VAR SuccessorWBS_ID = 
-			    CALCULATE(
-			        SELECTEDVALUE('01 XER_TASK'[wbs_id_key]),
-			        FILTER(
-			            ALL('01 XER_TASK'),
-			            '01 XER_TASK'[task_id_key] = SuccTaskID
-			        )
-			    )
-			VAR SuccLevel2 = 
-			    IF(
-			        NOT ISBLANK(SuccessorWBS_ID),
-			        CALCULATE(
-			            MINX(
-			                FILTER(
-			                    ALL('03 XER_PROJWBS'),
-			                    '03 XER_PROJWBS'[wbs_id_key] = SuccessorWBS_ID
-			                ),
-			                '03 XER_PROJWBS'[Level_2]
-			            )
-			        )
-			    )
-			RETURN
-			    SuccLevel2
-			```
+	column Successor_Level_2 = RELATED('03 XER_PROJWBS'[Level_2])
 		lineageTag: edd8bac4-29f2-4178-9030-2130db1006ed
 		summarizeBy: none
 
@@ -313,6 +289,8 @@ table '06 XER_PREDECESSOR'
 
 	column pred_task_id_key
 		dataType: string
+		isHidden
+		isAvailableInMdx: false
 		lineageTag: fa5ed2b6-bdcb-4e95-a0fd-ff82c80f7ed0
 		summarizeBy: none
 		sourceColumn: pred_task_id_key
@@ -350,28 +328,6 @@ table '06 XER_PREDECESSOR'
 
 	column 'predecessor_Total Float' = LOOKUPVALUE('01 XER_TASK'[total_float],'01 XER_TASK'[Task_ID_key],[pred_task_id_key])
 		lineageTag: 3ef7601a-6708-462b-95c2-9e65e33cb7a2
-		summarizeBy: sum
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	column predecessor_name = LOOKUPVALUE('01 XER_TASK'[task_name], '01 XER_TASK'[task_id_key], [pred_task_id_key])
-		lineageTag: 83c18887-7ef2-4d4a-bce6-c35fd8389017
-		summarizeBy: none
-
-		annotation SummarizationSetBy = Automatic
-
-	column ProjectCode
-		dataType: string
-		lineageTag: c44df539-41d7-4101-a575-013fcf83f489
-		summarizeBy: none
-		sourceColumn: ProjectCode
-
-		annotation SummarizationSetBy = Automatic
-
-	column FFloat = LOOKUPVALUE('01 XER_TASK'[free_float],'01 XER_TASK'[Task_ID_key],[pred_task_id_key])
-		lineageTag: 45499f3d-478f-4f2d-9ca1-75108dad8eb5
 		summarizeBy: sum
 
 		annotation SummarizationSetBy = Automatic
@@ -431,8 +387,7 @@ table '06 XER_PREDECESSOR'
 				                    "t.""predecessor_start""",
 				                    "t.""predecessor_finish""",
 				                    "t.""free_float""",
-				                    "t.""total_float""",
-				                    "TRIM(UPPER(SPLIT_PART(t.""filename"", '-', 1))) AS ""ProjectCode"""
+				                    "t.""total_float"""
 				                },
 				                ", "
 				            )

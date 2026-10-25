@@ -35,24 +35,6 @@ table Project_Dimension
 
 		annotation SummarizationSetBy = Automatic
 
-	column CompanyId
-		formatString: 0
-		lineageTag: f974fd61-5cb6-491d-99c2-c0cffcb14675
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: [CompanyId]
-
-		annotation SummarizationSetBy = Automatic
-
-	column ProjectId
-		formatString: 0
-		lineageTag: ea353b97-1a97-4a4b-97a9-0017737f893d
-		summarizeBy: none
-		isNameInferred
-		sourceColumn: [ProjectId]
-
-		annotation SummarizationSetBy = Automatic
-
 	column ProjectKey
 		isHidden
 		lineageTag: 99d88f35-6624-45c3-b75f-cdfd209c9b5d
@@ -143,36 +125,6 @@ table Project_Dimension
 				                        'dbo_project'[projectno], [SecurityAltProjectCode]
 				                    )
 				                ),
-				        "CompanyId",
-				            VAR OriginalCompanyId =
-				                LOOKUPVALUE(
-				                    'dbo_project'[companyid],
-				                    'dbo_project'[projectno], [ProjectCode]
-				                )
-				            RETURN
-				                IF(
-				                    NOT ISBLANK(OriginalCompanyId),
-				                    OriginalCompanyId,
-				                    LOOKUPVALUE(
-				                        'dbo_project'[companyid],
-				                        'dbo_project'[projectno], [SecurityAltProjectCode]
-				                    )
-				                ),
-				        "ProjectId",
-				            VAR OriginalProjectId =
-				                LOOKUPVALUE(
-				                    'dbo_project'[projectid],
-				                    'dbo_project'[projectno], [ProjectCode]
-				                )
-				            RETURN
-				                IF(
-				                    NOT ISBLANK(OriginalProjectId),
-				                    OriginalProjectId,
-				                    LOOKUPVALUE(
-				                        'dbo_project'[projectid],
-				                        'dbo_project'[projectno], [SecurityAltProjectCode]
-				                    )
-				            ),
 				        // --- NEW LOGIC ADDED HERE ---
 				        "FinalProjectCode",
 				            VAR PreferredProject =
@@ -193,9 +145,7 @@ table Project_Dimension
 				        "Project", [Project],
 				        "State", [State],
 				        "ProjectKey", [ProjectKey], 
-				        "ProjectCode", [FinalProjectCode], // <-- NOW OUTPUTTING THE WINNING CODE
-				        "CompanyId", [CompanyId],
-				        "ProjectId", [ProjectId]
+				        "ProjectCode", [FinalProjectCode] // <-- NOW OUTPUTTING THE WINNING CODE
 				)
 				```
 

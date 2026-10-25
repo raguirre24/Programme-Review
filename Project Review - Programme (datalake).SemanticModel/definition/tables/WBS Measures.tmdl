@@ -41,6 +41,20 @@ table 'WBS Measures'
 		formatString: 0
 		lineageTag: 346fe8a4-8ee0-4167-9205-2c38167026f6
 
+	/// Predecessor activity name for each row of the Programme page's Predecessors table, looked up through the
+	/// snapshot-local predecessor key so page, report and slicer filters on activities never blank it. It replaces the
+	/// stored 06 XER_PREDECESSOR[predecessor_name] column to save model memory.
+	measure 'Predecessor Name' =
+			IF (
+			    ISINSCOPE ( '06 XER_PREDECESSOR'[predecessor_task_code] ),
+			    CALCULATE (
+			        MAX ( '01 XER_TASK'[task_name] ),
+			        REMOVEFILTERS (),
+			        TREATAS ( VALUES ( '06 XER_PREDECESSOR'[pred_task_id_key] ), '01 XER_TASK'[task_id_key] )
+			    )
+			)
+		lineageTag: cee379c4-2f10-4d6a-b06f-e78941544b91
+
 	partition 'WBS Measures' = m
 		mode: import
 		source =

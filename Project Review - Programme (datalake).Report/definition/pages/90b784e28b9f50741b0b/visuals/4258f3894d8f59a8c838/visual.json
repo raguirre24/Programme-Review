@@ -32,13 +32,13 @@
             },
             {
               "field": {
-                "Column": {
+                "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "06 XER_PREDECESSOR"
+                      "Entity": "WBS Measures"
                     }
                   },
-                  "Property": "predecessor_name"
+                  "Property": "Predecessor Name"
                 }
               },
               "queryRef": "06 XER_PREDECESSOR.predecessor_name",
