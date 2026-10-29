@@ -1,11 +1,17 @@
-"""Offline regression fixtures for Desktop's measure-format metadata rule."""
-import unittest
+"""Offline regression fixtures for Schedule Metrics policy, table bindings and measure formats."""
 import copy
 import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
+import unittest
 
-from validate_static import conflicting_measure_formats, validate_measure_formats, validate_guide_policy
+from validate_static import (
+    EXPECTED_DRILL_ROUTES,
+    conflicting_measure_formats,
+    validate_failing_activities_table,
+    validate_guide_policy,
+    validate_measure_formats,
+)
 
 
 class ReviewPolicyTests(unittest.TestCase):
@@ -27,6 +33,14 @@ class ReviewPolicyTests(unittest.TestCase):
             next(row for row in changed["rows"] if row["id"] == "missing_logic")[band_field] = "  "
             with self.assertRaisesRegex(AssertionError, f"missing_logic\\.{band_field}"):
                 validate_guide_policy(changed)
+
+    def test_rejects_missing_or_wrong_grid_count_binding(self):
+        changed = copy.deepcopy(self.guide)
+        next(row for row in changed["rows"] if row["id"] == "leads")["related_grid_counts"] = [
+            {"label": "Leads <0d", "measure": "XER Metrics[Leads<0d]", "meaning": "Old link count"}
+        ]
+        with self.assertRaisesRegex(AssertionError, "grid count binding differs: leads"):
+            validate_guide_policy(changed)
 
     def test_rejects_scored_check_dropped_from_score(self):
         for check in ("out_of_sequence", "baseline_coverage"):
@@ -51,6 +65,26 @@ class ReviewPolicyTests(unittest.TestCase):
             changed["score_policy"][key] = value
             with self.assertRaisesRegex(AssertionError, "aggregation/severity/coverage"):
                 validate_guide_policy(changed)
+
+
+class FailingActivitiesTableTests(unittest.TestCase):
+    def setUp(self):
+        root = Path(__file__).resolve().parents[2]
+        path = (
+            root
+            / "Project Review - Programme (datalake).Report/definition/pages/327b48a7fbd37ce0a51c/visuals/58fbc09d197fe53515d8/visual.json"
+        )
+        self.table = json.loads(path.read_text(encoding="utf-8-sig"))
+
+    def test_accepts_ten_scored_failing_activity_columns(self):
+        self.assertEqual(len(EXPECTED_DRILL_ROUTES), 10)
+        validate_failing_activities_table(self.table)
+
+    def test_rejects_unscored_or_percentage_column_in_table(self):
+        changed = copy.deepcopy(self.table)
+        changed["visual"]["query"]["queryState"]["Values"]["projections"][1]["field"]["Measure"]["Property"] = "Missing Predecessor"
+        with self.assertRaisesRegex(AssertionError, "Failing-activities table columns differ"):
+            validate_failing_activities_table(changed)
 
 
 class MeasureFormatTests(unittest.TestCase):

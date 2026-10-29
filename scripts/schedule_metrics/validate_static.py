@@ -1,4 +1,4 @@
-"""Read-only PBIR/reference checks for the existing Schedule Metrics page.
+"""Read-only PBIR/reference checks for the Schedule Metrics page and its 10 drill-through routes.
 
 TMDL is parsed formally by Validate-Live.ps1 using TOM. Here the declaration
 index checks PBIR references, and a separate metadata check rejects mutually
@@ -11,6 +11,102 @@ import json
 import re
 import subprocess
 from pathlib import Path
+
+EXPECTED_DRILL_ROUTES = [
+    (
+        "4da217e10ae952b9b4a4",
+        "Missing Logic",
+        "SM Missing Logic Count",
+        "SM Drill Missing Logic Header",
+        "SM Drill Missing Logic Detail",
+        ("status_code", "task_type", "SM Fail Missing Logic"),
+    ),
+    (
+        "566c6f848f9c58ccae18",
+        "Leads",
+        "SM Leads Activity Count",
+        "SM Drill Leads Header",
+        "SM Drill Leads Detail",
+        ("status_code", "task_type", "SM Fail Leads"),
+    ),
+    (
+        "2dc1210d106d519e8c33",
+        "Lags >5d",
+        "SM Lags Activity Count",
+        "SM Drill Lags Header",
+        "SM Drill Lags Detail",
+        ("status_code", "task_type", "SM Fail Lags"),
+    ),
+    (
+        "a4aae77cfb0f528bb352",
+        "Non-FS Relationships",
+        "SM Non-FS Activity Count",
+        "SM Drill Non-FS Header",
+        "SM Drill Non-FS Detail",
+        ("status_code", "task_type", "SM Fail Non FS"),
+    ),
+    (
+        "4e84ddebb9405ac18f9d",
+        "Hard Constraints",
+        "SM Restrictive Primary Count",
+        "SM Drill Restrictive Constraints Header",
+        "SM Drill Restrictive Constraints Detail",
+        ("status_code", "task_type", "cstr_type"),
+    ),
+    (
+        "0ce34782f4f350ad83b5",
+        "Out-of-Sequence",
+        "Out Of Sequence Count",
+        "SM Drill Out-of-Sequence Header",
+        "SM Drill Out-of-Sequence Detail",
+        ("status_code", "task_type", "SM Fail Out Of Sequence"),
+    ),
+    (
+        "1650221e71f2522ca403",
+        "Negative Float",
+        "Task_Count_Negative_Float",
+        "SM Drill Negative Float Header",
+        "SM Drill Negative Float Detail",
+        ("status_code", "task_type", "total_float"),
+    ),
+    (
+        "381cf6286aea5f0a94f6",
+        "Remaining Duration >44d",
+        "Dur >44",
+        "SM Drill Remaining Duration Header",
+        "SM Drill Remaining Duration Detail",
+        ("status_code", "task_type", "remaining_duration"),
+    ),
+    (
+        "7a03ed9cacd75d91903e",
+        "Date Integrity",
+        "SM Invalid Dates Count",
+        "SM Drill Date Integrity Header",
+        "SM Drill Date Integrity Detail",
+        ("status_code", "task_type", "SM Fail Invalid Dates"),
+    ),
+    (
+        "68cba7045a475d22afb7",
+        "Baseline Coverage",
+        "SM Baseline Unmatched Activity Count",
+        "SM Drill Baseline Coverage Header",
+        "SM Drill Baseline Coverage Detail",
+        ("status_code", "task_type", "SM Fail Baseline Coverage"),
+    ),
+]
+
+EXPECTED_GUIDE_GRID_MEASURES = {
+    "missing_logic": "XER Metrics[SM Missing Logic Count]",
+    "leads": "XER Metrics[SM Leads Activity Count]",
+    "positive_lags": "XER Metrics[SM Lags Activity Count]",
+    "fs_relationships": "XER Metrics[SM Non-FS Activity Count]",
+    "restrictive_constraints": "XER Metrics[SM Restrictive Primary Count]",
+    "out_of_sequence": "XER Metrics[Out Of Sequence Count]",
+    "negative_float": "XER Metrics[Task_Count_Negative_Float]",
+    "long_remaining_duration": "XER Metrics[Dur >44]",
+    "invalid_dates": "XER Metrics[SM Invalid Dates Count]",
+    "baseline_coverage": "XER Metrics[SM Baseline Unmatched Activity Count]",
+}
 
 
 def unquote(name: str) -> str:
@@ -123,6 +219,10 @@ def validate_guide_policy(guide: dict) -> int:
         assert rows[key].get("review_bands") == bands, f"Guide band contract differs: {key}"
         for band_field in ("green", "amber", "red"):
             assert str(rows[key].get(band_field, "")).strip(), f"Guide band text missing: {key}.{band_field}"
+        grid_counts = rows[key].get("related_grid_counts", [])
+        assert len(grid_counts) == 1 and grid_counts[0].get("measure") == EXPECTED_GUIDE_GRID_MEASURES[key], (
+            f"Guide grid count binding differs: {key}"
+        )
     policy = guide.get("score_policy", {})
     assert len(policy.get("scored_metric_ids", [])) == 10 and set(policy["scored_metric_ids"]) == set(expected), "Score policy membership differs"
     expected_policy = {
@@ -135,7 +235,27 @@ def validate_guide_policy(guide: dict) -> int:
     return len(expected)
 
 
+def validate_failing_activities_table(table_visual: dict) -> None:
+    projections = table_visual["visual"]["query"]["queryState"]["Values"]["projections"]
+    expected_measures = [route[2] for route in EXPECTED_DRILL_ROUTES]
+    assert len(projections) == 11, f"Failing-activities table must project UpdateDate + 10 scored checks, found {len(projections)}"
+    first = projections[0]["field"].get("Column", {})
+    assert first.get("Property") == "UpdateDate" and first.get("Expression", {}).get("SourceRef", {}).get("Entity") == "01 XER_TASK", (
+        "First column of failing-activities table must be 01 XER_TASK[UpdateDate]"
+    )
+    actual_measures = [
+        p["field"].get("Measure", {}).get("Property")
+        for p in projections[1:]
+    ]
+    assert actual_measures == expected_measures, f"Failing-activities table columns differ: {actual_measures}"
+    assert all(
+        p["field"].get("Measure", {}).get("Expression", {}).get("SourceRef", {}).get("Entity") == "XER Metrics"
+        for p in projections[1:]
+    ), "All 10 failing-activities table measures must bind to XER Metrics"
+
+
 def validate_review_visuals(visuals: dict[str, dict]) -> None:
+    validate_failing_activities_table(visuals["58fbc09d197fe53515d8"])
     # The former high-float panel now shows the scored out-of-sequence check.
     out_of_sequence = visuals["b472a4a2b0c50d6843ad"]["visual"]
     values = out_of_sequence["query"]["queryState"]["Y"]["projections"]
@@ -170,30 +290,97 @@ def validate_review_visuals(visuals: dict[str, dict]) -> None:
     assert len(bound_history) == 11 and set(bound_history) == expected_history, "History metric bindings changed"
 
 
-def validate_removed_date_alignment(report: Path, objects: dict) -> None:
-    removed_page = "db92ae49184b6932662e"
+def validate_drillthrough_and_retirements(report: Path, objects: dict) -> int:
+    removed_pages = {"db92ae49184b6932662e", "061f748900951ae92ba9", "4f15f55676d2add4e922"}
+    removed_bookmarks = {
+        "35c2baadfa05e673110e", "d85911f94d2be6576068",
+        "aae4df89fc5cb53b08d6", "b78ddd824cdcaae69b89",
+    }
     page_dirs = {path.name for path in (report / "pages").iterdir() if path.is_dir()}
     page_index = json.loads((report / "pages/pages.json").read_text(encoding="utf-8-sig"))
-    # 13 pages since Resources/Resource Simulator, Calendar Analysis/Calendar Stretch and Float/Duration/Constraint
-    # Analysis were merged into pages with view buttons.
-    assert len(page_dirs) == 13 and removed_page not in page_dirs, "Removed page remains or retained page count differs"
-    assert set(page_index["pageOrder"]) == page_dirs and len(page_index["pageOrder"]) == 13, "Page order is not the 13 retained pages"
+    # 11 visible pages + 10 hidden Schedule Metrics drill-through pages = 21 pages.
+    assert len(page_dirs) == 21 and not (removed_pages & page_dirs), "Removed page remains or retained page count differs"
+    assert set(page_index["pageOrder"]) == page_dirs and len(page_index["pageOrder"]) == 21, "Page order is not the 21 retained pages"
     assert page_index.get("activePageName") in page_dirs, "Active page points to a removed page"
+    for bmid in removed_bookmarks:
+        assert not (report / "bookmarks" / f"{bmid}.bookmark.json").exists(), f"Retired bookmark file remains: {bmid}"
     removed = {
         ("XER Metrics", name) for name in (
             "DD Driving", "DataDate%", "DataDate% (History)",
-            "SM Drill Date Alignment Header", "SM Drill Date Alignment Reason")
+            "SM Drill Date Alignment Header", "SM Drill Date Alignment Reason",
+            "SM Drill Missing Predecessor Header", "SM Drill Missing Predecessor Flag",
+            "SM Drill Missing Successor Header", "SM Drill Missing Successor Flag",
+        )
     } | {("XER Measures", "ShowDriven")}
     for table, measure in removed:
         assert measure not in objects[table][0], f"Removed measure still declared: {table}[{measure}]"
     assert "Driven_DataDate" in objects["01 XER_TASK"][1], "Removing a report metric must not delete the source classification column"
+    for col in (
+        "SM Fail Missing Logic", "SM Fail Leads", "SM Fail Lags", "SM Fail Non FS",
+        "SM Fail Out Of Sequence", "SM Fail Invalid Dates", "SM Fail Baseline Coverage",
+    ):
+        assert col in objects["01 XER_TASK"][1], f"Missing storage-engine failure column: 01 XER_TASK[{col}]"
+
     for path in report.rglob("*.json"):
         data = json.loads(path.read_text(encoding="utf-8-sig"))
         for kind, _, entity, prop in field_references(data):
             assert kind != "Measure" or (entity, prop) not in removed, f"Removed measure reference remains: {path}"
         for node in walk(data):
-            assert removed_page not in node, f"Removed page retained as a bookmark/state key: {path}"
-            assert removed_page not in node.values(), f"Removed page reference remains: {path}"
+            for retired in removed_pages | removed_bookmarks:
+                assert retired not in node, f"Retired ID {retired} retained as a key: {path}"
+                assert retired not in node.values(), f"Retired ID {retired} reference remains: {path}"
+
+    for pid, display_name, count_measure, header_measure, detail_measure, required_cols in EXPECTED_DRILL_ROUTES:
+        pdir = report / "pages" / pid
+        page = json.loads((pdir / "page.json").read_text(encoding="utf-8-sig"))
+        assert page.get("displayName") == display_name, f"Drill-through page displayName differs: {pid}"
+        assert page.get("visibility") == "HiddenInViewMode", f"Drill-through page must be hidden: {display_name}"
+        assert page.get("type") == "Drillthrough", f"Drill-through page type missing: {display_name}"
+        binding = page.get("pageBinding", {})
+        params = binding.get("parameters", [])
+        assert binding.get("type") == "Drillthrough" and len(params) == 1, f"Invalid drill-through pageBinding: {display_name}"
+        bound_measure = params[0].get("fieldExpr", {}).get("Measure", {})
+        assert (
+            bound_measure.get("Expression", {}).get("SourceRef", {}).get("Entity") == "XER Metrics"
+            and bound_measure.get("Property") == count_measure
+        ), f"Drill-through binding measure differs on {display_name}"
+
+        page_filters = page.get("filterConfig", {}).get("filters", [])
+        filter_cols = set()
+        for flt in page_filters:
+            if not flt.get("filter"):
+                continue
+            assert "Column" in flt.get("field", {}), f"Non-column page filter predicate on {display_name}"
+            col_entity = flt["field"]["Column"]["Expression"]["SourceRef"]["Entity"]
+            col_prop = flt["field"]["Column"]["Property"]
+            assert col_entity == "01 XER_TASK" and col_prop != "Is Unscheduled", (
+                f"Disallowed page filter {col_entity}[{col_prop}] on {display_name}"
+            )
+            filter_cols.add(col_prop)
+        for req_col in required_cols:
+            assert req_col in filter_cols, f"Missing storage-engine filter {req_col} on {display_name}"
+
+        matrices = []
+        page_refs = set()
+        for vpath in [pdir / "page.json", *(pdir / "visuals").glob("*/visual.json")]:
+            vdoc = json.loads(vpath.read_text(encoding="utf-8-sig"))
+            for kind, slot, entity, prop in field_references(vdoc):
+                assert entity in objects and prop in objects[entity][slot], (
+                    f"Missing {kind} {entity}[{prop}] in {vpath}"
+                )
+                if kind == "Measure":
+                    page_refs.add((entity, prop))
+            if vpath.name == "visual.json" and str(vdoc.get("visual", {}).get("visualType", "")).startswith("P6WBSMatrix"):
+                matrices.append(vdoc)
+        assert len(matrices) == 1, f"Expected one P6WBSMatrix on {display_name}"
+        assert not matrices[0].get("filterConfig", {}).get("filters"), (
+            f"P6WBSMatrix on {display_name} must not carry visual-level filters"
+        )
+        for required_helper in (count_measure, header_measure, detail_measure, "SM Drill Status", "SM Drill Context", "SM Drill Data Date", "SM Drill Source File"):
+            assert ("XER Metrics", required_helper) in page_refs, (
+                f"Drill-through page {display_name} missing helper XER Metrics[{required_helper}]"
+            )
+    return len(EXPECTED_DRILL_ROUTES)
 
 
 def original_references(root: Path, path: Path):
@@ -214,7 +401,7 @@ def main() -> None:
     format_files_checked = validate_measure_formats(list(model.rglob("*.tmdl")))
     objects = {name: (measures, columns) for name, measures, columns in
                (declarations(path) for path in (model / "tables").glob("*.tmdl"))}
-    validate_removed_date_alignment(report, objects)
+    drillthrough_routes = validate_drillthrough_and_retirements(report, objects)
     pages = [(path, json.loads(path.read_text(encoding="utf-8-sig")))
              for path in (report / "pages").glob("*/page.json")]
     matches = [(path, page) for path, page in pages
@@ -279,7 +466,8 @@ def main() -> None:
                       "measure_references": len(metrics), "history_pairs": len(histories),
                       "gap_safe_trends": gap_safe_trends,
                       "scored_policy_checks": scored_policy_checks,
-                      "report_pages": 16, "date_alignment_removed": True,
+                      "drillthrough_routes": drillthrough_routes,
+                      "report_pages": 21, "date_alignment_removed": True,
                       "measure_format_files_checked": format_files_checked,
                       "pre_existing_warnings": warnings, "status": "passed"}, indent=2))
 

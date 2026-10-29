@@ -1,0 +1,1012 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "403d35e15d9e5c86bd89",
+  "position": {
+    "x": 3.9901477832512313,
+    "y": 134.33497536945814,
+    "z": 11000,
+    "height": 915.07389162561572,
+    "width": 1909.9507389162561,
+    "tabOrder": 11000
+  },
+  "visual": {
+    "visualType": "P6WBSMatrix8BDB3B26BB4B497EA3E044ADBDE081D0",
+    "query": {
+      "queryState": {
+        "WBSLevels": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "03 XER_PROJWBS"
+                    }
+                  },
+                  "Property": "Level_1"
+                }
+              },
+              "queryRef": "03 XER_PROJWBS.Level_1",
+              "nativeQueryRef": "Level_1"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "03 XER_PROJWBS"
+                    }
+                  },
+                  "Property": "Level_2"
+                }
+              },
+              "queryRef": "03 XER_PROJWBS.Level_2",
+              "nativeQueryRef": "Level_2"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "03 XER_PROJWBS"
+                    }
+                  },
+                  "Property": "Level_3"
+                }
+              },
+              "queryRef": "03 XER_PROJWBS.Level_3",
+              "nativeQueryRef": "Level_3"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "03 XER_PROJWBS"
+                    }
+                  },
+                  "Property": "Level_4"
+                }
+              },
+              "queryRef": "03 XER_PROJWBS.Level_4",
+              "nativeQueryRef": "Level_4"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "03 XER_PROJWBS"
+                    }
+                  },
+                  "Property": "Level_5"
+                }
+              },
+              "queryRef": "03 XER_PROJWBS.Level_5",
+              "nativeQueryRef": "Level_5"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "03 XER_PROJWBS"
+                    }
+                  },
+                  "Property": "Level_6"
+                }
+              },
+              "queryRef": "03 XER_PROJWBS.Level_6",
+              "nativeQueryRef": "Level_6"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "03 XER_PROJWBS"
+                    }
+                  },
+                  "Property": "Level_7"
+                }
+              },
+              "queryRef": "03 XER_PROJWBS.Level_7",
+              "nativeQueryRef": "Level_7"
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Measures"
+                    }
+                  },
+                  "Property": "ShowTaskName"
+                }
+              },
+              "queryRef": "XER Measures.ShowTaskName",
+              "nativeQueryRef": "Activity Name",
+              "displayName": "Activity Name"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Metrics"
+                    }
+                  },
+                  "Property": "SM Drill Status"
+                }
+              },
+              "queryRef": "XER Metrics.SM Drill Status",
+              "nativeQueryRef": "Status",
+              "displayName": "Status"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Metrics"
+                    }
+                  },
+                  "Property": "SM Drill Out-of-Sequence Detail"
+                }
+              },
+              "queryRef": "XER Metrics.SM Drill Out-of-Sequence Detail",
+              "nativeQueryRef": "Driving predecessors",
+              "displayName": "Driving predecessors"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Measures"
+                    }
+                  },
+                  "Property": "ShowTaskType"
+                }
+              },
+              "queryRef": "XER Measures.ShowTaskType",
+              "nativeQueryRef": "Task Type",
+              "displayName": "Task Type"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Measures"
+                    }
+                  },
+                  "Property": "ShowDuration"
+                }
+              },
+              "queryRef": "XER Measures.ShowDuration",
+              "nativeQueryRef": "Rem. Duration",
+              "displayName": "Rem. Duration"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Measures"
+                    }
+                  },
+                  "Property": "ShowFloat"
+                }
+              },
+              "queryRef": "XER Measures.ShowFloat",
+              "nativeQueryRef": "Total Float",
+              "displayName": "Total Float"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "01 XER_TASK"
+                        }
+                      },
+                      "Property": "Baseline Start"
+                    }
+                  },
+                  "Function": 3
+                }
+              },
+              "queryRef": "Min(01 XER_TASK.Baseline Start)",
+              "nativeQueryRef": "Baseline Start",
+              "displayName": "Baseline Start",
+              "format": "dd-MMM-yy"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "01 XER_TASK"
+                        }
+                      },
+                      "Property": "Baseline Finish"
+                    }
+                  },
+                  "Function": 4
+                }
+              },
+              "queryRef": "Max(01 XER_TASK.Baseline Finish)",
+              "nativeQueryRef": "Baseline Finish",
+              "displayName": "Baseline Finish",
+              "format": "dd-MMM-yy"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "01 XER_TASK"
+                        }
+                      },
+                      "Property": "Previous Month Start"
+                    }
+                  },
+                  "Function": 3
+                }
+              },
+              "queryRef": "Min(01 XER_TASK.Previous Month Start)",
+              "nativeQueryRef": "Previous Month Start",
+              "displayName": "Previous Month Start",
+              "format": "dd-MMM-yy"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "01 XER_TASK"
+                        }
+                      },
+                      "Property": "Previous Month Finish"
+                    }
+                  },
+                  "Function": 4
+                }
+              },
+              "queryRef": "Max(01 XER_TASK.Previous Month Finish)",
+              "nativeQueryRef": "Previous Month Finish",
+              "displayName": "Previous Month Finish",
+              "format": "dd-MMM-yy"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "01 XER_TASK"
+                        }
+                      },
+                      "Property": "Start"
+                    }
+                  },
+                  "Function": 3
+                }
+              },
+              "queryRef": "Min(01 XER_TASK.Start)",
+              "nativeQueryRef": "Current Start",
+              "displayName": "Current Start",
+              "format": "dd-MMM-yy"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "01 XER_TASK"
+                        }
+                      },
+                      "Property": "Finish"
+                    }
+                  },
+                  "Function": 4
+                }
+              },
+              "queryRef": "Max(01 XER_TASK.Finish)",
+              "nativeQueryRef": "Current Finish",
+              "displayName": "Current Finish",
+              "format": "dd-MMM-yy"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Measures"
+                    }
+                  },
+                  "Property": "ShowVarianceBL"
+                }
+              },
+              "queryRef": "XER Measures.ShowVarianceBL",
+              "nativeQueryRef": "Finish Variance to Baseline",
+              "displayName": "Finish Variance to Baseline"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Measures"
+                    }
+                  },
+                  "Property": "ShowVariance"
+                }
+              },
+              "queryRef": "XER Measures.ShowVariance",
+              "nativeQueryRef": "Finish Variance Previous Month",
+              "displayName": "Finish Variance Previous Month"
+            }
+          ]
+        },
+        "Activity": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "01 XER_TASK"
+                    }
+                  },
+                  "Property": "task_code"
+                }
+              },
+              "queryRef": "01 XER_TASK.task_code",
+              "nativeQueryRef": "task_code"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "03 XER_PROJWBS"
+                  }
+                },
+                "Property": "Level_3"
+              }
+            },
+            "direction": "Ascending"
+          },
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "03 XER_PROJWBS"
+                  }
+                },
+                "Property": "Level_4"
+              }
+            },
+            "direction": "Ascending"
+          },
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "01 XER_TASK"
+                  }
+                },
+                "Property": "task_code"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "objects": {
+      "values": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {},
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 1
+                }
+              }
+            ],
+            "metadata": "XER Measures.ShowVariance"
+          }
+        },
+        {
+          "properties": {},
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 1
+                }
+              }
+            ],
+            "metadata": "XER Measures.ShowVarianceBL"
+          }
+        },
+        {
+          "properties": {
+            "width": {
+              "expr": {
+                "Literal": {
+                  "Value": "80D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Max(01 XER_TASK.Finish)"
+          }
+        },
+        {
+          "properties": {
+            "width": {
+              "expr": {
+                "Literal": {
+                  "Value": "80D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Min(01 XER_TASK.Start)"
+          }
+        },
+        {
+          "properties": {
+            "width": {
+              "expr": {
+                "Literal": {
+                  "Value": "80D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Max(01 XER_TASK.Previous Month Finish)"
+          }
+        },
+        {
+          "properties": {
+            "width": {
+              "expr": {
+                "Literal": {
+                  "Value": "80D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Min(01 XER_TASK.Previous Month Start)"
+          }
+        },
+        {
+          "properties": {
+            "width": {
+              "expr": {
+                "Literal": {
+                  "Value": "80D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Max(01 XER_TASK.Baseline Finish)"
+          }
+        },
+        {
+          "properties": {
+            "width": {
+              "expr": {
+                "Literal": {
+                  "Value": "80D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Min(01 XER_TASK.Baseline Start)"
+          }
+        },
+        {
+          "properties": {
+            "width": {
+              "expr": {
+                "Literal": {
+                  "Value": "50D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "XER Measures.ShowVarianceBL"
+          }
+        },
+        {
+          "properties": {
+            "width": {
+              "expr": {
+                "Literal": {
+                  "Value": "50D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "XER Measures.ShowVariance"
+          }
+        },
+        {
+          "properties": {
+            "width": {
+              "expr": {
+                "Literal": {
+                  "Value": "250D"
+                }
+              }
+            },
+            "customWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "XER Measures.ShowTaskName"
+          }
+        },
+        {
+          "properties": {
+            "width": {
+              "expr": {
+                "Literal": {
+                  "Value": "50D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "XER Measures.ShowFloat"
+          }
+        },
+        {
+          "properties": {
+            "width": {
+              "expr": {
+                "Literal": {
+                  "Value": "50D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "XER Measures.ShowDuration"
+          }
+        },
+        {
+          "properties": {
+            "width": {
+              "expr": {
+                "Literal": {
+                  "Value": "100D"
+                }
+              }
+            },
+            "customWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "XER Metrics.SM Drill Status"
+          }
+        },
+        {
+          "properties": {
+            "width": {
+              "expr": {
+                "Literal": {
+                  "Value": "230D"
+                }
+              }
+            },
+            "customWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "wrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "XER Metrics.SM Drill Out-of-Sequence Detail"
+          }
+        }
+      ],
+      "columnHeaders": [
+        {
+          "properties": {
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
+                }
+              }
+            },
+            "wrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "grid": [
+        {
+          "properties": {}
+        }
+      ],
+      "layout": [
+        {
+          "properties": {
+            "columnWidthMode": {
+              "expr": {
+                "Literal": {
+                  "Value": "'viewport'"
+                }
+              }
+            },
+            "customColumnWidths": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "state": [
+        {
+          "properties": {
+            "payload": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{\"version\":1,\"signature\":\"[[[\\\"03 XER_PROJWBS.Level_2\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_3\\\",true,false]],[[\\\"03 XER_PROJWBS.Level_4\\\",true,false]],[[\\\"01 XER_TASK.task_code\\\",false,true]]]\",\"expansion\":{\"level\":-1,\"overrides\":{}},\"sort\":{\"key\":\"\",\"direction\":\"none\"},\"widths\":{}}'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "labelColumn": [
+        {
+          "properties": {
+            "width": {
+              "expr": {
+                "Literal": {
+                  "Value": "160D"
+                }
+              }
+            },
+            "customWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "11D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "wbsBands": [
+        {
+          "properties": {
+            "level0Background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#1D1D1B'"
+                    }
+                  }
+                }
+              }
+            },
+            "level1Background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#CF2E26'"
+                    }
+                  }
+                }
+              }
+            },
+            "level2Background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#0F4C5C'"
+                    }
+                  }
+                }
+              }
+            },
+            "level3Background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FDE047'"
+                    }
+                  }
+                }
+              }
+            },
+            "level4Background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FED7AA'"
+                    }
+                  }
+                }
+              }
+            },
+            "level5Background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#CBD5E1'"
+                    }
+                  }
+                }
+              }
+            },
+            "level6Background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FAF9F6'"
+                    }
+                  }
+                }
+              }
+            },
+            "level0Colour": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "level1Colour": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "level2Colour": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "level5Colour": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#1D1D1B'"
+                    }
+                  }
+                }
+              }
+            },
+            "level4Colour": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#1D1D1B'"
+                    }
+                  }
+                }
+              }
+            },
+            "level3Colour": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#1D1D1B'"
+                    }
+                  }
+                }
+              }
+            },
+            "level6Colour": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#1D1D1B'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "stylePreset": [
+        {
+          "properties": {
+            "name": {
+              "expr": {
+                "Literal": {
+                  "Value": "''"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "border": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0.6
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

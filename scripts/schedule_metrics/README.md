@@ -66,11 +66,20 @@ then also rejects reading a missing hashtable key with dot notation, so test
 optional keys with `ContainsKey` and check a result column exists before
 reading its `.Value`.
 
-The drill-through runner validates the two retained Missing Predecessor and
-Missing Successor routes. `-SkipWbs` retains snapshot count, fixture, leaf-evidence,
-context and guard checks while skipping the exhaustive per-WBS count sweep.
-Date alignment has been removed without a replacement; invalid dates remains
-an independent scored check.
+The drill-through runner (`Validate-Drillthrough.ps1`) validates all 10
+scored-metric drill-through routes (`Missing Logic`, `Leads`, `Lags >5d`,
+`Non-FS Relationships`, `Restrictive Constraints`, `Out-of-Sequence`,
+`Negative Float`, `Remaining Duration >44d`, `Date Integrity`,
+`Baseline Coverage`), reconciling each route's failing-activity count measure
+against its exact `01 XER_TASK` storage-engine filter across every loaded
+snapshot and WBS node, plus synthetic fixtures, leaf diagnostic detail strings,
+context measures and multi-snapshot/multi-project guards. Without
+`-UseLoadedModel`, it evaluates proposed disk measures and unmaterialised
+`SM Fail *` columns via query-scoped `DEFINE TABLE` / `DEFINE MEASURE`
+overrides; with `-UseLoadedModel`, it queries physical columns and loaded
+measures directly after Desktop reload/refresh. `-SkipWbs` skips the exhaustive
+per-WBS sweep while retaining snapshot, fixture, leaf-evidence, context and
+guard checks.
 
 The fixture script executes the actual proposed ratios and score expressions,
 substituting aggregate inputs through query-scoped measures. It checks the ten

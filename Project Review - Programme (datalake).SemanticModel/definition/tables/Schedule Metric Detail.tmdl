@@ -136,14 +136,15 @@ table 'Schedule Metric Detail'
 			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
 			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
 			    TREATAS({BaselineDate}, '01 XER_TASK'[UpdateDate]),
-			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile"})
 			VAR CurrentRows = CALCULATETABLE('01 XER_TASK',
 			    REMOVEFILTERS(),
 			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
 			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
 			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
 			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]),
-			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			    '01 XER_TASK'[status_code] IN {"Not Started", "In Progress"},
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile"})
 			VAR BaselineActivities = GROUPBY(SELECTCOLUMNS(BaselineRows,
 			    "ActivityCode", '01 XER_TASK'[task_code], "RowFinish", '01 XER_TASK'[Finish]),
 			    [ActivityCode], "BaselineFinish", MAXX(CURRENTGROUP(), [RowFinish]))
@@ -169,14 +170,15 @@ table 'Schedule Metric Detail'
 			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
 			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
 			    TREATAS({BaselineDate}, '01 XER_TASK'[UpdateDate]),
-			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile"})
 			VAR CurrentRows = CALCULATETABLE('01 XER_TASK',
 			    REMOVEFILTERS(),
 			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
 			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
 			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
 			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]),
-			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			    '01 XER_TASK'[status_code] IN {"Not Started", "In Progress"},
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile"})
 			VAR BaselineActivities = GROUPBY(SELECTCOLUMNS(BaselineRows,
 			    "ActivityCode", '01 XER_TASK'[task_code], "RowFinish", '01 XER_TASK'[Finish]),
 			    [ActivityCode], "BaselineFinish", MAXX(CURRENTGROUP(), [RowFinish]))
@@ -202,14 +204,15 @@ table 'Schedule Metric Detail'
 			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
 			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
 			    TREATAS({BaselineDate}, '01 XER_TASK'[UpdateDate]),
-			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile"})
 			VAR CurrentRows = CALCULATETABLE('01 XER_TASK',
 			    REMOVEFILTERS(),
 			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
 			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
 			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
 			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]),
-			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			    '01 XER_TASK'[status_code] IN {"Not Started", "In Progress"},
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile"})
 			VAR BaselineActivities = GROUPBY(SELECTCOLUMNS(BaselineRows,
 			    "ActivityCode", '01 XER_TASK'[task_code], "RowFinish", '01 XER_TASK'[Finish]),
 			    [ActivityCode], "BaselineFinish", MAXX(CURRENTGROUP(), [RowFinish]))
@@ -235,14 +238,15 @@ table 'Schedule Metric Detail'
 			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
 			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
 			    TREATAS({BaselineDate}, '01 XER_TASK'[UpdateDate]),
-			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile"})
 			VAR CurrentRows = CALCULATETABLE('01 XER_TASK',
 			    REMOVEFILTERS(),
 			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
 			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
 			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
 			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]),
-			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			    '01 XER_TASK'[status_code] IN {"Not Started", "In Progress"},
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile"})
 			VAR BaselineActivities = GROUPBY(SELECTCOLUMNS(BaselineRows,
 			    "ActivityCode", '01 XER_TASK'[task_code], "RowFinish", '01 XER_TASK'[Finish]),
 			    [ActivityCode], "BaselineFinish", MAXX(CURRENTGROUP(), [RowFinish]))
@@ -268,14 +272,15 @@ table 'Schedule Metric Detail'
 			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
 			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
 			    TREATAS({BaselineDate}, '01 XER_TASK'[UpdateDate]),
-			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile"})
 			VAR CurrentRows = CALCULATETABLE('01 XER_TASK',
 			    REMOVEFILTERS(),
 			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
 			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
 			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
 			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]),
-			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			    '01 XER_TASK'[status_code] IN {"Not Started", "In Progress"},
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile"})
 			VAR BaselineActivities = GROUPBY(SELECTCOLUMNS(BaselineRows,
 			    "ActivityCode", '01 XER_TASK'[task_code], "RowFinish", '01 XER_TASK'[Finish]),
 			    [ActivityCode], "BaselineFinish", MAXX(CURRENTGROUP(), [RowFinish]))
@@ -307,14 +312,15 @@ table 'Schedule Metric Detail'
 			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
 			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
 			    TREATAS({BaselineDate}, '01 XER_TASK'[UpdateDate]),
-			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile"})
 			VAR CurrentCodes = CALCULATETABLE(VALUES('01 XER_TASK'[task_code]),
 			    REMOVEFILTERS(),
 			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
 			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
 			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
 			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]),
-			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			    '01 XER_TASK'[status_code] IN {"Not Started", "In Progress"},
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile"})
 			RETURN COALESCE(COUNTROWS(EXCEPT(BaselineCodes, CurrentCodes)), 0)
 		formatString: #,0
 		isHidden
@@ -333,14 +339,15 @@ table 'Schedule Metric Detail'
 			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
 			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
 			    TREATAS({BaselineDate}, '01 XER_TASK'[UpdateDate]),
-			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile"})
 			VAR CurrentRows = CALCULATETABLE('01 XER_TASK',
 			    REMOVEFILTERS(),
 			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
 			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
 			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
 			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]),
-			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			    '01 XER_TASK'[status_code] IN {"Not Started", "In Progress"},
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile"})
 			VAR BaselineActivities = GROUPBY(SELECTCOLUMNS(BaselineRows,
 			    "ActivityCode", '01 XER_TASK'[task_code], "RowFinish", '01 XER_TASK'[Finish]),
 			    [ActivityCode], "BaselineFinish", MAXX(CURRENTGROUP(), [RowFinish]))
@@ -393,14 +400,15 @@ table 'Schedule Metric Detail'
 			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
 			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
 			    TREATAS({BaselineDate}, '01 XER_TASK'[UpdateDate]),
-			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile"})
 			VAR CurrentRows = CALCULATETABLE('01 XER_TASK',
 			    REMOVEFILTERS(),
 			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
 			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
 			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
 			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]),
-			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			    '01 XER_TASK'[status_code] IN {"Not Started", "In Progress"},
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile"})
 			VAR BaselineActivities = GROUPBY(SELECTCOLUMNS(BaselineRows,
 			    "ActivityCode", '01 XER_TASK'[task_code], "RowFinish", '01 XER_TASK'[Finish]),
 			    [ActivityCode], "BaselineFinish", MAXX(CURRENTGROUP(), [RowFinish]))
@@ -492,14 +500,15 @@ table 'Schedule Metric Detail'
 			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
 			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
 			    TREATAS({BaselineDate}, '01 XER_TASK'[UpdateDate]),
-			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile"})
 			VAR CurrentRows = CALCULATETABLE('01 XER_TASK',
 			    REMOVEFILTERS(),
 			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
 			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
 			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
 			    TREATAS({SnapshotDate}, '01 XER_TASK'[UpdateDate]),
-			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc"})
+			    '01 XER_TASK'[status_code] IN {"Not Started", "In Progress"},
+			    '01 XER_TASK'[task_type] IN {"TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile"})
 			VAR BaselineActivities = GROUPBY(SELECTCOLUMNS(BaselineRows,
 			    "ActivityCode", '01 XER_TASK'[task_code], "RowFinish", '01 XER_TASK'[Finish]),
 			    [ActivityCode], "BaselineFinish", MAXX(CURRENTGROUP(), [RowFinish]))

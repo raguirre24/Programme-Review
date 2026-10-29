@@ -2,7 +2,7 @@
   "schema_version": 1,
   "title": "Schedule metrics guide",
   "purpose": "Explain the practical review bands, calculations, evidence coverage and score used by the Schedule Metrics tab.",
-  "introduction": "Score = average of the ten checks' points × 100. Each check earns 1 point at its target, falling evenly to 0 at its limit; all checks weigh the same.\nScore colour: green ≥95%, amber ≥75%, red <75%. Scroll for each metric's target, limit and scope.\nActivity lists: right-click an update in the counts table > Drill through > Missing Predecessor or Missing Successor.",
+  "introduction": "Score = average of the ten checks' points × 100. Each check earns 1 point at its target, falling evenly to 0 at its limit; all checks weigh the same.\nScore colour: green ≥95%, amber ≥75%, red <75%. Scroll for each metric's target, limit and scope.\nActivity lists: right-click any metric cell or update in the failing-activities table > Drill through to inspect the matching activities.",
   "reading_notes": [
     {
       "title": "Core activity population",
@@ -14,7 +14,7 @@
     },
     {
       "title": "Updates and trend lines",
-      "text": "Gauges show the selected snapshot. Trends show each available snapshot through the selected cutoff; multiple selected dates use their latest date for core histories. If the selected project has no snapshot at the cutoff, current gauges can be N/A while earlier history remains visible. Each counts-table row refers to its own update; counts must not be added across updates."
+      "text": "Gauges show the selected snapshot. Trends show each available snapshot through the selected cutoff; multiple selected dates use their latest date for core histories. If the selected project has no snapshot at the cutoff, current gauges can be N/A while earlier history remains visible. Each failing-activities table row refers to its own update; counts must not be added across updates."
     },
     {
       "title": "Baseline and detail scope",
@@ -22,7 +22,7 @@
     },
     {
       "title": "Reading counts beside percentages",
-      "text": "A grid count shows the number of flagged activities or relationships; the corresponding percentage divides that count by the population described here. Unknown inputs can reduce a percentage denominator without changing the number of remaining activities. Missing predecessor and successor counts can overlap; the combined logic check counts each activity only once."
+      "text": "The failing-activities table shows the number of failing activities for each of the ten scored checks; the gauges show the scored percentage for each check. Relationship-based gauges (Leads, Lags >5d, FS relationships) score links, while their table columns and drill-through views list the distinct incomplete activities receiving those links."
     },
     {
       "title": "Units and source conventions",
@@ -30,7 +30,7 @@
     },
     {
       "title": "Activity drill-through",
-      "text": "Activity details: in the counts table, right-click an update and select Drill through > Missing Predecessor or Missing Successor."
+      "text": "Activity details: in the failing-activities table, right-click a metric cell (or an update row) and select Drill through to open that metric's failing activity list."
     }
   ],
   "rows": [
@@ -46,7 +46,7 @@
       "amber": ">5% to <10%",
       "red": "≥10%",
       "population": "Core activities: incomplete task- and resource-dependent activities. Excludes milestones, LOE, WBS summaries and completed work.",
-      "limitations": "Pred. and Succ. counts overlap. Drill through from the counts table to list activities.",
+      "limitations": "Each activity missing a predecessor, a successor, or both is counted once. Right-click Missing logic > Drill through to list failing activities.",
       "classification": "Network logic",
       "scored": true,
       "score_note": "1 point at ≤5%, falling evenly to 0 at 10%.",
@@ -57,12 +57,19 @@
         "01 XER_TASK[task_type]",
         "01 XER_TASK[status_code]"
       ],
-      "related_grid_counts": [],
+      "related_grid_counts": [
+        {
+          "label": "Missing logic",
+          "measure": "XER Metrics[SM Missing Logic Count]",
+          "meaning": "Number of incomplete discrete activities missing a predecessor, a successor, or both."
+        }
+      ],
       "review_bands": {
         "direction": "lower",
         "target": 0.05,
         "limit": 0.1
-      }
+      },
+      "scope": "Incomplete activities and milestones (`Not Started` and `In Progress`); excludes Level of Effort (`TT_LOE`), WBS summaries (`TT_WBS`), and completed work (`Complete`). Drill through from `Missing logic` in the counts table to list failing activities."
     },
     {
       "id": "leads",
@@ -76,7 +83,7 @@
       "amber": ">0% to <1%",
       "red": "≥1%",
       "population": "Links into incomplete discrete successors.",
-      "limitations": "Counts relationships, not activities. Missing lag excluded.",
+      "limitations": "Gauge scores relationships (missing lag excluded); table column Leads <0d counts distinct incomplete activities receiving a lead for drill-through.",
       "classification": "Network logic",
       "scored": true,
       "score_note": "1 point at 0%, falling evenly to 0 at 1%.",
@@ -91,15 +98,16 @@
       "related_grid_counts": [
         {
           "label": "Leads <0d",
-          "measure": "XER Metrics[Leads<0d]",
-          "meaning": "Number of eligible negative-lag relationships."
+          "measure": "XER Metrics[SM Leads Activity Count]",
+          "meaning": "Number of incomplete discrete activities with at least one incoming negative-lag relationship."
         }
       ],
       "review_bands": {
         "direction": "lower",
         "target": 0,
         "limit": 0.01
-      }
+      },
+      "scope": "Relationships into incomplete activities and milestones (`Not Started` and `In Progress`, excluding LOE and WBS summaries). Gauge scores relationship share; counts table shows failing activities (`Leads <0d`)."
     },
     {
       "id": "positive_lags",
@@ -113,7 +121,7 @@
       "amber": ">5% to <10%",
       "red": "≥10%",
       "population": "Links into incomplete discrete successors.",
-      "limitations": "Short lags (5 days or less), mostly on SS/FF overlap pairs, are not counted; overlap use is assessed through FS relationships. Missing lag excluded.",
+      "limitations": "Short lags (5 days or less), mostly on SS/FF overlap pairs, are not counted; missing lag excluded. Gauge scores relationships; table column Lags >5d counts distinct receiving activities for drill-through.",
       "classification": "Network logic",
       "scored": true,
       "score_note": "1 point at ≤5%, falling evenly to 0 at 10%.",
@@ -128,15 +136,16 @@
       "related_grid_counts": [
         {
           "label": "Lags >5d",
-          "measure": "XER Metrics[Lags>5d]",
-          "meaning": "Number of eligible relationships with lag over 5 working days."
+          "measure": "XER Metrics[SM Lags Activity Count]",
+          "meaning": "Number of incomplete discrete activities with at least one incoming lag over 5 working days."
         }
       ],
       "review_bands": {
         "direction": "lower",
         "target": 0.05,
         "limit": 0.1
-      }
+      },
+      "scope": "Relationships into incomplete activities and milestones (`Not Started` and `In Progress`, excluding LOE and WBS summaries). Short lags (5 days or less) are not counted. Gauge scores relationship share; counts table shows failing activities (`Lags >5d`)."
     },
     {
       "id": "fs_relationships",
@@ -150,7 +159,7 @@
       "amber": ">80% to <90%",
       "red": "≤80%",
       "population": "Links into incomplete discrete successors.",
-      "limitations": "Unknown types excluded. FS and FS1 rows are not deduplicated.",
+      "limitations": "Unknown types excluded; FS and FS1 rows are not deduplicated. Gauge scores FS share of relationships; table column Non-FS counts distinct activities receiving SS/FF/SF links for drill-through.",
       "classification": "Network logic",
       "scored": true,
       "score_note": "1 point at ≥90%, falling evenly to 0 at 80%.",
@@ -162,26 +171,33 @@
         "01 XER_TASK[task_type]",
         "01 XER_TASK[status_code]"
       ],
-      "related_grid_counts": [],
+      "related_grid_counts": [
+        {
+          "label": "Non-FS",
+          "measure": "XER Metrics[SM Non-FS Activity Count]",
+          "meaning": "Number of incomplete discrete activities with at least one incoming SS, FF or SF relationship."
+        }
+      ],
       "review_bands": {
         "direction": "higher",
         "target": 0.9,
         "limit": 0.8
-      }
+      },
+      "scope": "Relationships into incomplete activities and milestones (`Not Started` and `In Progress`, excluding LOE and WBS summaries). Gauge scores FS relationship share; counts table shows activities with non-FS links (`Non-FS`)."
     },
     {
       "id": "restrictive_constraints",
       "sort_order": 50,
       "section": "Scored checks",
-      "metric": "Restrictive primary constraints",
-      "meaning": "Activities whose primary constraint fixes or caps their dates.",
-      "calculation": "Activities with a restrictive primary constraint / core activities with a known or blank constraint.",
+      "metric": "Hard constraints",
+      "meaning": "Incomplete activities and milestones whose primary constraint fixes or caps their dates (hard constraints).",
+      "calculation": "Incomplete activities and milestones with a hard primary constraint / incomplete activities and milestones with a known or blank constraint.",
       "threshold": "Green ≤5%; amber >5% to <10%; red ≥10%.",
       "green": "≤5%",
       "amber": ">5% to <10%",
       "red": "≥10%",
-      "population": "Core activities; primary constraint only.",
-      "limitations": "Counted: CS_MSO, CS_MSOB, CS_MEO, CS_MEOB, CS_MANDSTART, CS_MANDFIN. Unknown codes excluded.",
+      "population": "Incomplete activities and milestones (excludes only Level of Effort and WBS Summary); primary hard constraints only.",
+      "limitations": "Counted: Must Start On (CS_MSO), Start On or Before (CS_MSOB), Must Finish On (CS_MEO), Finish On or Before (CS_MEOB), Mandatory Start (CS_MANDSTART), Mandatory Finish (CS_MANDFIN). Soft constraints and unconstrained items are not counted. Unknown codes excluded. Right-click Hard constraints > Drill through to list failing activities and milestones.",
       "classification": "Schedule constraints",
       "scored": true,
       "score_note": "1 point at ≤5%, falling evenly to 0 at 10%.",
@@ -193,16 +209,17 @@
       ],
       "related_grid_counts": [
         {
-          "label": "Restrictive primary",
+          "label": "Hard constraints",
           "measure": "XER Metrics[SM Restrictive Primary Count]",
-          "meaning": "Number of activities with a counted restrictive primary constraint."
+          "meaning": "Number of incomplete activities and milestones with a counted hard primary constraint."
         }
       ],
       "review_bands": {
         "direction": "lower",
         "target": 0.05,
         "limit": 0.1
-      }
+      },
+      "scope": "Incomplete activities and milestones (`Not Started` and `In Progress`); excludes Level of Effort (`TT_LOE`), WBS summaries (`TT_WBS`), and completed work (`Complete`). As Late As Possible and Start/Finish On or After are not hard constraints. Secondary constraints are not in the export."
     },
     {
       "id": "out_of_sequence",
@@ -240,7 +257,8 @@
         "direction": "lower",
         "target": 0,
         "limit": 0.1
-      }
+      },
+      "scope": "In-progress activities and milestones (`In Progress`, excluding LOE and WBS summaries); completed and not-started items are excluded. Drill through from `Out of seq.` in the counts table to list failing activities."
     },
     {
       "id": "negative_float",
@@ -275,7 +293,8 @@
         "direction": "lower",
         "target": 0,
         "limit": 0.05
-      }
+      },
+      "scope": "Incomplete activities and milestones (`Not Started` and `In Progress`) with known float; excludes Level of Effort (`TT_LOE`), WBS summaries (`TT_WBS`), and completed work (`Complete`). Drill through from `Float <0` in the counts table to list failing activities."
     },
     {
       "id": "long_remaining_duration",
@@ -301,7 +320,7 @@
       ],
       "related_grid_counts": [
         {
-          "label": "Rem. duration >44d",
+          "label": "Dur. >44d",
           "measure": "XER Metrics[Dur >44]",
           "meaning": "Number of eligible activities with remaining duration above 44 working days."
         }
@@ -310,7 +329,8 @@
         "direction": "lower",
         "target": 0.05,
         "limit": 0.1
-      }
+      },
+      "scope": "Incomplete activities and milestones (`Not Started` and `In Progress`) with known remaining duration; excludes Level of Effort (`TT_LOE`), WBS summaries (`TT_WBS`), and completed work (`Complete`). Drill through from `Dur. >44d` in the counts table to list failing activities."
     },
     {
       "id": "invalid_dates",
@@ -337,12 +357,19 @@
         "01 XER_TASK[status_code]",
         "01 XER_TASK[task_type]"
       ],
-      "related_grid_counts": [],
+      "related_grid_counts": [
+        {
+          "label": "Invalid dates",
+          "measure": "XER Metrics[SM Invalid Dates Count]",
+          "meaning": "Number of activities and milestones failing any date integrity rule."
+        }
+      ],
       "review_bands": {
         "direction": "lower",
         "target": 0,
         "limit": 0.01
-      }
+      },
+      "scope": "Incomplete activities and milestones (`Not Started` and `In Progress`); excludes Level of Effort (`TT_LOE`), WBS summaries (`TT_WBS`), and completed work (`Complete`). Drill through from `Invalid dates` in the counts table to list failing activities."
     },
     {
       "id": "baseline_coverage",
@@ -356,7 +383,7 @@
       "amber": ">60% to <90%",
       "red": "≤60%",
       "population": "Whole project, all statuses, against the latest BL baseline file up to the selected update (or the earliest loaded update when no BL file exists).",
-      "limitations": "Not changed by WBS selection. 0% if a BL filename tag is invalid; repeated codes are disclosed, not penalised. New or renumbered activities lower coverage until the next re-baseline.",
+      "limitations": "Gauge scores whole-project coverage (0% if a BL filename tag is invalid; repeated codes disclosed, not penalised). Table column No baseline counts unmatched activities in the current selection for drill-through.",
       "classification": "Baseline coverage",
       "scored": true,
       "score_note": "1 point at ≥90%, falling evenly to 0 at 60%.",
@@ -370,16 +397,17 @@
       ],
       "related_grid_counts": [
         {
-          "label": "Baseline coverage (project)",
-          "measure": "Schedule Metric Detail[SM Baseline Coverage %]",
-          "meaning": "The same whole-project coverage percentage shown in the counts grid."
+          "label": "No baseline",
+          "measure": "XER Metrics[SM Baseline Unmatched Activity Count]",
+          "meaning": "Number of discrete activities lacking a dated finish in the project baseline snapshot."
         }
       ],
       "review_bands": {
         "direction": "higher",
         "target": 0.9,
         "limit": 0.6
-      }
+      },
+      "scope": "Whole selected project/programme across incomplete activities and milestones (`Not Started` and `In Progress`, excluding LOE and WBS summaries). Prefers the latest `-BL` snapshot on or before the selected update, falling back to the earliest loaded update when no `-BL` file exists. Drill through from `No baseline` in the counts table to list unmatched activities."
     }
   ],
   "reading_legend": "Check colours: green = at target (full point); amber = between target and limit (part point); red = at or past the limit (no point); grey = no valid selection.\nPartial inputs are a separate coverage warning: hover for known/excluded records.",

@@ -806,6 +806,313 @@ table '01 XER_TASK'
 
 		annotation SummarizationSetBy = Automatic
 
+	/// Hidden storage-engine failure reason for the scored Missing logic check on incomplete discrete activities.
+	column 'SM Fail Missing Logic' =
+			IF (
+			    '01 XER_TASK'[status_code] IN { "Not Started", "In Progress" }
+			        && '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" },
+			    SWITCH (
+			        TRUE (),
+			        '01 XER_TASK'[No Predecessor] = 1 && '01 XER_TASK'[No Successor] = 1, "No pred. & no succ.",
+			        '01 XER_TASK'[No Predecessor] = 1, "No predecessor",
+			        '01 XER_TASK'[No Successor] = 1, "No successor",
+			        BLANK ()
+			    )
+			)
+		isHidden
+		displayFolder: Schedule Quality
+		lineageTag: e9ab8284-75f0-5bbd-8eab-95d32798d1be
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Hidden storage-engine count of incoming negative-lag relationships on an incomplete discrete activity.
+	column 'SM Fail Leads' =
+			IF (
+			    '01 XER_TASK'[status_code] IN { "Not Started", "In Progress" }
+			        && '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" },
+			    COALESCE (
+			        COUNTROWS (
+			            FILTER (
+			                RELATEDTABLE ( '06 XER_PREDECESSOR' ),
+			                NOT ISBLANK ( '06 XER_PREDECESSOR'[lag] ) && '06 XER_PREDECESSOR'[lag] < 0
+			            )
+			        ),
+			        0
+			    ),
+			    0
+			)
+		isHidden
+		formatString: #,0
+		displayFolder: Schedule Quality
+		lineageTag: 874cf5f5-9197-5d59-ba0b-2e92fc1a62f9
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Hidden storage-engine count of incoming relationships with lag > 5 working days on an incomplete discrete activity.
+	column 'SM Fail Lags' =
+			IF (
+			    '01 XER_TASK'[status_code] IN { "Not Started", "In Progress" }
+			        && '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" },
+			    COALESCE (
+			        COUNTROWS (
+			            FILTER (
+			                RELATEDTABLE ( '06 XER_PREDECESSOR' ),
+			                NOT ISBLANK ( '06 XER_PREDECESSOR'[lag] ) && '06 XER_PREDECESSOR'[lag] > 5
+			            )
+			        ),
+			        0
+			    ),
+			    0
+			)
+		isHidden
+		formatString: #,0
+		displayFolder: Schedule Quality
+		lineageTag: 25f1eca0-9276-5c91-8e0a-37f0c79783a8
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Hidden storage-engine count of incoming non-FS recognised relationships (SS/FF/SF) on an incomplete discrete activity.
+	column 'SM Fail Non FS' =
+			IF (
+			    '01 XER_TASK'[status_code] IN { "Not Started", "In Progress" }
+			        && '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" },
+			    COALESCE (
+			        COUNTROWS (
+			            FILTER (
+			                RELATEDTABLE ( '06 XER_PREDECESSOR' ),
+			                '06 XER_PREDECESSOR'[pred_type] IN { "PR_SS", "PR_FF", "PR_SF" }
+			            )
+			        ),
+			        0
+			    ),
+			    0
+			)
+		isHidden
+		formatString: #,0
+		displayFolder: Schedule Quality
+		lineageTag: ab3741cf-3515-57b1-aa9d-4206bf7425a1
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Hidden storage-engine count of unfinished driving incoming predecessors on an in-progress discrete activity.
+	column 'SM Fail Out Of Sequence' =
+			IF (
+			    '01 XER_TASK'[status_code] = "In Progress"
+			        && '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" },
+			    COALESCE (
+			        COUNTROWS (
+			            FILTER (
+			                RELATEDTABLE ( '06 XER_PREDECESSOR' ),
+			                '06 XER_PREDECESSOR'[predecessor_task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }
+			                    && (
+			                        ( '06 XER_PREDECESSOR'[pred_type] IN { "PR_FS", "PR_FS1" } && '06 XER_PREDECESSOR'[predecessor_status_code] IN { "TK_NotStart", "TK_Active" } )
+			                            || ( '06 XER_PREDECESSOR'[pred_type] = "PR_SS" && '06 XER_PREDECESSOR'[predecessor_status_code] = "TK_NotStart" )
+			                    )
+			            )
+			        ),
+			        0
+			    ),
+			    0
+			)
+		isHidden
+		formatString: #,0
+		displayFolder: Schedule Quality
+		lineageTag: 083ae6a5-9a30-526c-81f3-55786e807aca
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Hidden storage-engine failure reason for the scored Date integrity check across incomplete activities and milestones (excluding LOE and WBS Summary).
+	column 'SM Fail Invalid Dates' =
+			IF (
+			    '01 XER_TASK'[status_code] IN { "Not Started", "In Progress" }
+			        && '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" },
+			    VAR S = '01 XER_TASK'[status_code]
+			    VAR T = '01 XER_TASK'[task_type]
+			    VAR DD = '01 XER_TASK'[data_date]
+			    VAR StartDate = '01 XER_TASK'[Start]
+			    VAR FinishDate = '01 XER_TASK'[Finish]
+			    VAR ActualFinish = '01 XER_TASK'[act_end_date]
+			    VAR NeedsStart = T <> "TT_FinMile"
+			    VAR NeedsFinish = T <> "TT_Mile"
+			    VAR IsOpen = S IN { "Not Started", "In Progress" }
+			    RETURN SWITCH (
+			        TRUE (),
+			        ISBLANK ( DD ), "Missing data date",
+			        NOT ( S IN { "Not Started", "In Progress", "Complete" } ), "Unrecognised status",
+			        NeedsStart && ISBLANK ( StartDate ) && S IN { "In Progress", "Complete" }, "Missing actual start date",
+			        NeedsStart && ISBLANK ( StartDate ), "Missing start date",
+			        NeedsFinish && ISBLANK ( FinishDate ), "Missing finish date",
+			        NeedsStart && S = "Not Started" && StartDate < DD, "Not Started before data date",
+			        NeedsStart && S IN { "In Progress", "Complete" } && StartDate > DD, "Actual start after data date",
+			        NeedsFinish && IsOpen && FinishDate < DD, "Remaining finish before data date",
+			        NeedsFinish && S = "Complete" && ISBLANK ( ActualFinish ), "Completed without actual finish",
+			        NOT ISBLANK ( ActualFinish ) && ActualFinish > DD, "Actual finish after data date",
+			        IsOpen && NOT ISBLANK ( ActualFinish ), "Open activity with actual finish",
+			        NeedsStart && NeedsFinish && FinishDate < StartDate, "Finish before start",
+			        BLANK ()
+			    )
+			)
+		isHidden
+		displayFolder: Schedule Quality
+		lineageTag: 99c031f8-8cc5-50ff-b30f-245f0cb882b9
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Hidden storage-engine failure reason for the scored Baseline coverage check on incomplete activities and milestones against the latest -BL update or earliest loaded update fallback.
+	column 'SM Fail Baseline Coverage' =
+			IF (
+			    NOT '01 XER_TASK'[IsExcludedFromDataLake]
+			        && '01 XER_TASK'[status_code] IN { "Not Started", "In Progress" }
+			        && '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" },
+			    VAR P = '01 XER_TASK'[ProjectCode]
+			    VAR PT = '01 XER_TASK'[ProgrammeType]
+			    VAR U = '01 XER_TASK'[UpdateDate]
+			    VAR Code = '01 XER_TASK'[task_code]
+			    RETURN IF (
+			        ISBLANK ( P ) || ISBLANK ( PT ) || ISBLANK ( U ),
+			        "Invalid baseline snapshot",
+			        VAR SnapMeta =
+			            FILTER (
+			                ALL (
+			                    '01 XER_TASK'[ProjectCode],
+			                    '01 XER_TASK'[ProgrammeType],
+			                    '01 XER_TASK'[UpdateDate],
+			                    '01 XER_TASK'[filename],
+			                    '01 XER_TASK'[data_date],
+			                    '01 XER_TASK'[IsExcludedFromDataLake]
+			                ),
+			                NOT '01 XER_TASK'[IsExcludedFromDataLake]
+			                    && '01 XER_TASK'[ProjectCode] = P
+			                    && '01 XER_TASK'[ProgrammeType] = PT
+			                    && '01 XER_TASK'[UpdateDate] <= U
+			            )
+			        VAR CurrentMeta = FILTER ( SnapMeta, '01 XER_TASK'[UpdateDate] = U )
+			        VAR CurrentValid =
+			            COUNTROWS ( CurrentMeta ) = 1
+			                && COUNTROWS ( FILTER ( CurrentMeta, ISBLANK ( '01 XER_TASK'[data_date] ) ) ) = 0
+			        VAR BlDate =
+			            MAXX (
+			                FILTER ( SnapMeta, CONTAINSSTRING ( '01 XER_TASK'[filename], "-BL" ) ),
+			                '01 XER_TASK'[UpdateDate]
+			            )
+			        VAR EarliestDate = MINX ( SnapMeta, '01 XER_TASK'[UpdateDate] )
+			        VAR TargetBL = COALESCE ( BlDate, EarliestDate )
+			        VAR BlMeta = FILTER ( SnapMeta, '01 XER_TASK'[UpdateDate] = TargetBL )
+			        VAR BaselineFile = IF ( COUNTROWS ( BlMeta ) = 1, MAXX ( BlMeta, '01 XER_TASK'[filename] ) )
+			        VAR FileNameUpper = UPPER ( BaselineFile )
+			        VAR TagStart = SEARCH ( "-BL", FileNameUpper, 1, 0 )
+			        VAR TagEnd = IF ( TagStart > 0, SEARCH ( "_", FileNameUpper, TagStart + 3, 0 ), 0 )
+			        VAR Tag = IF ( TagEnd > TagStart + 3, MID ( FileNameUpper, TagStart + 3, TagEnd - TagStart - 3 ), "" )
+			        VAR RevisionAt = SEARCH ( "-", Tag, 1, 0 )
+			        VAR NumberText = IF ( RevisionAt > 0, LEFT ( Tag, RevisionAt - 1 ), Tag )
+			        VAR Revision = IF ( RevisionAt > 0, MID ( Tag, RevisionAt + 1, LEN ( Tag ) ), "" )
+			        VAR DigitsOnly =
+			            LEN ( NumberText ) > 0
+			                && LEN (
+			                    SUBSTITUTE (
+			                        SUBSTITUTE (
+			                            SUBSTITUTE (
+			                                SUBSTITUTE (
+			                                    SUBSTITUTE (
+			                                        SUBSTITUTE (
+			                                            SUBSTITUTE (
+			                                                SUBSTITUTE (
+			                                                    SUBSTITUTE (
+			                                                        SUBSTITUTE ( NumberText, "0", "" ),
+			                                                        "1", ""
+			                                                    ),
+			                                                    "2", ""
+			                                                ),
+			                                                "3", ""
+			                                            ),
+			                                            "4", ""
+			                                        ),
+			                                        "5", ""
+			                                    ),
+			                                    "6", ""
+			                                ),
+			                                "7", ""
+			                            ),
+			                            "8", ""
+			                        ),
+			                        "9", ""
+			                    )
+			                ) = 0
+			        VAR ValidBlTag =
+			            TagEnd > 0
+			                && DigitsOnly
+			                && ( RevisionAt = 0 || ( LEN ( Revision ) = 1 && Revision >= "A" && Revision <= "Z" ) )
+			        VAR HasProvenance =
+			            NOT ISBLANK ( TargetBL )
+			                && NOT ISBLANK ( BaselineFile )
+			                && LEN ( TRIM ( BaselineFile ) ) > 0
+			                && ( TagStart = 0 || ValidBlTag )
+			        RETURN IF (
+			            NOT CurrentValid || NOT HasProvenance,
+			            "Invalid baseline snapshot",
+			            IF (
+			                TargetBL = U && NOT ISBLANK ( '01 XER_TASK'[Finish] ),
+			                BLANK (),
+			                VAR TC = '01 XER_TASK'[TaskType_Classified]
+			                VAR FastLookup =
+			                    IFERROR (
+			                        LOOKUPVALUE (
+			                            '01 XER_TASK'[Finish],
+			                            '01 XER_TASK'[ProjectCode], P,
+			                            '01 XER_TASK'[ProgrammeType], PT,
+			                            '01 XER_TASK'[UpdateDate], TargetBL,
+			                            '01 XER_TASK'[IsExcludedFromDataLake], FALSE (),
+			                            '01 XER_TASK'[TaskType_Classified], TC,
+			                            '01 XER_TASK'[task_code], Code,
+			                            DATE ( 1899, 12, 30 )
+			                        ),
+			                        DATE ( 1899, 12, 31 )
+			                    )
+			                RETURN SWITCH (
+			                    TRUE (),
+			                    ISBLANK ( FastLookup ), "Baseline finish missing",
+			                    FastLookup <> DATE ( 1899, 12, 30 ) && FastLookup <> DATE ( 1899, 12, 31 ), BLANK (),
+			                    VAR DupRows =
+			                        FILTER (
+			                            ALL (
+			                                '01 XER_TASK'[ProjectCode],
+			                                '01 XER_TASK'[ProgrammeType],
+			                                '01 XER_TASK'[UpdateDate],
+			                                '01 XER_TASK'[IsExcludedFromDataLake],
+			                                '01 XER_TASK'[task_type],
+			                                '01 XER_TASK'[task_code],
+			                                '01 XER_TASK'[Finish]
+			                            ),
+			                            NOT '01 XER_TASK'[IsExcludedFromDataLake]
+			                                && '01 XER_TASK'[ProjectCode] = P
+			                                && '01 XER_TASK'[ProgrammeType] = PT
+			                                && '01 XER_TASK'[UpdateDate] = TargetBL
+			                                && '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }
+			                                && '01 XER_TASK'[task_code] == Code
+			                        )
+			                    RETURN IF (
+			                        COUNTROWS ( DupRows ) = 0,
+			                        "Added after baseline",
+			                        IF ( ISBLANK ( MAXX ( DupRows, '01 XER_TASK'[Finish] ) ), "Baseline finish missing", BLANK () )
+			                    )
+			                )
+			            )
+			        )
+			    )
+			)
+		isHidden
+		displayFolder: Schedule Quality
+		lineageTag: 82ccd3df-d52c-5d0c-bfec-0f416fea8f06
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
 	partition '01 XER_TASK' = m
 		mode: import
 		queryGroup: XER

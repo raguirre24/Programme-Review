@@ -19,7 +19,7 @@ diagnostics.
 | Leads | 0% | 1% |
 | Lags over 5 working days | <=5% | 10% |
 | Finish-to-start links | >=90% | 80% |
-| Restrictive primary constraints | <=5% | 10% |
+| Hard constraints | <=5% | 10% |
 | Negative total float | 0% | 5% |
 | Remaining duration above 44 working days | <=5% | 10% |
 | Date integrity | 0% | 1% |
@@ -46,8 +46,7 @@ Relationship denominators use eligible links with a known lag or recognised
 relationship type. Only lags over 5 working days count; shorter lags, mostly on
 SS/FF overlap pairs, are assessed through the FS share instead. Negative float
 counts every activity with total float below zero, however small (user decision,
-19 October 2026). Constraints use recognised primary codes; blank means unconstrained and
-secondary constraints are unavailable. Float is already in working days.
+19 October 2026). Hard constraints evaluate incomplete activities and milestones (excluding only Level of Effort and WBS Summary) using recognised primary constraint codes; blank means unconstrained and secondary constraints are unavailable. Float is already in working days.
 Remaining duration uses known, nonnegative remaining days and remains a custom
 work-definition check. Date integrity includes completed activities, milestones
 and unscheduled work, using the meaningful milestone endpoints.
@@ -163,9 +162,15 @@ return values only through the selected `CurrentDate` cutoff. The hidden
 chosen cutoff when bidirectional project filtering removes that date from the
 current project's available snapshots. Multiple selected dates use their maximum.
 An unavailable selected update leaves current gauges BLANK while retaining valid
-earlier history. The counts table
-retains its task `UpdateDate` and base-measure bindings; each displayed row is
-evaluated at its own snapshot and preserves the existing drill-through context.
+earlier history. The 11-column counts table (`58fbc09d197fe53515d8`)
+binds task `UpdateDate` (`MMM yyyy`) and the 10 scored checks' failing-activity
+count measures (`SM Missing Logic Count`, `SM Leads Activity Count`,
+`SM Lags Activity Count`, `SM Non-FS Activity Count`,
+`SM Restrictive Primary Count`, `Out Of Sequence Count`,
+`Task_Count_Negative_Float`, `Dur >44`, `SM Invalid Dates Count`,
+`SM Baseline Unmatched Activity Count`); each displayed row is evaluated at its
+own snapshot and right-clicking any metric cell offers only that metric's
+dedicated drill-through page.
 Trend categories retain available but unassessed snapshot dates, so unknown
 periods can be displayed as gaps. A separate history-scope filter removes future
 dates and dates at which the selected project has no snapshot.
@@ -200,29 +205,55 @@ current snapshot are disclosed separately in the tooltip. When baseline
 activities disappear from the current snapshot, the dataset does not establish
 whether they completed, were deleted or were renumbered.
 
-## Validation limits and repaired drill-through scope
+## Validation limits and 10-route scored drill-through scope
 
-The approved drill-through repair moves `Is Unscheduled = false` from the
-report to the other 12 pages. Schedule Metrics and its two detail pages now
-share the activity population, including unscheduled work. Governance and
-security remain unchanged. The four Summary bookmark captures use the same local filter
-placement. See [DRILLTHROUGH-VALIDATION.md](DRILLTHROUGH-VALIDATION.md) for the
-implementation, loaded-model reconciliation and native Desktop evidence.
+`Is Unscheduled = false` is placed at the page level on the 9 operational
+visible pages (and the four Summary bookmark captures) and omitted on `Home`,
+`Sched. Metrics` and all 10 hidden drill-through pages so schedule-health checks
+and their activity detail lists evaluate the same population, including
+unscheduled work. Governance and security remain unchanged.
 
-The Missing Predecessor and Missing Successor lists are keyed by activity code,
-so two flagged activities sharing a code would show as one row;
-`Validate-Drillthrough.ps1` reports that as a collapse. J5068's repeated code is
-in neither list.
+Every scored check has a failing-activity count column in `58fbc09d197fe53515d8`
+and a dedicated `HiddenInViewMode` single-measure drill-through page maintained
+by `scripts/schedule_metrics/repair_drillthrough_display.py`:
 
-The speculative Date alignment diagnostic has been removed at the user's
-request: its counts-table column, detail page, page-menu bookmarks, guide row
-and dedicated measures are retired. Missing Predecessor and Missing Successor
-remain the two activity detail routes. The guide contains 10 rows (the 10 scored
-checks, with colour-accented `Green (1 pt)`, `Amber (0–1 pt)` and `Red (0 pt)`
-band columns). The
-10 scored checks, Date integrity, all existing gauge/trend positions and
-the remaining table fields are preserved. The imported classification is not
-presented as a schedule-health metric; source queries remain unchanged.
+| Drill-through page | Page ID | Bound count measure | Storage-engine `01 XER_TASK` filter |
+| --- | --- | --- | --- |
+| `Missing Logic` | `4da217e10ae952b9b4a4` | `SM Missing Logic Count` | `SM Fail Missing Logic` is not blank |
+| `Leads` | `566c6f848f9c58ccae18` | `SM Leads Activity Count` | `SM Fail Leads > 0` |
+| `Lags >5d` | `2dc1210d106d519e8c33` | `SM Lags Activity Count` | `SM Fail Lags > 0` |
+| `Non-FS Relationships` | `a4aae77cfb0f528bb352` | `SM Non-FS Activity Count` | `SM Fail Non FS > 0` |
+| `Hard Constraints` | `4e84ddebb9405ac18f9d` | `SM Restrictive Primary Count` | Incomplete non-LOE/non-WBS (`TT_Task`, `TT_Rsrc`, `TT_Mile`, `TT_FinMile`) + 6 hard `cstr_type` codes |
+| `Out-of-Sequence` | `0ce34782f4f350ad83b5` | `Out Of Sequence Count` | `SM Fail Out Of Sequence > 0` |
+| `Negative Float` | `1650221e71f2522ca403` | `Task_Count_Negative_Float` | Incomplete discrete + `total_float < 0` |
+| `Remaining Duration >44d` | `381cf6286aea5f0a94f6` | `Dur >44` | Incomplete discrete + `remaining_duration > 44` |
+| `Date Integrity` | `7a03ed9cacd75d91903e` | `SM Invalid Dates Count` | `SM Fail Invalid Dates` is not blank |
+| `Baseline Coverage` | `68cba7045a475d22afb7` | `SM Baseline Unmatched Activity Count` | `SM Fail Baseline Coverage` is not blank |
+
+Gauges for Leads, Lags >5d and FS relationships continue to score at
+relationship grain; their counts-table columns count distinct incomplete
+discrete successor activities with at least one failing incoming link, and their
+`SM Drill <Route> Detail` columns list up to three offending predecessors (`+N
+more`). Baseline coverage continues to score whole-project; `SM Baseline
+Unmatched Activity Count` and its `Baseline Coverage` drill-through page list
+unmatched eligible activities within the drilled WBS/update scope and identify
+whether the activity code is absent from the baseline, lacks a baseline finish
+date, or is blank, or whether no valid baseline snapshot exists.
+
+Each drill-through `P6WBSMatrix` carries zero visual-level measure filters and is
+keyed by WBS `Level_1`–`Level_7` + `task_code`, so two failing activities
+sharing a code in the same WBS leaf show as one row; `Validate-Drillthrough.ps1`
+checks and reports any `task_code` collapse across all 10 routes.
+
+The legacy unscored `Missing Predecessor` and `Missing Successor` drill-through
+pages (together with their four project-menu bookmarks and `SM Drill Missing
+Predecessor/Successor *` measures) and the earlier speculative Date alignment
+diagnostic are retired; `SM Drill Missing Logic Detail` explicitly labels each
+failing activity as `Missing both (no pred. or succ.)`, `Missing predecessor`,
+or `Missing successor`. The guide contains 10 rows (the 10 scored checks, with
+colour-accented `Green (1 pt)`, `Amber (0–1 pt)` and `Red (0 pt)` band columns).
+All existing gauge/trend positions are preserved, and source queries remain
+unchanged.
 
 Automated checks can evaluate proposed DAX against the loaded Desktop cache
 using query-scoped overrides and isolated fixtures, or the actual loaded

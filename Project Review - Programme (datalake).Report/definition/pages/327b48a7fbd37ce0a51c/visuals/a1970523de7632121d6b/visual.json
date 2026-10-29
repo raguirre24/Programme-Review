@@ -81,7 +81,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Bands: see titles | Hover: coverage | Right-click an update → Drill through → choose a detail view.'"
+                  "Value": "'Bands: see titles | Hover: coverage | Table: failing activities — right-click a cell → Drill through.'"
                 }
               }
             },

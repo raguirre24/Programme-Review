@@ -108,7 +108,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Restrictive primary | ≤5% / <10%'"
+                  "Value": "'Hard constraints | ≤5% / <10%'"
                 }
               }
             },

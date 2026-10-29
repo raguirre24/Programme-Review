@@ -3782,16 +3782,6 @@ cultureInfo en-NZ
 			            },
 			            "Weight": 0.485
 			          }
-			        },
-			        {
-			          "Missing Pred.": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -3824,16 +3814,6 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.727
-			          }
-			        },
-			        {
-			          "Rem. Activities": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -3941,7 +3921,7 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "Rem. duration >44d": {
+			          "Dur. >44d": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -4010,16 +3990,6 @@ cultureInfo en-NZ
 			        {
 			          "lags>5d": {
 			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "Lags >5d": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -4291,16 +4261,6 @@ cultureInfo en-NZ
 			        {
 			          "leads<0d": {
 			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "Leads <0d": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -6073,7 +6033,7 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "Restrictive primary | ≤5% / <10%": {
+			          "Hard constraints | ≤5% / <10%": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -16903,16 +16863,6 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.485
-			          }
-			        },
-			        {
-			          "Missing Succ.": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -37969,7 +37919,7 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "Restrictive primary | ≤5% / <10%": {
+			          "Hard constraints | ≤5% / <10%": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -47843,16 +47793,6 @@ cultureInfo en-NZ
 			            },
 			            "Weight": 0.9
 			          }
-			        },
-			        {
-			          "FS %": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -47919,7 +47859,7 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "Restrictive primary": {
+			          "Hard constraints": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -48023,16 +47963,6 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "Missing logic %": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
-			        },
-			        {
 			          "Missing logic | ≤5% / <10%": {
 			            "State": "Suggested",
 			            "Source": {
@@ -48076,16 +48006,6 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.748
-			          }
-			        },
-			        {
-			          "Invalid dates %": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        },
 			        {
@@ -48512,16 +48432,6 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.748
-			          }
-			        },
-			        {
-			          "Baseline coverage (project)": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -48952,306 +48862,6 @@ cultureInfo en-NZ
 			        }
 			      ]
 			    },
-			    "XER_metrics.SM_drill_missing_successor_flag": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "XER Metrics",
-			          "ConceptualProperty": "SM Drill Missing Successor Flag"
-			        }
-			      },
-			      "State": "Generated",
-			      "Terms": [
-			        {
-			          "SM drill missing successor flag": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "flag": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "successor flag": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "missing successor flag": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "drill missing successor flag": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "sm drill missing successor ensign": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.52
-			          }
-			        },
-			        {
-			          "sm drill missing successor pennant": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.52
-			          }
-			        },
-			        {
-			          "sm drill missing successor pennon": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.52
-			          }
-			        },
-			        {
-			          "sm drill missing successor emblem": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.52
-			          }
-			        },
-			        {
-			          "sm drill missing successor streamer": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.52
-			          }
-			        },
-			        {
-			          "drill missing successor ensign": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.514
-			          }
-			        },
-			        {
-			          "drill missing successor pennant": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.514
-			          }
-			        },
-			        {
-			          "drill missing successor pennon": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.514
-			          }
-			        },
-			        {
-			          "drill missing successor emblem": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.514
-			          }
-			        },
-			        {
-			          "drill missing successor streamer": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.514
-			          }
-			        },
-			        {
-			          "Missing successor": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
-			        }
-			      ]
-			    },
-			    "XER_metrics.SM_drill_missing_predecessor_flag": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "XER Metrics",
-			          "ConceptualProperty": "SM Drill Missing Predecessor Flag"
-			        }
-			      },
-			      "State": "Generated",
-			      "Terms": [
-			        {
-			          "SM drill missing predecessor flag": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "flag": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "predecessor flag": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "missing predecessor flag": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "drill missing predecessor flag": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "sm drill missing predecessor ensign": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.52
-			          }
-			        },
-			        {
-			          "sm drill missing predecessor pennant": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.52
-			          }
-			        },
-			        {
-			          "sm drill missing predecessor pennon": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.52
-			          }
-			        },
-			        {
-			          "sm drill missing predecessor emblem": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.52
-			          }
-			        },
-			        {
-			          "sm drill missing predecessor streamer": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.52
-			          }
-			        },
-			        {
-			          "drill missing predecessor ensign": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.514
-			          }
-			        },
-			        {
-			          "drill missing predecessor pennant": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.514
-			          }
-			        },
-			        {
-			          "drill missing predecessor pennon": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.514
-			          }
-			        },
-			        {
-			          "drill missing predecessor emblem": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.514
-			          }
-			        },
-			        {
-			          "drill missing predecessor streamer": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.514
-			          }
-			        },
-			        {
-			          "Missing predecessor": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
-			        }
-			      ]
-			    },
 			    "XER_metrics.SM_snapshot_valid": {
 			      "Definition": {
 			        "Binding": {
@@ -49422,6 +49032,16 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.727
+			          }
+			        },
+			        {
+			          "Missing logic": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -49960,6 +49580,16 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.727
+			          }
+			        },
+			        {
+			          "Invalid dates": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -51402,286 +51032,6 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.508
-			          }
-			        }
-			      ]
-			    },
-			    "XER_metrics.SM_drill_missing_predecessor_header": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "XER Metrics",
-			          "ConceptualProperty": "SM Drill Missing Predecessor Header"
-			        }
-			      },
-			      "State": "Generated",
-			      "Terms": [
-			        {
-			          "SM drill missing predecessor header": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "header": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "predecessor header": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "missing predecessor header": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "drill missing predecessor header": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "sm drill missing predecessor shot": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.504
-			          }
-			        },
-			        {
-			          "sm drill missing predecessor pass": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.504
-			          }
-			        },
-			        {
-			          "sm drill missing predecessor goal": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.504
-			          }
-			        },
-			        {
-			          "drill missing predecessor shot": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.499
-			          }
-			        },
-			        {
-			          "drill missing predecessor pass": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.499
-			          }
-			        },
-			        {
-			          "drill missing predecessor goal": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.499
-			          }
-			        },
-			        {
-			          "sm drill missing predecessor slogan": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.494
-			          }
-			        },
-			        {
-			          "sm drill missing predecessor legend": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.494
-			          }
-			        },
-			        {
-			          "sm drill missing predecessor headpiece": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.494
-			          }
-			        },
-			        {
-			          "sm drill missing predecessor description": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.494
-			          }
-			        }
-			      ]
-			    },
-			    "XER_metrics.SM_drill_missing_successor_header": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "XER Metrics",
-			          "ConceptualProperty": "SM Drill Missing Successor Header"
-			        }
-			      },
-			      "State": "Generated",
-			      "Terms": [
-			        {
-			          "SM drill missing successor header": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "header": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "successor header": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "missing successor header": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "drill missing successor header": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "sm drill missing successor shot": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.504
-			          }
-			        },
-			        {
-			          "sm drill missing successor pass": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.504
-			          }
-			        },
-			        {
-			          "sm drill missing successor goal": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.504
-			          }
-			        },
-			        {
-			          "drill missing successor shot": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.499
-			          }
-			        },
-			        {
-			          "drill missing successor pass": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.499
-			          }
-			        },
-			        {
-			          "drill missing successor goal": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.499
-			          }
-			        },
-			        {
-			          "sm drill missing successor slogan": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.494
-			          }
-			        },
-			        {
-			          "sm drill missing successor legend": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.494
-			          }
-			        },
-			        {
-			          "sm drill missing successor headpiece": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.494
-			          }
-			        },
-			        {
-			          "sm drill missing successor description": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.494
 			          }
 			        }
 			      ]
@@ -57385,6 +56735,300 @@ cultureInfo en-NZ
 			      "Terms": [
 			        {
 			          "Predecessor Name": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_metrics.sm_leads_activity_count": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Metrics",
+			          "ConceptualProperty": "SM Leads Activity Count"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Leads <0d": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_metrics.sm_lags_activity_count": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Metrics",
+			          "ConceptualProperty": "SM Lags Activity Count"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Lags >5d": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_metrics.sm_nonfs_activity_count": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Metrics",
+			          "ConceptualProperty": "SM Non-FS Activity Count"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Non-FS": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_metrics.sm_baseline_unmatched_activity_count": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Metrics",
+			          "ConceptualProperty": "SM Baseline Unmatched Activity Count"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "No baseline": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_metrics.sm_drill_missing_logic_detail": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Metrics",
+			          "ConceptualProperty": "SM Drill Missing Logic Detail"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Missing logic": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_metrics.sm_drill_leads_detail": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Metrics",
+			          "ConceptualProperty": "SM Drill Leads Detail"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Lead predecessors": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_metrics.sm_drill_lags_detail": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Metrics",
+			          "ConceptualProperty": "SM Drill Lags Detail"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Lag >5d predecessors": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_metrics.sm_drill_nonfs_detail": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Metrics",
+			          "ConceptualProperty": "SM Drill Non-FS Detail"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Non-FS predecessors": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_metrics.sm_drill_restrictive_constraints_detail": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Metrics",
+			          "ConceptualProperty": "SM Drill Restrictive Constraints Detail"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Primary constraint": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_metrics.sm_drill_outofsequence_detail": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Metrics",
+			          "ConceptualProperty": "SM Drill Out-of-Sequence Detail"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Driving predecessors": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_metrics.sm_drill_negative_float_detail": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Metrics",
+			          "ConceptualProperty": "SM Drill Negative Float Detail"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Negative float": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_metrics.sm_drill_remaining_duration_detail": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Metrics",
+			          "ConceptualProperty": "SM Drill Remaining Duration Detail"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Remaining duration": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_metrics.sm_drill_date_integrity_detail": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Metrics",
+			          "ConceptualProperty": "SM Drill Date Integrity Detail"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Date issue": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "xer_metrics.sm_drill_baseline_coverage_detail": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "XER Metrics",
+			          "ConceptualProperty": "SM Drill Baseline Coverage Detail"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Baseline issue": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",

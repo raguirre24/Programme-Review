@@ -11,7 +11,7 @@ table 'XER Metrics'
 			REMOVEFILTERS ( '00 CALENDAR' ),
 			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" }, KEEPFILTERS ( '01 XER_TASK'[No Predecessor] = 1 ) )
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }, KEEPFILTERS ( '01 XER_TASK'[No Predecessor] = 1 ) )
 			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
 		formatString: #,0
 		displayFolder: Schedule Quality Table
@@ -26,7 +26,7 @@ table 'XER Metrics'
 			REMOVEFILTERS ( '00 CALENDAR' ),
 			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" } )
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" } )
 			RETURN IF ( [SM Snapshot Valid], N )
 		formatString: #,0
 		displayFolder: Schedule Quality Table
@@ -47,7 +47,7 @@ table 'XER Metrics'
 			REMOVEFILTERS ( '00 CALENDAR' ),
 			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" }, KEEPFILTERS ( '01 XER_TASK'[total_float] > 44 ) )
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }, KEEPFILTERS ( '01 XER_TASK'[total_float] > 44 ) )
 			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
 		formatString: #,0
 		displayFolder: Schedule Quality Table
@@ -69,7 +69,7 @@ table 'XER Metrics'
 			REMOVEFILTERS ( '00 CALENDAR' ),
 			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" }, KEEPFILTERS ( '01 XER_TASK'[remaining_duration] > 44 ) )
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }, KEEPFILTERS ( '01 XER_TASK'[remaining_duration] > 44 ) )
 			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
 		formatString: #,0
 		displayFolder: Schedule Quality Table
@@ -91,7 +91,7 @@ table 'XER Metrics'
 			REMOVEFILTERS ( '00 CALENDAR' ),
 			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" } )
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" } )
 			VAR Result = CALCULATE ( COUNTROWS ( '06 XER_PREDECESSOR' ),
 			    REMOVEFILTERS ( '01 XER_TASK' ),
 			    TREATAS ( WorkKeys, '06 XER_PREDECESSOR'[task_id_key] ),
@@ -138,13 +138,13 @@ table 'XER Metrics'
 			REMOVEFILTERS ( '00 CALENDAR' ),
 			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" }, KEEPFILTERS ( '01 XER_TASK'[total_float] < 0 ) )
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }, KEEPFILTERS ( '01 XER_TASK'[total_float] < 0 ) )
 			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
 		formatString: #,0
 		displayFolder: Schedule Quality Table
 		lineageTag: 84f80f9d-6679-44c8-9967-879cefb38790
 
-	/// All primary constraints; retained for existing diagnostic consumers. Score uses restrictive primary constraints instead.
+	/// All primary constraints on incomplete activities and milestones (excluding LOE and WBS Summary); retained for existing diagnostic consumers. Score uses hard primary constraints instead.
 	measure 'Primary Constraints' =
 			VAR N = [Task_Count]
 			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
@@ -154,7 +154,7 @@ table 'XER Metrics'
 			REMOVEFILTERS ( '00 CALENDAR' ),
 			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" }, KEEPFILTERS ( NOT ISBLANK ( '01 XER_TASK'[cstr_type] ) && '01 XER_TASK'[cstr_type] <> "" ) )
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }, KEEPFILTERS ( NOT ISBLANK ( '01 XER_TASK'[cstr_type] ) && '01 XER_TASK'[cstr_type] <> "" ) )
 			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
 		formatString: #,0
 		displayFolder: Schedule Quality Table
@@ -169,7 +169,7 @@ table 'XER Metrics'
 			REMOVEFILTERS ( '00 CALENDAR' ),
 			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" } )
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" } )
 			VAR Result = CALCULATE ( COUNTROWS ( '06 XER_PREDECESSOR' ),
 			    REMOVEFILTERS ( '01 XER_TASK' ),
 			    TREATAS ( WorkKeys, '06 XER_PREDECESSOR'[task_id_key] ),
@@ -189,7 +189,7 @@ table 'XER Metrics'
 			REMOVEFILTERS ( '00 CALENDAR' ),
 			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" }, KEEPFILTERS ( '01 XER_TASK'[total_float] == 0 ) )
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }, KEEPFILTERS ( '01 XER_TASK'[total_float] == 0 ) )
 			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
 		formatString: #,0
 		displayFolder: Schedule Quality Table
@@ -213,7 +213,7 @@ table 'XER Metrics'
 		displayFolder: Schedule Quality Visuals
 		lineageTag: 491fc125-f8aa-4e36-878d-89d555bf390c
 
-	/// Primary restrictive constraints only; at or below 5%. Secondary constraints are not available.
+	/// Primary hard constraints on incomplete activities and milestones (excluding LOE and WBS Summary); at or below 5%. Secondary constraints are not available.
 	measure Constraint% = IF ( [SM Snapshot Valid], COALESCE ( DIVIDE ( [SM Restrictive Primary Count], [Task_Count] - [SM Unknown Constraint Count] ), 0 ) )
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Visuals
@@ -229,7 +229,7 @@ table 'XER Metrics'
 			REMOVEFILTERS ( '00 CALENDAR' ),
 			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" }, KEEPFILTERS ( '01 XER_TASK'[No Successor] = 1 ) )
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }, KEEPFILTERS ( '01 XER_TASK'[No Successor] = 1 ) )
 			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
 		formatString: #,0
 		displayFolder: Schedule Quality Table
@@ -389,13 +389,13 @@ table 'XER Metrics'
 			REMOVEFILTERS ( '00 CALENDAR' ),
 			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" }, KEEPFILTERS ( '01 XER_TASK'[No Predecessor] = 1 || '01 XER_TASK'[No Successor] = 1 ) )
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }, KEEPFILTERS ( '01 XER_TASK'[No Predecessor] = 1 || '01 XER_TASK'[No Successor] = 1 ) )
 			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
 		formatString: #,0
 		displayFolder: Schedule Quality Table
 		lineageTag: 2c6b3d25-2ffa-4bf2-8974-5b92acd86f7a
 
-	/// DCMA restrictive fixed/latest-date mapping. Secondary constraints and constraint dates are unavailable.
+	/// DCMA hard fixed/latest-date mapping across incomplete activities and milestones (excluding LOE and WBS Summary). Secondary constraints are unavailable.
 	measure 'SM Restrictive Primary Count' =
 			VAR N = [Task_Count]
 			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
@@ -405,7 +405,7 @@ table 'XER Metrics'
 			REMOVEFILTERS ( '00 CALENDAR' ),
 			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" }, KEEPFILTERS ( '01 XER_TASK'[cstr_type] IN { "CS_MSO", "CS_MSOB", "CS_MEO", "CS_MEOB", "CS_MANDSTART", "CS_MANDFIN" } ) )
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }, KEEPFILTERS ( '01 XER_TASK'[cstr_type] IN { "CS_MSO", "CS_MSOB", "CS_MEO", "CS_MEOB", "CS_MANDSTART", "CS_MANDFIN" } ) )
 			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
 		formatString: #,0
 		displayFolder: Schedule Quality Table
@@ -420,7 +420,7 @@ table 'XER Metrics'
 			REMOVEFILTERS ( '00 CALENDAR' ),
 			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" }, KEEPFILTERS ( ISBLANK ( '01 XER_TASK'[total_float] ) ) )
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }, KEEPFILTERS ( ISBLANK ( '01 XER_TASK'[total_float] ) ) )
 			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
 		formatString: #,0
 		displayFolder: Schedule Quality Coverage
@@ -435,7 +435,7 @@ table 'XER Metrics'
 			REMOVEFILTERS ( '00 CALENDAR' ),
 			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" }, KEEPFILTERS ( ISBLANK ( '01 XER_TASK'[remaining_duration] ) || '01 XER_TASK'[remaining_duration] < 0 ) )
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }, KEEPFILTERS ( ISBLANK ( '01 XER_TASK'[remaining_duration] ) || '01 XER_TASK'[remaining_duration] < 0 ) )
 			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
 		formatString: #,0
 		displayFolder: Schedule Quality Coverage
@@ -450,7 +450,7 @@ table 'XER Metrics'
 			REMOVEFILTERS ( '00 CALENDAR' ),
 			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" }, KEEPFILTERS ( NOT ISBLANK ( '01 XER_TASK'[cstr_type] ) && '01 XER_TASK'[cstr_type] <> "" && NOT ( '01 XER_TASK'[cstr_type] IN { "CS_ALAP", "CS_MSO", "CS_MSOA", "CS_MSOB", "CS_MEO", "CS_MEOA", "CS_MEOB", "CS_MANDSTART", "CS_MANDFIN" } ) ) )
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }, KEEPFILTERS ( NOT ISBLANK ( '01 XER_TASK'[cstr_type] ) && '01 XER_TASK'[cstr_type] <> "" && NOT ( '01 XER_TASK'[cstr_type] IN { "CS_ALAP", "CS_MSO", "CS_MSOA", "CS_MSOB", "CS_MEO", "CS_MEOA", "CS_MEOB", "CS_MANDSTART", "CS_MANDFIN" } ) ) )
 			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
 		formatString: #,0
 		displayFolder: Schedule Quality Coverage
@@ -466,7 +466,7 @@ table 'XER Metrics'
 			REMOVEFILTERS ( '00 CALENDAR' ),
 			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" } )
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" } )
 			VAR Result = CALCULATE ( COUNTROWS ( '06 XER_PREDECESSOR' ),
 			    REMOVEFILTERS ( '01 XER_TASK' ),
 			    TREATAS ( WorkKeys, '06 XER_PREDECESSOR'[task_id_key] ) )
@@ -485,7 +485,7 @@ table 'XER Metrics'
 			REMOVEFILTERS ( '00 CALENDAR' ),
 			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" } )
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" } )
 			VAR Result = CALCULATE ( COUNTROWS ( '06 XER_PREDECESSOR' ),
 			    REMOVEFILTERS ( '01 XER_TASK' ),
 			    TREATAS ( WorkKeys, '06 XER_PREDECESSOR'[task_id_key] ),
@@ -504,7 +504,7 @@ table 'XER Metrics'
 			REMOVEFILTERS ( '00 CALENDAR' ),
 			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" } )
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" } )
 			VAR Result = CALCULATE ( COUNTROWS ( '06 XER_PREDECESSOR' ),
 			    REMOVEFILTERS ( '01 XER_TASK' ),
 			    TREATAS ( WorkKeys, '06 XER_PREDECESSOR'[task_id_key] ),
@@ -523,7 +523,7 @@ table 'XER Metrics'
 			REMOVEFILTERS ( '00 CALENDAR' ),
 			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" } )
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" } )
 			VAR Result = CALCULATE ( COUNTROWS ( '06 XER_PREDECESSOR' ),
 			    REMOVEFILTERS ( '01 XER_TASK' ),
 			    TREATAS ( WorkKeys, '06 XER_PREDECESSOR'[task_id_key] ),
@@ -543,7 +543,7 @@ table 'XER Metrics'
 			REMOVEFILTERS ( '00 CALENDAR' ),
 			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" } )
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" } )
 			VAR Result = CALCULATE ( COUNTROWS ( '06 XER_PREDECESSOR' ),
 			    REMOVEFILTERS ( '01 XER_TASK' ),
 			    TREATAS ( WorkKeys, '06 XER_PREDECESSOR'[task_id_key] ),
@@ -565,28 +565,30 @@ table 'XER Metrics'
 		displayFolder: Schedule Quality Visuals
 		lineageTag: ccac7e63-2a44-4d12-935d-0027049761dc
 
-	/// Discrete activities and milestones in all statuses, including unscheduled activities.
+	/// Incomplete activities and milestones (excluding LOE and WBS Summary), including unscheduled activities.
 	measure 'SM Date Eligible Count' =
 			VAR ScopeRows = CALCULATETABLE ( '01 XER_TASK', REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
 			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
 			REMOVEFILTERS ( Filter_Activity_Status ),
 			REMOVEFILTERS ( Filter_TaskType ),
 			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) )
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" } )
 			VAR Events = FILTER ( ScopeRows, '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" } )
 			RETURN IF ( [SM Snapshot Valid], COUNTROWS ( Events ) )
 		formatString: #,0
 		displayFolder: Schedule Quality Support
 		lineageTag: bc4f8db4-6dcf-4b46-824a-edc500ea26d4
 
-	/// Custom extension of DCMA invalid dates: missing required dates, future actuals, overdue forecasts, inconsistent finish status and reversed intervals. Milestones require only their meaningful endpoint.
+	/// Custom extension of DCMA invalid dates on incomplete activities and milestones: missing required dates, future actuals, overdue forecasts, inconsistent finish status and reversed intervals. Milestones require only their meaningful endpoint.
 	measure 'SM Invalid Dates Count' =
 			VAR ScopeRows = CALCULATETABLE ( '01 XER_TASK', REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
 			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
 			REMOVEFILTERS ( Filter_Activity_Status ),
 			REMOVEFILTERS ( Filter_TaskType ),
 			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) )
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" } )
 			VAR Events = FILTER ( ScopeRows, '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" } )
 			VAR Bad = FILTER ( Events,
 			    VAR S = '01 XER_TASK'[status_code]
@@ -897,17 +899,40 @@ table 'XER Metrics'
 	/// Project and clicked update for drill-through labels, including a zero-match result.
 	measure 'SM Drill Context' =
 			CALCULATE (
-			    VAR ProjectLabel = COALESCE ( SELECTEDVALUE ( '01 XER_TASK'[ProjectName] ),
-			        SELECTEDVALUE ( Project_Dimension[Project] ), "Multiple projects" )
-			    VAR Snapshot = COALESCE ( SELECTEDVALUE ( '01 XER_TASK'[UpdateDate] ),
-			        SELECTEDVALUE ( CurrentDate[UpdateDate] ) )
+			    VAR ProjectLabel = COALESCE (
+			        SELECTEDVALUE ( '01 XER_TASK'[ProjectName] ),
+			        SELECTEDVALUE ( Project_Dimension[Project] ),
+			        "Multiple projects"
+			    )
+			    VAR Snapshot = COALESCE (
+			        SELECTEDVALUE ( '01 XER_TASK'[UpdateDate] ),
+			        SELECTEDVALUE ( CurrentDate[UpdateDate] )
+			    )
 			    RETURN ProjectLabel & " | " & IF ( ISBLANK ( Snapshot ), "Select one update", FORMAT ( Snapshot, "MMMM yyyy" ) ),
-			    REMOVEFILTERS ( '01 XER_TASK'[No Predecessor], '01 XER_TASK'[No Successor],
-			        '01 XER_TASK'[Driven_DataDate], '01 XER_TASK'[status_code],
-			        '01 XER_TASK'[StatusCategory], '01 XER_TASK'[task_type],
-			        '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
-			    REMOVEFILTERS ( Filter_Activity_Status ), REMOVEFILTERS ( Filter_TaskType ),
-			    REMOVEFILTERS ( '00 CALENDAR' ), REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' )
+			    REMOVEFILTERS (
+			        '01 XER_TASK'[No Predecessor],
+			        '01 XER_TASK'[No Successor],
+			        '01 XER_TASK'[Driven_DataDate],
+			        '01 XER_TASK'[SM Fail Missing Logic],
+			        '01 XER_TASK'[SM Fail Leads],
+			        '01 XER_TASK'[SM Fail Lags],
+			        '01 XER_TASK'[SM Fail Non FS],
+			        '01 XER_TASK'[SM Fail Out Of Sequence],
+			        '01 XER_TASK'[SM Fail Invalid Dates],
+			        '01 XER_TASK'[SM Fail Baseline Coverage],
+			        '01 XER_TASK'[cstr_type],
+			        '01 XER_TASK'[total_float],
+			        '01 XER_TASK'[remaining_duration],
+			        '01 XER_TASK'[status_code],
+			        '01 XER_TASK'[StatusCategory],
+			        '01 XER_TASK'[task_type],
+			        '01 XER_TASK'[TaskType_Classified],
+			        '01 XER_TASK'[Is Unscheduled]
+			    ),
+			    REMOVEFILTERS ( Filter_Activity_Status ),
+			    REMOVEFILTERS ( Filter_TaskType ),
+			    REMOVEFILTERS ( '00 CALENDAR' ),
+			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' )
 			)
 		formatString: @
 		displayFolder: Schedule Quality Drill-through
@@ -915,12 +940,30 @@ table 'XER Metrics'
 
 	/// Actual source data date for the clicked snapshot, rather than the export/update timestamp.
 	measure 'SM Drill Data Date' =
-			VAR SourceDate = CALCULATE ( SELECTEDVALUE ( '01 XER_TASK'[data_date] ), REMOVEFILTERS ( '01 XER_TASK'[No Predecessor], '01 XER_TASK'[No Successor],
-			        '01 XER_TASK'[Driven_DataDate], '01 XER_TASK'[status_code],
-			        '01 XER_TASK'[StatusCategory], '01 XER_TASK'[task_type],
-			        '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
-			    REMOVEFILTERS ( Filter_Activity_Status ), REMOVEFILTERS ( Filter_TaskType ),
-			    REMOVEFILTERS ( '00 CALENDAR' ), REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) )
+			VAR SourceDate = CALCULATE ( SELECTEDVALUE ( '01 XER_TASK'[data_date] ), REMOVEFILTERS (
+			        '01 XER_TASK'[No Predecessor],
+			        '01 XER_TASK'[No Successor],
+			        '01 XER_TASK'[Driven_DataDate],
+			        '01 XER_TASK'[SM Fail Missing Logic],
+			        '01 XER_TASK'[SM Fail Leads],
+			        '01 XER_TASK'[SM Fail Lags],
+			        '01 XER_TASK'[SM Fail Non FS],
+			        '01 XER_TASK'[SM Fail Out Of Sequence],
+			        '01 XER_TASK'[SM Fail Invalid Dates],
+			        '01 XER_TASK'[SM Fail Baseline Coverage],
+			        '01 XER_TASK'[cstr_type],
+			        '01 XER_TASK'[total_float],
+			        '01 XER_TASK'[remaining_duration],
+			        '01 XER_TASK'[status_code],
+			        '01 XER_TASK'[StatusCategory],
+			        '01 XER_TASK'[task_type],
+			        '01 XER_TASK'[TaskType_Classified],
+			        '01 XER_TASK'[Is Unscheduled]
+			    ),
+			    REMOVEFILTERS ( Filter_Activity_Status ),
+			    REMOVEFILTERS ( Filter_TaskType ),
+			    REMOVEFILTERS ( '00 CALENDAR' ),
+			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) )
 			RETURN "Data date: " & IF ( ISBLANK ( SourceDate ), "Unavailable or multiple", FORMAT ( SourceDate, "dd MMM yyyy" ) )
 		formatString: @
 		displayFolder: Schedule Quality Drill-through
@@ -928,64 +971,68 @@ table 'XER Metrics'
 
 	/// Selected source filename retained when the diagnostic has no matching activities.
 	measure 'SM Drill Source File' =
-			CALCULATE ( SELECTEDVALUE ( '01 XER_TASK'[FileName], "Multiple or unavailable source files" ), REMOVEFILTERS ( '01 XER_TASK'[No Predecessor], '01 XER_TASK'[No Successor],
-			        '01 XER_TASK'[Driven_DataDate], '01 XER_TASK'[status_code],
-			        '01 XER_TASK'[StatusCategory], '01 XER_TASK'[task_type],
-			        '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
-			    REMOVEFILTERS ( Filter_Activity_Status ), REMOVEFILTERS ( Filter_TaskType ),
-			    REMOVEFILTERS ( '00 CALENDAR' ), REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) )
+			CALCULATE ( SELECTEDVALUE ( '01 XER_TASK'[FileName], "Multiple or unavailable source files" ), REMOVEFILTERS (
+			        '01 XER_TASK'[No Predecessor],
+			        '01 XER_TASK'[No Successor],
+			        '01 XER_TASK'[Driven_DataDate],
+			        '01 XER_TASK'[SM Fail Missing Logic],
+			        '01 XER_TASK'[SM Fail Leads],
+			        '01 XER_TASK'[SM Fail Lags],
+			        '01 XER_TASK'[SM Fail Non FS],
+			        '01 XER_TASK'[SM Fail Out Of Sequence],
+			        '01 XER_TASK'[SM Fail Invalid Dates],
+			        '01 XER_TASK'[SM Fail Baseline Coverage],
+			        '01 XER_TASK'[cstr_type],
+			        '01 XER_TASK'[total_float],
+			        '01 XER_TASK'[remaining_duration],
+			        '01 XER_TASK'[status_code],
+			        '01 XER_TASK'[StatusCategory],
+			        '01 XER_TASK'[task_type],
+			        '01 XER_TASK'[TaskType_Classified],
+			        '01 XER_TASK'[Is Unscheduled]
+			    ),
+			    REMOVEFILTERS ( Filter_Activity_Status ),
+			    REMOVEFILTERS ( Filter_TaskType ),
+			    REMOVEFILTERS ( '00 CALENDAR' ),
+			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) )
 		formatString: @
 		displayFolder: Schedule Quality Drill-through
 		lineageTag: b167361a-f559-5971-87c8-a94d5aa04241
 
-	/// Diagnostic activity count and snapshot context; WBS grouping rows are not counted.
-	measure 'SM Drill Missing Predecessor Header' =
-			VAR Matches = COALESCE ( [Missing Predecessor], 0 )
-			RETURN IF ( NOT [SM Drill Snapshot Available], "Select one project and available update",
-			    "Missing Predecessor: " & FORMAT ( Matches, "#,0" ) &
-			    IF ( Matches = 1, " matching activity", " matching activities" ) & " | " & [SM Drill Context] )
-		formatString: @
-		displayFolder: Schedule Quality Drill-through
-		lineageTag: 4bcaf9b5-851d-5d0f-962c-0d7c6b9b859c
-
-	/// Diagnostic activity count and snapshot context; WBS grouping rows are not counted.
-	measure 'SM Drill Missing Successor Header' =
-			VAR Matches = COALESCE ( [Missing Successor], 0 )
-			RETURN IF ( NOT [SM Drill Snapshot Available], "Select one project and available update",
-			    "Missing Successor: " & FORMAT ( Matches, "#,0" ) &
-			    IF ( Matches = 1, " matching activity", " matching activities" ) & " | " & [SM Drill Context] )
-		formatString: @
-		displayFolder: Schedule Quality Drill-through
-		lineageTag: 7c8fd2d3-25d6-54f3-80f0-0978ccd69440
-
-	/// Source diagnostic evidence at the activity row; blank at WBS summary levels.
+	/// Source diagnostic status at the activity row; blank at WBS summary levels.
 	measure 'SM Drill Status' = IF ( ISINSCOPE ( '01 XER_TASK'[task_code] ), SELECTEDVALUE ( '01 XER_TASK'[status_code] ) )
 		formatString: @
 		displayFolder: Schedule Quality Drill-through
 		lineageTag: ffd9a65e-fa77-54b7-b554-2d64dc5cba2f
 
-	/// Source diagnostic evidence at the activity row; blank at WBS summary levels.
-	measure 'SM Drill Missing Predecessor Flag' = IF ( ISINSCOPE ( '01 XER_TASK'[task_code] ), SELECTEDVALUE ( '01 XER_TASK'[No Predecessor] ) )
-		formatString: 0
-		displayFolder: Schedule Quality Drill-through
-		lineageTag: b7f6241a-8f7b-5395-9d88-d87dfec04909
-
-	/// Source diagnostic evidence at the activity row; blank at WBS summary levels.
-	measure 'SM Drill Missing Successor Flag' = IF ( ISINSCOPE ( '01 XER_TASK'[task_code] ), SELECTEDVALUE ( '01 XER_TASK'[No Successor] ) )
-		formatString: 0
-		displayFolder: Schedule Quality Drill-through
-		lineageTag: 0aaa2c05-2d8d-5b3b-82e8-fdba7b94fbd2
-
 	/// True only for one available project snapshot, including a valid snapshot with zero diagnostic matches.
 	measure 'SM Drill Snapshot Available' =
 			CALCULATE (
 			    [SM Snapshot Valid],
-			    REMOVEFILTERS ( '01 XER_TASK'[No Predecessor], '01 XER_TASK'[No Successor],
-			        '01 XER_TASK'[Driven_DataDate], '01 XER_TASK'[status_code],
-			        '01 XER_TASK'[StatusCategory], '01 XER_TASK'[task_type],
-			        '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
-			    REMOVEFILTERS ( Filter_Activity_Status ), REMOVEFILTERS ( Filter_TaskType ),
-			    REMOVEFILTERS ( '00 CALENDAR' ), REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' )
+			    REMOVEFILTERS (
+			        '01 XER_TASK'[No Predecessor],
+			        '01 XER_TASK'[No Successor],
+			        '01 XER_TASK'[Driven_DataDate],
+			        '01 XER_TASK'[SM Fail Missing Logic],
+			        '01 XER_TASK'[SM Fail Leads],
+			        '01 XER_TASK'[SM Fail Lags],
+			        '01 XER_TASK'[SM Fail Non FS],
+			        '01 XER_TASK'[SM Fail Out Of Sequence],
+			        '01 XER_TASK'[SM Fail Invalid Dates],
+			        '01 XER_TASK'[SM Fail Baseline Coverage],
+			        '01 XER_TASK'[cstr_type],
+			        '01 XER_TASK'[total_float],
+			        '01 XER_TASK'[remaining_duration],
+			        '01 XER_TASK'[status_code],
+			        '01 XER_TASK'[StatusCategory],
+			        '01 XER_TASK'[task_type],
+			        '01 XER_TASK'[TaskType_Classified],
+			        '01 XER_TASK'[Is Unscheduled]
+			    ),
+			    REMOVEFILTERS ( Filter_Activity_Status ),
+			    REMOVEFILTERS ( Filter_TaskType ),
+			    REMOVEFILTERS ( '00 CALENDAR' ),
+			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' )
 			)
 		formatString: @
 		displayFolder: Schedule Quality Drill-through
@@ -1170,7 +1217,7 @@ table 'XER Metrics'
 			REMOVEFILTERS ( '00 CALENDAR' ),
 			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" } )
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" } )
 			RETURN IF ( [SM Snapshot Valid], COALESCE ( N, 0 ) )
 		formatString: #,0
 		displayFolder: Schedule Quality Table
@@ -1186,7 +1233,7 @@ table 'XER Metrics'
 			REMOVEFILTERS ( '00 CALENDAR' ),
 			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" } )
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" } )
 			VAR Result = CALCULATE ( DISTINCTCOUNT ( '06 XER_PREDECESSOR'[task_id_key] ),
 			    REMOVEFILTERS ( '01 XER_TASK' ),
 			    TREATAS ( WorkKeys, '06 XER_PREDECESSOR'[task_id_key] ),
@@ -1260,6 +1307,823 @@ table 'XER Metrics'
 		formatString: @
 		displayFolder: Schedule Quality Formatting
 		lineageTag: 2d7ec45b-acb0-410e-9b78-e84e33a8d204
+
+	/// Incomplete discrete activities with at least one incoming negative-lag relationship (activity-grain companion to Leads<0d).
+	measure 'SM Leads Activity Count' =
+			VAR N = [Task_Count]
+			VAR Result = CALCULATE (
+			    COUNTROWS ( '01 XER_TASK' ),
+			    REMOVEFILTERS (
+			        '01 XER_TASK'[status_code],
+			        '01 XER_TASK'[StatusCategory],
+			        '01 XER_TASK'[task_type],
+			        '01 XER_TASK'[TaskType_Classified],
+			        '01 XER_TASK'[Is Unscheduled]
+			    ),
+			    REMOVEFILTERS ( Filter_Activity_Status ),
+			    REMOVEFILTERS ( Filter_TaskType ),
+			    REMOVEFILTERS ( '00 CALENDAR' ),
+			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			    '01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
+			    '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" },
+			    KEEPFILTERS ( '01 XER_TASK'[SM Fail Leads] > 0 )
+			)
+			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
+		formatString: #,0
+		displayFolder: Schedule Quality Table
+		lineageTag: 31dfefcf-ed1e-5659-8e13-10e294f4d358
+
+	/// Incomplete discrete activities with at least one incoming relationship whose lag exceeds 5 working days (activity-grain companion to Lags>5d).
+	measure 'SM Lags Activity Count' =
+			VAR N = [Task_Count]
+			VAR Result = CALCULATE (
+			    COUNTROWS ( '01 XER_TASK' ),
+			    REMOVEFILTERS (
+			        '01 XER_TASK'[status_code],
+			        '01 XER_TASK'[StatusCategory],
+			        '01 XER_TASK'[task_type],
+			        '01 XER_TASK'[TaskType_Classified],
+			        '01 XER_TASK'[Is Unscheduled]
+			    ),
+			    REMOVEFILTERS ( Filter_Activity_Status ),
+			    REMOVEFILTERS ( Filter_TaskType ),
+			    REMOVEFILTERS ( '00 CALENDAR' ),
+			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			    '01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
+			    '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" },
+			    KEEPFILTERS ( '01 XER_TASK'[SM Fail Lags] > 0 )
+			)
+			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
+		formatString: #,0
+		displayFolder: Schedule Quality Table
+		lineageTag: 2ccd3a50-7660-5df2-b3ef-74ae3ad19112
+
+	/// Incomplete discrete activities with at least one incoming non-FS recognised relationship (SS, FF, or SF).
+	measure 'SM Non-FS Activity Count' =
+			VAR N = [Task_Count]
+			VAR Result = CALCULATE (
+			    COUNTROWS ( '01 XER_TASK' ),
+			    REMOVEFILTERS (
+			        '01 XER_TASK'[status_code],
+			        '01 XER_TASK'[StatusCategory],
+			        '01 XER_TASK'[task_type],
+			        '01 XER_TASK'[TaskType_Classified],
+			        '01 XER_TASK'[Is Unscheduled]
+			    ),
+			    REMOVEFILTERS ( Filter_Activity_Status ),
+			    REMOVEFILTERS ( Filter_TaskType ),
+			    REMOVEFILTERS ( '00 CALENDAR' ),
+			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			    '01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
+			    '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" },
+			    KEEPFILTERS ( '01 XER_TASK'[SM Fail Non FS] > 0 )
+			)
+			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
+		formatString: #,0
+		displayFolder: Schedule Quality Table
+		lineageTag: 54b5d71e-2254-50ba-8b7b-1dc5a28e2442
+
+	/// Incomplete activities and milestones (excluding LOE and WBS Summary) lacking a dated finish in the project baseline snapshot (or when baseline provenance is invalid).
+	measure 'SM Baseline Unmatched Activity Count' =
+			VAR N = [Task_Count]
+			VAR Result = CALCULATE (
+			    COUNTROWS ( '01 XER_TASK' ),
+			    REMOVEFILTERS (
+			        '01 XER_TASK'[status_code],
+			        '01 XER_TASK'[StatusCategory],
+			        '01 XER_TASK'[task_type],
+			        '01 XER_TASK'[TaskType_Classified],
+			        '01 XER_TASK'[Is Unscheduled]
+			    ),
+			    REMOVEFILTERS ( Filter_Activity_Status ),
+			    REMOVEFILTERS ( Filter_TaskType ),
+			    REMOVEFILTERS ( '00 CALENDAR' ),
+			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			    '01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
+			    '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" },
+			    KEEPFILTERS ( NOT ISBLANK ( '01 XER_TASK'[SM Fail Baseline Coverage] ) )
+			)
+			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
+		formatString: #,0
+		displayFolder: Schedule Quality Table
+		lineageTag: 9643056d-2328-5922-afb6-bb8151f197e4
+
+	/// Diagnostic activity count and snapshot context for Missing Logic; WBS grouping rows are not counted.
+	measure 'SM Drill Missing Logic Header' =
+			VAR Matches = COALESCE ( CALCULATE ( [SM Missing Logic Count], REMOVEFILTERS (
+			        '01 XER_TASK'[No Predecessor],
+			        '01 XER_TASK'[No Successor],
+			        '01 XER_TASK'[Driven_DataDate],
+			        '01 XER_TASK'[SM Fail Missing Logic],
+			        '01 XER_TASK'[SM Fail Leads],
+			        '01 XER_TASK'[SM Fail Lags],
+			        '01 XER_TASK'[SM Fail Non FS],
+			        '01 XER_TASK'[SM Fail Out Of Sequence],
+			        '01 XER_TASK'[SM Fail Invalid Dates],
+			        '01 XER_TASK'[SM Fail Baseline Coverage],
+			        '01 XER_TASK'[cstr_type],
+			        '01 XER_TASK'[total_float],
+			        '01 XER_TASK'[remaining_duration],
+			        '01 XER_TASK'[status_code],
+			        '01 XER_TASK'[StatusCategory],
+			        '01 XER_TASK'[task_type],
+			        '01 XER_TASK'[TaskType_Classified],
+			        '01 XER_TASK'[Is Unscheduled]
+			    ),
+			    REMOVEFILTERS ( Filter_Activity_Status ),
+			    REMOVEFILTERS ( Filter_TaskType ),
+			    REMOVEFILTERS ( '00 CALENDAR' ),
+			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) ), 0 )
+			RETURN IF (
+			    NOT [SM Drill Snapshot Available],
+			    "Select one project and available update",
+			    "Missing Logic: " & FORMAT ( Matches, "#,0" )
+			        & IF ( Matches = 1, " matching activity | ", " matching activities | " )
+			        & [SM Drill Context]
+			)
+		formatString: @
+		displayFolder: Schedule Quality Drill-through
+		lineageTag: 874cc8cf-b07d-53bf-a543-533caf42c4fc
+
+	/// Diagnostic activity count and snapshot context for Leads; WBS grouping rows are not counted.
+	measure 'SM Drill Leads Header' =
+			VAR Matches = COALESCE ( CALCULATE ( [SM Leads Activity Count], REMOVEFILTERS (
+			        '01 XER_TASK'[No Predecessor],
+			        '01 XER_TASK'[No Successor],
+			        '01 XER_TASK'[Driven_DataDate],
+			        '01 XER_TASK'[SM Fail Missing Logic],
+			        '01 XER_TASK'[SM Fail Leads],
+			        '01 XER_TASK'[SM Fail Lags],
+			        '01 XER_TASK'[SM Fail Non FS],
+			        '01 XER_TASK'[SM Fail Out Of Sequence],
+			        '01 XER_TASK'[SM Fail Invalid Dates],
+			        '01 XER_TASK'[SM Fail Baseline Coverage],
+			        '01 XER_TASK'[cstr_type],
+			        '01 XER_TASK'[total_float],
+			        '01 XER_TASK'[remaining_duration],
+			        '01 XER_TASK'[status_code],
+			        '01 XER_TASK'[StatusCategory],
+			        '01 XER_TASK'[task_type],
+			        '01 XER_TASK'[TaskType_Classified],
+			        '01 XER_TASK'[Is Unscheduled]
+			    ),
+			    REMOVEFILTERS ( Filter_Activity_Status ),
+			    REMOVEFILTERS ( Filter_TaskType ),
+			    REMOVEFILTERS ( '00 CALENDAR' ),
+			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) ), 0 )
+			VAR Links = COALESCE ( CALCULATE ( [Leads<0d], REMOVEFILTERS (
+			        '01 XER_TASK'[No Predecessor],
+			        '01 XER_TASK'[No Successor],
+			        '01 XER_TASK'[Driven_DataDate],
+			        '01 XER_TASK'[SM Fail Missing Logic],
+			        '01 XER_TASK'[SM Fail Leads],
+			        '01 XER_TASK'[SM Fail Lags],
+			        '01 XER_TASK'[SM Fail Non FS],
+			        '01 XER_TASK'[SM Fail Out Of Sequence],
+			        '01 XER_TASK'[SM Fail Invalid Dates],
+			        '01 XER_TASK'[SM Fail Baseline Coverage],
+			        '01 XER_TASK'[cstr_type],
+			        '01 XER_TASK'[total_float],
+			        '01 XER_TASK'[remaining_duration],
+			        '01 XER_TASK'[status_code],
+			        '01 XER_TASK'[StatusCategory],
+			        '01 XER_TASK'[task_type],
+			        '01 XER_TASK'[TaskType_Classified],
+			        '01 XER_TASK'[Is Unscheduled]
+			    ),
+			    REMOVEFILTERS ( Filter_Activity_Status ),
+			    REMOVEFILTERS ( Filter_TaskType ),
+			    REMOVEFILTERS ( '00 CALENDAR' ),
+			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) ), 0 )
+			RETURN IF (
+			    NOT [SM Drill Snapshot Available],
+			    "Select one project and available update",
+			    "Leads: " & FORMAT ( Matches, "#,0" )
+			        & IF ( Matches = 1, " matching activity (", " matching activities (" )
+			        & FORMAT ( Links, "#,0" )
+			        & IF ( Links = 1, " relationship) | ", " relationships) | " )
+			        & [SM Drill Context]
+			)
+		formatString: @
+		displayFolder: Schedule Quality Drill-through
+		lineageTag: dfcbabe6-9be5-5e2e-b367-933a4963098c
+
+	/// Diagnostic activity count and snapshot context for Lags >5d; WBS grouping rows are not counted.
+	measure 'SM Drill Lags Header' =
+			VAR Matches = COALESCE ( CALCULATE ( [SM Lags Activity Count], REMOVEFILTERS (
+			        '01 XER_TASK'[No Predecessor],
+			        '01 XER_TASK'[No Successor],
+			        '01 XER_TASK'[Driven_DataDate],
+			        '01 XER_TASK'[SM Fail Missing Logic],
+			        '01 XER_TASK'[SM Fail Leads],
+			        '01 XER_TASK'[SM Fail Lags],
+			        '01 XER_TASK'[SM Fail Non FS],
+			        '01 XER_TASK'[SM Fail Out Of Sequence],
+			        '01 XER_TASK'[SM Fail Invalid Dates],
+			        '01 XER_TASK'[SM Fail Baseline Coverage],
+			        '01 XER_TASK'[cstr_type],
+			        '01 XER_TASK'[total_float],
+			        '01 XER_TASK'[remaining_duration],
+			        '01 XER_TASK'[status_code],
+			        '01 XER_TASK'[StatusCategory],
+			        '01 XER_TASK'[task_type],
+			        '01 XER_TASK'[TaskType_Classified],
+			        '01 XER_TASK'[Is Unscheduled]
+			    ),
+			    REMOVEFILTERS ( Filter_Activity_Status ),
+			    REMOVEFILTERS ( Filter_TaskType ),
+			    REMOVEFILTERS ( '00 CALENDAR' ),
+			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) ), 0 )
+			VAR Links = COALESCE ( CALCULATE ( [Lags>5d], REMOVEFILTERS (
+			        '01 XER_TASK'[No Predecessor],
+			        '01 XER_TASK'[No Successor],
+			        '01 XER_TASK'[Driven_DataDate],
+			        '01 XER_TASK'[SM Fail Missing Logic],
+			        '01 XER_TASK'[SM Fail Leads],
+			        '01 XER_TASK'[SM Fail Lags],
+			        '01 XER_TASK'[SM Fail Non FS],
+			        '01 XER_TASK'[SM Fail Out Of Sequence],
+			        '01 XER_TASK'[SM Fail Invalid Dates],
+			        '01 XER_TASK'[SM Fail Baseline Coverage],
+			        '01 XER_TASK'[cstr_type],
+			        '01 XER_TASK'[total_float],
+			        '01 XER_TASK'[remaining_duration],
+			        '01 XER_TASK'[status_code],
+			        '01 XER_TASK'[StatusCategory],
+			        '01 XER_TASK'[task_type],
+			        '01 XER_TASK'[TaskType_Classified],
+			        '01 XER_TASK'[Is Unscheduled]
+			    ),
+			    REMOVEFILTERS ( Filter_Activity_Status ),
+			    REMOVEFILTERS ( Filter_TaskType ),
+			    REMOVEFILTERS ( '00 CALENDAR' ),
+			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) ), 0 )
+			RETURN IF (
+			    NOT [SM Drill Snapshot Available],
+			    "Select one project and available update",
+			    "Lags >5d: " & FORMAT ( Matches, "#,0" )
+			        & IF ( Matches = 1, " matching activity (", " matching activities (" )
+			        & FORMAT ( Links, "#,0" )
+			        & IF ( Links = 1, " relationship) | ", " relationships) | " )
+			        & [SM Drill Context]
+			)
+		formatString: @
+		displayFolder: Schedule Quality Drill-through
+		lineageTag: a99af115-637c-5f57-abfb-d8eb783e9c0c
+
+	/// Diagnostic activity count and snapshot context for Non-FS Relationships; WBS grouping rows are not counted.
+	measure 'SM Drill Non-FS Header' =
+			VAR Matches = COALESCE ( CALCULATE ( [SM Non-FS Activity Count], REMOVEFILTERS (
+			        '01 XER_TASK'[No Predecessor],
+			        '01 XER_TASK'[No Successor],
+			        '01 XER_TASK'[Driven_DataDate],
+			        '01 XER_TASK'[SM Fail Missing Logic],
+			        '01 XER_TASK'[SM Fail Leads],
+			        '01 XER_TASK'[SM Fail Lags],
+			        '01 XER_TASK'[SM Fail Non FS],
+			        '01 XER_TASK'[SM Fail Out Of Sequence],
+			        '01 XER_TASK'[SM Fail Invalid Dates],
+			        '01 XER_TASK'[SM Fail Baseline Coverage],
+			        '01 XER_TASK'[cstr_type],
+			        '01 XER_TASK'[total_float],
+			        '01 XER_TASK'[remaining_duration],
+			        '01 XER_TASK'[status_code],
+			        '01 XER_TASK'[StatusCategory],
+			        '01 XER_TASK'[task_type],
+			        '01 XER_TASK'[TaskType_Classified],
+			        '01 XER_TASK'[Is Unscheduled]
+			    ),
+			    REMOVEFILTERS ( Filter_Activity_Status ),
+			    REMOVEFILTERS ( Filter_TaskType ),
+			    REMOVEFILTERS ( '00 CALENDAR' ),
+			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) ), 0 )
+			VAR Links = COALESCE ( CALCULATE ( [SM Eligible Relationship Count] - [SM Unknown Relationship Type Count] - [SM FS Count], REMOVEFILTERS (
+			        '01 XER_TASK'[No Predecessor],
+			        '01 XER_TASK'[No Successor],
+			        '01 XER_TASK'[Driven_DataDate],
+			        '01 XER_TASK'[SM Fail Missing Logic],
+			        '01 XER_TASK'[SM Fail Leads],
+			        '01 XER_TASK'[SM Fail Lags],
+			        '01 XER_TASK'[SM Fail Non FS],
+			        '01 XER_TASK'[SM Fail Out Of Sequence],
+			        '01 XER_TASK'[SM Fail Invalid Dates],
+			        '01 XER_TASK'[SM Fail Baseline Coverage],
+			        '01 XER_TASK'[cstr_type],
+			        '01 XER_TASK'[total_float],
+			        '01 XER_TASK'[remaining_duration],
+			        '01 XER_TASK'[status_code],
+			        '01 XER_TASK'[StatusCategory],
+			        '01 XER_TASK'[task_type],
+			        '01 XER_TASK'[TaskType_Classified],
+			        '01 XER_TASK'[Is Unscheduled]
+			    ),
+			    REMOVEFILTERS ( Filter_Activity_Status ),
+			    REMOVEFILTERS ( Filter_TaskType ),
+			    REMOVEFILTERS ( '00 CALENDAR' ),
+			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) ), 0 )
+			RETURN IF (
+			    NOT [SM Drill Snapshot Available],
+			    "Select one project and available update",
+			    "Non-FS Relationships: " & FORMAT ( Matches, "#,0" )
+			        & IF ( Matches = 1, " matching activity (", " matching activities (" )
+			        & FORMAT ( Links, "#,0" )
+			        & IF ( Links = 1, " relationship) | ", " relationships) | " )
+			        & [SM Drill Context]
+			)
+		formatString: @
+		displayFolder: Schedule Quality Drill-through
+		lineageTag: d790e7ca-1c91-5e9a-bc70-725addc3986c
+
+	/// Diagnostic activity count and snapshot context for Hard Constraints; WBS grouping rows are not counted.
+	measure 'SM Drill Restrictive Constraints Header' =
+			VAR Matches = COALESCE ( CALCULATE ( [SM Restrictive Primary Count], REMOVEFILTERS (
+			        '01 XER_TASK'[No Predecessor],
+			        '01 XER_TASK'[No Successor],
+			        '01 XER_TASK'[Driven_DataDate],
+			        '01 XER_TASK'[SM Fail Missing Logic],
+			        '01 XER_TASK'[SM Fail Leads],
+			        '01 XER_TASK'[SM Fail Lags],
+			        '01 XER_TASK'[SM Fail Non FS],
+			        '01 XER_TASK'[SM Fail Out Of Sequence],
+			        '01 XER_TASK'[SM Fail Invalid Dates],
+			        '01 XER_TASK'[SM Fail Baseline Coverage],
+			        '01 XER_TASK'[cstr_type],
+			        '01 XER_TASK'[total_float],
+			        '01 XER_TASK'[remaining_duration],
+			        '01 XER_TASK'[status_code],
+			        '01 XER_TASK'[StatusCategory],
+			        '01 XER_TASK'[task_type],
+			        '01 XER_TASK'[TaskType_Classified],
+			        '01 XER_TASK'[Is Unscheduled]
+			    ),
+			    REMOVEFILTERS ( Filter_Activity_Status ),
+			    REMOVEFILTERS ( Filter_TaskType ),
+			    REMOVEFILTERS ( '00 CALENDAR' ),
+			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) ), 0 )
+			RETURN IF (
+			    NOT [SM Drill Snapshot Available],
+			    "Select one project and available update",
+			    "Hard Constraints: " & FORMAT ( Matches, "#,0" )
+			        & IF ( Matches = 1, " matching activity | ", " matching activities | " )
+			        & [SM Drill Context]
+			)
+		formatString: @
+		displayFolder: Schedule Quality Drill-through
+		lineageTag: 74205123-5ec3-5e78-a916-d2533a958b6b
+
+	/// Diagnostic activity count and snapshot context for Out-of-Sequence; WBS grouping rows are not counted.
+	measure 'SM Drill Out-of-Sequence Header' =
+			VAR Matches = COALESCE ( CALCULATE ( [Out Of Sequence Count], REMOVEFILTERS (
+			        '01 XER_TASK'[No Predecessor],
+			        '01 XER_TASK'[No Successor],
+			        '01 XER_TASK'[Driven_DataDate],
+			        '01 XER_TASK'[SM Fail Missing Logic],
+			        '01 XER_TASK'[SM Fail Leads],
+			        '01 XER_TASK'[SM Fail Lags],
+			        '01 XER_TASK'[SM Fail Non FS],
+			        '01 XER_TASK'[SM Fail Out Of Sequence],
+			        '01 XER_TASK'[SM Fail Invalid Dates],
+			        '01 XER_TASK'[SM Fail Baseline Coverage],
+			        '01 XER_TASK'[cstr_type],
+			        '01 XER_TASK'[total_float],
+			        '01 XER_TASK'[remaining_duration],
+			        '01 XER_TASK'[status_code],
+			        '01 XER_TASK'[StatusCategory],
+			        '01 XER_TASK'[task_type],
+			        '01 XER_TASK'[TaskType_Classified],
+			        '01 XER_TASK'[Is Unscheduled]
+			    ),
+			    REMOVEFILTERS ( Filter_Activity_Status ),
+			    REMOVEFILTERS ( Filter_TaskType ),
+			    REMOVEFILTERS ( '00 CALENDAR' ),
+			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) ), 0 )
+			RETURN IF (
+			    NOT [SM Drill Snapshot Available],
+			    "Select one project and available update",
+			    "Out-of-Sequence: " & FORMAT ( Matches, "#,0" )
+			        & IF ( Matches = 1, " matching activity | ", " matching activities | " )
+			        & [SM Drill Context]
+			)
+		formatString: @
+		displayFolder: Schedule Quality Drill-through
+		lineageTag: 092cbc86-4c7d-53d0-80fb-6a1e5f892fea
+
+	/// Diagnostic activity count and snapshot context for Negative Float; WBS grouping rows are not counted.
+	measure 'SM Drill Negative Float Header' =
+			VAR Matches = COALESCE ( CALCULATE ( [Task_Count_Negative_Float], REMOVEFILTERS (
+			        '01 XER_TASK'[No Predecessor],
+			        '01 XER_TASK'[No Successor],
+			        '01 XER_TASK'[Driven_DataDate],
+			        '01 XER_TASK'[SM Fail Missing Logic],
+			        '01 XER_TASK'[SM Fail Leads],
+			        '01 XER_TASK'[SM Fail Lags],
+			        '01 XER_TASK'[SM Fail Non FS],
+			        '01 XER_TASK'[SM Fail Out Of Sequence],
+			        '01 XER_TASK'[SM Fail Invalid Dates],
+			        '01 XER_TASK'[SM Fail Baseline Coverage],
+			        '01 XER_TASK'[cstr_type],
+			        '01 XER_TASK'[total_float],
+			        '01 XER_TASK'[remaining_duration],
+			        '01 XER_TASK'[status_code],
+			        '01 XER_TASK'[StatusCategory],
+			        '01 XER_TASK'[task_type],
+			        '01 XER_TASK'[TaskType_Classified],
+			        '01 XER_TASK'[Is Unscheduled]
+			    ),
+			    REMOVEFILTERS ( Filter_Activity_Status ),
+			    REMOVEFILTERS ( Filter_TaskType ),
+			    REMOVEFILTERS ( '00 CALENDAR' ),
+			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) ), 0 )
+			RETURN IF (
+			    NOT [SM Drill Snapshot Available],
+			    "Select one project and available update",
+			    "Negative Float: " & FORMAT ( Matches, "#,0" )
+			        & IF ( Matches = 1, " matching activity | ", " matching activities | " )
+			        & [SM Drill Context]
+			)
+		formatString: @
+		displayFolder: Schedule Quality Drill-through
+		lineageTag: d8b4dddc-fbd0-59ed-ad26-21e511887058
+
+	/// Diagnostic activity count and snapshot context for Remaining Duration >44d; WBS grouping rows are not counted.
+	measure 'SM Drill Remaining Duration Header' =
+			VAR Matches = COALESCE ( CALCULATE ( [Dur >44], REMOVEFILTERS (
+			        '01 XER_TASK'[No Predecessor],
+			        '01 XER_TASK'[No Successor],
+			        '01 XER_TASK'[Driven_DataDate],
+			        '01 XER_TASK'[SM Fail Missing Logic],
+			        '01 XER_TASK'[SM Fail Leads],
+			        '01 XER_TASK'[SM Fail Lags],
+			        '01 XER_TASK'[SM Fail Non FS],
+			        '01 XER_TASK'[SM Fail Out Of Sequence],
+			        '01 XER_TASK'[SM Fail Invalid Dates],
+			        '01 XER_TASK'[SM Fail Baseline Coverage],
+			        '01 XER_TASK'[cstr_type],
+			        '01 XER_TASK'[total_float],
+			        '01 XER_TASK'[remaining_duration],
+			        '01 XER_TASK'[status_code],
+			        '01 XER_TASK'[StatusCategory],
+			        '01 XER_TASK'[task_type],
+			        '01 XER_TASK'[TaskType_Classified],
+			        '01 XER_TASK'[Is Unscheduled]
+			    ),
+			    REMOVEFILTERS ( Filter_Activity_Status ),
+			    REMOVEFILTERS ( Filter_TaskType ),
+			    REMOVEFILTERS ( '00 CALENDAR' ),
+			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) ), 0 )
+			RETURN IF (
+			    NOT [SM Drill Snapshot Available],
+			    "Select one project and available update",
+			    "Remaining Duration >44d: " & FORMAT ( Matches, "#,0" )
+			        & IF ( Matches = 1, " matching activity | ", " matching activities | " )
+			        & [SM Drill Context]
+			)
+		formatString: @
+		displayFolder: Schedule Quality Drill-through
+		lineageTag: 1a288eaa-76d5-5745-81c2-77370ae98675
+
+	/// Diagnostic activity count and snapshot context for Date Integrity; WBS grouping rows are not counted.
+	measure 'SM Drill Date Integrity Header' =
+			VAR Matches = COALESCE ( CALCULATE ( [SM Invalid Dates Count], REMOVEFILTERS (
+			        '01 XER_TASK'[No Predecessor],
+			        '01 XER_TASK'[No Successor],
+			        '01 XER_TASK'[Driven_DataDate],
+			        '01 XER_TASK'[SM Fail Missing Logic],
+			        '01 XER_TASK'[SM Fail Leads],
+			        '01 XER_TASK'[SM Fail Lags],
+			        '01 XER_TASK'[SM Fail Non FS],
+			        '01 XER_TASK'[SM Fail Out Of Sequence],
+			        '01 XER_TASK'[SM Fail Invalid Dates],
+			        '01 XER_TASK'[SM Fail Baseline Coverage],
+			        '01 XER_TASK'[cstr_type],
+			        '01 XER_TASK'[total_float],
+			        '01 XER_TASK'[remaining_duration],
+			        '01 XER_TASK'[status_code],
+			        '01 XER_TASK'[StatusCategory],
+			        '01 XER_TASK'[task_type],
+			        '01 XER_TASK'[TaskType_Classified],
+			        '01 XER_TASK'[Is Unscheduled]
+			    ),
+			    REMOVEFILTERS ( Filter_Activity_Status ),
+			    REMOVEFILTERS ( Filter_TaskType ),
+			    REMOVEFILTERS ( '00 CALENDAR' ),
+			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) ), 0 )
+			RETURN IF (
+			    NOT [SM Drill Snapshot Available],
+			    "Select one project and available update",
+			    "Date Integrity: " & FORMAT ( Matches, "#,0" )
+			        & IF ( Matches = 1, " matching activity | ", " matching activities | " )
+			        & [SM Drill Context]
+			)
+		formatString: @
+		displayFolder: Schedule Quality Drill-through
+		lineageTag: 77a9a5a3-2b93-5dbe-9863-4de3ab1729ce
+
+	/// Diagnostic activity count and snapshot context for Baseline Coverage; WBS grouping rows are not counted.
+	measure 'SM Drill Baseline Coverage Header' =
+			VAR Matches = COALESCE ( CALCULATE ( [SM Baseline Unmatched Activity Count], REMOVEFILTERS (
+			        '01 XER_TASK'[No Predecessor],
+			        '01 XER_TASK'[No Successor],
+			        '01 XER_TASK'[Driven_DataDate],
+			        '01 XER_TASK'[SM Fail Missing Logic],
+			        '01 XER_TASK'[SM Fail Leads],
+			        '01 XER_TASK'[SM Fail Lags],
+			        '01 XER_TASK'[SM Fail Non FS],
+			        '01 XER_TASK'[SM Fail Out Of Sequence],
+			        '01 XER_TASK'[SM Fail Invalid Dates],
+			        '01 XER_TASK'[SM Fail Baseline Coverage],
+			        '01 XER_TASK'[cstr_type],
+			        '01 XER_TASK'[total_float],
+			        '01 XER_TASK'[remaining_duration],
+			        '01 XER_TASK'[status_code],
+			        '01 XER_TASK'[StatusCategory],
+			        '01 XER_TASK'[task_type],
+			        '01 XER_TASK'[TaskType_Classified],
+			        '01 XER_TASK'[Is Unscheduled]
+			    ),
+			    REMOVEFILTERS ( Filter_Activity_Status ),
+			    REMOVEFILTERS ( Filter_TaskType ),
+			    REMOVEFILTERS ( '00 CALENDAR' ),
+			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) ), 0 )
+			RETURN IF (
+			    NOT [SM Drill Snapshot Available],
+			    "Select one project and available update",
+			    "Baseline Coverage: " & FORMAT ( Matches, "#,0" )
+			        & IF ( Matches = 1, " matching activity | ", " matching activities | " )
+			        & [SM Drill Context]
+			)
+		formatString: @
+		displayFolder: Schedule Quality Drill-through
+		lineageTag: 8985b448-4193-54a7-ba6b-beca4bed7087
+
+	/// Activity-grain diagnostic evidence for Missing Logic; blank at WBS summary levels.
+	measure 'SM Drill Missing Logic Detail' = IF ( ISINSCOPE ( '01 XER_TASK'[task_code] ), SELECTEDVALUE ( '01 XER_TASK'[SM Fail Missing Logic] ) )
+		formatString: @
+		displayFolder: Schedule Quality Drill-through
+		lineageTag: 96bc9acc-1cd8-5283-b910-683ca5496d61
+
+	/// Activity-grain diagnostic evidence for Leads; blank at WBS summary levels.
+	measure 'SM Drill Leads Detail' =
+			IF (
+			    ISINSCOPE ( '01 XER_TASK'[task_code] ),
+			    VAR Links =
+			        FILTER (
+			            RELATEDTABLE ( '06 XER_PREDECESSOR' ),
+			            NOT ISBLANK ( '06 XER_PREDECESSOR'[lag] ) && '06 XER_PREDECESSOR'[lag] < 0
+			        )
+			    VAR TotalLinks = COUNTROWS ( Links )
+			    VAR TopLinks =
+			        TOPN (
+			            3,
+			            Links,
+			            '06 XER_PREDECESSOR'[predecessor_task_code], ASC,
+			            '06 XER_PREDECESSOR'[pred_type], ASC,
+			            '06 XER_PREDECESSOR'[pred_task_id_key], ASC
+			        )
+			    VAR Extra = TotalLinks - COUNTROWS ( TopLinks )
+			    RETURN IF (
+			        TotalLinks > 0,
+			        FORMAT ( TotalLinks, "#,0" ) & ": "
+			            & CONCATENATEX (
+			                TopLinks,
+			                VAR Code = COALESCE ( '06 XER_PREDECESSOR'[predecessor_task_code], '06 XER_PREDECESSOR'[pred_task_id_key], "?" )
+			                VAR Rel = SWITCH (
+			                    '06 XER_PREDECESSOR'[pred_type],
+			                    "PR_FS", "FS",
+			                    "PR_FS1", "FS",
+			                    "PR_SS", "SS",
+			                    "PR_FF", "FF",
+			                    "PR_SF", "SF",
+			                    COALESCE ( '06 XER_PREDECESSOR'[pred_type], "?" )
+			                )
+			                VAR LagVal = '06 XER_PREDECESSOR'[lag]
+			                VAR LagTxt = IF ( ISBLANK ( LagVal ), "", " " & IF ( LagVal = INT ( LagVal ), FORMAT ( LagVal, "+#,0;-#,0;0" ), FORMAT ( LagVal, "+#,0.0;-#,0.0;0.0" ) ) & "d" )
+			                RETURN Code & " (" & Rel & LagTxt & ")",
+			                ", ",
+			                '06 XER_PREDECESSOR'[predecessor_task_code], ASC,
+			                '06 XER_PREDECESSOR'[pred_type], ASC,
+			                '06 XER_PREDECESSOR'[pred_task_id_key], ASC
+			            )
+			            & IF ( Extra > 0, " (+" & FORMAT ( Extra, "#,0" ) & " more)", "" )
+			    )
+			)
+		formatString: @
+		displayFolder: Schedule Quality Drill-through
+		lineageTag: caf475e8-d6a3-5174-a079-c9eceaedf53b
+
+	/// Activity-grain diagnostic evidence for Lags >5d; blank at WBS summary levels.
+	measure 'SM Drill Lags Detail' =
+			IF (
+			    ISINSCOPE ( '01 XER_TASK'[task_code] ),
+			    VAR Links =
+			        FILTER (
+			            RELATEDTABLE ( '06 XER_PREDECESSOR' ),
+			            NOT ISBLANK ( '06 XER_PREDECESSOR'[lag] ) && '06 XER_PREDECESSOR'[lag] > 5
+			        )
+			    VAR TotalLinks = COUNTROWS ( Links )
+			    VAR TopLinks =
+			        TOPN (
+			            3,
+			            Links,
+			            '06 XER_PREDECESSOR'[predecessor_task_code], ASC,
+			            '06 XER_PREDECESSOR'[pred_type], ASC,
+			            '06 XER_PREDECESSOR'[pred_task_id_key], ASC
+			        )
+			    VAR Extra = TotalLinks - COUNTROWS ( TopLinks )
+			    RETURN IF (
+			        TotalLinks > 0,
+			        FORMAT ( TotalLinks, "#,0" ) & ": "
+			            & CONCATENATEX (
+			                TopLinks,
+			                VAR Code = COALESCE ( '06 XER_PREDECESSOR'[predecessor_task_code], '06 XER_PREDECESSOR'[pred_task_id_key], "?" )
+			                VAR Rel = SWITCH (
+			                    '06 XER_PREDECESSOR'[pred_type],
+			                    "PR_FS", "FS",
+			                    "PR_FS1", "FS",
+			                    "PR_SS", "SS",
+			                    "PR_FF", "FF",
+			                    "PR_SF", "SF",
+			                    COALESCE ( '06 XER_PREDECESSOR'[pred_type], "?" )
+			                )
+			                VAR LagVal = '06 XER_PREDECESSOR'[lag]
+			                VAR LagTxt = IF ( ISBLANK ( LagVal ), "", " " & IF ( LagVal = INT ( LagVal ), FORMAT ( LagVal, "+#,0;-#,0;0" ), FORMAT ( LagVal, "+#,0.0;-#,0.0;0.0" ) ) & "d" )
+			                RETURN Code & " (" & Rel & LagTxt & ")",
+			                ", ",
+			                '06 XER_PREDECESSOR'[predecessor_task_code], ASC,
+			                '06 XER_PREDECESSOR'[pred_type], ASC,
+			                '06 XER_PREDECESSOR'[pred_task_id_key], ASC
+			            )
+			            & IF ( Extra > 0, " (+" & FORMAT ( Extra, "#,0" ) & " more)", "" )
+			    )
+			)
+		formatString: @
+		displayFolder: Schedule Quality Drill-through
+		lineageTag: 64a1bf3e-f389-5ebb-8295-4b0b31ffe957
+
+	/// Activity-grain diagnostic evidence for Non-FS Relationships; blank at WBS summary levels.
+	measure 'SM Drill Non-FS Detail' =
+			IF (
+			    ISINSCOPE ( '01 XER_TASK'[task_code] ),
+			    VAR Links =
+			        FILTER (
+			            RELATEDTABLE ( '06 XER_PREDECESSOR' ),
+			            '06 XER_PREDECESSOR'[pred_type] IN { "PR_SS", "PR_FF", "PR_SF" }
+			        )
+			    VAR TotalLinks = COUNTROWS ( Links )
+			    VAR TopLinks =
+			        TOPN (
+			            3,
+			            Links,
+			            '06 XER_PREDECESSOR'[predecessor_task_code], ASC,
+			            '06 XER_PREDECESSOR'[pred_type], ASC,
+			            '06 XER_PREDECESSOR'[pred_task_id_key], ASC
+			        )
+			    VAR Extra = TotalLinks - COUNTROWS ( TopLinks )
+			    RETURN IF (
+			        TotalLinks > 0,
+			        FORMAT ( TotalLinks, "#,0" ) & ": "
+			            & CONCATENATEX (
+			                TopLinks,
+			                VAR Code = COALESCE ( '06 XER_PREDECESSOR'[predecessor_task_code], '06 XER_PREDECESSOR'[pred_task_id_key], "?" )
+			                VAR Rel = SWITCH (
+			                    '06 XER_PREDECESSOR'[pred_type],
+			                    "PR_FS", "FS",
+			                    "PR_FS1", "FS",
+			                    "PR_SS", "SS",
+			                    "PR_FF", "FF",
+			                    "PR_SF", "SF",
+			                    COALESCE ( '06 XER_PREDECESSOR'[pred_type], "?" )
+			                )
+			                VAR LagVal = '06 XER_PREDECESSOR'[lag]
+			                VAR LagTxt = IF ( ISBLANK ( LagVal ) || LagVal = 0, "", " " & IF ( LagVal = INT ( LagVal ), FORMAT ( LagVal, "+#,0;-#,0;0" ), FORMAT ( LagVal, "+#,0.0;-#,0.0;0.0" ) ) & "d" )
+			                RETURN Code & " (" & Rel & LagTxt & ")",
+			                ", ",
+			                '06 XER_PREDECESSOR'[predecessor_task_code], ASC,
+			                '06 XER_PREDECESSOR'[pred_type], ASC,
+			                '06 XER_PREDECESSOR'[pred_task_id_key], ASC
+			            )
+			            & IF ( Extra > 0, " (+" & FORMAT ( Extra, "#,0" ) & " more)", "" )
+			    )
+			)
+		formatString: @
+		displayFolder: Schedule Quality Drill-through
+		lineageTag: 0f5ac700-2fe4-55cf-9331-c34eb80a533f
+
+	/// Activity-grain diagnostic evidence for Hard Constraints; blank at WBS summary levels.
+	measure 'SM Drill Restrictive Constraints Detail' =
+			IF (
+			    ISINSCOPE ( '01 XER_TASK'[task_code] ),
+			    VAR CstrCode = SELECTEDVALUE ( '01 XER_TASK'[cstr_type] )
+			    VAR CstrDate = SELECTEDVALUE ( '01 XER_TASK'[cstr_date] )
+			    VAR Label = SWITCH (
+			        CstrCode,
+			        "CS_MSO", "Must Start On",
+			        "CS_MSOB", "Start On or Before",
+			        "CS_MEO", "Must Finish On",
+			        "CS_MEOB", "Finish On or Before",
+			        "CS_MANDSTART", "Mandatory Start",
+			        "CS_MANDFIN", "Mandatory Finish",
+			        CstrCode
+			    )
+			    RETURN IF (
+			        NOT ISBLANK ( Label ),
+			        Label & IF ( NOT ISBLANK ( CstrDate ), " (" & FORMAT ( CstrDate, "dd MMM yyyy" ) & ")", "" )
+			    )
+			)
+		formatString: @
+		displayFolder: Schedule Quality Drill-through
+		lineageTag: 6448490b-da13-57be-afe5-076724618a3d
+
+	/// Activity-grain diagnostic evidence for Out-of-Sequence; blank at WBS summary levels.
+	measure 'SM Drill Out-of-Sequence Detail' =
+			IF (
+			    ISINSCOPE ( '01 XER_TASK'[task_code] ),
+			    VAR Links =
+			        FILTER (
+			            RELATEDTABLE ( '06 XER_PREDECESSOR' ),
+			            '06 XER_PREDECESSOR'[predecessor_task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }
+			                && (
+			                    ( '06 XER_PREDECESSOR'[pred_type] IN { "PR_FS", "PR_FS1" } && '06 XER_PREDECESSOR'[predecessor_status_code] IN { "TK_NotStart", "TK_Active" } )
+			                        || ( '06 XER_PREDECESSOR'[pred_type] = "PR_SS" && '06 XER_PREDECESSOR'[predecessor_status_code] = "TK_NotStart" )
+			                )
+			        )
+			    VAR TotalLinks = COUNTROWS ( Links )
+			    VAR TopLinks =
+			        TOPN (
+			            3,
+			            Links,
+			            '06 XER_PREDECESSOR'[predecessor_task_code], ASC,
+			            '06 XER_PREDECESSOR'[pred_type], ASC,
+			            '06 XER_PREDECESSOR'[pred_task_id_key], ASC
+			        )
+			    VAR Extra = TotalLinks - COUNTROWS ( TopLinks )
+			    RETURN IF (
+			        TotalLinks > 0,
+			        FORMAT ( TotalLinks, "#,0" ) & ": "
+			            & CONCATENATEX (
+			                TopLinks,
+			                VAR Code = COALESCE ( '06 XER_PREDECESSOR'[predecessor_task_code], '06 XER_PREDECESSOR'[pred_task_id_key], "?" )
+			                VAR Rel = IF ( '06 XER_PREDECESSOR'[pred_type] = "PR_SS", "SS", "FS" )
+			                VAR PredState = SWITCH (
+			                    '06 XER_PREDECESSOR'[predecessor_status_code],
+			                    "TK_NotStart", "Not Started",
+			                    "TK_Active", "In Progress",
+			                    COALESCE ( '06 XER_PREDECESSOR'[predecessor_status_code], "?" )
+			                )
+			                RETURN Code & " (" & Rel & ", " & PredState & ")",
+			                ", ",
+			                '06 XER_PREDECESSOR'[predecessor_task_code], ASC,
+			                '06 XER_PREDECESSOR'[pred_type], ASC,
+			                '06 XER_PREDECESSOR'[pred_task_id_key], ASC
+			            )
+			            & IF ( Extra > 0, " (+" & FORMAT ( Extra, "#,0" ) & " more)", "" )
+			    )
+			)
+		formatString: @
+		displayFolder: Schedule Quality Drill-through
+		lineageTag: 065cb6ea-14e2-59e6-8b9d-f1e932f22e2d
+
+	/// Activity-grain diagnostic evidence for Negative Float; blank at WBS summary levels.
+	measure 'SM Drill Negative Float Detail' =
+			IF (
+			    ISINSCOPE ( '01 XER_TASK'[task_code] ),
+			    VAR Val = SELECTEDVALUE ( '01 XER_TASK'[total_float] )
+			    RETURN IF (
+			        NOT ISBLANK ( Val ),
+			        IF ( Val = INT ( Val ), FORMAT ( Val, "#,0" ), FORMAT ( Val, "#,0.0" ) ) & "d"
+			    )
+			)
+		formatString: @
+		displayFolder: Schedule Quality Drill-through
+		lineageTag: 41f5672c-f243-5198-ac77-4f0f68d1e812
+
+	/// Activity-grain diagnostic evidence for Remaining Duration >44d; blank at WBS summary levels.
+	measure 'SM Drill Remaining Duration Detail' =
+			IF (
+			    ISINSCOPE ( '01 XER_TASK'[task_code] ),
+			    VAR Val = SELECTEDVALUE ( '01 XER_TASK'[remaining_duration] )
+			    VAR Excess = Val - 44
+			    RETURN IF (
+			        NOT ISBLANK ( Val ),
+			        IF ( Val = INT ( Val ), FORMAT ( Val, "#,0" ), FORMAT ( Val, "#,0.0" ) ) & "d (+"
+			            & IF ( Excess = INT ( Excess ), FORMAT ( Excess, "#,0" ), FORMAT ( Excess, "#,0.0" ) ) & "d)"
+			    )
+			)
+		formatString: @
+		displayFolder: Schedule Quality Drill-through
+		lineageTag: 0a3034c6-df87-50f2-a6ee-84c15a88f883
+
+	/// Activity-grain diagnostic evidence for Date Integrity; blank at WBS summary levels.
+	measure 'SM Drill Date Integrity Detail' = IF ( ISINSCOPE ( '01 XER_TASK'[task_code] ), SELECTEDVALUE ( '01 XER_TASK'[SM Fail Invalid Dates] ) )
+		formatString: @
+		displayFolder: Schedule Quality Drill-through
+		lineageTag: 7c896b0a-9858-5693-be65-8abaeb44664d
+
+	/// Activity-grain diagnostic evidence for Baseline Coverage; blank at WBS summary levels.
+	measure 'SM Drill Baseline Coverage Detail' = IF ( ISINSCOPE ( '01 XER_TASK'[task_code] ), SELECTEDVALUE ( '01 XER_TASK'[SM Fail Baseline Coverage] ) )
+		formatString: @
+		displayFolder: Schedule Quality Drill-through
+		lineageTag: 027c7230-17d3-530d-b5a6-5e5416cb12e6
 
 	partition 'XER Metrics' = m
 		mode: import

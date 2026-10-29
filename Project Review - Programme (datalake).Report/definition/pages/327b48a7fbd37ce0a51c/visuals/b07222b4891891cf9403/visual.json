@@ -67,7 +67,7 @@
               },
               "queryRef": "XER Metrics.Constraint%",
               "nativeQueryRef": "Constraint% (History)",
-              "displayName": "Restrictive primary | ≤5% / <10%"
+              "displayName": "Hard constraints | ≤5% / <10%"
             }
           ]
         }
@@ -352,7 +352,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Restrictive primary | ≤5% / <10% history'"
+                  "Value": "'Hard constraints | ≤5% / <10% history'"
                 }
               }
             }

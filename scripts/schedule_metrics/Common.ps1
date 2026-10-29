@@ -79,25 +79,65 @@ function Invoke-ScheduleMetricsDax {
 }
 
 function Get-ScheduleMetricsDefinitions {
-    param($Model, $LiveModel, [hashtable]$Overrides = @{})
+    param($Model, $LiveModel, [hashtable]$Overrides = @{}, [switch]$IncludeUnloadedColumns)
     $lines = [Collections.Generic.List[string]]::new()
     $lines.Add('DEFINE')
+    $blockedTokens = [Collections.Generic.List[string]]::new()
     foreach ($table in $Model.Tables) {
-        if ($LiveModel.Tables.Contains($table.Name)) { continue }
-        if (@($Model.Relationships | Where-Object { $_.FromTable.Name -eq $table.Name -or $_.ToTable.Name -eq $table.Name }).Count) {
-            throw "New table '$($table.Name)' has relationships; a query-scoped table cannot reproduce those."
+        if (-not $LiveModel.Tables.Contains($table.Name)) {
+            if (@($Model.Relationships | Where-Object { $_.FromTable.Name -eq $table.Name -or $_.ToTable.Name -eq $table.Name }).Count) {
+                throw "New table '$($table.Name)' has relationships; a query-scoped table cannot reproduce those."
+            }
+            if ($table.Partitions.Count -ne 1 -or $table.Partitions[0].Source -isnot [Microsoft.AnalysisServices.Tabular.CalculatedPartitionSource]) {
+                throw "New table '$($table.Name)' must be a disconnected calculated table to validate without loading it."
+            }
+            $escapedTable = $table.Name.Replace("'", "''")
+            $lines.Add("TABLE '$escapedTable' = $($table.Partitions[0].Source.Expression)")
+            continue
         }
-        if ($table.Partitions.Count -ne 1 -or $table.Partitions[0].Source -isnot [Microsoft.AnalysisServices.Tabular.CalculatedPartitionSource]) {
-            throw "New table '$($table.Name)' must be a disconnected calculated table to validate without loading it."
-        }
+        $liveTable = $LiveModel.Tables[$table.Name]
         $escapedTable = $table.Name.Replace("'", "''")
-        $lines.Add("TABLE '$escapedTable' = $($table.Partitions[0].Source.Expression)")
+        foreach ($column in $table.Columns) {
+            if ($liveTable.Columns.Contains($column.Name)) { continue }
+            if ($column -isnot [Microsoft.AnalysisServices.Tabular.CalculatedColumn]) {
+                throw "New physical column '$($table.Name)[$($column.Name)]' is not loaded yet; refresh the model first."
+            }
+            if ($IncludeUnloadedColumns) {
+                $escapedColumn = $column.Name.Replace(']', ']]')
+                $lines.Add("COLUMN '$escapedTable'[$escapedColumn] =`n$($column.Expression)")
+            } else {
+                $blockedTokens.Add("[$($column.Name)]")
+            }
+        }
+    }
+    $skippedMeasures = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+    if ($blockedTokens.Count -gt 0) {
+        $changed = $true
+        while ($changed) {
+            $changed = $false
+            foreach ($table in $Model.Tables) {
+                if ($table.Name -ne 'XER Metrics' -and $table.Name -notlike 'Schedule Metric*') { continue }
+                foreach ($measure in $table.Measures) {
+                    $key = "$($table.Name)[$($measure.Name)]"
+                    if ($Overrides.ContainsKey($key) -or $skippedMeasures.Contains($key)) { continue }
+                    foreach ($token in $blockedTokens) {
+                        if ($measure.Expression.IndexOf($token, [StringComparison]::OrdinalIgnoreCase) -ge 0) {
+                            [void]$skippedMeasures.Add($key)
+                            $blockedTokens.Add("[$($measure.Name)]")
+                            $changed = $true
+                            break
+                        }
+                    }
+                }
+            }
+        }
     }
     foreach ($table in $Model.Tables) {
         if ($table.Name -ne 'XER Metrics' -and $table.Name -notlike 'Schedule Metric*') { continue }
         $escapedTable = $table.Name.Replace("'", "''")
         foreach ($measure in $table.Measures) {
             $key = "$($table.Name)[$($measure.Name)]"
+            if ($skippedMeasures.Contains($key)) { continue }
             $expression = if ($Overrides.ContainsKey($key)) { $Overrides[$key] } else { $measure.Expression }
             $escapedMeasure = $measure.Name.Replace(']', ']]')
             $lines.Add("MEASURE '$escapedTable'[$escapedMeasure] =`n$expression")
@@ -105,7 +145,6 @@ function Get-ScheduleMetricsDefinitions {
     }
     return ($lines -join "`n")
 }
-
 function Assert-ScheduleMetric {
     param([bool]$Condition, [string]$Message)
     if (-not $Condition) { throw "Validation failed: $Message" }

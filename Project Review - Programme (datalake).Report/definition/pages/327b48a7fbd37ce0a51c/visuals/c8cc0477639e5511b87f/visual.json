@@ -19,7 +19,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Score = average of the ten checks' points × 100. Each check earns 1 point at its target, falling evenly to 0 at its limit; all checks weigh the same.\nScore colour: green ≥95%, amber ≥75%, red <75%. Scroll for each metric's target, limit and scope.\nActivity lists: right-click an update in the counts table > Drill through > Missing Predecessor or Missing Successor.",
+                    "value": "Score = average of the ten checks' points × 100. Each check earns 1 point at its target, falling evenly to 0 at its limit; all checks weigh the same.\nScore colour: green ≥95%, amber ≥75%, red <75%. Scroll for each metric's target, limit and scope.\nActivity lists: right-click any metric cell or update in the failing-activities table > Drill through to inspect the matching activities.",
                     "textStyle": {
                       "fontSize": "15pt",
                       "fontFamily": "Segoe UI",

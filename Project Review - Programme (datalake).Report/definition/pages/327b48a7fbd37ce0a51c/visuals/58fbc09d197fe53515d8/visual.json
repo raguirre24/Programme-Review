@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "58fbc09d197fe53515d8",
   "position": {
     "x": 882.5,
@@ -39,12 +39,12 @@
                       "Entity": "XER Metrics"
                     }
                   },
-                  "Property": "Task_Count"
+                  "Property": "SM Missing Logic Count"
                 }
               },
-              "queryRef": "XER Metrics.Task_Count",
-              "nativeQueryRef": "Task_Count",
-              "displayName": "Rem. Activities"
+              "queryRef": "XER Metrics.SM Missing Logic Count",
+              "nativeQueryRef": "SM Missing Logic Count",
+              "displayName": "Missing logic"
             },
             {
               "field": {
@@ -54,12 +54,12 @@
                       "Entity": "XER Metrics"
                     }
                   },
-                  "Property": "Missing Predecessor"
+                  "Property": "SM Leads Activity Count"
                 }
               },
-              "queryRef": "XER Metrics.Missing Predecessor",
-              "nativeQueryRef": "Missing Predecessor",
-              "displayName": "Missing Pred."
+              "queryRef": "XER Metrics.SM Leads Activity Count",
+              "nativeQueryRef": "SM Leads Activity Count",
+              "displayName": "Leads <0d"
             },
             {
               "field": {
@@ -69,12 +69,27 @@
                       "Entity": "XER Metrics"
                     }
                   },
-                  "Property": "Missing Successor"
+                  "Property": "SM Lags Activity Count"
                 }
               },
-              "queryRef": "XER Metrics.Missing Successor",
-              "nativeQueryRef": "Missing Successor",
-              "displayName": "Missing Succ."
+              "queryRef": "XER Metrics.SM Lags Activity Count",
+              "nativeQueryRef": "SM Lags Activity Count",
+              "displayName": "Lags >5d"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Metrics"
+                    }
+                  },
+                  "Property": "SM Non-FS Activity Count"
+                }
+              },
+              "queryRef": "XER Metrics.SM Non-FS Activity Count",
+              "nativeQueryRef": "SM Non-FS Activity Count",
+              "displayName": "Non-FS"
             },
             {
               "field": {
@@ -87,9 +102,9 @@
                   "Property": "SM Restrictive Primary Count"
                 }
               },
-              "queryRef": "XER Metrics.Primary Constraints",
+              "queryRef": "XER Metrics.SM Restrictive Primary Count",
               "nativeQueryRef": "SM Restrictive Primary Count",
-              "displayName": "Restrictive primary"
+              "displayName": "Hard constraints"
             },
             {
               "field": {
@@ -99,27 +114,12 @@
                       "Entity": "XER Metrics"
                     }
                   },
-                  "Property": "Leads<0d"
+                  "Property": "Out Of Sequence Count"
                 }
               },
-              "queryRef": "XER Metrics.Leads<0d",
-              "nativeQueryRef": "Leads<0d",
-              "displayName": "Leads <0d"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "XER Metrics"
-                    }
-                  },
-                  "Property": "Lags>5d"
-                }
-              },
-              "queryRef": "XER Metrics.Lags>5d",
-              "nativeQueryRef": "Lags>5d",
-              "displayName": "Lags >5d"
+              "queryRef": "XER Metrics.Out Of Sequence Count",
+              "nativeQueryRef": "Out Of Sequence Count",
+              "displayName": "Out of seq."
             },
             {
               "field": {
@@ -144,27 +144,12 @@
                       "Entity": "XER Metrics"
                     }
                   },
-                  "Property": "Out Of Sequence Count"
-                }
-              },
-              "queryRef": "XER Metrics.Float >44",
-              "nativeQueryRef": "Out Of Sequence Count",
-              "displayName": "Out of seq."
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "XER Metrics"
-                    }
-                  },
                   "Property": "Dur >44"
                 }
               },
               "queryRef": "XER Metrics.Dur >44",
               "nativeQueryRef": "Dur >44",
-              "displayName": "Rem. duration >44d"
+              "displayName": "Dur. >44d"
             },
             {
               "field": {
@@ -174,12 +159,12 @@
                       "Entity": "XER Metrics"
                     }
                   },
-                  "Property": "SM Missing Logic %"
+                  "Property": "SM Invalid Dates Count"
                 }
               },
-              "queryRef": "XER Metrics.SM Missing Logic %",
-              "nativeQueryRef": "SM Missing Logic %",
-              "displayName": "Missing logic %"
+              "queryRef": "XER Metrics.SM Invalid Dates Count",
+              "nativeQueryRef": "SM Invalid Dates Count",
+              "displayName": "Invalid dates"
             },
             {
               "field": {
@@ -189,42 +174,12 @@
                       "Entity": "XER Metrics"
                     }
                   },
-                  "Property": "SM FS %"
+                  "Property": "SM Baseline Unmatched Activity Count"
                 }
               },
-              "queryRef": "XER Metrics.SM FS %",
-              "nativeQueryRef": "SM FS %",
-              "displayName": "FS %"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "XER Metrics"
-                    }
-                  },
-                  "Property": "SM Invalid Dates %"
-                }
-              },
-              "queryRef": "XER Metrics.SM Invalid Dates %",
-              "nativeQueryRef": "SM Invalid Dates %",
-              "displayName": "Invalid dates %"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Schedule Metric Detail"
-                    }
-                  },
-                  "Property": "SM Baseline Coverage %"
-                }
-              },
-              "queryRef": "Schedule Metric Detail.SM Baseline Coverage %",
-              "nativeQueryRef": "SM Baseline Coverage %",
-              "displayName": "Baseline coverage (project)"
+              "queryRef": "XER Metrics.SM Baseline Unmatched Activity Count",
+              "nativeQueryRef": "SM Baseline Unmatched Activity Count",
+              "displayName": "No baseline"
             }
           ]
         }
@@ -267,13 +222,13 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "84.4960481424808D"
+                  "Value": "78D"
                 }
               }
             }
           },
           "selector": {
-            "metadata": "XER Metrics.Task_Count"
+            "metadata": "01 XER_TASK.UpdateDate"
           }
         },
         {
@@ -281,13 +236,13 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "71.01517832419728D"
+                  "Value": "78D"
                 }
               }
             }
           },
           "selector": {
-            "metadata": "XER Metrics.Missing Predecessor"
+            "metadata": "XER Metrics.SM Missing Logic Count"
           }
         },
         {
@@ -295,13 +250,13 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "83.9594693531188D"
+                  "Value": "72D"
                 }
               }
             }
           },
           "selector": {
-            "metadata": "XER Metrics.Primary Constraints"
+            "metadata": "XER Metrics.SM Leads Activity Count"
           }
         },
         {
@@ -309,13 +264,13 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "64.93296865265604D"
+                  "Value": "72D"
                 }
               }
             }
           },
           "selector": {
-            "metadata": "XER Metrics.Leads<0d"
+            "metadata": "XER Metrics.SM Lags Activity Count"
           }
         },
         {
@@ -323,13 +278,13 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "68.78140594550219D"
+                  "Value": "70D"
                 }
               }
             }
           },
           "selector": {
-            "metadata": "XER Metrics.Lags>5d"
+            "metadata": "XER Metrics.SM Non-FS Activity Count"
           }
         },
         {
@@ -337,7 +292,35 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "68.36399749908026D"
+                  "Value": "82D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "XER Metrics.SM Restrictive Primary Count"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "78D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "XER Metrics.Out Of Sequence Count"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "70D"
                 }
               }
             }
@@ -351,21 +334,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "72.56139251093178D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "XER Metrics.Float >44"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "66.80400912295411D"
+                  "Value": "74D"
                 }
               }
             }
@@ -379,13 +348,13 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "69.31664127319793D"
+                  "Value": "84D"
                 }
               }
             }
           },
           "selector": {
-            "metadata": "XER Metrics.Missing Successor"
+            "metadata": "XER Metrics.SM Invalid Dates Count"
           }
         },
         {
@@ -393,13 +362,13 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "81D"
+                  "Value": "82D"
                 }
               }
             }
           },
           "selector": {
-            "metadata": "01 XER_TASK.UpdateDate"
+            "metadata": "XER Metrics.SM Baseline Unmatched Activity Count"
           }
         }
       ],
@@ -474,7 +443,14 @@
             "defaultColumnWidth": {
               "expr": {
                 "Literal": {
-                  "Value": "90D"
+                  "Value": "78D"
+                }
+              }
+            },
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
                 }
               }
             }
@@ -493,7 +469,7 @@
             }
           },
           "selector": {
-            "metadata": "XER Metrics.Task_Count"
+            "metadata": "XER Metrics.SM Missing Logic Count"
           }
         },
         {
@@ -507,7 +483,7 @@
             }
           },
           "selector": {
-            "metadata": "XER Metrics.Missing Predecessor"
+            "metadata": "XER Metrics.SM Leads Activity Count"
           }
         },
         {
@@ -521,7 +497,7 @@
             }
           },
           "selector": {
-            "metadata": "XER Metrics.Primary Constraints"
+            "metadata": "XER Metrics.SM Lags Activity Count"
           }
         },
         {
@@ -535,7 +511,7 @@
             }
           },
           "selector": {
-            "metadata": "XER Metrics.Leads<0d"
+            "metadata": "XER Metrics.SM Non-FS Activity Count"
           }
         },
         {
@@ -549,7 +525,7 @@
             }
           },
           "selector": {
-            "metadata": "XER Metrics.Lags>5d"
+            "metadata": "XER Metrics.SM Restrictive Primary Count"
           }
         },
         {
@@ -563,7 +539,7 @@
             }
           },
           "selector": {
-            "metadata": "XER Metrics.Missing Successor"
+            "metadata": "XER Metrics.Out Of Sequence Count"
           }
         },
         {
@@ -591,7 +567,7 @@
             }
           },
           "selector": {
-            "metadata": "XER Metrics.Float >44"
+            "metadata": "XER Metrics.Dur >44"
           }
         },
         {
@@ -605,7 +581,21 @@
             }
           },
           "selector": {
-            "metadata": "XER Metrics.Dur >44"
+            "metadata": "XER Metrics.SM Invalid Dates Count"
+          }
+        },
+        {
+          "properties": {
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "XER Metrics.SM Baseline Unmatched Activity Count"
           }
         }
       ],
