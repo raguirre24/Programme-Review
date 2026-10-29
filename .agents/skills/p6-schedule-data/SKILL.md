@@ -153,7 +153,7 @@ For per-table, per-field detail (TASK, TASKPRED, PROJECT, PROJWBS, CALENDAR incl
   7. Remaining duration above 44 working days (`<=5%` target, `10%` limit)
   8. Date integrity (`0%` target, `1%` limit; includes completed activities, milestones, and unscheduled work)
   9. Out-of-sequence progress (`0%` target, `10%` limit; replaces `HighFloat%` on the page)
-  10. Baseline coverage (`>=90%` target, `60%` limit; whole-project comparison against the latest `BL`-tagged snapshot on or before the selected update)
+  10. Baseline coverage (`>=90%` target, `60%` limit; whole-project comparison against the latest `BL`-tagged snapshot on or before the selected update, falling back to the earliest loaded update when no `BL` file exists)
 - **`PR_FS1` Alias**: `PR_FS1` is an explicit user-confirmed alias for `PR_FS` in `06 XER_PREDECESSOR[pred_type]`. Always treat `pred_type IN {"PR_FS", "PR_FS1"}` as Finish-to-Start.
 - **`Is Unscheduled` Filter Placement**: `Is Unscheduled = false` is applied as a page-level filter on 9 operational pages, and intentionally omitted from `Sched. Metrics` and its two hidden drill-through pages (`Missing Predecessor`, `Missing Successor`) so schedule health checks and their drill-through tables share the same activity population. `Home` has no page filter and shows every activity, including unscheduled ones.
 - **Validation**: Whenever editing schedule-health measures, `Schedule Metric Detail`, `Schedule Metric Guide`, or `Sched. Metrics`, run `python scripts/schedule_metrics/validate_static.py`.

@@ -1,4 +1,5 @@
 table '02 XER_PROJECT'
+	isHidden
 	lineageTag: 4174ebbd-f58e-48fd-9c0f-aa9cf47af1ac
 
 	column last_recalc_date

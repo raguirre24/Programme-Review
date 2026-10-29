@@ -1,4 +1,5 @@
 table 12_XER_RSRC
+	isHidden
 	lineageTag: e4336989-d4b0-42ee-88e3-6b90d448d516
 
 	column rsrc_id_key

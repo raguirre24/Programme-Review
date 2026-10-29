@@ -4,10 +4,10 @@
   "position": {
     "x": 644,
     "y": 728,
-    "z": 27000,
+    "z": 17000,
     "height": 340,
     "width": 1132,
-    "tabOrder": 27000
+    "tabOrder": 17000
   },
   "visual": {
     "visualType": "lineChart",
@@ -124,6 +124,30 @@
                   "Value": "'Possible start of the remaining work'"
                 }
               }
+            },
+            "start": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Measures"
+                    }
+                  },
+                  "Property": "CS Cliff Window Start"
+                }
+              }
+            },
+            "end": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Measures"
+                    }
+                  },
+                  "Property": "CS Cliff Window End"
+                }
+              }
             }
           }
         }
@@ -141,7 +165,7 @@
             "titleText": {
               "expr": {
                 "Literal": {
-                  "Value": "'Finish change vs scheduled'"
+                  "Value": "'Finish change vs scheduled (days)'"
                 }
               }
             }
@@ -168,6 +192,161 @@
           }
         }
       ],
+      "xAxisReferenceLine": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "displayName": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Scheduled start'"
+                }
+              }
+            },
+            "value": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Measures"
+                    }
+                  },
+                  "Property": "CS Cliff Start Date"
+                }
+              }
+            },
+            "lineColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#404040'"
+                    }
+                  }
+                }
+              }
+            },
+            "style": {
+              "expr": {
+                "Literal": {
+                  "Value": "'dashed'"
+                }
+              }
+            },
+            "dataLabelShow": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "dataLabelText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Name'"
+                }
+              }
+            },
+            "dataLabelColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "id": "1"
+          }
+        },
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "displayName": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Last start before shutdown'"
+                }
+              }
+            },
+            "value": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "XER Measures"
+                    }
+                  },
+                  "Property": "CS Cliff Edge Date"
+                }
+              }
+            },
+            "lineColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#C00000'"
+                    }
+                  }
+                }
+              }
+            },
+            "style": {
+              "expr": {
+                "Literal": {
+                  "Value": "'dashed'"
+                }
+              }
+            },
+            "dataLabelShow": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "dataLabelText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Name'"
+                }
+              }
+            },
+            "dataLabelColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#C00000'"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "id": "2"
+          }
+        }
+      ],
       "y1AxisReferenceLine": [
         {
           "properties": {
@@ -181,7 +360,7 @@
             "displayName": {
               "expr": {
                 "Literal": {
-                  "Value": "'Scheduled finish'"
+                  "Value": "'No finish change (0 d)'"
                 }
               }
             },
@@ -221,6 +400,18 @@
               "expr": {
                 "Literal": {
                   "Value": "'Name'"
+                }
+              }
+            },
+            "dataLabelColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0
+                    }
+                  }
                 }
               }
             }
@@ -357,5 +548,50 @@
     },
     "drillFilterOtherVisuals": true
   },
-  "isHidden": true
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "e1382d96ee9706e335a9",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Scenario Date"
+              }
+            },
+            "Property": "Date"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "04974d893094c9045738",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Measures"
+              }
+            },
+            "Property": "CS Cliff Finish Shift Days"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "2d65c8a9880c93d5037d",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Measures"
+              }
+            },
+            "Property": "CS Cliff Finish Date"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
+  }
 }

@@ -179,13 +179,16 @@ dates, execution index and longest-path share options were removed with their
 measures; `Schedule Metric Detail` now hosts a single Baseline coverage row.
 
 The baseline is the latest BL-tagged update on or before the selected update for
-the selected project and programme, so an approved re-baseline resets the
-comparison, with explicit baseline-filename provenance validation. Table 04 is itself a
-derived earliest-snapshot subset, so it is not an independent proof that a real
-baseline was supplied. An update-only history must not silently become a baseline.
+the selected project and programme (so an approved re-baseline resets the
+comparison), falling back to the earliest loaded snapshot on or before the
+selected update when no BL-tagged file exists (matching `04 XER_BASELINE`, so a
+single-update project without a `-BL` tag evaluates against itself rather than
+forcing 0%, and the tooltip discloses `(earliest update, no BL file)`). When a
+`-BL` filename tag is present, strict `-BL<digits>(-<A-Z>)?_` provenance
+validation applies; a malformed `-BL` tag or missing/ambiguous baseline snapshot
+leaves coverage at 0% with an explicit tooltip reason.
 Cross-snapshot matching uses activity code within project/programme, never
-snapshot-local task IDs. Missing baseline provenance leaves coverage at 0% with
-an explicit tooltip reason. Repeated or blank activity codes are disclosed in
+snapshot-local task IDs. Repeated or blank activity codes are disclosed in
 the tooltip, not penalised: the baseline side is reduced to one row per code,
 so each current activity counts at most once.
 
@@ -214,7 +217,9 @@ in neither list.
 The speculative Date alignment diagnostic has been removed at the user's
 request: its counts-table column, detail page, page-menu bookmarks, guide row
 and dedicated measures are retired. Missing Predecessor and Missing Successor
-remain the two activity detail routes. The guide now contains 14 rows. The
+remain the two activity detail routes. The guide contains 10 rows (the 10 scored
+checks, with colour-accented `Green (1 pt)`, `Amber (0–1 pt)` and `Red (0 pt)`
+band columns). The
 10 scored checks, Date integrity, all existing gauge/trend positions and
 the remaining table fields are preserved. The imported classification is not
 presented as a schedule-health metric; source queries remain unchanged.

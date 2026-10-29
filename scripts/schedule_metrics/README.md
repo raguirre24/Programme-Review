@@ -45,7 +45,8 @@ earlier cutoff, and checks missing-snapshot BLANK behaviour.
 The direct detail runner checks the baseline-coverage gauge against
 `SM Baseline Coverage %` and its history across all loaded snapshots and
 cutoffs, checks that each update compares with the latest BL-tagged file on or
-before it, plus provenance, partial/full coverage and repeated-code disclosure
+before it (or falls back to the earliest loaded update when no BL file exists),
+plus provenance, partial/full coverage and repeated-code disclosure
 fixtures (a repeated code is disclosed, not penalised). The cutoff
 runner uses the report's actual project dimension to test available, unavailable,
 earlier, multiple and absent explicit date selections. Because the Desktop
@@ -109,9 +110,10 @@ refresh validation. The loaded cache may be older than the source systems.
 ## In-report metric guide
 
 The **Metric guide** button on Sched. Metrics opens a scrollable reference table
-on the same page. Its 14 rows cover the overall score, the ten scored checks
-and three supporting counts.
-Each row gives a short definition, calculation, target, scope and key notes. **Close guide** restores the charts without
+on the same page. Its 10 rows cover the ten scored checks, with colour-accented
+`Green (1 pt)`, `Amber (0–1 pt)` and `Red (0 pt)` band columns alongside each
+metric's definition, calculation, scope and key notes (the overall score formula
+and bands sit in the header banner above the table). **Close guide** restores the charts without
 resetting project, update or WBS selections.
 
 The detail panel shows baseline coverage only; `Schedule Metric Detail` holds a
@@ -120,14 +122,14 @@ constant table and does not change any metric calculations or data sources.
 
 Edit `metric_guide.json` to maintain the definitions, then run
 `python scripts/schedule_metrics/build_metric_guide.py --content-only` to update
-the existing guide content without rebuilding visuals or bookmarks. The full
+the existing guide content and column bindings without rebuilding bookmarks or page layout. The full
 builder is reserved for explicitly approved guide creation or layout work.
 `metric_guide_manifest.json` records the existing guide IDs.
 Use `pwsh -File scripts/schedule_metrics/Validate-Guide.ps1` to check the loaded
-guide's 14 rows, content parity and disconnected state. If more than one report
+guide's 10 rows, content parity and disconnected state. If more than one report
 containing the guide is open, specify `-ServerAddress` and `-Catalog`.
 
-Native acceptance: open the guide, scroll through the baseline-coverage and
-supporting-count rows, close it, and confirm the selected project/update
+Native acceptance: open the guide, scroll through the ten scored-check rows
+(including baseline coverage), close it, and confirm the selected project/update
 and chart values remain intact. In Desktop edit mode, use Ctrl+click on buttons;
 report readers use a normal click.

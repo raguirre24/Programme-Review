@@ -1,4 +1,5 @@
 table '10 XER_CALENDARS'
+	isHidden
 	lineageTag: 94ce6dcf-9bfd-48f9-b715-089c33d5f05c
 
 	column clndr_id_key

@@ -1,4 +1,5 @@
 table 'Monthly Resource Distribution Baseline'
+	isHidden
 	lineageTag: fa1cf293-638c-4a26-8dd7-9b7d1bbee83f
 
 	column distribution_month

@@ -133,9 +133,10 @@ table 'Resource Scenario Measures'
 
 	/// Require one secured identity, exactly seven valid Standard rules and no undated unknown exception marker. Source defects are not repaired.
 	measure 'Scenario Calendar Validation' =
-			VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
-			VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
-			VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			VAR CalendarCount = CALCULATE(COUNTROWS('Scenario Calendar'), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR CalendarKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR ProjectKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[ProjectKey]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR CsvSource = CALCULATE(SELECTEDVALUE('Scenario Calendar'[IsCsvSource]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
 			VAR CalendarRows =
 			    CALCULATETABLE(
 			        '11 XER_CALENDAR_DETAILED',
@@ -162,9 +163,9 @@ table 'Resource Scenario Measures'
 			        NOT HASONEVALUE('Project_Dimension'[ProjectKey]), "Select one project.",
 			        NOT HASONEVALUE('CurrentDate'[UpdateDate]) || ISBLANK(SELECTEDVALUE('CurrentDate'[UpdateDate])),
 			            "Select one report update month.",
-			        COUNTROWS('Scenario Calendar') > 1 && HASONEVALUE('Scenario Calendar'[Calendar]),
+			        CalendarCount > 1 && CALCULATE(HASONEVALUE('Scenario Calendar'[Calendar]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay)),
 			            "This calendar name identifies more than one calendar in the selected project and update. Select a unique calendar name.",
-			        COUNTROWS('Scenario Calendar') <> 1 || ISBLANK(CalendarKey) || ISBLANK(ProjectKey) || ISBLANK(CsvSource),
+			        CalendarCount <> 1 || ISBLANK(CalendarKey) || ISBLANK(ProjectKey) || ISBLANK(CsvSource),
 			            "Select one calendar available for the selected project and update.",
 			        COUNTROWS(CalendarRows) = 0, "The selected calendar has no available table-11 rows in the current project scope.",
 			        SourceMonths <> 1, "The calendar identity contains conflicting source snapshots.",
@@ -180,9 +181,10 @@ table 'Resource Scenario Measures'
 
 	/// First invalid or duplicated dated replacement on or after the requested start. It limits proof but does not invalidate a prior proven completion.
 	measure 'Scenario First Unknown Date' =
-			VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
-			VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
-			VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			VAR CalendarCount = CALCULATE(COUNTROWS('Scenario Calendar'), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR CalendarKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR ProjectKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[ProjectKey]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR CsvSource = CALCULATE(SELECTEDVALUE('Scenario Calendar'[IsCsvSource]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
 			VAR CalendarRows =
 			    CALCULATETABLE(
 			        '11 XER_CALENDAR_DETAILED',
@@ -230,9 +232,10 @@ table 'Resource Scenario Measures'
 
 	/// Cumulative working hours from the selected start to the axis endpoint: seven weekday counts plus dated replacement deltas. Never iterates all prior dates.
 	measure 'Scenario Hours Through' =
-			VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
-			VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
-			VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			VAR CalendarCount = CALCULATE(COUNTROWS('Scenario Calendar'), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR CalendarKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR ProjectKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[ProjectKey]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR CsvSource = CALCULATE(SELECTEDVALUE('Scenario Calendar'[IsCsvSource]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
 			VAR CalendarRows =
 			    CALCULATETABLE(
 			        '11 XER_CALENDAR_DETAILED',
@@ -286,9 +289,10 @@ table 'Resource Scenario Measures'
 
 	/// Cumulative count of positive-hour working dates using weekday arithmetic and exception deltas; this is not hours divided by eight.
 	measure 'Scenario Working Days Through' =
-			VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
-			VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
-			VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			VAR CalendarCount = CALCULATE(COUNTROWS('Scenario Calendar'), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR CalendarKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR ProjectKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[ProjectKey]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR CsvSource = CALCULATE(SELECTEDVALUE('Scenario Calendar'[IsCsvSource]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
 			VAR CalendarRows =
 			    CALCULATETABLE(
 			        '11 XER_CALENDAR_DETAILED',
@@ -372,9 +376,10 @@ table 'Resource Scenario Measures'
 
 	/// Cumulative production capacity from seven weekday counts plus dated replacement deltas. Each daily capacity is capped before aggregation.
 	measure 'Scenario Capacity Through' =
-			VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
-			VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
-			VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			VAR CalendarCount = CALCULATE(COUNTROWS('Scenario Calendar'), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR CalendarKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR ProjectKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[ProjectKey]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR CsvSource = CALCULATE(SELECTEDVALUE('Scenario Calendar'[IsCsvSource]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
 			VAR CalendarRows =
 			    CALCULATETABLE(
 			        '11 XER_CALENDAR_DETAILED',
@@ -503,9 +508,9 @@ table 'Resource Scenario Measures'
 			    IF([Scenario Input Validation] <> "" || [Scenario Calendar Validation] <> "", BLANK(),
 			        VAR SafeThrough = [Scenario Safe Through]
 			        RETURN IF(ISBLANK(SafeThrough) || SafeThrough < StartDate || PeriodStart > SafeThrough, BLANK(),
-			            VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
-			            VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
-			            VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			            VAR CalendarKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			            VAR ProjectKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[ProjectKey]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			            VAR CsvSource = CALCULATE(SELECTEDVALUE('Scenario Calendar'[IsCsvSource]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
 			            VAR CalendarRows = CALCULATETABLE(
 			                '11 XER_CALENDAR_DETAILED',
 			                KEEPFILTERS(TREATAS({CalendarKey}, '11 XER_CALENDAR_DETAILED'[clndr_id_key])),
@@ -618,9 +623,9 @@ table 'Resource Scenario Measures'
 			VAR InputOk = [Scenario Input Validation] = "" && [Scenario Calendar Validation] = ""
 			    && NOT ISBLANK(Threshold) && Threshold > 0 && NOT ISBLANK(Rate) && Rate > 0
 			    && NOT ISBLANK(StartDate) && NOT ISBLANK(SafeThrough) && SafeThrough >= StartDate
-			VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
-			VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
-			VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			VAR CalendarKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR ProjectKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[ProjectKey]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR CsvSource = CALCULATE(SELECTEDVALUE('Scenario Calendar'[IsCsvSource]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
 			VAR CalendarRows = CALCULATETABLE(
 			    '11 XER_CALENDAR_DETAILED',
 			    KEEPFILTERS(TREATAS({ CalendarKey }, '11 XER_CALENDAR_DETAILED'[clndr_id_key])),
@@ -685,9 +690,9 @@ table 'Resource Scenario Measures'
 			VAR InputOk = [Scenario Input Validation] = "" && [Scenario Calendar Validation] = ""
 			    && NOT ISBLANK(Threshold) && Threshold > 0
 			    && NOT ISBLANK(StartDate) && NOT ISBLANK(SafeThrough) && SafeThrough >= StartDate
-			VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
-			VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
-			VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			VAR CalendarKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR ProjectKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[ProjectKey]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR CsvSource = CALCULATE(SELECTEDVALUE('Scenario Calendar'[IsCsvSource]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
 			VAR CalendarRows = CALCULATETABLE(
 			    '11 XER_CALENDAR_DETAILED',
 			    KEEPFILTERS(TREATAS({ CalendarKey }, '11 XER_CALENDAR_DETAILED'[clndr_id_key])),
@@ -758,9 +763,10 @@ table 'Resource Scenario Measures'
 
 	/// Selected date's resolved table-11 hours: dated replacement first, otherwise its validated weekday rule. Unknown days stay blank.
 	measure 'Scenario Daily Hours' =
-			VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
-			VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
-			VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			VAR CalendarCount = CALCULATE(COUNTROWS('Scenario Calendar'), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR CalendarKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR ProjectKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[ProjectKey]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR CsvSource = CALCULATE(SELECTEDVALUE('Scenario Calendar'[IsCsvSource]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
 			VAR CalendarRows =
 			    CALCULATETABLE(
 			        '11 XER_CALENDAR_DETAILED',
@@ -931,8 +937,10 @@ table 'Resource Scenario Measures'
 	measure 'Scenario Input Summary' =
 			VAR Quantity = [Scenario Selected Quantity]
 			VAR Unit = COALESCE([Scenario Selected Unit], "select unit")
-			VAR CalendarName = IF(COUNTROWS('Scenario Calendar') = 1,
-			    COALESCE(SELECTEDVALUE('Scenario Calendar'[Calendar Name]), "unnamed calendar"), "select one calendar")
+			VAR CalendarName = CALCULATE(
+			    IF(COUNTROWS('Scenario Calendar') = 1,
+			        COALESCE(SELECTEDVALUE('Scenario Calendar'[Calendar Name]), "unnamed calendar"), "select one calendar"),
+			    CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
 			VAR StartDate = [Scenario Selected Start]
 			VAR Rate = [Scenario Applied Rate]
 			VAR Basis = COALESCE([Scenario Selected Basis], "select basis")
@@ -968,9 +976,9 @@ table 'Resource Scenario Measures'
 			    IF([Scenario Input Validation] <> "" || [Scenario Calendar Validation] <> "", BLANK(),
 			        VAR SafeThrough = [Scenario Safe Through]
 			        RETURN IF(ISBLANK(SafeThrough) || SafeThrough < StartDate || PeriodStart > SafeThrough, BLANK(),
-			            VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
-			            VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
-			            VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			            VAR CalendarKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			            VAR ProjectKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[ProjectKey]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			            VAR CsvSource = CALCULATE(SELECTEDVALUE('Scenario Calendar'[IsCsvSource]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
 			            VAR CalendarRows = CALCULATETABLE(
 			                '11 XER_CALENDAR_DETAILED',
 			                KEEPFILTERS(TREATAS({CalendarKey}, '11 XER_CALENDAR_DETAILED'[clndr_id_key])),
@@ -1070,9 +1078,9 @@ table 'Resource Scenario Measures'
 			    IF([Scenario Input Validation] <> "" || [Scenario Calendar Validation] <> "", BLANK(),
 			        VAR SafeThrough = [Scenario Safe Through]
 			        RETURN IF(ISBLANK(SafeThrough) || SafeThrough < StartDate || PeriodStart > SafeThrough, BLANK(),
-			            VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
-			            VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
-			            VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			            VAR CalendarKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			            VAR ProjectKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[ProjectKey]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			            VAR CsvSource = CALCULATE(SELECTEDVALUE('Scenario Calendar'[IsCsvSource]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
 			            VAR CalendarRows = CALCULATETABLE(
 			                '11 XER_CALENDAR_DETAILED',
 			                KEEPFILTERS(TREATAS({CalendarKey}, '11 XER_CALENDAR_DETAILED'[clndr_id_key])),
@@ -1172,9 +1180,9 @@ table 'Resource Scenario Measures'
 			    IF([Scenario Input Validation] <> "" || [Scenario Calendar Validation] <> "", BLANK(),
 			        VAR SafeThrough = [Scenario Safe Through]
 			        RETURN IF(ISBLANK(SafeThrough) || SafeThrough < StartDate || PeriodStart > SafeThrough, BLANK(),
-			            VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
-			            VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
-			            VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			            VAR CalendarKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			            VAR ProjectKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[ProjectKey]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			            VAR CsvSource = CALCULATE(SELECTEDVALUE('Scenario Calendar'[IsCsvSource]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
 			            VAR CalendarRows = CALCULATETABLE(
 			                '11 XER_CALENDAR_DETAILED',
 			                KEEPFILTERS(TREATAS({CalendarKey}, '11 XER_CALENDAR_DETAILED'[clndr_id_key])),
@@ -1280,9 +1288,9 @@ table 'Resource Scenario Measures'
 			    IF([Scenario Input Validation] <> "" || [Scenario Calendar Validation] <> "", BLANK(),
 			        VAR SafeThrough = [Scenario Safe Through]
 			        RETURN IF(ISBLANK(SafeThrough) || SafeThrough < StartDate || PeriodStart > SafeThrough, BLANK(),
-			            VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
-			            VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
-			            VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			            VAR CalendarKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			            VAR ProjectKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[ProjectKey]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			            VAR CsvSource = CALCULATE(SELECTEDVALUE('Scenario Calendar'[IsCsvSource]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
 			            VAR CalendarRows = CALCULATETABLE(
 			                '11 XER_CALENDAR_DETAILED',
 			                KEEPFILTERS(TREATAS({CalendarKey}, '11 XER_CALENDAR_DETAILED'[clndr_id_key])),
@@ -1386,9 +1394,9 @@ table 'Resource Scenario Measures'
 			    IF([Scenario Input Validation] <> "" || [Scenario Calendar Validation] <> "", BLANK(),
 			        VAR SafeThrough = [Scenario Safe Through]
 			        RETURN IF(ISBLANK(SafeThrough) || SafeThrough < StartDate || PeriodStart > SafeThrough, BLANK(),
-			            VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
-			            VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
-			            VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			            VAR CalendarKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			            VAR ProjectKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[ProjectKey]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			            VAR CsvSource = CALCULATE(SELECTEDVALUE('Scenario Calendar'[IsCsvSource]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
 			            VAR CalendarRows = CALCULATETABLE(
 			                '11 XER_CALENDAR_DETAILED',
 			                KEEPFILTERS(TREATAS({CalendarKey}, '11 XER_CALENDAR_DETAILED'[clndr_id_key])),
@@ -1488,9 +1496,9 @@ table 'Resource Scenario Measures'
 			    IF([Scenario Input Validation] <> "" || [Scenario Calendar Validation] <> "", BLANK(),
 			        VAR SafeThrough = [Scenario Safe Through]
 			        RETURN IF(ISBLANK(SafeThrough) || SafeThrough < StartDate || PeriodStart > SafeThrough, BLANK(),
-			            VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
-			            VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
-			            VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			            VAR CalendarKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			            VAR ProjectKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[ProjectKey]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			            VAR CsvSource = CALCULATE(SELECTEDVALUE('Scenario Calendar'[IsCsvSource]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
 			            VAR CalendarRows = CALCULATETABLE(
 			                '11 XER_CALENDAR_DETAILED',
 			                KEEPFILTERS(TREATAS({CalendarKey}, '11 XER_CALENDAR_DETAILED'[clndr_id_key])),
@@ -1590,9 +1598,9 @@ table 'Resource Scenario Measures'
 			    IF([Scenario Input Validation] <> "" || [Scenario Calendar Validation] <> "", BLANK(),
 			        VAR SafeThrough = [Scenario Safe Through]
 			        RETURN IF(ISBLANK(SafeThrough) || SafeThrough < StartDate || PeriodStart > SafeThrough, BLANK(),
-			            VAR CalendarKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
-			            VAR ProjectKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
-			            VAR CsvSource = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			            VAR CalendarKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			            VAR ProjectKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[ProjectKey]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			            VAR CsvSource = CALCULATE(SELECTEDVALUE('Scenario Calendar'[IsCsvSource]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
 			            VAR CalendarRows = CALCULATETABLE(
 			                '11 XER_CALENDAR_DETAILED',
 			                KEEPFILTERS(TREATAS({CalendarKey}, '11 XER_CALENDAR_DETAILED'[clndr_id_key])),
@@ -1689,16 +1697,17 @@ table 'Resource Scenario Measures'
 
 	/// One calendar's complete scenario per shared week/month bucket. Multiple-calendar totals remain blank.
 	measure 'Comparison Chart Quantity' =
-			VAR CalendarKey = SELECTEDVALUE('Scenario Comparison Calendar'[clndr_id_key])
-			VAR ProjectKey = SELECTEDVALUE('Scenario Comparison Calendar'[ProjectKey])
-			VAR CsvSource = SELECTEDVALUE('Scenario Comparison Calendar'[IsCsvSource])
+			VAR CalendarKey = CALCULATE(SELECTEDVALUE('Scenario Comparison Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR ProjectKey = CALCULATE(SELECTEDVALUE('Scenario Comparison Calendar'[ProjectKey]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR CsvSource = CALCULATE(SELECTEDVALUE('Scenario Comparison Calendar'[IsCsvSource]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
 			VAR Eligible = HASONEVALUE('Project_Dimension'[ProjectKey])
 			    && HASONEVALUE('CurrentDate'[UpdateDate])
 			    && NOT ISBLANK(SELECTEDVALUE('CurrentDate'[UpdateDate]))
-			    && COUNTROWS('Scenario Comparison Calendar') = 1
+			    && CALCULATE(COUNTROWS('Scenario Comparison Calendar'), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay)) = 1
 			    && NOT ISBLANK(CalendarKey) && NOT ISBLANK(ProjectKey) && NOT ISBLANK(CsvSource)
 			RETURN IF(Eligible,
 			    CALCULATE([Scenario Chart Quantity],
+			    CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay),
 			    REMOVEFILTERS(
 			        'Scenario Calendar'[Calendar], 'Scenario Calendar'[Calendar Name],
 			        'Scenario Calendar'[ProjectKey], 'Scenario Calendar'[clndr_id_key],
@@ -1713,16 +1722,17 @@ table 'Resource Scenario Measures'
 
 	/// Required production calculated independently for the current comparison calendar and shared target date.
 	measure 'Comparison Required Rate' =
-			VAR CalendarKey = SELECTEDVALUE('Scenario Comparison Calendar'[clndr_id_key])
-			VAR ProjectKey = SELECTEDVALUE('Scenario Comparison Calendar'[ProjectKey])
-			VAR CsvSource = SELECTEDVALUE('Scenario Comparison Calendar'[IsCsvSource])
+			VAR CalendarKey = CALCULATE(SELECTEDVALUE('Scenario Comparison Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR ProjectKey = CALCULATE(SELECTEDVALUE('Scenario Comparison Calendar'[ProjectKey]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR CsvSource = CALCULATE(SELECTEDVALUE('Scenario Comparison Calendar'[IsCsvSource]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
 			VAR Eligible = HASONEVALUE('Project_Dimension'[ProjectKey])
 			    && HASONEVALUE('CurrentDate'[UpdateDate])
 			    && NOT ISBLANK(SELECTEDVALUE('CurrentDate'[UpdateDate]))
-			    && COUNTROWS('Scenario Comparison Calendar') = 1
+			    && CALCULATE(COUNTROWS('Scenario Comparison Calendar'), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay)) = 1
 			    && NOT ISBLANK(CalendarKey) && NOT ISBLANK(ProjectKey) && NOT ISBLANK(CsvSource)
 			RETURN IF(Eligible,
 			    CALCULATE([Scenario Required Rate],
+			    CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay),
 			    REMOVEFILTERS(
 			        'Scenario Calendar'[Calendar], 'Scenario Calendar'[Calendar Name],
 			        'Scenario Calendar'[ProjectKey], 'Scenario Calendar'[clndr_id_key],
@@ -1737,16 +1747,17 @@ table 'Resource Scenario Measures'
 
 	/// Quantity remaining at the shared target for this calendar only; scenarios are never added together.
 	measure 'Comparison Target Remaining' =
-			VAR CalendarKey = SELECTEDVALUE('Scenario Comparison Calendar'[clndr_id_key])
-			VAR ProjectKey = SELECTEDVALUE('Scenario Comparison Calendar'[ProjectKey])
-			VAR CsvSource = SELECTEDVALUE('Scenario Comparison Calendar'[IsCsvSource])
+			VAR CalendarKey = CALCULATE(SELECTEDVALUE('Scenario Comparison Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR ProjectKey = CALCULATE(SELECTEDVALUE('Scenario Comparison Calendar'[ProjectKey]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR CsvSource = CALCULATE(SELECTEDVALUE('Scenario Comparison Calendar'[IsCsvSource]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
 			VAR Eligible = HASONEVALUE('Project_Dimension'[ProjectKey])
 			    && HASONEVALUE('CurrentDate'[UpdateDate])
 			    && NOT ISBLANK(SELECTEDVALUE('CurrentDate'[UpdateDate]))
-			    && COUNTROWS('Scenario Comparison Calendar') = 1
+			    && CALCULATE(COUNTROWS('Scenario Comparison Calendar'), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay)) = 1
 			    && NOT ISBLANK(CalendarKey) && NOT ISBLANK(ProjectKey) && NOT ISBLANK(CsvSource)
 			RETURN IF(Eligible,
 			    CALCULATE([Scenario Target Remaining],
+			    CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay),
 			    REMOVEFILTERS(
 			        'Scenario Calendar'[Calendar], 'Scenario Calendar'[Calendar Name],
 			        'Scenario Calendar'[ProjectKey], 'Scenario Calendar'[clndr_id_key],
@@ -1761,16 +1772,17 @@ table 'Resource Scenario Measures'
 
 	/// Scalar completion inspection; requires a selected Inspection Calendar row, never just a single selector choice.
 	measure 'Comparison Finish Date' =
-			VAR CalendarKey = SELECTEDVALUE('Scenario Comparison Calendar'[clndr_id_key])
-			VAR ProjectKey = SELECTEDVALUE('Scenario Comparison Calendar'[ProjectKey])
-			VAR CsvSource = SELECTEDVALUE('Scenario Comparison Calendar'[IsCsvSource])
+			VAR CalendarKey = CALCULATE(SELECTEDVALUE('Scenario Comparison Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR ProjectKey = CALCULATE(SELECTEDVALUE('Scenario Comparison Calendar'[ProjectKey]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR CsvSource = CALCULATE(SELECTEDVALUE('Scenario Comparison Calendar'[IsCsvSource]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
 			VAR Eligible = HASONEVALUE('Project_Dimension'[ProjectKey])
 			    && HASONEVALUE('CurrentDate'[UpdateDate])
 			    && NOT ISBLANK(SELECTEDVALUE('CurrentDate'[UpdateDate]))
-			    && COUNTROWS('Scenario Comparison Calendar') = 1
+			    && CALCULATE(COUNTROWS('Scenario Comparison Calendar'), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay)) = 1
 			    && NOT ISBLANK(CalendarKey) && NOT ISBLANK(ProjectKey) && NOT ISBLANK(CsvSource)
 			RETURN IF(Eligible && ISFILTERED('Scenario Comparison Calendar'[Inspection Calendar]),
 			    CALCULATE([Scenario Finish Date],
+			    CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay),
 			    REMOVEFILTERS(
 			        'Scenario Calendar'[Calendar], 'Scenario Calendar'[Calendar Name],
 			        'Scenario Calendar'[ProjectKey], 'Scenario Calendar'[clndr_id_key],
@@ -1785,13 +1797,13 @@ table 'Resource Scenario Measures'
 
 	/// Bounded per-calendar input, source and target validation. Never evaluates the finish solver or full scenario status.
 	measure 'Comparison Validation' =
-			VAR CalendarKey = SELECTEDVALUE('Scenario Comparison Calendar'[clndr_id_key])
-			VAR ProjectKey = SELECTEDVALUE('Scenario Comparison Calendar'[ProjectKey])
-			VAR CsvSource = SELECTEDVALUE('Scenario Comparison Calendar'[IsCsvSource])
+			VAR CalendarKey = CALCULATE(SELECTEDVALUE('Scenario Comparison Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR ProjectKey = CALCULATE(SELECTEDVALUE('Scenario Comparison Calendar'[ProjectKey]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR CsvSource = CALCULATE(SELECTEDVALUE('Scenario Comparison Calendar'[IsCsvSource]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
 			VAR Eligible = HASONEVALUE('Project_Dimension'[ProjectKey])
 			    && HASONEVALUE('CurrentDate'[UpdateDate])
 			    && NOT ISBLANK(SELECTEDVALUE('CurrentDate'[UpdateDate]))
-			    && COUNTROWS('Scenario Comparison Calendar') = 1
+			    && CALCULATE(COUNTROWS('Scenario Comparison Calendar'), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay)) = 1
 			    && NOT ISBLANK(CalendarKey) && NOT ISBLANK(ProjectKey) && NOT ISBLANK(CsvSource)
 			RETURN IF(Eligible,
 			    CALCULATE(
@@ -1825,7 +1837,8 @@ table 'Resource Scenario Measures'
 			    Mode = "Meet target date" && LimitEnabled && RequiredRate > DailyLimit,
 			        "Target is infeasible at the daily limit.",
 			    "Ready; select this row for completion details."),
-			REMOVEFILTERS(
+			CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay),
+			    REMOVEFILTERS(
 			        'Scenario Calendar'[Calendar], 'Scenario Calendar'[Calendar Name],
 			        'Scenario Calendar'[ProjectKey], 'Scenario Calendar'[clndr_id_key],
 			        'Scenario Calendar'[IsCsvSource], 'Scenario Calendar'[MonthUpdate],
@@ -1839,14 +1852,14 @@ table 'Resource Scenario Measures'
 
 	/// Full scalar status only after explicit results-row inspection; selector-only choices do not run the finish solver.
 	measure 'Comparison Status' =
-			VAR CalendarKey = SELECTEDVALUE('Scenario Comparison Calendar'[clndr_id_key])
-			VAR ProjectKey = SELECTEDVALUE('Scenario Comparison Calendar'[ProjectKey])
-			VAR CsvSource = SELECTEDVALUE('Scenario Comparison Calendar'[IsCsvSource])
-			VAR InspectedLabel = SELECTEDVALUE('Scenario Comparison Calendar'[Inspection Calendar])
+			VAR CalendarKey = CALCULATE(SELECTEDVALUE('Scenario Comparison Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR ProjectKey = CALCULATE(SELECTEDVALUE('Scenario Comparison Calendar'[ProjectKey]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR CsvSource = CALCULATE(SELECTEDVALUE('Scenario Comparison Calendar'[IsCsvSource]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR InspectedLabel = CALCULATE(SELECTEDVALUE('Scenario Comparison Calendar'[Inspection Calendar]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
 			VAR Eligible = HASONEVALUE('Project_Dimension'[ProjectKey])
 			    && HASONEVALUE('CurrentDate'[UpdateDate])
 			    && NOT ISBLANK(SELECTEDVALUE('CurrentDate'[UpdateDate]))
-			    && COUNTROWS('Scenario Comparison Calendar') = 1
+			    && CALCULATE(COUNTROWS('Scenario Comparison Calendar'), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay)) = 1
 			    && NOT ISBLANK(CalendarKey) && NOT ISBLANK(ProjectKey) && NOT ISBLANK(CsvSource)
 			RETURN IF(
 			    Eligible && ISFILTERED('Scenario Comparison Calendar'[Inspection Calendar]),
@@ -1885,6 +1898,7 @@ table 'Resource Scenario Measures'
 			                ),
 			            COALESCE(InspectedLabel, SELECTEDVALUE('Scenario Calendar'[Calendar Name]), "Selected calendar") & " | " & BaseStatus
 			        ),
+			    CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay),
 			    REMOVEFILTERS(
 			        'Scenario Calendar'[Calendar], 'Scenario Calendar'[Calendar Name],
 			        'Scenario Calendar'[ProjectKey], 'Scenario Calendar'[clndr_id_key],
@@ -1904,8 +1918,10 @@ table 'Resource Scenario Measures'
 			VAR ValidUpdate = HASONEVALUE('CurrentDate'[UpdateDate])
 			    && NOT ISBLANK(SELECTEDVALUE('CurrentDate'[UpdateDate]))
 			VAR SelectedCount = CALCULATE(COUNTROWS('Scenario Comparison Calendar'),
+			    CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay),
 			    REMOVEFILTERS('Scenario Comparison Calendar'[Inspection Calendar]))
 			VAR AvailableCount = CALCULATE(COUNTROWS('Scenario Comparison Calendar'),
+			    CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay),
 			    REMOVEFILTERS('Scenario Comparison Calendar'[Calendar],
 			        'Scenario Comparison Calendar'[Inspection Calendar]))
 			RETURN SWITCH(TRUE(),
@@ -1920,13 +1936,13 @@ table 'Resource Scenario Measures'
 
 	/// Full project, calendar key and source for one eligible comparison chart point; empty periods, invalid and ambiguous selections remain blank.
 	measure 'Comparison Calendar Identity' =
-			VAR CalendarKey = SELECTEDVALUE('Scenario Comparison Calendar'[clndr_id_key])
-			VAR ProjectKey = SELECTEDVALUE('Scenario Comparison Calendar'[ProjectKey])
-			VAR CsvSource = SELECTEDVALUE('Scenario Comparison Calendar'[IsCsvSource])
+			VAR CalendarKey = CALCULATE(SELECTEDVALUE('Scenario Comparison Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR ProjectKey = CALCULATE(SELECTEDVALUE('Scenario Comparison Calendar'[ProjectKey]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
+			VAR CsvSource = CALCULATE(SELECTEDVALUE('Scenario Comparison Calendar'[IsCsvSource]), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay))
 			VAR Eligible = HASONEVALUE('Project_Dimension'[ProjectKey])
 			    && HASONEVALUE('CurrentDate'[UpdateDate])
 			    && NOT ISBLANK(SELECTEDVALUE('CurrentDate'[UpdateDate]))
-			    && COUNTROWS('Scenario Comparison Calendar') = 1
+			    && CALCULATE(COUNTROWS('Scenario Comparison Calendar'), CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay)) = 1
 			    && NOT ISBLANK(CalendarKey) && NOT ISBLANK(ProjectKey) && NOT ISBLANK(CsvSource)
 			VAR UnsupportedMode = [Scenario Selected Mode] = "Meet target date"
 			    && [Scenario Selected Basis] = "Per working hour"

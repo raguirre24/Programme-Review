@@ -1,4 +1,5 @@
 table '07 XER_ACTVTYPE'
+	isHidden
 	lineageTag: a20352d7-2126-4b85-a8c7-2d39fe44994f
 
 	column actv_code_type_id_key

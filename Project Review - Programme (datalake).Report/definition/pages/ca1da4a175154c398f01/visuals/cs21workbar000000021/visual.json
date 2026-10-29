@@ -4,10 +4,10 @@
   "position": {
     "x": 12,
     "y": 226,
-    "z": 18000,
+    "z": 13000,
     "height": 420,
     "width": 620,
-    "tabOrder": 18000
+    "tabOrder": 13000
   },
   "visual": {
     "visualType": "barChart",
@@ -172,7 +172,7 @@
                     "Entity": "XER Measures"
                   }
                 },
-                "Property": "CS Activity Calendar Delay Days"
+                "Property": "CA Activity Stretch Ratio"
               }
             },
             "direction": "Descending"
@@ -318,7 +318,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Work vs wait · top 15 activities by calendar-driven delay'"
+                  "Value": "'Work vs wait · top 15 delayed activities by stretch ratio'"
                 }
               }
             },
@@ -454,6 +454,11 @@
                         "Name": "t",
                         "Entity": "01 XER_TASK",
                         "Type": 0
+                      },
+                      {
+                        "Name": "x",
+                        "Entity": "XER Measures",
+                        "Type": 0
                       }
                     ],
                     "Select": [
@@ -473,18 +478,13 @@
                       {
                         "Direction": 2,
                         "Expression": {
-                          "Aggregation": {
+                          "Measure": {
                             "Expression": {
-                              "Column": {
-                                "Expression": {
-                                  "SourceRef": {
-                                    "Source": "t"
-                                  }
-                                },
-                                "Property": "Calendar Delay Days"
+                              "SourceRef": {
+                                "Source": "x"
                               }
                             },
-                            "Function": 4
+                            "Property": "CA Activity Stretch Ratio"
                           }
                         }
                       }
@@ -577,8 +577,133 @@
           ]
         },
         "howCreated": "User"
+      },
+      {
+        "name": "6ee7bcc77234e2384ecc",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "01 XER_TASK"
+              }
+            },
+            "Property": "task_code"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "b8b0bc401702e3a36457",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Measures"
+              }
+            },
+            "Property": "CA Activity Remaining Working Days"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "c588b92edb6c173061a6",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Measures"
+              }
+            },
+            "Property": "CA Activity Standard Non-Working Days"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "59971ed7bd680263019e",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Measures"
+              }
+            },
+            "Property": "CA Activity Exception Blackout Days"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "08ebe32eae1d2d3d321e",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Measures"
+              }
+            },
+            "Property": "CS Activity Calendar Delay Days"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "375314f0a34d23aca0ac",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Measures"
+              }
+            },
+            "Property": "CA Activity Name"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "a16d05a6110723090309",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Measures"
+              }
+            },
+            "Property": "CA Activity Calendar"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "c9d26f503e3ecc40e59e",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Measures"
+              }
+            },
+            "Property": "CA Activity Stretch Ratio"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "ba57513d9ed6b0b38c05",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Measures"
+              }
+            },
+            "Property": "CA Activity Total Float"
+          }
+        },
+        "type": "Advanced"
       }
     ]
-  },
-  "isHidden": true
+  }
 }

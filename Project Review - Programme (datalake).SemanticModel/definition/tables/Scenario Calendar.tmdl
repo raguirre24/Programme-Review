@@ -40,6 +40,7 @@ table 'Scenario Calendar'
 
 	column MonthUpdate
 		dataType: dateTime
+		isHidden
 		formatString: dd-MM-yyyy
 		lineageTag: ec13d69a-3ac0-5f8a-88ed-114749c3bc96
 		summarizeBy: none

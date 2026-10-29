@@ -867,7 +867,190 @@
           ]
         },
         "howCreated": "User"
+      },
+      {
+        "name": "e89fa09d49ce099b0803",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "01 XER_TASK"
+              }
+            },
+            "Property": "task_code"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "df698364708c372bea61",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Measures"
+              }
+            },
+            "Property": "CA Activity Name"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "3edda6594cb70a264bba",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Measures"
+              }
+            },
+            "Property": "CA Activity Calendar"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "8b442c763834d63c1282",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Measures"
+              }
+            },
+            "Property": "CA Activity Start"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "2c713b318cac3b9bade3",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Measures"
+              }
+            },
+            "Property": "CA Activity Finish"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "c7ac9a4201cb83e028b4",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Measures"
+              }
+            },
+            "Property": "CA Activity Total Float"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "7f976f721779c0e077c2",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Measures"
+              }
+            },
+            "Property": "CA Activity Remaining Working Days"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "3f4ae57140d1ceeeba2b",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Measures"
+              }
+            },
+            "Property": "CA Activity Remaining Elapsed Days"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "294f7aa9c01edaa044d7",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Measures"
+              }
+            },
+            "Property": "CA Activity Standard Non-Working Days"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "c379d3af2d097924c6db",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Measures"
+              }
+            },
+            "Property": "CA Activity Exception Blackout Days"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "5d69811065903d4054ee",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Measures"
+              }
+            },
+            "Property": "CA Activity Non-Working Stretch Days"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "9d20108a2b0b90706db9",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Measures"
+              }
+            },
+            "Property": "CA Activity Stretch Ratio"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "4c72b91562dbe4a5c3e5",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "XER Measures"
+              }
+            },
+            "Property": "CA Activity Stretch Diagnosis"
+          }
+        },
+        "type": "Advanced"
       }
     ]
-  }
+  },
+  "isHidden": true
 }

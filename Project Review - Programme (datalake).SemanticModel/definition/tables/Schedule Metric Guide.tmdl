@@ -24,17 +24,29 @@ table 'Schedule Metric Guide'
 		summarizeBy: none
 		sourceColumn: [Meaning and calculation]
 
-	column 'Target / score'
-		dataType: string
-		lineageTag: b2a95d02-1049-56cc-8490-290ac834fced
-		summarizeBy: none
-		sourceColumn: [Target / score]
-
 	column 'Scope and notes'
 		dataType: string
 		lineageTag: 45161ea0-9e69-5598-a5ec-52f21cc8bea6
 		summarizeBy: none
 		sourceColumn: [Scope and notes]
+
+	column 'Green (1 pt)'
+		dataType: string
+		lineageTag: 6aa2c30e-b134-5d8e-9f6d-79ae9058369b
+		summarizeBy: none
+		sourceColumn: [Green (1 pt)]
+
+	column 'Amber (0–1 pt)'
+		dataType: string
+		lineageTag: c67bfc90-2fff-542e-b050-99d2b3508c39
+		summarizeBy: none
+		sourceColumn: [Amber (0–1 pt)]
+
+	column 'Red (0 pt)'
+		dataType: string
+		lineageTag: 2a435c57-a825-5834-b2e1-af5ae6cda7d3
+		summarizeBy: none
+		sourceColumn: [Red (0 pt)]
 
 	partition 'Schedule Metric Guide' = calculated
 		mode: import
@@ -43,23 +55,21 @@ table 'Schedule Metric Guide'
 				    "Order", INTEGER,
 				    "Metric", STRING,
 				    "Meaning and calculation", STRING,
-				    "Target / score", STRING,
+				    "Green (1 pt)", STRING,
+				    "Amber (0–1 pt)", STRING,
+				    "Red (0 pt)", STRING,
 				    "Scope and notes", STRING,
 				    {
-				        { 1, "Schedule health score", "0–100% summary of the ten scored checks, each with equal weight. Calculation: Each check earns 1 point at its target, falling evenly to 0 at its limit. Score = average points × 100. Example: missing logic at 6% (target 5%, limit 10%) earns 0.8.", "Green ≥95%; amber 75% to <95%; red <75%. One check at its limit cannot turn the score red on its own; check colours show where to look.", "Missing logic, leads, lags over 5 days, FS relationships, restrictive constraints, out-of-sequence progress, negative total float, long remaining duration, date integrity and baseline coverage. A check with nothing to count shows 0%: a full point, except FS and baseline coverage, which score 0. Partial inputs still score, with a coverage warning. 100% means every check is at target, not assured delivery." },
-				        { 2, "Missing logic", "Activities with no predecessor, no successor, or neither. Calculation: Activities missing either end / core activities. Each activity counted once.", "Green ≤5%; amber >5% to <10%; red ≥10%. 1 point at ≤5%, falling evenly to 0 at 10%.", "Core activities: incomplete task- and resource-dependent activities. Excludes milestones, LOE, WBS summaries and completed work. Pred. and Succ. counts overlap. Drill through from the counts table to list activities." },
-				        { 3, "Leads", "Relationships with negative lag. Calculation: Relationships with lag < 0 / relationships with a known lag.", "Green 0%; amber >0% to <1%; red ≥1%. 1 point at 0%, falling evenly to 0 at 1%.", "Links into incomplete discrete successors. Counts relationships, not activities. Missing lag excluded." },
-				        { 4, "Lags over 5 days", "Relationships with a waiting period of more than 5 working days. Calculation: Relationships with lag > 5 days / relationships with a known lag.", "Green ≤5%; amber >5% to <10%; red ≥10%. 1 point at ≤5%, falling evenly to 0 at 10%.", "Links into incomplete discrete successors. Short lags (5 days or less), mostly on SS/FF overlap pairs, are not counted; overlap use is assessed through FS relationships. Missing lag excluded." },
-				        { 5, "Finish-to-start relationships", "Share of relationships that are finish-to-start. Calculation: FS relationships (incl. PR_FS1) / relationships with a recognised FS, SS, FF or SF type.", "Green ≥90%; amber >80% to <90%; red ≤80%. 1 point at ≥90%, falling evenly to 0 at 80%.", "Links into incomplete discrete successors. Unknown types excluded. FS and FS1 rows are not deduplicated." },
-				        { 6, "Restrictive primary constraints", "Activities whose primary constraint fixes or caps their dates. Calculation: Activities with a restrictive primary constraint / core activities with a known or blank constraint.", "Green ≤5%; amber >5% to <10%; red ≥10%. 1 point at ≤5%, falling evenly to 0 at 10%.", "Core activities; primary constraint only. Counted: CS_MSO, CS_MSOB, CS_MEO, CS_MEOB, CS_MANDSTART, CS_MANDFIN. Unknown codes excluded." },
-				        { 7, "Out-of-sequence progress", "In-progress activities that started before their logic allowed. Calculation: In-progress activities with an FS predecessor not finished, or an SS predecessor not started / in-progress activities.", "Green 0%; amber >0% to <10%; red ≥10%. 1 point at 0%, falling evenly to 0 at 10%.", "In-progress task- and resource-dependent activities. LOE and WBS predecessors are ignored. Shows 0% until work is in progress. Fix by progressing the predecessor or correcting the logic." },
-				        { 8, "Negative total float", "Activities forecast to miss a required date (total float below zero). Calculation: Activities with total float < 0 / core activities with known float.", "Green 0%; amber >0% to <5%; red ≥5%. 1 point at 0%, falling evenly to 0 at 5%.", "Core activities. Any negative float counts, however small. Missing float excluded." },
-				        { 9, "Long remaining duration", "Activities with more than 44 working days still to perform. Calculation: Activities with remaining duration > 44d / core activities with known, non-negative remaining duration.", "Green ≤5%; amber >5% to <10%; red ≥10%. 1 point at ≤5%, falling evenly to 0 at 10%.", "Core activities. Uses remaining, not original, duration. Exactly 44d is not flagged." },
-				        { 10, "Date integrity (invalid or missing dates)", "Activities with a missing required date, or a date inconsistent with the data date or status. Calculation: Activities and milestones failing any date rule / all eligible activities and milestones. Each counted once.", "Green 0%; amber >0% to <1%; red ≥1%. 1 point at 0%, falling evenly to 0 at 1%.", "Task- and resource-dependent activities and milestones in all statuses. Excludes LOE and WBS summaries. Rules: future actuals, overdue forecasts, actual finish vs status, missing data date, unknown status, finish before start. Milestones need only their relevant date. Missing dates count as defects." },
-				        { 11, "Baseline coverage", "Share of current activities that have a dated baseline match. Calculation: Current activities matched to a baseline activity with a Finish / all current activities.", "Green ≥90%; amber >60% to <90%; red ≤60%. 1 point at ≥90%, falling evenly to 0 at 60%.", "Whole project, all statuses, against the latest BL baseline file up to the selected update. Not changed by WBS selection. 0% if there is no valid BL file; repeated codes are disclosed, not penalised. New or renumbered activities lower it until the next re-baseline." },
-				        { 12, "Remaining activities", "Number of incomplete activities in the snapshot (the core population). Calculation: Count of Not Started / In Progress task- and resource-dependent activities.", "No pass/fail threshold Supports the activity checks; no separate score weight.", "Includes unscheduled work. Excludes milestones, completed work, LOE and WBS summaries. Do not sum across updates." },
-				        { 13, "Missing predecessors", "Activities with no incoming relationship. Calculation: Count of core activities with No Predecessor = 1.", "Assessed through the combined Missing logic check Included through combined Missing logic only; not scored separately.", "Core activities. Part of Missing logic; overlaps Missing successors, so do not add them. Drill through > Missing Predecessor." },
-				        { 14, "Missing successors", "Activities with no outgoing relationship. Calculation: Count of core activities with No Successor = 1.", "Assessed through the combined Missing logic check Included through combined Missing logic only; not scored separately.", "Core activities. Part of Missing logic; overlaps Missing predecessors, so do not add them. Drill through > Missing Successor." }
+				        { 1, "Missing logic", "Activities with no predecessor, no successor, or neither. Calculation: Activities missing either end / core activities. Each activity counted once.", "≤5%", ">5% to <10%", "≥10%", "Core activities: incomplete task- and resource-dependent activities. Excludes milestones, LOE, WBS summaries and completed work. Pred. and Succ. counts overlap. Drill through from the counts table to list activities." },
+				        { 2, "Leads", "Relationships with negative lag. Calculation: Relationships with lag < 0 / relationships with a known lag.", "0%", ">0% to <1%", "≥1%", "Links into incomplete discrete successors. Counts relationships, not activities. Missing lag excluded." },
+				        { 3, "Lags over 5 days", "Relationships with a waiting period of more than 5 working days. Calculation: Relationships with lag > 5 days / relationships with a known lag.", "≤5%", ">5% to <10%", "≥10%", "Links into incomplete discrete successors. Short lags (5 days or less), mostly on SS/FF overlap pairs, are not counted; overlap use is assessed through FS relationships. Missing lag excluded." },
+				        { 4, "Finish-to-start relationships", "Share of relationships that are finish-to-start. Calculation: FS relationships (incl. PR_FS1) / relationships with a recognised FS, SS, FF or SF type.", "≥90%", ">80% to <90%", "≤80%", "Links into incomplete discrete successors. Unknown types excluded. FS and FS1 rows are not deduplicated." },
+				        { 5, "Restrictive primary constraints", "Activities whose primary constraint fixes or caps their dates. Calculation: Activities with a restrictive primary constraint / core activities with a known or blank constraint.", "≤5%", ">5% to <10%", "≥10%", "Core activities; primary constraint only. Counted: CS_MSO, CS_MSOB, CS_MEO, CS_MEOB, CS_MANDSTART, CS_MANDFIN. Unknown codes excluded." },
+				        { 6, "Out-of-sequence progress", "In-progress activities that started before their logic allowed. Calculation: In-progress activities with an FS predecessor not finished, or an SS predecessor not started / in-progress activities.", "0%", ">0% to <10%", "≥10%", "In-progress task- and resource-dependent activities. LOE and WBS predecessors are ignored. Shows 0% until work is in progress. Fix by progressing the predecessor or correcting the logic." },
+				        { 7, "Negative total float", "Activities forecast to miss a required date (total float below zero). Calculation: Activities with total float < 0 / core activities with known float.", "0%", ">0% to <5%", "≥5%", "Core activities. Any negative float counts, however small. Missing float excluded." },
+				        { 8, "Long remaining duration", "Activities with more than 44 working days still to perform. Calculation: Activities with remaining duration > 44d / core activities with known, non-negative remaining duration.", "≤5%", ">5% to <10%", "≥10%", "Core activities. Uses remaining, not original, duration. Exactly 44d is not flagged." },
+				        { 9, "Date integrity (invalid or missing dates)", "Activities with a missing required date, or a date inconsistent with the data date or status. Calculation: Activities and milestones failing any date rule / all eligible activities and milestones. Each counted once.", "0%", ">0% to <1%", "≥1%", "Task- and resource-dependent activities and milestones in all statuses. Excludes LOE and WBS summaries. Rules: future actuals, overdue forecasts, actual finish vs status, missing data date, unknown status, finish before start. Milestones need only their relevant date. Missing dates count as defects." },
+				        { 10, "Baseline coverage", "Share of current activities that have a dated baseline match. Calculation: Current activities matched to a baseline activity with a Finish / all current activities.", "≥90%", ">60% to <90%", "≤60%", "Whole project, all statuses, against the latest BL baseline file up to the selected update (or the earliest loaded update when no BL file exists). Not changed by WBS selection. 0% if a BL filename tag is invalid; repeated codes are disclosed, not penalised. New or renumbered activities lower coverage until the next re-baseline." }
 				    }
 				)
 

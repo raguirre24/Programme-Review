@@ -4,7 +4,7 @@
   "name": "109523331af7b8688e3a",
   "options": {
     "targetVisualNames": [
-      "d0f42d6f6db694358c27"
+      "e473b21d676622c41e5d"
     ],
     "suppressActiveSection": true,
     "suppressDisplay": true
@@ -370,7 +370,56 @@
             "filters": {
               "byExpr": [
                 {
-                  "name": "532b1f2c6f083fc842d1",
+                  "name": "2b8fd361170eb8c3c582",
+                  "type": "Advanced",
+                  "filter": {
+                    "Version": 2,
+                    "From": [
+                      {
+                        "Name": "x",
+                        "Entity": "XER Measures",
+                        "Type": 0
+                      }
+                    ],
+                    "Where": [
+                      {
+                        "Condition": {
+                          "Comparison": {
+                            "ComparisonKind": 0,
+                            "Left": {
+                              "Measure": {
+                                "Expression": {
+                                  "SourceRef": {
+                                    "Source": "x"
+                                  }
+                                },
+                                "Property": "Update Has Visible Tasks"
+                              }
+                            },
+                            "Right": {
+                              "Literal": {
+                                "Value": "1L"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "expression": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "XER Measures"
+                        }
+                      },
+                      "Property": "Update Has Visible Tasks"
+                    }
+                  },
+                  "howCreated": 1
+                },
+                {
+                  "name": "04c2c549332ba367753c",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -500,7 +549,7 @@
             "filters": {
               "byExpr": [
                 {
-                  "name": "667b9c738fd42a741869",
+                  "name": "63b1ea79d0798820b896",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -515,7 +564,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "aeb4f3bc8731d9a556d6",
+                  "name": "da33fd236d2dde552340",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -530,7 +579,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "e03040ee8fc4823baaa9",
+                  "name": "2e633a059ee363aa0d7a",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -545,7 +594,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "9fb57276aa2c44960c96",
+                  "name": "88e9b167cd353dd57b0c",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -560,7 +609,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "6d57e5c50d308ab4106b",
+                  "name": "7346ed30517a90d3920a",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -816,7 +865,7 @@
             "filters": {
               "byExpr": [
                 {
-                  "name": "33451b66ca9f49132d55",
+                  "name": "75b8d7272bad0e9b0521",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -831,7 +880,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "4d91ef9215ad2b61db26",
+                  "name": "0c0db37fcc480dc94a5a",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -908,7 +957,7 @@
               "expanded": {
                 "expr": {
                   "Literal": {
-                    "Value": "false"
+                    "Value": "true"
                   }
                 }
               },

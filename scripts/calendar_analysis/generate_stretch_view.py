@@ -70,6 +70,12 @@ DESKTOP_MANAGED_KEYS = {"$schema", "z", "tabOrder", "active", "stateManagement",
 def desktop_neutral(value):
     if isinstance(value, dict):
         result = {key: desktop_neutral(item) for key, item in value.items() if key not in DESKTOP_MANAGED_KEYS}
+        if "filterConfig" in result and isinstance(result["filterConfig"], dict):
+            active_filters = [f for f in result["filterConfig"].get("filters", []) if isinstance(f, dict) and "filter" in f]
+            if active_filters:
+                result["filterConfig"] = {**result["filterConfig"], "filters": active_filters}
+            else:
+                result.pop("filterConfig", None)
         for entry in result.get("vega", []) if isinstance(result.get("vega"), list) else []:
             entry.get("properties", {}).pop("version", None)
         return result
@@ -119,7 +125,7 @@ def column_ref(source: str, name: str) -> dict:
 
 
 def top_delay_filter(name: str) -> dict:
-    """Top 15 activities by MAX('01 XER_TASK'[Calendar Delay Days]): a column aggregate, never a measure filter."""
+    """Top 15 activities by 'XER Measures'[CA Activity Stretch Ratio]."""
     return {
         "name": name,
         "field": field(TASK, "task_code"),
@@ -129,10 +135,13 @@ def top_delay_filter(name: str) -> dict:
             "From": [
                 {"Name": "subquery", "Expression": {"Subquery": {"Query": {
                     "Version": 2,
-                    "From": [{"Name": "t", "Entity": TASK, "Type": 0}],
+                    "From": [
+                        {"Name": "t", "Entity": TASK, "Type": 0},
+                        {"Name": "x", "Entity": XER, "Type": 0},
+                    ],
                     "Select": [{**column_ref("t", "task_code"), "Name": "field"}],
-                    "OrderBy": [{"Direction": 2, "Expression": {"Aggregation": {
-                        "Expression": column_ref("t", "Calendar Delay Days"), "Function": 4}}}],
+                    "OrderBy": [{"Direction": 2, "Expression": {"Measure": {
+                        "Expression": {"SourceRef": {"Source": "x"}}, "Property": "CA Activity Stretch Ratio"}}}],
                     "Top": 15,
                 }}}, "Type": 2},
                 {"Name": "t", "Entity": TASK, "Type": 0},
@@ -206,7 +215,7 @@ def work_vs_wait_bars() -> dict:
                 measure("CA Activity Total Float", "Total float (working days)"),
             ]},
         },
-        "sortDefinition": {"sort": [{"field": field(XER, "CS Activity Calendar Delay Days", "Measure"), "direction": "Descending"}]},
+        "sortDefinition": {"sort": [{"field": field(XER, "CA Activity Stretch Ratio", "Measure"), "direction": "Descending"}]},
     }
     visual["objects"] = {
         "dataPoint": series_colours({name: hex_value for name, (_, hex_value) in stack.items()}),
@@ -215,7 +224,7 @@ def work_vs_wait_bars() -> dict:
         "valueAxis": props(showAxisTitle=expr("true"), titleText=string("Remaining calendar days")),
         "categoryAxis": props(showAxisTitle=expr("false")),
     }
-    titles(item, "Work vs wait · top 15 activities by calendar-driven delay",
+    titles(item, "Work vs wait · top 15 delayed activities by stretch ratio",
            "Remaining calendar days split into working days, weekends and holidays or shutdowns")
     item["filterConfig"] = {"filters": [top_delay_filter("cs21topdelayfilter01"), delayed_filter("cs21delayedfilter002")]}
     return item
@@ -229,6 +238,7 @@ def deneb_timeline() -> dict:
         measure("CA Activity Name", "Name"),
         measure("CA Activity Calendar", "Calendar"),
         measure("CS Activity Calendar Delay Days", "Delay Days"),
+        measure("CA Activity Stretch Ratio", "Stretch Ratio"),
         measure("CS Activity Timeline Dates", "Timeline Dates"),
         measure("CS Activity Shutdown Bands", "Shutdown Bands"),
         measure("CA Activity Total Float", "Total Float"),
@@ -306,11 +316,25 @@ def cliff_chart() -> dict:
     }}
     visual["objects"] = {
         "lineStyles": props(lineChartType=string("step"), showMarker=expr("false"), strokeWidth=expr("3D")),
-        "categoryAxis": props(axisType=string("Scalar"), showAxisTitle=expr("true"), titleText=string("Possible start of the remaining work")),
-        "valueAxis": props(showAxisTitle=expr("true"), titleText=string("Finish change vs scheduled")),
+        # The X axis is zoomed to the relevant window (measures evaluated once per visual) inside the kernel's data range.
+        "categoryAxis": props(axisType=string("Scalar"), showAxisTitle=expr("true"), titleText=string("Possible start of the remaining work"),
+                              start={"expr": {"Measure": field(XER, "CS Cliff Window Start", "Measure")["Measure"]}},
+                              end={"expr": {"Measure": field(XER, "CS Cliff Window End", "Measure")["Measure"]}}),
+        "valueAxis": props(showAxisTitle=expr("true"), titleText=string("Finish change vs scheduled (days)")),
         "dataPoint": series_colours({"CS Cliff Finish Shift Days": "#C00000"}),
+        "xAxisReferenceLine": [{"properties": {
+            "show": expr("true"), "displayName": string("Scheduled start"),
+            "value": {"expr": {"Measure": field(XER, "CS Cliff Start Date", "Measure")["Measure"]}},
+            "lineColor": hex_colour("#404040"), "style": string("dashed"),
+            "dataLabelShow": expr("true"), "dataLabelText": string("Name"),
+        }, "selector": {"id": "1"}}, {"properties": {
+            "show": expr("true"), "displayName": string("Last start before shutdown"),
+            "value": {"expr": {"Measure": field(XER, "CS Cliff Edge Date", "Measure")["Measure"]}},
+            "lineColor": hex_colour("#C00000"), "style": string("dashed"),
+            "dataLabelShow": expr("true"), "dataLabelText": string("Name"), "dataLabelColor": hex_colour("#C00000"),
+        }, "selector": {"id": "2"}}],
         "y1AxisReferenceLine": [{"properties": {
-            "show": expr("true"), "displayName": string("Scheduled finish"), "value": expr("0D"),
+            "show": expr("true"), "displayName": string("No finish change (0 d)"), "value": expr("0D"),
             "lineColor": hex_colour("#404040"), "style": string("dashed"),
             "dataLabelShow": expr("true"), "dataLabelText": string("Name"),
         }, "selector": {"id": "1"}}],
@@ -394,6 +418,11 @@ def build() -> dict[Path, dict | None]:
         navigator["position"] = existing[NAVIGATOR]["position"]
 
     outputs: dict[Path, dict | None] = {}
+    for name in CALENDARS_VIEW:
+        if existing[name].get("isHidden"):
+            restored = copy.deepcopy(existing[name])
+            restored.pop("isHidden", None)
+            outputs[Path("pages") / PAGE / "visuals" / name / "visual.json"] = restored
     for item in [*delay.values(), navigator]:
         outputs[Path("pages") / PAGE / "visuals" / item["name"] / "visual.json"] = item
     page = read(page_dir / "page.json")

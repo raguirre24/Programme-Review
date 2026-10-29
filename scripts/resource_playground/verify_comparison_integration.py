@@ -59,11 +59,12 @@ def validate_model(tables):
     for name in base.COMPARISON_MEASURES - {"Comparison Selection Summary", "Comparison Finish Date Display"}:
         expression = measures[name]
         compact = canonical(expression)
-        assert "COUNTROWS('Scenario Comparison Calendar')=1" in compact, (name, "one independent identity required")
+        assert "COUNTROWS('Scenario Comparison Calendar'),CROSSFILTER('01 XER_TASK'[UpdateDate],'CurrentDate'[UpdateDate],OneWay))=1" in compact, (name, "one independent identity required with RLS join-tree guard")
         assert "HASONEVALUE('Project_Dimension'[ProjectKey])" in compact and "HASONEVALUE('CurrentDate'[UpdateDate])" in compact
         if name != "Comparison Calendar Identity":
             for column in ["ProjectKey", "clndr_id_key", "IsCsvSource"]:
                 assert "'Scenario Calendar'[" + column + "]" in expression, (name, column)
+            assert "CROSSFILTER('01 XER_TASK'[UpdateDate],'CurrentDate'[UpdateDate],OneWay),REMOVEFILTERS('Scenario Calendar'[Calendar]" in compact, (name, "must disable 01 XER_TASK -> CurrentDate cross-filter when overriding Scenario Calendar")
         assert not re.search(r"REMOVEFILTERS\s*\(\s*'(Project_Dimension|CurrentDate)'", expression, re.I), (name, "must preserve secured scope")
         assert not re.search(r"\bSUMX?\s*\(", base.dax_code(expression), re.I), (name, "alternatives must not be added")
     for name in ["Comparison Finish Date", "Comparison Status"]:
@@ -72,7 +73,7 @@ def validate_model(tables):
     bounded = measures["Comparison Validation"]
     assert "[Scenario Finish Date]" not in bounded and "[Scenario Status]" not in bounded
     summary = measures["Comparison Selection Summary"]
-    assert "COUNTROWS('Scenario Comparison Calendar')" in canonical(summary)
+    assert "COUNTROWS('Scenario Comparison Calendar'),CROSSFILTER('01 XER_TASK'[UpdateDate],'CurrentDate'[UpdateDate],OneWay)" in canonical(summary)
     assert "[Inspection Calendar]" in summary and "[Calendar]" in summary
     identity = canonical(measures["Comparison Calendar Identity"])
     assert canonical("NOT ISBLANK([Comparison Chart Quantity])") in identity, "Text tooltips must not add invalid series or empty chart periods."
@@ -80,7 +81,7 @@ def validate_model(tables):
     for expression in ['[Scenario Selected Mode] = "Meet target date"', '[Scenario Selected Basis] = "Per working hour"', '[Scenario Selected Limit Mode] = "Daily limit"']:
         assert canonical(expression) in identity
     for column in ["ProjectKey", "clndr_id_key", "IsCsvSource"]:
-        assert "SELECTEDVALUE('Scenario Comparison Calendar'[" + column + "])" in identity
+        assert "CALCULATE(SELECTEDVALUE('Scenario Comparison Calendar'[" + column + "]),CROSSFILTER('01 XER_TASK'[UpdateDate],'CurrentDate'[UpdateDate],OneWay))" in identity
     return {"measures": 66, "preserved_base_measures": 57, "comparison_measures": 9}
 
 

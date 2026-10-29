@@ -20,6 +20,7 @@ table Logos
 
 	column Name
 		dataType: string
+		isHidden
 		lineageTag: c98c80ba-5609-4a7b-9224-6a30b35d7140
 		summarizeBy: none
 		sourceColumn: Name
@@ -28,6 +29,7 @@ table Logos
 
 	column LogoCode
 		dataType: string
+		isHidden
 		lineageTag: f26951eb-269c-4172-beed-3b57eac67417
 		summarizeBy: none
 		sourceColumn: LogoCode

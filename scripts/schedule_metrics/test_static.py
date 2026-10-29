@@ -18,8 +18,15 @@ class ReviewPolicyTests(unittest.TestCase):
     def test_rejects_removed_unscored_guide_row(self):
         changed = copy.deepcopy(self.guide)
         changed["rows"].append({"id": "date_alignment_count", "scored": False})
-        with self.assertRaisesRegex(AssertionError, "14 rows"):
+        with self.assertRaisesRegex(AssertionError, "10 rows"):
             validate_guide_policy(changed)
+
+    def test_rejects_missing_band_column_text(self):
+        for band_field in ("green", "amber", "red"):
+            changed = copy.deepcopy(self.guide)
+            next(row for row in changed["rows"] if row["id"] == "missing_logic")[band_field] = "  "
+            with self.assertRaisesRegex(AssertionError, f"missing_logic\\.{band_field}"):
+                validate_guide_policy(changed)
 
     def test_rejects_scored_check_dropped_from_score(self):
         for check in ("out_of_sequence", "baseline_coverage"):

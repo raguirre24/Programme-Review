@@ -51,11 +51,39 @@
                       "Entity": "Schedule Metric Guide"
                     }
                   },
-                  "Property": "Target / score"
+                  "Property": "Green (1 pt)"
                 }
               },
-              "queryRef": "Schedule Metric Guide.Target / score",
-              "nativeQueryRef": "Target / score"
+              "queryRef": "Schedule Metric Guide.Green (1 pt)",
+              "nativeQueryRef": "Green (1 pt)"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Schedule Metric Guide"
+                    }
+                  },
+                  "Property": "Amber (0–1 pt)"
+                }
+              },
+              "queryRef": "Schedule Metric Guide.Amber (0–1 pt)",
+              "nativeQueryRef": "Amber (0–1 pt)"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Schedule Metric Guide"
+                    }
+                  },
+                  "Property": "Red (0 pt)"
+                }
+              },
+              "queryRef": "Schedule Metric Guide.Red (0 pt)",
+              "nativeQueryRef": "Red (0 pt)"
             },
             {
               "field": {
@@ -270,7 +298,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "275D"
+                  "Value": "240D"
                 }
               }
             }
@@ -284,7 +312,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "650D"
+                  "Value": "510D"
                 }
               }
             }
@@ -298,13 +326,13 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "210D"
+                  "Value": "160D"
                 }
               }
             }
           },
           "selector": {
-            "metadata": "Schedule Metric Guide.Target / score"
+            "metadata": "Schedule Metric Guide.Green (1 pt)"
           }
         },
         {
@@ -312,13 +340,193 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "675D"
+                  "Value": "185D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Schedule Metric Guide.Amber (0–1 pt)"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "160D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Schedule Metric Guide.Red (0 pt)"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "555D"
                 }
               }
             }
           },
           "selector": {
             "metadata": "Schedule Metric Guide.Scope and notes"
+          }
+        }
+      ],
+      "columnFormatting": [
+        {
+          "properties": {
+            "styleHeader": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "styleValues": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "styleTotal": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "backColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#F1F5EA'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#4B6110'"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Schedule Metric Guide.Green (1 pt)"
+          }
+        },
+        {
+          "properties": {
+            "styleHeader": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "styleValues": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "styleTotal": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "backColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FCF5E8'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#8A5600'"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Schedule Metric Guide.Amber (0–1 pt)"
+          }
+        },
+        {
+          "properties": {
+            "styleHeader": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "styleValues": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "styleTotal": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "backColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FBEFF1'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#6F0516'"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Schedule Metric Guide.Red (0 pt)"
           }
         }
       ]

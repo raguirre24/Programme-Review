@@ -6,7 +6,8 @@
 L1  'Finish Without Exceptions' and 'Calendar Delay Days' equal the Python closed form on every incomplete Activity row.
 L3  KPI cards for the project update (page filters, float unrestricted) match --expect (>30 d, >90 d, worst activity, max days).
 L4  Top-15 rows: timeline dates and shutdown bands equal the oracle built from the loaded calendar rows.
-L5  Cliff chart: every non-blank axis date equals the day-by-day oracle, the window is complete, and the callout text matches.
+L5  Cliff chart: every non-blank axis date equals the day-by-day oracle and the data range is complete; the shutdown, edge
+    (last start that beats it) and X-axis window equal the Python mirrors, and the callout text matches.
 L6  Query timings (warnings only): bars/Deneb and scatter under 1 s, cliff under 2 s.
 L7  At most one incomplete row per (project, update, task_code).
 --define injects the TMDL text as query-scoped DEFINE COLUMN/MEASURE (for a model opened before these changes);
@@ -31,7 +32,8 @@ sys.dont_write_bytecode = True
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from validate_calendar_stretch import (  # noqa: E402
-    callout_searches, exception_free_finish, need_days, nth_working_day, shutdown_bands,
+    callout_searches, cliff_shutdown, cliff_window, edge_date, exception_free_finish, need_days, nth_working_day,
+    shutdown_bands,
 )
 
 DAY = timedelta(days=1)
@@ -58,7 +60,7 @@ def iso(expression: str) -> str:
 def queries(project: str, update: date, task: str | None) -> dict[str, str]:
     scope = filters(project, update)
     delayed = "FILTER(ALL('01 XER_TASK'[Calendar Delay Days]), '01 XER_TASK'[Calendar Delay Days] > 0)"
-    top = (f"CALCULATETABLE(TOPN(15, VALUES('01 XER_TASK'[task_code]), CALCULATE(MAX('01 XER_TASK'[Calendar Delay Days])), DESC), "
+    top = (f"CALCULATETABLE(TOPN(15, VALUES('01 XER_TASK'[task_code]), [CA Activity Stretch Ratio], DESC), "
            f"{scope}, {delayed})")
     cliff_task = f'TREATAS({{"{task}"}}, \'01 XER_TASK\'[task_code]), ' if task else ""
     return {
@@ -84,7 +86,7 @@ def queries(project: str, update: date, task: str | None) -> dict[str, str]:
             "work", [CA Activity Remaining Working Days], "weekends", [CA Activity Standard Non-Working Days],
             "holidays", [CA Activity Exception Blackout Days], "delay", [CS Activity Calendar Delay Days])""",
         "deneb": f"""EVALUATE SUMMARIZECOLUMNS('01 XER_TASK'[task_code], TREATAS({top}, '01 XER_TASK'[task_code]), {scope}, {delayed},
-            "name", [CA Activity Name], "delay", [CS Activity Calendar Delay Days],
+            "name", [CA Activity Name], "delay", [CS Activity Calendar Delay Days], "ratio", [CA Activity Stretch Ratio],
             "timeline", [CS Activity Timeline Dates], "bands", [CS Activity Shutdown Bands])""",
         "scatter": f"""EVALUATE SUMMARIZECOLUMNS('01 XER_TASK'[task_code], '01 XER_TASK'[CriticalStatus], {scope}, {delayed},
             "x", [CA Activity Remaining Working Days], "y", [CS Activity Calendar Delay Days])""",
@@ -93,6 +95,8 @@ def queries(project: str, update: date, task: str | None) -> dict[str, str]:
                 "finish", {iso("[CS Cliff Finish Date]")}, "shift", [CS Cliff Finish Shift Days]),
             "start", FORMAT('Scenario Date'[Date], "yyyy-MM-dd"), "finish", [finish], "shift", [shift])""",
         "callout": f"""EVALUATE CALCULATETABLE(ROW("task", [CS Cliff Task Code], "title", [CS Cliff Title], "callout", [CS Cliff Callout],
+            "shutdown", [CS Cliff Shutdown], "edge", {iso("[CS Cliff Edge Date]")},
+            "window_start", {iso("[CS Cliff Window Start]")}, "window_end", {iso("[CS Cliff Window End]")},
             "axis_end", FORMAT(CALCULATE(MAX('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date')), "yyyy-MM-dd")), {cliff_task}{scope})""",
     }
 
@@ -114,7 +118,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--project", required=True)
     parser.add_argument("--update", required=True, type=date.fromisoformat)
-    parser.add_argument("--task", help="Activity for the cliff checks (default: the page's default, the largest delay)")
+    parser.add_argument("--task", help="Activity for the cliff checks (default: the page's default, the largest stretch ratio)")
     parser.add_argument("--expect", help="delayed>30:delayed>90:worst task:max delay days, e.g. 26:3:N-C-3131-CPT-1320:168")
     parser.add_argument("--define", action="store_true", help="Inject TMDL definitions as query-scoped DEFINE statements")
     parser.add_argument("--server")
@@ -196,7 +200,7 @@ def main() -> int:
     if len(data["bars"]) != len(data["deneb"]) or not data["bars"]:
         failures.append(f"L4 bars returned {len(data['bars'])} rows and Deneb {len(data['deneb'])}")
 
-    # L5 cliff chart and callout.
+    # L5 cliff chart, shutdown, edge, window and callout.
     callout = data["callout"][0]
     task = arguments.task or callout["task"]
     source = rows_by_code.get((project_code, arguments.update.isoformat(), task))
@@ -207,13 +211,13 @@ def main() -> int:
         start, data_date, finish = parse(source["start"]), parse(source["data_date"]), parse(source["finish"])
         effective, need, mask = max(start, data_date), need_days(float(source["remaining"])), source["mask"]
         axis_end = date.fromisoformat(callout["axis_end"])
-        window_start, window_end = max(data_date, effective - 60 * DAY), effective + 60 * DAY
+        range_start, range_end = max(data_date, effective - 60 * DAY), effective + 60 * DAY
         calendar = exceptions[source["key"]]
         finish_of = lambda day: nth_working_day(day, need, mask, calendar, axis_end)  # noqa: E731
         points = {row["start"]: row for row in data["cliff"] if row["finish"]}
-        expected_points = (window_end - window_start).days + 1
+        expected_points = (range_end - range_start).days + 1
         if len(points) != expected_points:
-            failures.append(f"L5 cliff returned {len(points)} points, expected {expected_points} ({window_start}..{window_end})")
+            failures.append(f"L5 cliff returned {len(points)} points, expected {expected_points} ({range_start}..{range_end})")
         for day_text, row in sorted(points.items()):
             day = date.fromisoformat(day_text)
             expected = finish_of(day)
@@ -221,19 +225,39 @@ def main() -> int:
                 failures.append(f"L5 start {day}: finish {row['finish']} shift {row['shift']}, expected {expected}")
                 break
             cliff_points += 1
-        model_finish = finish_of(effective)
-        recovery, slip = callout_searches(effective, window_start, window_end, finish_of)
+
+        shutdown = cliff_shutdown(effective, finish, mask, calendar)
+        edge = edge_date(data_date, shutdown[0] - DAY, need, mask, calendar) if shutdown else None
+        window_start, window_end = cliff_window(data_date, effective, edge, shutdown[0] if shutdown else None)
+        expected_shutdown = f"{shutdown[0].isoformat()}|{shutdown[1].isoformat()}" if shutdown else ""
+        actual = (callout["shutdown"], parse(callout["edge"]), parse(callout["window_start"]), parse(callout["window_end"]))
+        if actual != (expected_shutdown, edge, window_start, window_end):
+            failures.append(f"L5 shutdown/edge/window {actual} != {(expected_shutdown, edge, window_start, window_end)}")
+
         text = lambda day: day.strftime("%d-%b-%y")  # noqa: E731
-        parts = []
-        if recovery:
-            parts.append(f"Start by {text(recovery)} ({(effective - recovery).days:,} days earlier) → finish {text(finish_of(recovery))}, "
-                         f"{(model_finish - finish_of(recovery)).days:,} days sooner.")
-        if slip:
-            parts.append(f"If it starts after {text(slip - DAY)}, the finish jumps to {text(finish_of(slip))} (+{(finish_of(slip) - model_finish).days:,} days).")
-        body = " ".join(parts) if parts else "no calendar cliff within 60 days of its remaining start; the finish moves day for day."
-        caveat = "" if model_finish == finish else (f" The calendar model finishes on {text(model_finish)}, not the P6 finish {text(finish)}"
-                                                      " (resource calendar or part-day duration).")
-        expected_callout = f"{task}: {body}{caveat}"
+        in_window = lambda day: finish_of(day) if day is not None and window_start <= day <= window_end else None  # noqa: E731
+        model_finish = finish_of(effective)
+        if shutdown:
+            band = f"{text(shutdown[0])} → {text(shutdown[1])}"
+            edge_finish = in_window(edge)
+            if edge and edge_finish:
+                expected_callout = (f"Start by {text(edge)} ({(effective - edge).days:,} d earlier) → finish {text(edge_finish)} "
+                                    f"(-{(model_finish - edge_finish).days:,} d) · beats {band} shutdown")
+            elif edge:
+                expected_callout = f"Start by {text(edge)} ({(effective - edge).days:,} d earlier) · beats {band} shutdown"
+            elif window_start == data_date and in_window(window_start) and in_window(window_start) >= shutdown[0]:
+                expected_callout = f"Cannot beat {band} shutdown from data date ({text(data_date)})"
+            else:
+                expected_callout = f"Cannot beat {band} shutdown within window"
+        else:
+            recovery, slip = callout_searches(effective, window_start, window_end, finish_of)
+            parts = []
+            if recovery:
+                parts.append(f"Start by {text(recovery)} ({(effective - recovery).days:,} d earlier) → finish {text(finish_of(recovery))} "
+                             f"(-{(model_finish - finish_of(recovery)).days:,} d)")
+            if slip:
+                parts.append(f"Start after {text(slip - DAY)} → finish {text(finish_of(slip))} (+{(finish_of(slip) - model_finish).days:,} d)")
+            expected_callout = " · ".join(parts) if parts else "No calendar cliff around scheduled start · finish moves day for day"
         if callout["callout"] != expected_callout:
             failures.append(f"L5 callout {callout['callout']!r} != {expected_callout!r}")
 

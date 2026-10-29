@@ -57,18 +57,25 @@ table 'Schedule Metric Detail'
 		displayFolder: Detail diagnostics\Internal
 		lineageTag: 8d89784c-670f-449b-98d9-0994d6263f3c
 
-	/// Latest BL-tagged snapshot on or before the selected update, so an approved re-baseline resets baseline coverage. Provenance is validated separately.
+	/// Latest BL-tagged snapshot on or before the selected update (so an approved re-baseline resets baseline coverage), falling back to the earliest loaded snapshot when no BL file exists.
 	measure 'SM Detail Baseline Date' =
 			VAR ProjectCode = [SM Detail Project]
 			VAR ProgrammeType = [SM Detail Programme]
 			VAR SnapshotDate = [SM Detail Snapshot]
-			RETURN CALCULATE(MAX('01 XER_TASK'[UpdateDate]),
+			VAR BlBaselineDate = CALCULATE(MAX('01 XER_TASK'[UpdateDate]),
 			    REMOVEFILTERS(),
 			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
 			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
 			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
 			    '01 XER_TASK'[UpdateDate] <= SnapshotDate,
 			    CONTAINSSTRING('01 XER_TASK'[filename], "-BL"))
+			VAR EarliestBaselineDate = CALCULATE(MIN('01 XER_TASK'[UpdateDate]),
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    '01 XER_TASK'[UpdateDate] <= SnapshotDate)
+			RETURN COALESCE(BlBaselineDate, EarliestBaselineDate)
 		formatString: dd mmm yyyy
 		isHidden
 		displayFolder: Detail diagnostics\Internal
@@ -90,7 +97,8 @@ table 'Schedule Metric Detail'
 		lineageTag: fbb2cf11-9203-4695-b702-d77c549d82ad
 
 	measure 'SM Detail Baseline Provenance' =
-			VAR FileName = UPPER([SM Detail Baseline File])
+			VAR BaselineFile = [SM Detail Baseline File]
+			VAR FileName = UPPER(BaselineFile)
 			VAR TagStart = SEARCH("-BL", FileName, 1, 0)
 			VAR TagEnd = IF(TagStart > 0, SEARCH("_", FileName, TagStart + 3, 0), 0)
 			VAR Tag = IF(TagEnd > TagStart + 3, MID(FileName, TagStart + 3, TagEnd - TagStart - 3), "")
@@ -99,7 +107,8 @@ table 'Schedule Metric Detail'
 			VAR Revision = IF(RevisionAt > 0, MID(Tag, RevisionAt + 1, LEN(Tag)), "")
 			VAR BaselineNumber = IFERROR(VALUE(NumberText), BLANK())
 			VAR DigitsOnly = LEN(NumberText) > 0 && LEN(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(NumberText, "0", ""), "1", ""), "2", ""), "3", ""), "4", ""), "5", ""), "6", ""), "7", ""), "8", ""), "9", "")) = 0
-			RETURN NOT ISBLANK([SM Detail Baseline Date]) && TagStart > 0 && TagEnd > 0 && DigitsOnly && NOT ISBLANK(BaselineNumber) && (RevisionAt = 0 || (LEN(Revision) = 1 && Revision >= "A" && Revision <= "Z"))
+			VAR ValidBlTag = TagEnd > 0 && DigitsOnly && NOT ISBLANK(BaselineNumber) && (RevisionAt = 0 || (LEN(Revision) = 1 && Revision >= "A" && Revision <= "Z"))
+			RETURN NOT ISBLANK([SM Detail Baseline Date]) && NOT ISBLANK(BaselineFile) && LEN(TRIM(BaselineFile)) > 0 && (TagStart = 0 || ValidBlTag)
 		isHidden
 		displayFolder: Detail diagnostics\Internal
 		lineageTag: ff74e339-576f-46af-9e8c-4279e1945573
@@ -358,13 +367,20 @@ table 'Schedule Metric Detail'
 			VAR ProjectCode = [SM Detail Project]
 			VAR ProgrammeType = [SM Detail Programme]
 			VAR SnapshotDate = [SM Detail Snapshot]
-			VAR BaselineDate = CALCULATE(MAX('01 XER_TASK'[UpdateDate]),
+			VAR BlBaselineDate = CALCULATE(MAX('01 XER_TASK'[UpdateDate]),
 			    REMOVEFILTERS(),
 			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
 			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
 			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
 			    '01 XER_TASK'[UpdateDate] <= SnapshotDate,
 			    CONTAINSSTRING('01 XER_TASK'[filename], "-BL"))
+			VAR EarliestBaselineDate = CALCULATE(MIN('01 XER_TASK'[UpdateDate]),
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    '01 XER_TASK'[UpdateDate] <= SnapshotDate)
+			VAR BaselineDate = COALESCE(BlBaselineDate, EarliestBaselineDate)
 			VAR StatusDate = CALCULATE(SELECTEDVALUE('01 XER_TASK'[data_date]),
 			    REMOVEFILTERS(),
 			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
@@ -412,7 +428,8 @@ table 'Schedule Metric Detail'
 			VAR Revision = IF(RevisionAt > 0, MID(Tag, RevisionAt + 1, LEN(Tag)), "")
 			VAR BaselineNumber = IFERROR(VALUE(NumberText), BLANK())
 			VAR DigitsOnly = LEN(NumberText) > 0 && LEN(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(NumberText, "0", ""), "1", ""), "2", ""), "3", ""), "4", ""), "5", ""), "6", ""), "7", ""), "8", ""), "9", "")) = 0
-			VAR HasBaselineProvenance = NOT ISBLANK(BaselineDate) && TagStart > 0 && TagEnd > 0 && DigitsOnly && NOT ISBLANK(BaselineNumber) && (RevisionAt = 0 || (LEN(Revision) = 1 && Revision >= "A" && Revision <= "Z"))
+			VAR ValidBlTag = TagEnd > 0 && DigitsOnly && NOT ISBLANK(BaselineNumber) && (RevisionAt = 0 || (LEN(Revision) = 1 && Revision >= "A" && Revision <= "Z"))
+			VAR HasBaselineProvenance = NOT ISBLANK(BaselineDate) && NOT ISBLANK(BaselineFile) && LEN(TRIM(BaselineFile)) > 0 && (TagStart = 0 || ValidBlTag)
 			VAR CurrentCount = COALESCE(COUNTROWS(CurrentRows), 0)
 			VAR DatedCount = COALESCE(COUNTROWS(FILTER(MatchedActivities, NOT ISBLANK([BaselineFinish]))), 0)
 			
@@ -449,13 +466,20 @@ table 'Schedule Metric Detail'
 			VAR ProjectCode = [SM Detail Project]
 			VAR ProgrammeType = [SM Detail Programme]
 			VAR SnapshotDate = [SM Detail Snapshot]
-			VAR BaselineDate = CALCULATE(MAX('01 XER_TASK'[UpdateDate]),
+			VAR BlBaselineDate = CALCULATE(MAX('01 XER_TASK'[UpdateDate]),
 			    REMOVEFILTERS(),
 			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
 			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
 			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
 			    '01 XER_TASK'[UpdateDate] <= SnapshotDate,
 			    CONTAINSSTRING('01 XER_TASK'[filename], "-BL"))
+			VAR EarliestBaselineDate = CALCULATE(MIN('01 XER_TASK'[UpdateDate]),
+			    REMOVEFILTERS(),
+			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
+			    TREATAS({ProgrammeType}, '01 XER_TASK'[ProgrammeType]),
+			    '01 XER_TASK'[IsExcludedFromDataLake] = FALSE(),
+			    '01 XER_TASK'[UpdateDate] <= SnapshotDate)
+			VAR BaselineDate = COALESCE(BlBaselineDate, EarliestBaselineDate)
 			VAR StatusDate = CALCULATE(SELECTEDVALUE('01 XER_TASK'[data_date]),
 			    REMOVEFILTERS(),
 			    TREATAS({ProjectCode}, '01 XER_TASK'[ProjectCode]),
@@ -503,7 +527,9 @@ table 'Schedule Metric Detail'
 			VAR Revision = IF(RevisionAt > 0, MID(Tag, RevisionAt + 1, LEN(Tag)), "")
 			VAR BaselineNumber = IFERROR(VALUE(NumberText), BLANK())
 			VAR DigitsOnly = LEN(NumberText) > 0 && LEN(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(NumberText, "0", ""), "1", ""), "2", ""), "3", ""), "4", ""), "5", ""), "6", ""), "7", ""), "8", ""), "9", "")) = 0
-			VAR HasBaselineProvenance = NOT ISBLANK(BaselineDate) && TagStart > 0 && TagEnd > 0 && DigitsOnly && NOT ISBLANK(BaselineNumber) && (RevisionAt = 0 || (LEN(Revision) = 1 && Revision >= "A" && Revision <= "Z"))
+			VAR ValidBlTag = TagEnd > 0 && DigitsOnly && NOT ISBLANK(BaselineNumber) && (RevisionAt = 0 || (LEN(Revision) = 1 && Revision >= "A" && Revision <= "Z"))
+			VAR HasBaselineProvenance = NOT ISBLANK(BaselineDate) && NOT ISBLANK(BaselineFile) && LEN(TRIM(BaselineFile)) > 0 && (TagStart = 0 || ValidBlTag)
+			VAR BaselineSourceNote = IF(TagStart = 0, " (earliest update, no BL file)", "")
 			VAR AbsentCount = COALESCE(COUNTROWS(EXCEPT(SELECTCOLUMNS(BaselineActivities, "ActivityCode", [ActivityCode]), CurrentActivities)), 0)
 			VAR CurrentCount = COALESCE(COUNTROWS(CurrentRows), 0)
 			VAR MatchedCount = COALESCE(COUNTROWS(MatchedActivities), 0)
@@ -512,9 +538,9 @@ table 'Schedule Metric Detail'
 			
 			RETURN SWITCH(TRUE(),
 			    ScopeMessage <> "", ScopeMessage,
-			    NOT HasBaselineProvenance, "0%: no valid BL baseline file up to this update.",
+			    NOT HasBaselineProvenance, "0%: no valid baseline snapshot up to this update.",
 			    CurrentCount = 0, "0%: no activities in this snapshot.",
-			    FORMAT(DatedCount, "#,0") & " of " & FORMAT(CurrentCount, "#,0") & " activities matched to a dated baseline. Baseline " & FORMAT(BaselineDate, "dd mmm yyyy") & "; data date " & FORMAT(StatusDate, "dd mmm yyyy") & ". New: " & FORMAT(CurrentCount - MatchedCount, "#,0") & "; baseline codes absent: " & FORMAT(AbsentCount, "#,0") & "."
+			    FORMAT(DatedCount, "#,0") & " of " & FORMAT(CurrentCount, "#,0") & " activities matched to a dated baseline. Baseline " & FORMAT(BaselineDate, "dd mmm yyyy") & BaselineSourceNote & "; data date " & FORMAT(StatusDate, "dd mmm yyyy") & ". New: " & FORMAT(CurrentCount - MatchedCount, "#,0") & "; baseline codes absent: " & FORMAT(AbsentCount, "#,0") & "."
 			        & IF(InvalidCodeCount > 0, " Duplicate or blank codes: " & FORMAT(InvalidCodeCount, "#,0") & ".", ""))
 		displayFolder: Detail diagnostics
 		lineageTag: f26a0624-348f-4443-824a-9c571adfd34f

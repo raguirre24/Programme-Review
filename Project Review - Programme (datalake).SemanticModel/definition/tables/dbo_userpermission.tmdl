@@ -72,6 +72,7 @@ table dbo_userpermission
 
 	column region
 		dataType: string
+		isHidden
 		lineageTag: 49f0229c-5c81-4ea4-9a77-a858389d911a
 		summarizeBy: none
 		sourceColumn: region
@@ -86,14 +87,35 @@ table dbo_userpermission
 				    Source =
 				        Value.NativeQuery(
 				            AthenaDB,
-				            "SELECT p.email AS linkedsite_email, up.userprincipalname, up.projectid, up.companyid, up.region, up.refresh_date, pr.projectno FROM ""prod_projectcontrols_linkedsitereports"".""dbo_userpermission"" up LEFT JOIN ""prod_projectcontrols_linkedsitereports"".""dbo_person"" p ON p.id = up.personid LEFT JOIN ""prod_projectcontrols_linkedsitereports"".""dbo_project"" pr ON pr.projectid = up.projectid WHERE up.privilegename IN ('ViewPowerBIProgrammeDashboards')",
+				            "SELECT NULLIF(LOWER(TRIM(p.email)), '') AS linkedsite_email, NULLIF(LOWER(TRIM(up.userprincipalname)), '') AS userprincipalname, up.projectid, up.companyid, NULLIF(UPPER(TRIM(up.region)), '') AS region, up.refresh_date, NULLIF(UPPER(REGEXP_REPLACE(TRIM(pr.projectno), ' +', ' ')), '') AS projectno FROM ""prod_projectcontrols_linkedsitereports"".""dbo_userpermission"" up LEFT JOIN ""prod_projectcontrols_linkedsitereports"".""dbo_person"" p ON p.id = up.personid LEFT JOIN ""prod_projectcontrols_linkedsitereports"".""dbo_project"" pr ON pr.projectid = up.projectid WHERE up.privilegename IN ('ViewPowerBIProgrammeDashboards')",
 				            null
+				        ),
+				
+				    // Normalise projectno in M as well so C/J alias generation is case- and whitespace-safe
+				    NormalisedProjectNo =
+				        Table.TransformColumns(
+				            Source,
+				            {
+				                {
+				                    "projectno",
+				                    each
+				                        if _ = null then
+				                            null
+				                        else
+				                            let
+				                                Trimmed = Text.Upper(Text.Trim(Text.Clean(Text.From(_)))),
+				                                SingleSpaced = Text.Combine(List.Select(Text.Split(Trimmed, " "), each _ <> ""), " ")
+				                            in
+				                                if SingleSpaced = "" then null else SingleSpaced,
+				                    type nullable text
+				                }
+				            }
 				        ),
 				
 				    // Generate the alternate project code for each row
 				    AddAltProjectNo =
 				        Table.AddColumn(
-				            Source,
+				            NormalisedProjectNo,
 				            "AltProjectNo",
 				            each
 				                if [projectno] = null or [projectno] = "" then

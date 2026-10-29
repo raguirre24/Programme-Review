@@ -18,7 +18,7 @@
     },
     {
       "title": "Baseline and detail scope",
-      "text": "Baseline coverage uses the whole selected project and programme, including its completed activities, independently of the WBS and activity-status selections. Baseline coverage matches activity codes to the latest BL-tagged snapshot on or before the selected update. Table 04 is a derived earliest-snapshot subset, not an independent baseline. Missing baseline provenance makes baseline coverage 0%; repeated or blank activity codes are disclosed in its tooltip, not penalised."
+      "text": "Baseline coverage uses the whole selected project and programme, including its completed activities, independently of the WBS and activity-status selections. Baseline coverage matches activity codes to the latest BL-tagged snapshot on or before the selected update, or falls back to the earliest loaded snapshot when no BL file exists. Table 04 is a derived earliest-snapshot subset, not an independent baseline. Invalid BL filename provenance makes baseline coverage 0%; repeated or blank activity codes are disclosed in its tooltip, not penalised."
     },
     {
       "title": "Reading counts beside percentages",
@@ -42,6 +42,9 @@
       "meaning": "Activities with no predecessor, no successor, or neither.",
       "calculation": "Activities missing either end / core activities. Each activity counted once.",
       "threshold": "Green ≤5%; amber >5% to <10%; red ≥10%.",
+      "green": "≤5%",
+      "amber": ">5% to <10%",
+      "red": "≥10%",
       "population": "Core activities: incomplete task- and resource-dependent activities. Excludes milestones, LOE, WBS summaries and completed work.",
       "limitations": "Pred. and Succ. counts overlap. Drill through from the counts table to list activities.",
       "classification": "Network logic",
@@ -69,6 +72,9 @@
       "meaning": "Relationships with negative lag.",
       "calculation": "Relationships with lag < 0 / relationships with a known lag.",
       "threshold": "Green 0%; amber >0% to <1%; red ≥1%.",
+      "green": "0%",
+      "amber": ">0% to <1%",
+      "red": "≥1%",
       "population": "Links into incomplete discrete successors.",
       "limitations": "Counts relationships, not activities. Missing lag excluded.",
       "classification": "Network logic",
@@ -103,6 +109,9 @@
       "meaning": "Relationships with a waiting period of more than 5 working days.",
       "calculation": "Relationships with lag > 5 days / relationships with a known lag.",
       "threshold": "Green ≤5%; amber >5% to <10%; red ≥10%.",
+      "green": "≤5%",
+      "amber": ">5% to <10%",
+      "red": "≥10%",
       "population": "Links into incomplete discrete successors.",
       "limitations": "Short lags (5 days or less), mostly on SS/FF overlap pairs, are not counted; overlap use is assessed through FS relationships. Missing lag excluded.",
       "classification": "Network logic",
@@ -137,6 +146,9 @@
       "meaning": "Share of relationships that are finish-to-start.",
       "calculation": "FS relationships (incl. PR_FS1) / relationships with a recognised FS, SS, FF or SF type.",
       "threshold": "Green ≥90%; amber >80% to <90%; red ≤80%.",
+      "green": "≥90%",
+      "amber": ">80% to <90%",
+      "red": "≤80%",
       "population": "Links into incomplete discrete successors.",
       "limitations": "Unknown types excluded. FS and FS1 rows are not deduplicated.",
       "classification": "Network logic",
@@ -165,6 +177,9 @@
       "meaning": "Activities whose primary constraint fixes or caps their dates.",
       "calculation": "Activities with a restrictive primary constraint / core activities with a known or blank constraint.",
       "threshold": "Green ≤5%; amber >5% to <10%; red ≥10%.",
+      "green": "≤5%",
+      "amber": ">5% to <10%",
+      "red": "≥10%",
       "population": "Core activities; primary constraint only.",
       "limitations": "Counted: CS_MSO, CS_MSOB, CS_MEO, CS_MEOB, CS_MANDSTART, CS_MANDFIN. Unknown codes excluded.",
       "classification": "Schedule constraints",
@@ -197,6 +212,9 @@
       "meaning": "In-progress activities that started before their logic allowed.",
       "calculation": "In-progress activities with an FS predecessor not finished, or an SS predecessor not started / in-progress activities.",
       "threshold": "Green 0%; amber >0% to <10%; red ≥10%.",
+      "green": "0%",
+      "amber": ">0% to <10%",
+      "red": "≥10%",
       "population": "In-progress task- and resource-dependent activities. LOE and WBS predecessors are ignored.",
       "limitations": "Shows 0% until work is in progress. Fix by progressing the predecessor or correcting the logic.",
       "classification": "Network logic",
@@ -232,6 +250,9 @@
       "meaning": "Activities forecast to miss a required date (total float below zero).",
       "calculation": "Activities with total float < 0 / core activities with known float.",
       "threshold": "Green 0%; amber >0% to <5%; red ≥5%.",
+      "green": "0%",
+      "amber": ">0% to <5%",
+      "red": "≥5%",
       "population": "Core activities.",
       "limitations": "Any negative float counts, however small. Missing float excluded.",
       "classification": "Schedule flexibility",
@@ -264,6 +285,9 @@
       "meaning": "Activities with more than 44 working days still to perform.",
       "calculation": "Activities with remaining duration > 44d / core activities with known, non-negative remaining duration.",
       "threshold": "Green ≤5%; amber >5% to <10%; red ≥10%.",
+      "green": "≤5%",
+      "amber": ">5% to <10%",
+      "red": "≥10%",
       "population": "Core activities.",
       "limitations": "Uses remaining, not original, duration. Exactly 44d is not flagged.",
       "classification": "Work definition",
@@ -296,6 +320,9 @@
       "meaning": "Activities with a missing required date, or a date inconsistent with the data date or status.",
       "calculation": "Activities and milestones failing any date rule / all eligible activities and milestones. Each counted once.",
       "threshold": "Green 0%; amber >0% to <1%; red ≥1%.",
+      "green": "0%",
+      "amber": ">0% to <1%",
+      "red": "≥1%",
       "population": "Task- and resource-dependent activities and milestones in all statuses. Excludes LOE and WBS summaries.",
       "limitations": "Rules: future actuals, overdue forecasts, actual finish vs status, missing data date, unknown status, finish before start. Milestones need only their relevant date. Missing dates count as defects.",
       "classification": "Data integrity",
@@ -318,23 +345,6 @@
       }
     },
     {
-      "id": "overall_score",
-      "sort_order": 0,
-      "section": "Overall score",
-      "metric": "Schedule health score",
-      "meaning": "0–100% summary of the ten scored checks, each with equal weight.",
-      "calculation": "Each check earns 1 point at its target, falling evenly to 0 at its limit. Score = average points × 100. Example: missing logic at 6% (target 5%, limit 10%) earns 0.8.",
-      "threshold": "Green ≥95%; amber 75% to <95%; red <75%.",
-      "population": "Missing logic, leads, lags over 5 days, FS relationships, restrictive constraints, out-of-sequence progress, negative total float, long remaining duration, date integrity and baseline coverage.",
-      "limitations": "A check with nothing to count shows 0%: a full point, except FS and baseline coverage, which score 0. Partial inputs still score, with a coverage warning. 100% means every check is at target, not assured delivery.",
-      "classification": "Overall assessment",
-      "scored": false,
-      "score_note": "One check at its limit cannot turn the score red on its own; check colours show where to look.",
-      "source_measure": "XER Metrics[Score]",
-      "source_columns": [],
-      "related_grid_counts": []
-    },
-    {
       "id": "baseline_coverage",
       "sort_order": 95,
       "section": "Scored checks",
@@ -342,8 +352,11 @@
       "meaning": "Share of current activities that have a dated baseline match.",
       "calculation": "Current activities matched to a baseline activity with a Finish / all current activities.",
       "threshold": "Green ≥90%; amber >60% to <90%; red ≤60%.",
-      "population": "Whole project, all statuses, against the latest BL baseline file up to the selected update.",
-      "limitations": "Not changed by WBS selection. 0% if there is no valid BL file; repeated codes are disclosed, not penalised. New or renumbered activities lower it until the next re-baseline.",
+      "green": "≥90%",
+      "amber": ">60% to <90%",
+      "red": "≤60%",
+      "population": "Whole project, all statuses, against the latest BL baseline file up to the selected update (or the earliest loaded update when no BL file exists).",
+      "limitations": "Not changed by WBS selection. 0% if a BL filename tag is invalid; repeated codes are disclosed, not penalised. New or renumbered activities lower coverage until the next re-baseline.",
       "classification": "Baseline coverage",
       "scored": true,
       "score_note": "1 point at ≥90%, falling evenly to 0 at 60%.",
@@ -367,86 +380,6 @@
         "target": 0.9,
         "limit": 0.6
       }
-    },
-    {
-      "id": "remaining_activity_count",
-      "sort_order": 150,
-      "section": "Counts-table context",
-      "metric": "Remaining activities",
-      "meaning": "Number of incomplete activities in the snapshot (the core population).",
-      "calculation": "Count of Not Started / In Progress task- and resource-dependent activities.",
-      "threshold": "No pass/fail threshold",
-      "population": "Includes unscheduled work. Excludes milestones, completed work, LOE and WBS summaries.",
-      "limitations": "Do not sum across updates.",
-      "classification": "Activity population",
-      "scored": false,
-      "score_note": "Supports the activity checks; no separate score weight.",
-      "source_measure": "XER Metrics[Task_Count]",
-      "source_columns": [
-        "01 XER_TASK[status_code]",
-        "01 XER_TASK[task_type]"
-      ],
-      "related_grid_counts": [
-        {
-          "label": "Rem. Activities",
-          "measure": "XER Metrics[Task_Count]",
-          "meaning": "Remaining activity population for the snapshot."
-        }
-      ]
-    },
-    {
-      "id": "missing_predecessor_count",
-      "sort_order": 160,
-      "section": "Counts-table context",
-      "metric": "Missing predecessors",
-      "meaning": "Activities with no incoming relationship.",
-      "calculation": "Count of core activities with No Predecessor = 1.",
-      "threshold": "Assessed through the combined Missing logic check",
-      "population": "Core activities.",
-      "limitations": "Part of Missing logic; overlaps Missing successors, so do not add them. Drill through > Missing Predecessor.",
-      "classification": "Network logic",
-      "scored": false,
-      "score_note": "Included through combined Missing logic only; not scored separately.",
-      "source_measure": "XER Metrics[Missing Predecessor]",
-      "source_columns": [
-        "01 XER_TASK[No Predecessor]",
-        "01 XER_TASK[status_code]",
-        "01 XER_TASK[task_type]"
-      ],
-      "related_grid_counts": [
-        {
-          "label": "Missing Pred.",
-          "measure": "XER Metrics[Missing Predecessor]",
-          "meaning": "Number of eligible activities without a predecessor."
-        }
-      ]
-    },
-    {
-      "id": "missing_successor_count",
-      "sort_order": 170,
-      "section": "Counts-table context",
-      "metric": "Missing successors",
-      "meaning": "Activities with no outgoing relationship.",
-      "calculation": "Count of core activities with No Successor = 1.",
-      "threshold": "Assessed through the combined Missing logic check",
-      "population": "Core activities.",
-      "limitations": "Part of Missing logic; overlaps Missing predecessors, so do not add them. Drill through > Missing Successor.",
-      "classification": "Network logic",
-      "scored": false,
-      "score_note": "Included through combined Missing logic only; not scored separately.",
-      "source_measure": "XER Metrics[Missing Successor]",
-      "source_columns": [
-        "01 XER_TASK[No Successor]",
-        "01 XER_TASK[status_code]",
-        "01 XER_TASK[task_type]"
-      ],
-      "related_grid_counts": [
-        {
-          "label": "Missing Succ.",
-          "measure": "XER Metrics[Missing Successor]",
-          "meaning": "Number of eligible activities without a successor."
-        }
-      ]
     }
   ],
   "reading_legend": "Check colours: green = at target (full point); amber = between target and limit (part point); red = at or past the limit (no point); grey = no valid selection.\nPartial inputs are a separate coverage warning: hover for known/excluded records.",

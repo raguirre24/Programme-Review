@@ -18,6 +18,21 @@ PAGE_DIR = REPORT / 'pages' / PAGE
 TABLE = 'Schedule Metric Guide'
 NAMESPACE = uuid.UUID('9bcb9710-5137-49d5-b9a8-09b5207a7b42')
 
+GUIDE_COLUMNS = [
+    'Metric',
+    'Meaning and calculation',
+    'Green (1 pt)',
+    'Amber (0–1 pt)',
+    'Red (0 pt)',
+    'Scope and notes',
+]
+GUIDE_COLUMN_WIDTHS = [240, 510, 160, 185, 160, 555]
+GUIDE_BAND_STYLES = [
+    ('Green (1 pt)', '#F1F5EA', '#4B6110'),
+    ('Amber (0–1 pt)', '#FCF5E8', '#8A5600'),
+    ('Red (0 pt)', '#FBEFF1', '#6F0516'),
+]
+
 
 def identifier(name):
     return uuid.uuid5(NAMESPACE, name).hex[:20]
@@ -56,6 +71,45 @@ def props(**values):
 
 def column(name):
     return {'Column': {'Expression': {'SourceRef': {'Entity': TABLE}}, 'Property': name}}
+
+
+def guide_column_formatting():
+    return [
+        {
+            'properties': {
+                'styleHeader': lit(False),
+                'styleValues': lit(True),
+                'styleTotal': lit(False),
+                'backColor': colour(back_colour),
+                'fontColor': colour(font_colour),
+            },
+            'selector': {'metadata': f'{TABLE}.{name}'},
+        }
+        for name, back_colour, font_colour in GUIDE_BAND_STYLES
+    ]
+
+
+def apply_guide_table_schema(table):
+    table['visual']['query'] = {
+        'queryState': {
+            'Values': {
+                'projections': [
+                    {'field': column(name), 'queryRef': f'{TABLE}.{name}', 'nativeQueryRef': name}
+                    for name in GUIDE_COLUMNS
+                ]
+            }
+        },
+        'sortDefinition': {
+            'sort': [{'field': column('Metric'), 'direction': 'Ascending'}],
+            'isDefaultSort': True,
+        },
+    }
+    objects = table['visual'].setdefault('objects', {})
+    objects['columnWidth'] = [
+        {'properties': {'value': lit(width)}, 'selector': {'metadata': f'{TABLE}.{name}'}}
+        for name, width in zip(GUIDE_COLUMNS, GUIDE_COLUMN_WIDTHS)
+    ]
+    objects['columnFormatting'] = guide_column_formatting()
 
 
 def container(key, kind, x, y, width, height, z, hidden=True, tab=0):
@@ -100,11 +154,13 @@ def button(key, text, bookmark, x, y, width, height, hidden, tab):
 
 
 def write_reference_table(content):
-    columns = ['Metric', 'Meaning and calculation', 'Target / score', 'Scope and notes']
+    columns = GUIDE_COLUMNS
     rows = [{
         'Metric': row['metric'],
         'Meaning and calculation': row['meaning'] + '\nCalculation: ' + row['calculation'],
-        'Target / score': row['threshold'] + '\n' + row['score_note'],
+        'Green (1 pt)': row['green'],
+        'Amber (0–1 pt)': row['amber'],
+        'Red (0 pt)': row['red'],
         'Scope and notes': row['population'] + '\n' + row['limitations'],
     } for row in sorted(content['rows'], key=lambda row: row['sort_order'])]
     assert rows and all(set(columns).issubset(row) for row in rows)
@@ -153,17 +209,14 @@ def build(content):
     guide.append(textbox('guide-introduction', content['introduction'], 30, 90, 1855, 116, 15))
     guide.append(button('guide-close', 'Close guide', close_id, 1610, 24, 276, 50, True, 100))
     table = container('guide-table', 'tableEx', 30, 220, 1860, 710, 61000, True, 200)
-    table['visual']['query'] = {'queryState': {'Values': {'projections': [
-        {'field': column(name), 'queryRef': f'{TABLE}.{name}', 'nativeQueryRef': name} for name in columns]}},
-        'sortDefinition': {'sort': [{'field': column('Metric'), 'direction': 'Ascending'}], 'isDefaultSort': True}}
     table['visual']['objects'] = {
         'total': props(totals=lit(False)),
         'columnHeaders': props(fontSize=lit(16), fontColor=colour('#FFFFFF'), backColor=colour('#BE281D'), alignment=lit('Left'), wordWrap=lit(True), autoSizeColumnWidth=lit(True), columnAdjustment=lit('fitToContent'), defaultColumnWidth=lit(90)),
         'values': props(fontSize=lit(16), fontColor=colour('#252525'), backColor=colour('#FFFFFF'), wordWrap=lit(True)),
         'grid': props(rowPadding=lit(10), gridHorizontal=lit(True), gridHorizontalColor=colour('#DDDDDD'), gridHorizontalWeight=lit(1), gridVertical=lit(False)),
-        'columnWidth': [{'properties': {'value': lit(width)}, 'selector': {'metadata': f'{TABLE}.{name}'}} for name, width in zip(columns, [275, 650, 210, 675])],
     }
-    table['visual']['visualContainerObjects']['general'][0]['properties']['altText'] = lit('Scrollable reference table covering all metrics, their calculations, targets, score contribution and scope. Use Close guide to return to the charts.')
+    apply_guide_table_schema(table)
+    table['visual']['visualContainerObjects']['general'][0]['properties']['altText'] = lit('Scrollable reference table covering the ten scored metrics, their calculations, Green/Amber/Red bands and scope. Use Close guide to return to the charts.')
     table['visual']['visualContainerObjects']['background'] = props(show=lit(True), color=colour('#FFFFFF'), transparency=lit(0))
     guide.append(table)
     guide.append(textbox('guide-reading-notes', content['reading_legend'], 30, 950, 1855, 120, 17))
@@ -232,7 +285,7 @@ def build(content):
 
 
 def refresh_content(content):
-    """Refresh reference text only; preserve saved layout, bookmarks and filters."""
+    """Refresh reference text and guide-table column bindings; preserve saved layout, bookmarks and filters."""
     row_count = write_reference_table(content)
     for key, field in [('guide-introduction', 'introduction'),
                        ('guide-reading-notes', 'reading_legend')]:
@@ -243,6 +296,12 @@ def refresh_content(content):
         if paragraphs[0]['textRuns'][0]['value'] != content[field]:
             paragraphs[0]['textRuns'][0]['value'] = content[field]
             write(path, visual)
+    table_path = PAGE_DIR / 'visuals' / identifier('guide-table') / 'visual.json'
+    table_visual = read(table_path)
+    before = json.dumps(table_visual, sort_keys=True)
+    apply_guide_table_schema(table_visual)
+    if json.dumps(table_visual, sort_keys=True) != before:
+        write(table_path, table_visual)
     manifest_path = Path(__file__).with_name('metric_guide_manifest.json')
     if manifest_path.exists():
         manifest = read(manifest_path)

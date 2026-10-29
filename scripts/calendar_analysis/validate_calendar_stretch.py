@@ -35,7 +35,8 @@ EXPECTED_CS_MEASURES = {
     "CS Activity Timeline Dates", "CS Activity Shutdown Bands",
     "CS KPI Delayed Activities", "CS KPI Severely Delayed Activities", "CS KPI Critical Delay Days",
     "CS KPI Max Delay Days", "CS KPI Worst Stretch Ratio", "CS Scope Prompt",
-    "CS Cliff Task Code", "CS Cliff Finish Date", "CS Cliff Finish Shift Days", "CS Cliff Title", "CS Cliff Callout",
+    "CS Cliff Task Code", "CS Cliff Start Date", "CS Cliff Shutdown", "CS Cliff Edge Date", "CS Cliff Window Start",
+    "CS Cliff Window End", "CS Cliff Finish Date", "CS Cliff Finish Shift Days", "CS Cliff Title", "CS Cliff Callout",
 }
 ACTIVITY_MEASURES = {name for name in EXPECTED_CS_MEASURES if name.startswith("CS Activity ")}
 KPI_MEASURES = {name for name in EXPECTED_CS_MEASURES if name.startswith("CS KPI ")}
@@ -79,8 +80,8 @@ def nth_working_day(start: date, need: int, mask: str, exceptions: dict[date, fl
     return None
 
 
-def shutdown_bands(effective: date, finish: date, mask: str, exceptions: dict[date, float]) -> list[tuple[date, date]]:
-    """Mirror of 'CS Activity Shutdown Bands'."""
+def shutdown_runs(effective: date, finish: date, mask: str, exceptions: dict[date, float]) -> list[tuple[date, date]]:
+    """Runs of 'CS Activity Shutdown Bands' and 'CS Cliff Shutdown' (any length), clipped to the fetch window."""
     fetch_from, fetch_to = effective - 7 * DAY, finish + 7 * DAY
     window = {day: hours for day, hours in exceptions.items() if fetch_from <= day <= fetch_to}
     closed = sorted(day for day, hours in window.items() if hours <= 0)
@@ -98,7 +99,7 @@ def shutdown_bands(effective: date, finish: date, mask: str, exceptions: dict[da
         gap_off = (gap // 7) * off_per_week + extra - double[start_dow - 1:start_dow - 1 + extra].count("1")
         if gap_off < gap or any(previous < other < day for other in opened):
             heads.append(day)
-    bands = []
+    runs = []
     for head in heads:
         position = 8 - (head - DAY).isoweekday()
         off_before = ((reverse + reverse)[position - 1:position - 1 + 7] + "1").find("1")
@@ -111,11 +112,94 @@ def shutdown_bands(effective: date, finish: date, mask: str, exceptions: dict[da
         off_after = ((double)[dow - 1:dow - 1 + 7] + "1").find("1")
         next_opened = min((other for other in opened if other > tail), default=None)
         forward = off_after if next_opened is None else min(off_after, (next_opened - tail).days - 1)
-        end = min(fetch_to, tail + forward * DAY)
+        runs.append((start, min(fetch_to, tail + forward * DAY)))
+    return runs
+
+
+def shutdown_bands(effective: date, finish: date, mask: str, exceptions: dict[date, float]) -> list[tuple[date, date]]:
+    """Mirror of 'CS Activity Shutdown Bands'."""
+    bands = []
+    for start, end in shutdown_runs(effective, finish, mask, exceptions):
         clipped = (max(start, effective), min(end, finish))
         if (end - start).days + 1 >= 7 and clipped[1] >= clipped[0]:
             bands.append(clipped)
     return sorted(bands)
+
+
+def cliff_shutdown(effective: date, finish: date, mask: str, exceptions: dict[date, float]) -> tuple[date, date] | None:
+    """Mirror of 'CS Cliff Shutdown': the first 7+ day run starting after the remaining start and by the finish."""
+    if len(mask) != 7 or finish <= effective:
+        return None
+    hits = [(start, end) for start, end in shutdown_runs(effective, finish, mask, exceptions)
+            if (end - start).days + 1 >= 7 and effective < start <= finish]
+    return min(hits) if hits else None
+
+
+def brute_cliff_shutdown(effective: date, finish: date, mask: str, exceptions: dict[date, float]) -> tuple[date, date] | None:
+    fetch_from, fetch_to = effective - 7 * DAY, finish + 7 * DAY
+    runs, run_start, day = [], None, fetch_from
+    while day <= fetch_to + DAY:
+        non_working = day <= fetch_to and not is_working(day, mask, exceptions)
+        if non_working and run_start is None:
+            run_start = day
+        if not non_working and run_start is not None:
+            runs.append((run_start, day - DAY))
+            run_start = None
+        day += DAY
+    hits = [(a, b) for a, b in runs if (b - a).days + 1 >= 7 and effective < a <= finish]
+    return min(hits) if hits else None
+
+
+def edge_date(data_date: date, last_day: date, need: int, mask: str, exceptions: dict[date, float]) -> date | None:
+    """Mirror of 'CS Cliff Edge Date': latest start in [data_date, last_day] with at least `need` working days through
+    last_day (the day before the shutdown), by closed-form counts plus deltas and a 13-level backward bisection."""
+    if last_day < data_date or need < 1 or "1" not in mask:
+        return None
+    deltas = [(day, (1 if hours > 0 else 0) - (1 if mask[day.isoweekday() - 1] == "1" else 0))
+              for day, hours in exceptions.items() if data_date <= day <= last_day]
+    deltas = [(day, delta) for day, delta in deltas if delta != 0]
+    work_days, double = mask.count("1"), mask + mask
+
+    def back(probe: date) -> int:
+        span = (last_day - probe).days + 1
+        dow = probe.isoweekday()
+        return (span // 7) * work_days + double[dow - 1:dow - 1 + span % 7].count("1") + \
+            sum(delta for day, delta in deltas if day >= probe)
+
+    if back(data_date) < need:
+        return None
+    low, high = data_date, last_day + DAY
+    for _ in range(stretch_dax.FINISH_LEVELS):
+        middle = low + timedelta(days=(high - low).days // 2)
+        if back(middle) >= need:
+            low = middle
+        else:
+            high = middle
+    return low
+
+
+def brute_edge(data_date: date, last_day: date, need: int, mask: str, exceptions: dict[date, float]) -> date | None:
+    count, day = 0, last_day
+    while day >= data_date:
+        count += is_working(day, mask, exceptions)
+        if count >= need:
+            return day
+        day -= DAY
+    return None
+
+
+def cliff_window(data_date: date, effective: date, edge: date | None, shutdown_start: date | None) -> tuple[date, date]:
+    """Mirror of 'CS Cliff Window Start' / 'CS Cliff Window End'."""
+    sd = stretch_dax
+    if edge is not None:
+        wanted = max(edge - sd.WINDOW_BEFORE_EDGE * DAY, effective - sd.WINDOW_MAX_BEFORE * DAY)
+    else:
+        wanted = effective - sd.WINDOW_DEFAULT * DAY
+    if shutdown_start is not None:
+        end = min(effective + sd.WINDOW_MAX_AFTER * DAY, shutdown_start + sd.WINDOW_AFTER_SHUTDOWN * DAY)
+    else:
+        end = effective + sd.WINDOW_DEFAULT * DAY
+    return max(data_date, wanted), end
 
 
 def brute_bands(effective: date, finish: date, mask: str, exceptions: dict[date, float]) -> list[tuple[date, date]]:
@@ -168,13 +252,15 @@ def search_end(window_end: date, scheduled: date, need: int, mask: str, exceptio
 
 
 def callout_searches(effective: date, window_start: date, window_end: date, finish_of) -> tuple[date | None, date | None]:
-    """Mirror of 'CS Cliff Callout': one pass over the window; latest earlier start finishing 7+ days sooner, earliest
-    later start finishing 7+ days later."""
+    """Mirror of 'CS Cliff Callout' without a shutdown: one pass over the window; latest earlier start saving 7+ net
+    calendar days, earliest later start adding 7+ net calendar days."""
     model = finish_of(effective)
     starts = [window_start + timedelta(days=i) for i in range((window_end - window_start).days + 1)]
     finishes = {day: finish_of(day) for day in starts}
-    recovery = max((d for d in starts if d < effective and finishes[d] is not None and finishes[d] <= model - 7 * DAY), default=None)
-    slip = min((d for d in starts if d > effective and finishes[d] is not None and finishes[d] >= model + 7 * DAY), default=None)
+    recovery = max((d for d in starts if d < effective and finishes[d] is not None
+                    and (model - finishes[d]).days - (effective - d).days >= 7), default=None)
+    slip = min((d for d in starts if d > effective and finishes[d] is not None
+                and (finishes[d] - model).days - (d - effective).days >= 7), default=None)
     return recovery, slip
 
 
@@ -211,7 +297,7 @@ def verify_oracles() -> dict:
     assert exception_free_finish(date(2027, 4, 16), 4, "0000000") is None
 
     rng = random.Random(20261022)
-    band_cases = cliff_cases = margin_cases = 0
+    band_cases = cliff_cases = margin_cases = edge_cases = 0
     axis_end = date(2030, 12, 31)
     for _ in range(1500):
         mask, exceptions = random_calendar(rng)
@@ -224,10 +310,23 @@ def verify_oracles() -> dict:
         scheduled = nth_working_day(effective, need, mask, exceptions, axis_end)
         if scheduled is None:
             continue
-        horizon = search_end(effective + 60 * DAY, scheduled, need, mask, exceptions, axis_end)
+        shutdown = cliff_shutdown(effective, scheduled, mask, exceptions)
+        assert shutdown == brute_cliff_shutdown(effective, scheduled, mask, exceptions), (
+            f"Cliff shutdown differs: mask {mask}, window {effective}..{scheduled}")
+        data_date = effective - timedelta(days=rng.randint(0, 400))
+        if shutdown:
+            edge = edge_date(data_date, shutdown[0] - DAY, need, mask, exceptions)
+            assert edge == brute_edge(data_date, shutdown[0] - DAY, need, mask, exceptions), (
+                f"Edge differs: mask {mask}, shutdown {shutdown}, need {need}")
+            if edge:  # the edge is the last start that finishes before the shutdown
+                assert nth_working_day(edge, need, mask, exceptions, axis_end) < shutdown[0]
+                assert nth_working_day(edge + DAY, need, mask, exceptions, axis_end) > shutdown[1]
+                assert edge < effective
+            edge_cases += 1
+        horizon = search_end(effective + stretch_dax.WINDOW_MAX_AFTER * DAY, scheduled, need, mask, exceptions, axis_end)
         margin_cases += horizon < axis_end
         for _ in range(10):
-            candidate = effective + timedelta(days=rng.randint(-60, 60))
+            candidate = effective + timedelta(days=rng.randint(-stretch_dax.WINDOW_MAX_BEFORE, stretch_dax.WINDOW_MAX_AFTER))
             # Exact: the capped search equals an unlimited day-by-day search for every start in the window.
             assert cliff_finish(candidate, need, mask, exceptions, horizon) == nth_working_day(
                 candidate, need, mask, exceptions, axis_end), f"Cliff finish differs: mask {mask}, start {candidate}, need {need}"
@@ -246,7 +345,12 @@ def verify_oracles() -> dict:
     normal = exception_free_finish(effective, need_days(4.0), mask)
     assert normal == date(2027, 4, 21) and (finish - normal).days == 168, "Canonical delay should be 168 days"
     assert shutdown_bands(effective, finish, mask, asphalt) == [(date(2027, 4, 17), date(2027, 10, 3))]
-    horizon = search_end(effective + 60 * DAY, finish, 4, mask, asphalt, date(2036, 12, 31))
+    shutdown = cliff_shutdown(effective, finish, mask, asphalt)
+    assert shutdown == (date(2027, 4, 17), date(2027, 10, 3)), f"Canonical shutdown {shutdown}"
+    edge = edge_date(date(2026, 2, 28), shutdown[0] - DAY, 4, mask, asphalt)
+    assert edge == date(2027, 4, 13), f"Canonical edge {edge}"
+    assert cliff_window(date(2026, 2, 28), effective, edge, shutdown[0]) == (date(2027, 3, 30), date(2027, 5, 1))
+    horizon = search_end(effective + stretch_dax.WINDOW_MAX_AFTER * DAY, finish, 4, mask, asphalt, date(2036, 12, 31))
     assert horizon == finish + stretch_dax.SEARCH_MARGIN_DAYS * DAY, "Canonical case should use the near search horizon"
     finish_of = lambda start: cliff_finish(start, 4, mask, asphalt, horizon)  # noqa: E731
     assert finish_of(date(2027, 4, 13)) == date(2027, 4, 16)
@@ -255,7 +359,24 @@ def verify_oracles() -> dict:
     recovery, slip = callout_searches(effective, effective - 60 * DAY, effective + 60 * DAY, finish_of)
     assert recovery == date(2027, 4, 13) and slip is None, f"Canonical callout should recover from 13-Apr-27, got {recovery}, {slip}"
     assert (finish - finish_of(recovery)).days == 173
-    return {"exception_free_finish_cases": cases, "band_cases": band_cases, "cliff_cases": cliff_cases, "search_margin_cases": margin_cases}
+
+    # C6036 Sep-2026 case: C-Z4B-BEW-C-0360 (25 days, W2T 5d Earth/Pave wet Wednesdays, Easter, winter shutdown from 1-May-28).
+    wet = {date(2028, 4, 14): 0.0, date(2028, 4, 17): 0.0, date(2028, 4, 27): 0.0}
+    day = date(2028, 3, 1)
+    while day <= date(2028, 9, 29):
+        if day.isoweekday() == 3 or (day >= date(2028, 5, 1) and day.isoweekday() <= 5):
+            wet[day] = 0.0
+        day += DAY
+    effective, data_date = date(2028, 3, 27), date(2026, 9, 30)
+    scheduled = nth_working_day(effective, 25, mask, wet, date(2029, 12, 31))
+    shutdown = cliff_shutdown(effective, scheduled, mask, wet)
+    assert shutdown == (date(2028, 4, 29), date(2028, 10, 1)), f"C6036 shutdown {shutdown}"
+    edge = edge_date(data_date, shutdown[0] - DAY, 25, mask, wet)
+    assert edge == date(2028, 3, 13) and nth_working_day(edge, 25, mask, wet, scheduled) == date(2028, 4, 28), f"C6036 edge {edge}"
+    assert nth_working_day(edge + DAY, 25, mask, wet, scheduled) == date(2028, 10, 2)
+    assert cliff_window(data_date, effective, edge, shutdown[0]) == (date(2028, 2, 28), date(2028, 5, 13))
+    return {"exception_free_finish_cases": cases, "band_cases": band_cases, "cliff_cases": cliff_cases,
+            "search_margin_cases": margin_cases, "edge_cases": edge_cases}
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -317,7 +438,21 @@ def verify_tmdl() -> int:
     assert f"VAR NearEnd = MIN(AxisEnd, ScheduledFinish + {stretch_dax.SEARCH_MARGIN_DAYS})" in kernel, "Kernel must cap the search near the scheduled finish"
     assert "VAR SearchEnd = IF(NearReached, NearEnd, AxisEnd)" in kernel and "TREATAS(WorkingWeekdays, '11 XER_CALENDAR_DETAILED'[day_of_week_num])" in kernel, (
         "The cap must only apply when the latest window start completes by it (exact results)")
+    assert stretch_dax.edge_search(stretch_dax.EDGE_PAD) in normalised["CS Cliff Edge Date"], "Re-render stretch_dax edge levels"
+    sd = stretch_dax
+    # The kernel's data range stays a pure function of the row: the window measures cost about 25 ms an evaluation, so per
+    # axis date they took 10 s. They are read once per visual (X-axis range, constant line, callout) instead.
+    kernel_code = "\n".join(line for line in kernel.splitlines() if not line.strip().startswith("//"))
+    assert "[CS Cliff Window" not in kernel_code and "[CS Cliff Edge Date]" not in kernel_code and "[CS Cliff Shutdown]" not in kernel_code
+    assert (f"VAR WindowStart = MAX(DataDate, EffectiveStart - {sd.WINDOW_MAX_BEFORE})" in kernel
+            and f"VAR WindowEnd = EffectiveStart + {sd.WINDOW_MAX_AFTER}" in kernel), "Kernel data range must follow stretch_dax"
+    assert (f"MAX(Edge - {sd.WINDOW_BEFORE_EDGE}, EffectiveStart - {sd.WINDOW_MAX_BEFORE}), EffectiveStart - {sd.WINDOW_DEFAULT})"
+            in cs["CS Cliff Window Start"]), "Window start must follow stretch_dax"
+    assert "MAX(DataDate, Wanted)" in cs["CS Cliff Window Start"], "The window must never start before the data date"
+    assert f"MIN(EffectiveStart + {sd.WINDOW_MAX_AFTER}," in cs["CS Cliff Window End"] and f"+ {sd.WINDOW_AFTER_SHUTDOWN})" in cs["CS Cliff Window End"]
+    assert "INT([__End] - [__Start]) + 1 >= 7 && [__Start] > EffectiveStart && [__Start] <= FinishDate" in cs["CS Cliff Shutdown"]
     callout = cs["CS Cliff Callout"]
+    assert "[CS Cliff Window Start]" in callout and "[CS Cliff Edge Date]" in callout, "The callout must share the chart's window and edge"
     assert '"__Finish", [CS Cliff Finish Date]' in callout and "'Scenario Date'[Date] >= WindowStart" in callout, (
         "The callout must evaluate the window in one pass over 'Scenario Date'")
     assert "CALCULATE([CS Cliff Finish Date]" not in callout, "The callout must not probe the kernel date by date (each probe repeats its fixed cost)"
@@ -344,6 +479,12 @@ def desktop_neutral(value):
     developer, vega.properties.version)."""
     if isinstance(value, dict):
         result = {key: desktop_neutral(item) for key, item in value.items() if key not in DESKTOP_MANAGED_KEYS}
+        if "filterConfig" in result and isinstance(result["filterConfig"], dict):
+            active_filters = [f for f in result["filterConfig"].get("filters", []) if isinstance(f, dict) and "filter" in f]
+            if active_filters:
+                result["filterConfig"] = {**result["filterConfig"], "filters": active_filters}
+            else:
+                result.pop("filterConfig", None)
         for entry in result.get("vega", []) if isinstance(result.get("vega"), list) else []:
             entry.get("properties", {}).pop("version", None)
         return result
@@ -388,19 +529,22 @@ def verify_pbir() -> dict:
     filter_names = [f["name"] for v in visuals.values() for f in v.get("filterConfig", {}).get("filters", [])]
     assert len(filter_names) == len(set(filter_names)), "Filter names must be unique on the page"
     for name, v in delay.items():
-        filters = v.get("filterConfig", {}).get("filters", [])
-        assert "Measure" not in json.dumps(filters), f"{name} has a measure filter; use column filters only"
+        filters = [f for f in v.get("filterConfig", {}).get("filters", []) if "filter" in f]
+        non_topn = [f for f in filters if f.get("type") != "TopN"]
+        assert "Measure" not in json.dumps(non_topn), f"{name} has a measure filter; use column filters only"
         assert "'Scenario Calendar'" not in json.dumps(v) and "Scenario Calendar" not in json.dumps(v.get("visual", {}).get("query", {})), (
             f"{name} must not bind Scenario Calendar (it would change the CA Inspector Selection Match gate)")
         assert '"Property": "Month"' not in json.dumps(v.get("visual", {}).get("query", {})), f"{name} must not bind 'Scenario Date'[Month]"
     for name in (gen.BARS, gen.TIMELINE):
-        filters = {f["type"]: f for f in visuals[name]["filterConfig"]["filters"]}
+        filters = {f["type"]: f for f in visuals[name]["filterConfig"]["filters"] if "filter" in f}
         query = filters["TopN"]["filter"]["From"][0]["Expression"]["Subquery"]["Query"]
         assert query["Top"] == 15 and query["OrderBy"][0]["Direction"] == 2
-        aggregation = query["OrderBy"][0]["Expression"]["Aggregation"]
-        assert aggregation["Function"] == 4 and aggregation["Expression"]["Column"]["Property"] == "Calendar Delay Days"
+        measure_expr = query["OrderBy"][0]["Expression"]["Measure"]
+        assert measure_expr["Property"] == "CA Activity Stretch Ratio"
+    bars_sort = visuals[gen.BARS]["visual"]["query"]["sortDefinition"]["sort"][0]
+    assert bars_sort["field"]["Measure"]["Property"] == "CA Activity Stretch Ratio" and bars_sort["direction"] == "Descending"
     for name in (gen.BARS, gen.TIMELINE, gen.SCATTER):
-        advanced = [f for f in visuals[name]["filterConfig"]["filters"] if f["type"] == "Advanced"]
+        advanced = [f for f in visuals[name]["filterConfig"]["filters"] if f["type"] == "Advanced" and "filter" in f]
         condition = advanced[0]["filter"]["Where"][0]["Condition"]["Comparison"]
         assert condition["ComparisonKind"] == 1 and condition["Right"]["Literal"]["Value"] == "0L"
     scatter = visuals[gen.SCATTER]["visual"]
@@ -408,6 +552,15 @@ def verify_pbir() -> dict:
     cliff = visuals[gen.CLIFF]["visual"]
     assert cliff["query"]["queryState"]["Category"]["projections"][0]["queryRef"] == "Scenario Date.Date"
     assert cliff["objects"]["lineStyles"][0]["properties"]["lineChartType"]["expr"]["Literal"]["Value"] == "'step'"
+    x_lines = {line["selector"]["id"]: line["properties"]["value"]["expr"]["Measure"]["Property"] for line in cliff["objects"]["xAxisReferenceLine"]}
+    assert x_lines == {"1": "CS Cliff Start Date", "2": "CS Cliff Edge Date"}, f"Cliff X-axis constant lines {x_lines}"
+    axis = cliff["objects"]["categoryAxis"][0]["properties"]
+    assert (axis["start"]["expr"]["Measure"]["Property"], axis["end"]["expr"]["Measure"]["Property"]) == (
+        "CS Cliff Window Start", "CS Cliff Window End"), "The cliff chart's X axis must be zoomed to the window measures"
+    y_axis = cliff["objects"]["valueAxis"][0]["properties"]
+    assert y_axis["titleText"]["expr"]["Literal"]["Value"] == "'Finish change vs scheduled (days)'"
+    y_line = cliff["objects"]["y1AxisReferenceLine"][0]["properties"]
+    assert y_line["displayName"]["expr"]["Literal"]["Value"] == "'No finish change (0 d)'" and y_line["value"]["expr"]["Literal"]["Value"] == "0D"
 
     interactions = {(i["source"], i["target"]): i["type"] for i in page["visualInteractions"]}
     for source in (gen.BARS, gen.TIMELINE, gen.SCATTER):
@@ -431,6 +584,8 @@ def verify_pbir() -> dict:
     assert vega["enableSelection"]["expr"]["Literal"]["Value"] == "true"
     literal = vega["jsonSpec"]["expr"]["Literal"]["Value"]
     spec = json.loads(literal[1:-1].replace("''", "'"))
+    assert spec["encoding"]["y"]["sort"] == {"field": "Stretch Ratio", "op": "max", "order": "descending"}, (
+        "Deneb timeline must sort activities from highest to lowest Stretch Ratio")
     names = {p["displayName"] for p in deneb["query"]["queryState"]["dataset"]["projections"]}
     derived = set(re.findall(r'"as":\s*"([^"]+)"', json.dumps(spec))) | {"band", "__selected__", "dates"}
     referenced = set(re.findall(r"datum\['([^']+)'\]", json.dumps(spec))) | set(re.findall(r'"field":\s*"([^"]+)"', json.dumps(spec)))

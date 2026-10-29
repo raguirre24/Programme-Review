@@ -34,17 +34,19 @@ try {
     $guideRows = Invoke-ScheduleMetricsDax -Target $guideTarget -Query @'
 EVALUATE 'Schedule Metric Guide' ORDER BY 'Schedule Metric Guide'[Order]
 '@
-    Assert-ScheduleMetric ($guideRows.Count -eq 14) 'Guide must contain all 14 retained metric definitions.'
+    Assert-ScheduleMetric ($guideRows.Count -eq 10) 'Guide must contain all 10 scored metric definitions.'
     $guideExpected = @(Get-Content (Join-Path $PSScriptRoot 'metric_guide.json') -Raw | ConvertFrom-Json | Select-Object -ExpandProperty rows | Sort-Object sort_order)
     for ($guideIndex=0; $guideIndex -lt $guideRows.Count; $guideIndex++) {
         Assert-ScheduleMetric ($guideRows[$guideIndex].'Schedule Metric Guide[Metric]' -eq $guideExpected[$guideIndex].metric) 'Guide metric order/content mismatch.'
         $expectedRow = $guideExpected[$guideIndex]
         $expectedCells = @{
             'Meaning and calculation' = $expectedRow.meaning + ' Calculation: ' + $expectedRow.calculation
-            'Target / score' = $expectedRow.threshold + ' ' + $expectedRow.score_note
+            'Green (1 pt)' = $expectedRow.green
+            'Amber (0–1 pt)' = $expectedRow.amber
+            'Red (0 pt)' = $expectedRow.red
             'Scope and notes' = $expectedRow.population + ' ' + $expectedRow.limitations
         }
-        foreach($guideColumn in @('Meaning and calculation','Target / score','Scope and notes')) {
+        foreach($guideColumn in @('Meaning and calculation','Green (1 pt)','Amber (0–1 pt)','Red (0 pt)','Scope and notes')) {
             Assert-ScheduleMetric (-not [string]::IsNullOrWhiteSpace($guideRows[$guideIndex]."Schedule Metric Guide[$guideColumn]")) "Empty guide field: $guideColumn"
             $expectedCell = $expectedCells[$guideColumn].Replace("`n", ' ')
             Assert-ScheduleMetric ($guideRows[$guideIndex]."Schedule Metric Guide[$guideColumn]" -ceq $expectedCell) "Stale loaded guide cell: $($expectedRow.metric) / $guideColumn"

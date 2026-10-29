@@ -120,7 +120,7 @@ RETURN
          column(name, "clndr_id_key", "string", hidden=True),
          column(name, "IsCsvSource", "boolean", hidden=True),
          column(name, "Calendar Name", "string", hidden=True),
-         column(name, "MonthUpdate", "dateTime", fmt="dd-MM-yyyy"),
+         column(name, "MonthUpdate", "dateTime", fmt="dd-MM-yyyy", hidden=True),
          column(name, "Report Update Date", "dateTime", fmt="dd-MM-yyyy", hidden=True),
          column(name, "Calendar", "string")],
         '''VAR SourceRows =

@@ -3,7 +3,7 @@ role 'Project Access'
 
 	tablePermission Project_Dimension =
 			VAR RawUPN =
-			    LOWER ( USERPRINCIPALNAME () )
+			    LOWER ( TRIM ( USERPRINCIPALNAME () ) )
 			
 			-- 1. Strip #ext# and tenant suffix (e.g., @acciona365.onmicrosoft.com)
 			VAR ExtTagPos =
@@ -70,13 +70,13 @@ role 'Project Access'
 			
 			-- 6. Match permissions from dbo_userpermission
 			VAR CurrentProjectState =
-			    LOWER ( 'Project_Dimension'[State] )
+			    LOWER ( TRIM ( 'Project_Dimension'[State] ) )
 			
 			VAR CurrentUserPermissions =
 			    FILTER (
 			        ALL ( 'dbo_userpermission' ),
-			        LOWER ( 'dbo_userpermission'[linkedsite_email] ) IN UserIdentifiers
-			            || LOWER ( 'dbo_userpermission'[userprincipalname] ) IN UserIdentifiers
+			        LOWER ( TRIM ( 'dbo_userpermission'[linkedsite_email] ) ) IN UserIdentifiers
+			            || LOWER ( TRIM ( 'dbo_userpermission'[userprincipalname] ) ) IN UserIdentifiers
 			    )
 			
 			-- 7. Evaluate access tiers
@@ -85,7 +85,7 @@ role 'Project Access'
 			        FILTER (
 			            CurrentUserPermissions,
 			            ISBLANK ( 'dbo_userpermission'[projectid] )
-			                && ( ISBLANK ( 'dbo_userpermission'[region] ) || 'dbo_userpermission'[region] = "" )
+			                && ( ISBLANK ( 'dbo_userpermission'[region] ) || TRIM ( 'dbo_userpermission'[region] ) = "" )
 			                && ISBLANK ( 'dbo_userpermission'[companyid] )
 			        )
 			    ) > 0
@@ -96,26 +96,249 @@ role 'Project Access'
 			            CurrentUserPermissions,
 			            ISBLANK ( 'dbo_userpermission'[projectid] )
 			                && NOT ISBLANK ( 'dbo_userpermission'[region] )
-			                && 'dbo_userpermission'[region] <> ""
-			                && LOWER ( 'dbo_userpermission'[region] ) = CurrentProjectState
+			                && TRIM ( 'dbo_userpermission'[region] ) <> ""
+			                && CurrentProjectState <> ""
+			                && LOWER ( TRIM ( 'dbo_userpermission'[region] ) ) = CurrentProjectState
 			        )
 			    ) > 0
 			
 			VAR HasProjectAccess =
-			    'Project_Dimension'[ProjectCode]
+			    UPPER ( TRIM ( 'Project_Dimension'[ProjectCode] ) )
 			        IN SELECTCOLUMNS (
 			            FILTER (
 			                CurrentUserPermissions,
 			                NOT ISBLANK ( 'dbo_userpermission'[projectid] )
 			                    && NOT ISBLANK ( 'dbo_userpermission'[projectno] )
+			                    && TRIM ( 'dbo_userpermission'[projectno] ) <> ""
 			            ),
-			            "AllowedProjectNo", 'dbo_userpermission'[projectno]
+			            "AllowedProjectNo", UPPER ( TRIM ( 'dbo_userpermission'[projectno] ) )
 			        )
 			
 			RETURN
 			    HasAllAccess
 			        || HasStateAccess
 			        || HasProjectAccess
+
+	tablePermission 'Monthly Resource Distribution Baseline' =
+			VAR RawUPN =
+			    LOWER ( TRIM ( USERPRINCIPALNAME () ) )
+			
+			-- 1. Strip #ext# and tenant suffix (e.g., @acciona365.onmicrosoft.com)
+			VAR ExtTagPos =
+			    SEARCH ( "#ext#", RawUPN, 1, 0 )
+			
+			VAR PreExtString =
+			    IF ( ExtTagPos > 0, LEFT ( RawUPN, ExtTagPos - 1 ), RawUPN )
+			
+			-- 2. Safely recover email for ANY guest by replacing the LAST underscore with "@"
+			VAR UnderscoreCount =
+			    LEN ( PreExtString ) - LEN ( SUBSTITUTE ( PreExtString, "_", "" ) )
+			
+			VAR RecoveredEmail =
+			    IF (
+			        ExtTagPos > 0 && UnderscoreCount > 0,
+			        SUBSTITUTE ( PreExtString, "_", "@", UnderscoreCount ),
+			        PreExtString
+			    )
+			
+			-- 3. Split RecoveredEmail into LocalPart and DomainPart
+			VAR AtPos =
+			    SEARCH ( "@", RecoveredEmail, 1, 0 )
+			
+			VAR LocalPart =
+			    IF ( AtPos > 0, LEFT ( RecoveredEmail, AtPos - 1 ), RecoveredEmail )
+			
+			VAR DomainPart =
+			    IF ( AtPos > 0, MID ( RecoveredEmail, AtPos, LEN ( RecoveredEmail ) ), "" )
+			
+			VAR LocalPartNoExt =
+			    IF (
+			        RIGHT ( LocalPart, 4 ) = ".ext",
+			        LEFT ( LocalPart, LEN ( LocalPart ) - 4 ),
+			        LocalPart
+			    )
+			
+			-- 4. Check if the recovered domain belongs to Acciona
+			VAR IsAcciona =
+			    DomainPart IN {
+			        "@acciona.com",
+			        "@acciona.com.au",
+			        "@acciona.co.nz",
+			        "@acciona365.onmicrosoft.com"
+			    }
+			
+			-- 5. Generate all possible identity combinations
+			VAR UserIdentifiers =
+			    FILTER (
+			        {
+			            RawUPN,
+			            RecoveredEmail,
+			            LocalPartNoExt & DomainPart,
+			            IF ( IsAcciona, LocalPart & "@acciona.com", BLANK () ),
+			            IF ( IsAcciona, LocalPart & "@acciona.com.au", BLANK () ),
+			            IF ( IsAcciona, LocalPart & "@acciona.co.nz", BLANK () ),
+			            IF ( IsAcciona, LocalPart & "@acciona365.onmicrosoft.com", BLANK () ),
+			            IF ( IsAcciona, LocalPartNoExt & "@acciona.com", BLANK () ),
+			            IF ( IsAcciona, LocalPartNoExt & "@acciona.com.au", BLANK () ),
+			            IF ( IsAcciona, LocalPartNoExt & "@acciona.co.nz", BLANK () ),
+			            IF ( IsAcciona, LocalPartNoExt & "@acciona365.onmicrosoft.com", BLANK () )
+			        },
+			        NOT ISBLANK ( [Value] ) && [Value] <> ""
+			    )
+			
+			VAR CurrentUserPermissions =
+			    FILTER (
+			        ALL ( 'dbo_userpermission' ),
+			        LOWER ( TRIM ( 'dbo_userpermission'[linkedsite_email] ) ) IN UserIdentifiers
+			            || LOWER ( TRIM ( 'dbo_userpermission'[userprincipalname] ) ) IN UserIdentifiers
+			    )
+			
+			VAR HasAllAccess =
+			    COUNTROWS (
+			        FILTER (
+			            CurrentUserPermissions,
+			            ISBLANK ( 'dbo_userpermission'[projectid] )
+			                && ( ISBLANK ( 'dbo_userpermission'[region] ) || TRIM ( 'dbo_userpermission'[region] ) = "" )
+			                && ISBLANK ( 'dbo_userpermission'[companyid] )
+			        )
+			    ) > 0
+			
+			VAR AllowedStates =
+			    SELECTCOLUMNS (
+			        FILTER (
+			            CurrentUserPermissions,
+			            ISBLANK ( 'dbo_userpermission'[projectid] )
+			                && NOT ISBLANK ( 'dbo_userpermission'[region] )
+			                && TRIM ( 'dbo_userpermission'[region] ) <> ""
+			        ),
+			        "AllowedState", LOWER ( TRIM ( 'dbo_userpermission'[region] ) )
+			    )
+			
+			VAR ExplicitProjectCodes =
+			    SELECTCOLUMNS (
+			        FILTER (
+			            CurrentUserPermissions,
+			            NOT ISBLANK ( 'dbo_userpermission'[projectid] )
+			                && NOT ISBLANK ( 'dbo_userpermission'[projectno] )
+			                && TRIM ( 'dbo_userpermission'[projectno] ) <> ""
+			        ),
+			        "AllowedCode", UPPER ( TRIM ( 'dbo_userpermission'[projectno] ) )
+			    )
+			
+			VAR AuthorisedDimensionProjects =
+			    FILTER (
+			        ALL ( 'Project_Dimension' ),
+			        (
+			            LOWER ( TRIM ( 'Project_Dimension'[State] ) ) <> ""
+			                && LOWER ( TRIM ( 'Project_Dimension'[State] ) ) IN AllowedStates
+			        )
+			            || UPPER ( TRIM ( 'Project_Dimension'[ProjectCode] ) ) IN ExplicitProjectCodes
+			    )
+			
+			VAR AllowedBaselineCodes =
+			    UNION (
+			        ExplicitProjectCodes,
+			        SELECTCOLUMNS (
+			            AuthorisedDimensionProjects,
+			            "AllowedCode", UPPER ( TRIM ( 'Project_Dimension'[ProjectCode] ) )
+			        ),
+			        SELECTCOLUMNS (
+			            FILTER (
+			                AuthorisedDimensionProjects,
+			                LEFT ( 'Project_Dimension'[ProjectKey], 3 ) = "CJ:"
+			            ),
+			            "AllowedCode",
+			                VAR BaseCode = UPPER ( TRIM ( 'Project_Dimension'[ProjectCode] ) )
+			                RETURN
+			                    IF (
+			                        LEFT ( BaseCode, 1 ) = "J",
+			                        "C" & MID ( BaseCode, 2, LEN ( BaseCode ) - 1 ),
+			                        "J" & MID ( BaseCode, 2, LEN ( BaseCode ) - 1 )
+			                    )
+			        )
+			    )
+			
+			RETURN
+			    HasAllAccess
+			        || UPPER ( TRIM ( 'Monthly Resource Distribution Baseline'[ProjectCode] ) ) IN AllowedBaselineCodes
+
+	tablePermission dbo_userpermission =
+			VAR RawUPN =
+			    LOWER ( TRIM ( USERPRINCIPALNAME () ) )
+			
+			-- 1. Strip #ext# and tenant suffix (e.g., @acciona365.onmicrosoft.com)
+			VAR ExtTagPos =
+			    SEARCH ( "#ext#", RawUPN, 1, 0 )
+			
+			VAR PreExtString =
+			    IF ( ExtTagPos > 0, LEFT ( RawUPN, ExtTagPos - 1 ), RawUPN )
+			
+			-- 2. Safely recover email for ANY guest by replacing the LAST underscore with "@"
+			VAR UnderscoreCount =
+			    LEN ( PreExtString ) - LEN ( SUBSTITUTE ( PreExtString, "_", "" ) )
+			
+			VAR RecoveredEmail =
+			    IF (
+			        ExtTagPos > 0 && UnderscoreCount > 0,
+			        SUBSTITUTE ( PreExtString, "_", "@", UnderscoreCount ),
+			        PreExtString
+			    )
+			
+			-- 3. Split RecoveredEmail into LocalPart and DomainPart
+			VAR AtPos =
+			    SEARCH ( "@", RecoveredEmail, 1, 0 )
+			
+			VAR LocalPart =
+			    IF ( AtPos > 0, LEFT ( RecoveredEmail, AtPos - 1 ), RecoveredEmail )
+			
+			VAR DomainPart =
+			    IF ( AtPos > 0, MID ( RecoveredEmail, AtPos, LEN ( RecoveredEmail ) ), "" )
+			
+			VAR LocalPartNoExt =
+			    IF (
+			        RIGHT ( LocalPart, 4 ) = ".ext",
+			        LEFT ( LocalPart, LEN ( LocalPart ) - 4 ),
+			        LocalPart
+			    )
+			
+			-- 4. Check if the recovered domain belongs to Acciona
+			VAR IsAcciona =
+			    DomainPart IN {
+			        "@acciona.com",
+			        "@acciona.com.au",
+			        "@acciona.co.nz",
+			        "@acciona365.onmicrosoft.com"
+			    }
+			
+			-- 5. Generate all possible identity combinations
+			VAR UserIdentifiers =
+			    FILTER (
+			        {
+			            RawUPN,
+			            RecoveredEmail,
+			            LocalPartNoExt & DomainPart,
+			            IF ( IsAcciona, LocalPart & "@acciona.com", BLANK () ),
+			            IF ( IsAcciona, LocalPart & "@acciona.com.au", BLANK () ),
+			            IF ( IsAcciona, LocalPart & "@acciona.co.nz", BLANK () ),
+			            IF ( IsAcciona, LocalPart & "@acciona365.onmicrosoft.com", BLANK () ),
+			            IF ( IsAcciona, LocalPartNoExt & "@acciona.com", BLANK () ),
+			            IF ( IsAcciona, LocalPartNoExt & "@acciona.com.au", BLANK () ),
+			            IF ( IsAcciona, LocalPartNoExt & "@acciona.co.nz", BLANK () ),
+			            IF ( IsAcciona, LocalPartNoExt & "@acciona365.onmicrosoft.com", BLANK () )
+			        },
+			        NOT ISBLANK ( [Value] ) && [Value] <> ""
+			    )
+			RETURN
+			    LOWER ( TRIM ( 'dbo_userpermission'[linkedsite_email] ) ) IN UserIdentifiers
+			        || LOWER ( TRIM ( 'dbo_userpermission'[userprincipalname] ) ) IN UserIdentifiers
+
+	tablePermission dbo_project = FALSE ()
+
+	tablePermission 12_XER_RSRC = FALSE ()
+
+	tablePermission 'XER CSV Manifest' = FALSE ()
+
+	tablePermission 'XER CSV Refresh Audit' = FALSE ()
 
 	annotation PBI_Id = d8d20f5b9cdf4286af9ca1b71c029851
 

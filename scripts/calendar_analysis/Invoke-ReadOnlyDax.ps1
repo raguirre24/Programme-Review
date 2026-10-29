@@ -48,11 +48,18 @@ try {
             $loaded = $live.Tables[$pair[0]].Columns.Find($pair[1])
             if (-not $loaded) { $lines.Add("COLUMN '$($pair[0])'[$($pair[1])] = $($column.Expression)") }
         }
-        foreach ($measure in $source.Tables['XER Measures'].Measures) {
-            if ($measure.Name -notlike 'CS *' -and $measure.Name -notlike 'CA *') { continue }
+        $candidates = @($source.Tables['XER Measures'].Measures | Where-Object { $_.Name -like 'CS *' -or $_.Name -like 'CA *' })
+        $anyMeasureDiffers = $false
+        foreach ($measure in $candidates) {
             $loaded = $live.Tables['XER Measures'].Measures.Find($measure.Name)
-            if ($loaded -and ([string]$loaded.Expression).Replace("`r`n", "`n").Trim() -ceq ([string]$measure.Expression).Replace("`r`n", "`n").Trim()) { continue }
-            $lines.Add("MEASURE 'XER Measures'[$($measure.Name.Replace(']', ']]'))] = $($measure.Expression)")
+            if (-not $loaded -or ([string]$loaded.Expression).Replace("`r`n", "`n").Trim() -cne ([string]$measure.Expression).Replace("`r`n", "`n").Trim()) {
+                $anyMeasureDiffers = $true; break
+            }
+        }
+        if ($anyMeasureDiffers) {
+            foreach ($measure in $candidates) {
+                $lines.Add("MEASURE 'XER Measures'[$($measure.Name.Replace(']', ']]'))] = $($measure.Expression)")
+            }
         }
         if ($lines.Count) { $define = "DEFINE`n" + ($lines -join "`n") + "`n" }
     }

@@ -115,12 +115,14 @@ def validate_guide_policy(guide: dict) -> int:
         "baseline_coverage": {"direction": "higher", "target": .90, "limit": .60},
     }
     rows = {row["id"]: row for row in guide["rows"]}
-    assert len(rows) == len(guide["rows"]) == 14, "Guide must retain exactly 14 rows: score, ten checks and three supporting counts"
+    assert len(rows) == len(guide["rows"]) == 10, "Guide must retain exactly 10 rows: the ten scored checks"
     assert "date_alignment_count" not in rows, "Removed Date alignment guide entry remains"
     assert not {"high_float", "zero_float_count"} & set(rows), "Unscored float rows must not be presented"
     assert {key for key, row in rows.items() if row.get("scored")} == set(expected), "Guide must identify exactly ten scored checks"
     for key, bands in expected.items():
         assert rows[key].get("review_bands") == bands, f"Guide band contract differs: {key}"
+        for band_field in ("green", "amber", "red"):
+            assert str(rows[key].get(band_field, "")).strip(), f"Guide band text missing: {key}.{band_field}"
     policy = guide.get("score_policy", {})
     assert len(policy.get("scored_metric_ids", [])) == 10 and set(policy["scored_metric_ids"]) == set(expected), "Score policy membership differs"
     expected_policy = {

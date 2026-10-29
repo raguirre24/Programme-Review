@@ -59,6 +59,10 @@
       "as": "delayLabel"
     },
     {
+      "calculate": "isValid(datum['Stretch Ratio']) ? format(datum['Stretch Ratio'], ',.2f') + 'x' : ''",
+      "as": "Stretch ratio text"
+    },
+    {
       "calculate": "datum.__selected__ == 'off' ? 0.35 : 1",
       "as": "rowOpacity"
     },
@@ -72,7 +76,7 @@
       "field": "Activity",
       "type": "nominal",
       "sort": {
-        "field": "Delay Days",
+        "field": "Stretch Ratio",
         "op": "max",
         "order": "descending"
       },
@@ -128,6 +132,10 @@
           {
             "field": "Exception-free finish text",
             "title": "Finish without calendar exceptions"
+          },
+          {
+            "field": "Stretch ratio text",
+            "title": "Calendar vs working ratio"
           },
           {
             "field": "Total Float",
@@ -189,6 +197,10 @@
             "type": "quantitative",
             "format": ",",
             "title": "Calendar-driven delay (days)"
+          },
+          {
+            "field": "Stretch ratio text",
+            "title": "Calendar vs working ratio"
           }
         ]
       }

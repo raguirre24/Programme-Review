@@ -329,13 +329,26 @@ def verify_tmdl_measures() -> int:
         "ISFILTERED('Scenario Calendar'[Calendar])",
         "ISFILTERED('Scenario Date'[Month])",
         "ISFILTERED('Scenario Date'[Week])",
-        "TREATAS(VALUES('Scenario Calendar'[clndr_id_key]), '01 XER_TASK'[calendar_id_key])",
+        "CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay)",
+        "TREATAS(SelectedCalendars, '01 XER_TASK'[calendar_id_key])",
     ):
         assert required_token in gate_block, f"[CA Inspector Selection Match] must contain {required_token}"
-    for forbidden_token in ("CALCULATETABLE", "SELECTCOLUMNS", "CROSSFILTER", "FILTER(", "11 XER_CALENDAR_DETAILED"):
+    for forbidden_token in ("SELECTCOLUMNS", "11 XER_CALENDAR_DETAILED"):
         assert forbidden_token not in gate_block, (
             f"[CA Inspector Selection Match] must not contain '{forbidden_token}' (keep it a storage-engine column filter)"
         )
+    assert not re.search(r"\bFILTER\s*\(", gate_block), (
+        "[CA Inspector Selection Match] must not contain FILTER( (keep it a storage-engine column filter)"
+    )
+    # 5b. Every CA measure that reads 'Scenario Calendar' inside CALCULATE/SELECTEDVALUE/COUNTROWS/VALUES must cut the
+    #     reverse cross-filter '01 XER_TASK'[UpdateDate] -> CurrentDate[UpdateDate] so RLS on Project_Dimension sees a
+    #     strict join tree instead of two join paths ('Scenario Calendar' -> Project_Dimension and 'Scenario Calendar' ->
+    #     CurrentDate -> '01 XER_TASK' -> '03 XER_PROJWBS' -> Project_Dimension).
+    for name, body in ca.items():
+        if "'Scenario Calendar'" in body:
+            assert "CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay)" in body, (
+                f"{name} reads 'Scenario Calendar' and must include CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay) for RLS join-tree safety"
+            )
 
     # 6. The six day-count measures must compute on the activity's own row inside MAXX('01 XER_TASK', ...).
     #    Group-level MIN/MAX/SUM/SELECTEDVALUE variables inside the IF made the engine look up each activity

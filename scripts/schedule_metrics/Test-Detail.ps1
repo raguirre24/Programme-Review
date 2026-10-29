@@ -65,14 +65,19 @@ EVALUATE CALCULATETABLE(ROW("Gauge",[SM Detail Value],"Public",[SM Baseline Cove
         $clock.Stop()
         Assert-ScheduleMetric (Test-ScheduleMetricNumber $rows[0].'[Gauge]' $rows[0].'[Public]') 'Consolidated coverage differs from SM Baseline Coverage %.'
         $assertions++
-        # Coverage compares with the latest BL-tagged snapshot on or before the selected update.
-        $latestBaseline = @($files | Where-Object {
+        # Coverage compares with the latest BL-tagged snapshot on or before the selected update,
+        # falling back to the earliest loaded snapshot when no BL file exists.
+        $projectSnapshots = @($files | Where-Object {
             $_.'01 XER_TASK[ProjectCode]' -eq $snapshot.'01 XER_TASK[ProjectCode]' -and
             $_.'01 XER_TASK[ProgrammeType]' -eq $snapshot.'01 XER_TASK[ProgrammeType]' -and
-            [datetime]$_.'01 XER_TASK[UpdateDate]' -le [datetime]$snapshot.'01 XER_TASK[UpdateDate]' -and
-            $_.'01 XER_TASK[filename]' -match '-BL' } | ForEach-Object { [datetime]$_.'01 XER_TASK[UpdateDate]' } | Sort-Object | Select-Object -Last 1)
+            [datetime]$_.'01 XER_TASK[UpdateDate]' -le [datetime]$snapshot.'01 XER_TASK[UpdateDate]' })
+        $latestBaseline = @($projectSnapshots | Where-Object { $_.'01 XER_TASK[filename]' -match '-BL' } |
+            ForEach-Object { [datetime]$_.'01 XER_TASK[UpdateDate]' } | Sort-Object | Select-Object -Last 1)
+        $earliestSnapshot = @($projectSnapshots |
+            ForEach-Object { [datetime]$_.'01 XER_TASK[UpdateDate]' } | Sort-Object | Select-Object -First 1)
+        $expectedBaseline = if ($latestBaseline.Count) { $latestBaseline[0] } elseif ($earliestSnapshot.Count) { $earliestSnapshot[0] } else { $null }
         $chosen = if ($null -ne $rows[0].'[BaselineDate]') { [datetime]$rows[0].'[BaselineDate]' } else { $null }
-        Assert-ScheduleMetric ($(if ($latestBaseline.Count) { $chosen -eq $latestBaseline[0] } else { $null -eq $chosen })) 'Baseline is not the latest BL-tagged snapshot up to the selected update.'
+        Assert-ScheduleMetric ($chosen -eq $expectedBaseline) 'Baseline is not the latest BL-tagged snapshot (or earliest loaded update fallback) up to the selected update.'
         $assertions++
         if (-not $ComparePublicOnly) {
             Assert-ScheduleMetric (Test-ScheduleMetricNumber $rows[0].'[Gauge]' $rows[0].'[History]') 'Gauge/history endpoint mismatch.'
@@ -134,11 +139,11 @@ EVALUATE CALCULATETABLE(ROW("Value",[SM Detail Value],"Scope",[SM Detail Scope M
         $assertions++
     }
 
-    # Unusable baseline evidence must show 0% in both the public and consolidated
-    # measures (never blank) and leave an explicit tooltip reason. Repeated or
-    # blank activity codes are not unusable evidence: see the cohort cases below.
+    # Unusable baseline evidence (such as a malformed -BL filename tag) must show 0%
+    # in both the public and consolidated measures (never blank) and leave an explicit
+    # tooltip reason. An unambiguous non-BL earliest update is a valid fallback baseline.
     $fixtures = @(
-        @{ Name = 'No BL provenance'; Variable = 'HasBaselineProvenance'; Value = 'FALSE()'; Overrides = @{ 'Schedule Metric Detail[SM Detail Baseline File]' = '"PROJECT-C-2609_20260930.xer"' } }
+        @{ Name = 'Invalid BL provenance'; Variable = 'HasBaselineProvenance'; Value = 'FALSE()'; Overrides = @{ 'Schedule Metric Detail[SM Detail Baseline File]' = '"PROJECT-C-BLX_20260930.xer"' } }
     )
     foreach ($fixture in $fixtures) {
         foreach ($name in @('SM Detail Value', 'SM Detail Tooltip')) {
@@ -147,13 +152,23 @@ EVALUATE CALCULATETABLE(ROW("Value",[SM Detail Value],"Scope",[SM Detail Scope M
         $fixtureDefinitions = Get-ScheduleMetricsDefinitions -Model $model -LiveModel $target.Database.Model -Overrides $fixture.Overrides
         $rows = Invoke-ScheduleMetricsDax $target ($fixtureDefinitions + @"
 
-EVALUATE CALCULATETABLE(ROW("Coverage",[SM Baseline Coverage %],"Selected",[SM Detail Value],"Status",[SM Detail Status],"Tooltip",[SM Detail Tooltip]),$filter)
+EVALUATE CALCULATETABLE(ROW("Provenance",[SM Detail Baseline Provenance],"Coverage",[SM Baseline Coverage %],"Selected",[SM Detail Value],"Status",[SM Detail Status],"Tooltip",[SM Detail Tooltip]),$filter)
 "@) -TimeoutSeconds 30
+        Assert-ScheduleMetric ($rows[0].'[Provenance]' -eq $false) "$($fixture.Name): malformed BL filename must fail provenance."
         Assert-ScheduleMetric ((Test-ScheduleMetricNumber $rows[0].'[Coverage]' 0) -and (Test-ScheduleMetricNumber $rows[0].'[Selected]' 0)) "$($fixture.Name): baseline coverage must show 0%."
         Assert-ScheduleMetric ($rows[0].'[Status]' -eq 'Partial dated coverage') "$($fixture.Name): status must reflect 0% coverage."
         Assert-ScheduleMetric ($rows[0].'[Tooltip]' -match '0%: ') "$($fixture.Name): an explicit tooltip reason is required."
-        $assertions += 3
+        $assertions += 4
     }
+    $fallbackDefinitions = Get-ScheduleMetricsDefinitions -Model $model -LiveModel $target.Database.Model -Overrides @{
+        'Schedule Metric Detail[SM Detail Baseline File]' = '"PROJECT-C-2609_20260930.xer"'
+    }
+    $rows = Invoke-ScheduleMetricsDax $target ($fallbackDefinitions + @"
+
+EVALUATE CALCULATETABLE(ROW("Provenance",[SM Detail Baseline Provenance]),$filter)
+"@) -TimeoutSeconds 30
+    Assert-ScheduleMetric ($rows[0].'[Provenance]' -eq $true) 'Earliest-update fallback filename without -BL must pass provenance.'
+    $assertions++
 
     # A known matched cohort exercises the actual consolidated ratio, status,
     # colour and tooltip rather than a second implementation of their rules.

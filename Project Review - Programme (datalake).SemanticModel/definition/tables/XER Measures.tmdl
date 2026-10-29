@@ -430,9 +430,10 @@ table 'XER Measures'
 
 	/// Resolved working days for the calendar in the matrix column's period, a month or a week ('Calendar Period'): 7 weekday rules plus net dated exception overrides, for periods overlapping the forecast horizon months (data date month to latest finish month).
 	measure 'CA Monthly Working Days' =
-			VAR CalKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
-			VAR ProjKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
-			VAR CsvFlag = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			VAR CalCount = CALCULATE(COUNTROWS('Scenario Calendar'), CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay))
+			VAR CalKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay))
+			VAR ProjKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[ProjectKey]), CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay))
+			VAR CsvFlag = CALCULATE(SELECTEDVALUE('Scenario Calendar'[IsCsvSource]), CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay))
 			VAR PeriodStart = MIN('Scenario Date'[Date])
 			VAR PeriodEnd = MAX('Scenario Date'[Date])
 			VAR HorizonStart = [CA Horizon Start Month]
@@ -440,7 +441,7 @@ table 'XER Measures'
 			VAR ActiveTasks = [CA Incomplete Activity Count]
 			RETURN
 			    IF(
-			        COUNTROWS('Scenario Calendar') = 1
+			        CalCount = 1
 			            && (HASONEVALUE('Scenario Date'[Month]) || HASONEVALUE('Scenario Date'[Week]))
 			            && NOT ISBLANK(CalKey)
 			            && NOT ISBLANK(ActiveTasks) && ActiveTasks > 0
@@ -514,9 +515,10 @@ table 'XER Measures'
 
 	/// Baseline monthly working days from the calendar's 7-day standard workweek rule before dated exceptions.
 	measure 'CA Monthly Standard Working Days' =
-			VAR CalKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
-			VAR ProjKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
-			VAR CsvFlag = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			VAR CalCount = CALCULATE(COUNTROWS('Scenario Calendar'), CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay))
+			VAR CalKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay))
+			VAR ProjKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[ProjectKey]), CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay))
+			VAR CsvFlag = CALCULATE(SELECTEDVALUE('Scenario Calendar'[IsCsvSource]), CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay))
 			VAR MonthStart = MIN('Scenario Date'[Date])
 			VAR MonthEnd = MAX('Scenario Date'[Date])
 			VAR HorizonStart = [CA Horizon Start Month]
@@ -524,7 +526,7 @@ table 'XER Measures'
 			VAR ActiveTasks = [CA Incomplete Activity Count]
 			RETURN
 			    IF(
-			        COUNTROWS('Scenario Calendar') = 1
+			        CalCount = 1
 			            && HASONEVALUE('Scenario Date'[Month])
 			            && NOT ISBLANK(CalKey)
 			            && NOT ISBLANK(ActiveTasks) && ActiveTasks > 0
@@ -591,9 +593,10 @@ table 'XER Measures'
 
 	/// Total resolved working hours in the month for the selected calendar.
 	measure 'CA Monthly Working Hours' =
-			VAR CalKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
-			VAR ProjKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
-			VAR CsvFlag = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			VAR CalCount = CALCULATE(COUNTROWS('Scenario Calendar'), CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay))
+			VAR CalKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay))
+			VAR ProjKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[ProjectKey]), CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay))
+			VAR CsvFlag = CALCULATE(SELECTEDVALUE('Scenario Calendar'[IsCsvSource]), CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay))
 			VAR MonthStart = MIN('Scenario Date'[Date])
 			VAR MonthEnd = MAX('Scenario Date'[Date])
 			VAR HorizonStart = [CA Horizon Start Month]
@@ -601,7 +604,7 @@ table 'XER Measures'
 			VAR ActiveTasks = [CA Incomplete Activity Count]
 			RETURN
 			    IF(
-			        COUNTROWS('Scenario Calendar') = 1
+			        CalCount = 1
 			            && HASONEVALUE('Scenario Date'[Month])
 			            && NOT ISBLANK(CalKey)
 			            && NOT ISBLANK(ActiveTasks) && ActiveTasks > 0
@@ -665,7 +668,8 @@ table 'XER Measures'
 
 	/// Incomplete critical activities (Total Float <= 0) on this calendar whose remaining execution window overlaps the month.
 	measure 'CA Monthly Critical Activities' =
-			VAR CalKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
+			VAR CalCount = CALCULATE(COUNTROWS('Scenario Calendar'), CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay))
+			VAR CalKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay))
 			VAR MonthStart = MIN('Scenario Date'[Date])
 			VAR MonthEnd = MAX('Scenario Date'[Date])
 			VAR HorizonStart = [CA Horizon Start Month]
@@ -673,7 +677,7 @@ table 'XER Measures'
 			VAR ActiveTasks = [CA Incomplete Activity Count]
 			RETURN
 			    IF(
-			        COUNTROWS('Scenario Calendar') = 1
+			        CalCount = 1
 			            && HASONEVALUE('Scenario Date'[Month])
 			            && NOT ISBLANK(CalKey)
 			            && NOT ISBLANK(ActiveTasks) && ActiveTasks > 0
@@ -704,13 +708,14 @@ table 'XER Measures'
 
 	/// Summary of the calendar's standard 7-day workweek rule (working days per week, hours per day, and weekly hours).
 	measure 'CA Workweek Signature' =
-			VAR CalKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
-			VAR ProjKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
-			VAR CsvFlag = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			VAR CalCount = CALCULATE(COUNTROWS('Scenario Calendar'), CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay))
+			VAR CalKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay))
+			VAR ProjKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[ProjectKey]), CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay))
+			VAR CsvFlag = CALCULATE(SELECTEDVALUE('Scenario Calendar'[IsCsvSource]), CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay))
 			VAR ActiveTasks = [CA Incomplete Activity Count]
 			RETURN
 			    IF(
-			        COUNTROWS('Scenario Calendar') = 1
+			        CalCount = 1
 			            && NOT ISBLANK(CalKey)
 			            && NOT ISBLANK(ActiveTasks) && ActiveTasks > 0,
 			        VAR CalendarRows =
@@ -763,9 +768,10 @@ table 'XER Measures'
 
 	/// Count of future dated non-working holidays/exceptions between the Data Date and Project Finish that turn a standard working weekday into a non-working day.
 	measure 'CA Future Exception Blackout Days' =
-			VAR CalKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
-			VAR ProjKey = SELECTEDVALUE('Scenario Calendar'[ProjectKey])
-			VAR CsvFlag = SELECTEDVALUE('Scenario Calendar'[IsCsvSource])
+			VAR CalCount = CALCULATE(COUNTROWS('Scenario Calendar'), CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay))
+			VAR CalKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay))
+			VAR ProjKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[ProjectKey]), CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay))
+			VAR CsvFlag = CALCULATE(SELECTEDVALUE('Scenario Calendar'[IsCsvSource]), CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay))
 			VAR ActiveTasks = [CA Incomplete Activity Count]
 			VAR DataDate =
 			    CALCULATE(
@@ -780,7 +786,7 @@ table 'XER Measures'
 			    )
 			RETURN
 			    IF(
-			        COUNTROWS('Scenario Calendar') = 1
+			        CalCount = 1
 			            && NOT ISBLANK(CalKey)
 			            && NOT ISBLANK(ActiveTasks) && ActiveTasks > 0,
 			        VAR CalendarRows =
@@ -825,11 +831,12 @@ table 'XER Measures'
 
 	/// Total incomplete work activities assigned to this calendar in the selected snapshot and float scope.
 	measure 'CA Incomplete Activity Count' =
-			VAR CalKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
+			VAR CalCount = CALCULATE(COUNTROWS('Scenario Calendar'), CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay))
+			VAR CalKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay))
 			VAR InScopeRow = ISINSCOPE('Scenario Calendar'[Calendar])
 			VAR ActiveTaskCount =
 			    IF(
-			        COUNTROWS('Scenario Calendar') = 1 && NOT ISBLANK(CalKey),
+			        CalCount = 1 && NOT ISBLANK(CalKey),
 			        CALCULATE(
 			            COUNTROWS('01 XER_TASK'),
 			            '01 XER_TASK'[status_code] <> "Complete",
@@ -853,14 +860,15 @@ table 'XER Measures'
 
 	/// Incomplete critical activities (Total Float <= 0) assigned to this calendar in the selected snapshot and float scope.
 	measure 'CA Critical Activity Count' =
-			VAR CalKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
+			VAR CalCount = CALCULATE(COUNTROWS('Scenario Calendar'), CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay))
+			VAR CalKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay))
 			VAR InScopeRow = ISINSCOPE('Scenario Calendar'[Calendar])
 			VAR ActiveTasks = [CA Incomplete Activity Count]
 			RETURN
 			    IF(
 			        InScopeRow,
 			        IF(
-			            COUNTROWS('Scenario Calendar') = 1 && NOT ISBLANK(CalKey) && NOT ISBLANK(ActiveTasks) && ActiveTasks > 0,
+			            CalCount = 1 && NOT ISBLANK(CalKey) && NOT ISBLANK(ActiveTasks) && ActiveTasks > 0,
 			            COALESCE(
 			                CALCULATE(
 			                    COUNTROWS('01 XER_TASK'),
@@ -890,14 +898,15 @@ table 'XER Measures'
 
 	/// Sum of remaining working duration (in days) across incomplete critical activities (Total Float <= 0) on this calendar.
 	measure 'CA Critical Remaining Working Days' =
-			VAR CalKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
+			VAR CalCount = CALCULATE(COUNTROWS('Scenario Calendar'), CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay))
+			VAR CalKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay))
 			VAR InScopeRow = ISINSCOPE('Scenario Calendar'[Calendar])
 			VAR ActiveTasks = [CA Incomplete Activity Count]
 			RETURN
 			    IF(
 			        InScopeRow,
 			        IF(
-			            COUNTROWS('Scenario Calendar') = 1 && NOT ISBLANK(CalKey) && NOT ISBLANK(ActiveTasks) && ActiveTasks > 0,
+			            CalCount = 1 && NOT ISBLANK(CalKey) && NOT ISBLANK(ActiveTasks) && ActiveTasks > 0,
 			            COALESCE(
 			                CALCULATE(
 			                    SUM('01 XER_TASK'[remaining_duration]),
@@ -1261,6 +1270,11 @@ table 'XER Measures'
 	measure 'CA Inspector Selection Match' =
 			VAR CalendarSelected = ISFILTERED('Scenario Calendar'[Calendar])
 			VAR PeriodSelected = ISFILTERED('Scenario Date'[Month]) || ISFILTERED('Scenario Date'[Week])
+			VAR SelectedCalendars =
+			    CALCULATETABLE(
+			        VALUES('Scenario Calendar'[clndr_id_key]),
+			        CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay)
+			    )
 			VAR PeriodStart = MIN('Scenario Date'[Date])
 			VAR PeriodEnd = MAX('Scenario Date'[Date])
 			RETURN
@@ -1270,7 +1284,7 @@ table 'XER Measures'
 			        CalendarSelected && PeriodSelected,
 			            CALCULATE(
 			                COUNTROWS('01 XER_TASK'),
-			                KEEPFILTERS(TREATAS(VALUES('Scenario Calendar'[clndr_id_key]), '01 XER_TASK'[calendar_id_key])),
+			                KEEPFILTERS(TREATAS(SelectedCalendars, '01 XER_TASK'[calendar_id_key])),
 			                // Remaining window overlaps the month or week: Finish >= PeriodStart and MAX(Start, Data Date) <= PeriodEnd
 			                KEEPFILTERS('01 XER_TASK'[Finish] >= PeriodStart),
 			                KEEPFILTERS('01 XER_TASK'[Start] <= PeriodEnd),
@@ -1279,7 +1293,7 @@ table 'XER Measures'
 			        CalendarSelected,
 			            CALCULATE(
 			                COUNTROWS('01 XER_TASK'),
-			                KEEPFILTERS(TREATAS(VALUES('Scenario Calendar'[clndr_id_key]), '01 XER_TASK'[calendar_id_key]))
+			                KEEPFILTERS(TREATAS(SelectedCalendars, '01 XER_TASK'[calendar_id_key]))
 			            ) > 0,
 			        PeriodSelected,
 			            CALCULATE(
@@ -1361,12 +1375,13 @@ table 'XER Measures'
 
 	/// Incomplete activities on this calendar whose remaining execution window overlaps the matrix column's month or week (what the activity table lists for that cell).
 	measure 'CA Monthly Active Activities' =
-			VAR CalKey = SELECTEDVALUE('Scenario Calendar'[clndr_id_key])
+			VAR CalCount = CALCULATE(COUNTROWS('Scenario Calendar'), CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay))
+			VAR CalKey = CALCULATE(SELECTEDVALUE('Scenario Calendar'[clndr_id_key]), CROSSFILTER('01 XER_TASK'[UpdateDate], CurrentDate[UpdateDate], OneWay))
 			VAR PeriodStart = MIN('Scenario Date'[Date])
 			VAR PeriodEnd = MAX('Scenario Date'[Date])
 			RETURN
 			    IF(
-			        COUNTROWS('Scenario Calendar') = 1
+			        CalCount = 1
 			            && (HASONEVALUE('Scenario Date'[Month]) || HASONEVALUE('Scenario Date'[Week]))
 			            && NOT ISBLANK(CalKey),
 			        COALESCE(
@@ -1643,7 +1658,7 @@ table 'XER Measures'
 		displayFolder: Calendar Stretch
 		lineageTag: 02080098-b2bc-5472-9908-2b5ea5f9b0d6
 
-	/// Activity shown by the cliff-edge chart and callout: the one clicked in the bars, timeline or scatter, otherwise the activity with the largest calendar-driven delay. Blank unless one project and one update are in context.
+	/// Activity shown by the cliff-edge chart and callout: the one clicked in the bars, timeline or scatter, otherwise the delayed activity with the largest stretch ratio ([CA Activity Stretch Ratio]). Blank unless one project and one update are in context.
 	measure 'CS Cliff Task Code' =
 			VAR TaskRows = COUNTROWS('01 XER_TASK')
 			RETURN
@@ -1652,12 +1667,33 @@ table 'XER Measures'
 			        IF(
 			            HASONEVALUE('01 XER_TASK'[task_code]),
 			            VALUES('01 XER_TASK'[task_code]),
-			            VAR MaxDelay = MAX('01 XER_TASK'[Calendar Delay Days])
-			            RETURN
-			                IF(
-			                    MaxDelay > 0,
-			                    CALCULATE(MIN('01 XER_TASK'[task_code]), KEEPFILTERS('01 XER_TASK'[Calendar Delay Days] = MaxDelay))
+			            VAR DelayedTasks =
+			                CALCULATETABLE(
+			                    SUMMARIZE(
+			                        '01 XER_TASK',
+			                        '01 XER_TASK'[task_code],
+			                        '01 XER_TASK'[Start],
+			                        '01 XER_TASK'[Finish],
+			                        '01 XER_TASK'[data_date],
+			                        '01 XER_TASK'[remaining_duration]
+			                    ),
+			                    KEEPFILTERS('01 XER_TASK'[Calendar Delay Days] > 0),
+			                    KEEPFILTERS('01 XER_TASK'[remaining_duration] > 0)
 			                )
+			            VAR TopTask =
+			                TOPN(
+			                    1,
+			                    DelayedTasks,
+			                    VAR StartDate = '01 XER_TASK'[Start]
+			                    VAR DataDate = '01 XER_TASK'[data_date]
+			                    VAR EffectiveStart = IF(NOT ISBLANK(StartDate) && NOT ISBLANK(DataDate), MAX(StartDate, DataDate), StartDate)
+			                    RETURN DIVIDE(INT('01 XER_TASK'[Finish] - EffectiveStart) + 1, '01 XER_TASK'[remaining_duration]),
+			                    DESC,
+			                    '01 XER_TASK'[task_code],
+			                    ASC
+			                )
+			            RETURN
+			                MINX(TopTask, '01 XER_TASK'[task_code])
 			        )
 			    )
 		formatString: @
@@ -1665,7 +1701,7 @@ table 'XER Measures'
 		displayFolder: Calendar Stretch
 		lineageTag: cf487d5d-d0f5-57f8-badc-db30735107fc
 
-	/// Finish the cliff-edge activity ([CS Cliff Task Code]) would reach if its remaining work started on the 'Scenario Date' axis date: the CEILING(remaining_duration)-th working day on its calendar's weekday rules plus dated exceptions. Only within 60 days of its remaining start; blank past an invalid or conflicting exception, when exception coverage is unknown, or beyond the axis. A sparse search (closed-form weekday counts plus exception deltas, 13 bisection levels rendered by scripts/calendar_analysis/stretch_dax.py), never a date series; the search stops at the scheduled finish + 400 days when the latest window start completes by then, otherwise at the axis end.
+	/// Finish the cliff-edge activity ([CS Cliff Task Code]) would reach if its remaining work started on the 'Scenario Date' axis date: the CEILING(remaining_duration)-th working day on its calendar's weekday rules plus dated exceptions. Only within 60 days of its remaining start (the data range; the chart's X axis is zoomed to [CS Cliff Window Start] to [CS Cliff Window End] inside it); blank past an invalid or conflicting exception, when exception coverage is unknown, or beyond the axis. A sparse search (closed-form weekday counts plus exception deltas, 13 bisection levels rendered by scripts/calendar_analysis/stretch_dax.py), never a date series; the search stops at the scheduled finish + 400 days when the latest window start completes by then, otherwise at the axis end.
 	measure 'CS Cliff Finish Date' =
 			VAR Code = [CS Cliff Task Code]
 			VAR CandidateStart = SELECTEDVALUE('Scenario Date'[Date])
@@ -1681,6 +1717,8 @@ table 'XER Measures'
 			                VAR RowDataDate = '01 XER_TASK'[data_date]
 			                RETURN IF(NOT ISBLANK(StartDate) && NOT ISBLANK(RowDataDate), MAX(StartDate, RowDataDate), StartDate)
 			            )
+			        // The data range: 60 days either side of the remaining start, never before the data date. A pure function of the row, so
+			        // it is cheap for every axis date; the chart's X axis is zoomed to [CS Cliff Window Start]..[CS Cliff Window End] inside it.
 			        VAR WindowStart = MAX(DataDate, EffectiveStart - 60)
 			        VAR WindowEnd = EffectiveStart + 60
 			        RETURN
@@ -1884,13 +1922,13 @@ table 'XER Measures'
 			        ISBLANK(Code),
 			        "Cliff edge · select one project and one update",
 			        "Cliff edge · " & Code & " · " & TaskName
-			            & IF(NOT HASONEVALUE('01 XER_TASK'[task_code]), " (largest delay; click an activity to change)")
+			            & IF(NOT HASONEVALUE('01 XER_TASK'[task_code]), " (largest stretch ratio; click an activity to change)")
 			    )
 		formatString: @
 		displayFolder: Calendar Stretch
 		lineageTag: c0e751cc-5d09-5f06-8958-3ba234c06b6a
 
-	/// Cliff-edge callout for [CS Cliff Task Code]: the latest earlier start that would finish at least 7 days sooner, and the earliest later start that would finish at least 7 days later, among starts within 60 days of the remaining start. Evaluates [CS Cliff Finish Date] for the whole window in one pass over 'Scenario Date' (as the chart does), so its date-independent work is shared instead of repeated per probe.
+	/// Concise cliff-edge callout for [CS Cliff Task Code]. With a shutdown: the last start that beats it ([CS Cliff Edge Date]), the resulting finish and days saved, and the shutdown dates. Without one: any start shift within the chart window ([CS Cliff Window Start] to [CS Cliff Window End]) that saves or adds at least 7 net calendar days. Evaluates 'Scenario Date' in one pass (probing only the anchor dates when a shutdown exists).
 	measure 'CS Cliff Callout' =
 			VAR Code = [CS Cliff Task Code]
 			RETURN
@@ -1898,55 +1936,98 @@ table 'XER Measures'
 			        ISBLANK(Code),
 			        "Select one project and one update to see the cliff edge.",
 			        VAR DataDate = CALCULATE(MAX('01 XER_TASK'[data_date]), KEEPFILTERS(TREATAS({ Code }, '01 XER_TASK'[task_code])))
-			        VAR TaskStart = CALCULATE(MAX('01 XER_TASK'[Start]), KEEPFILTERS(TREATAS({ Code }, '01 XER_TASK'[task_code])))
-			        VAR EffectiveStart = IF(NOT ISBLANK(TaskStart) && NOT ISBLANK(DataDate), MAX(TaskStart, DataDate), TaskStart)
-			        VAR ScheduledFinish = CALCULATE(MAX('01 XER_TASK'[Finish]), KEEPFILTERS(TREATAS({ Code }, '01 XER_TASK'[task_code])))
-			        VAR WindowStart = MAX(DataDate, EffectiveStart - 60)
-			        VAR WindowEnd = EffectiveStart + 60
+			        VAR EffectiveStart = [CS Cliff Start Date]
+			        VAR WindowStart = [CS Cliff Window Start]
+			        VAR WindowEnd = [CS Cliff Window End]
+			        VAR Shutdown = [CS Cliff Shutdown]
+			        VAR Edge = [CS Cliff Edge Date]
 			        VAR MaterialDays = 7
-			        // One pass over the window, like the chart, so the date-independent work is shared.
-			        VAR Finishes =
-			            ADDCOLUMNS(
-			                CALCULATETABLE(VALUES('Scenario Date'[Date]), REMOVEFILTERS('Scenario Date'), 'Scenario Date'[Date] >= WindowStart, 'Scenario Date'[Date] <= WindowEnd),
-			                "__Finish", [CS Cliff Finish Date]
+			        // One pass over 'Scenario Date' (only the anchor dates when a shutdown already defines the cliff).
+			        VAR ProbeDates =
+			            FILTER(
+			                CALCULATETABLE(
+			                    VALUES('Scenario Date'[Date]),
+			                    REMOVEFILTERS('Scenario Date'),
+			                    'Scenario Date'[Date] >= WindowStart,
+			                    'Scenario Date'[Date] <= WindowEnd
+			                ),
+			                ISBLANK(Shutdown)
+			                    || 'Scenario Date'[Date] = EffectiveStart
+			                    || 'Scenario Date'[Date] = WindowStart
+			                    || (NOT ISBLANK(Edge) && 'Scenario Date'[Date] = Edge)
 			            )
+			        VAR Finishes = ADDCOLUMNS(ProbeDates, "__Finish", [CS Cliff Finish Date])
 			        VAR ModelFinish = MAXX(FILTER(Finishes, 'Scenario Date'[Date] = EffectiveStart), [__Finish])
 			        RETURN
 			            IF(
 			                ISBLANK(ModelFinish),
-			                Code & ": the calendar's weekday rules or exceptions are unusable near its start, so no cliff edge is shown.",
-			                VAR RecoveryStart = MAXX(FILTER(Finishes, 'Scenario Date'[Date] < EffectiveStart && NOT ISBLANK([__Finish]) && [__Finish] <= ModelFinish - MaterialDays), 'Scenario Date'[Date])
-			                VAR RecoveryFinish = MAXX(FILTER(Finishes, 'Scenario Date'[Date] = RecoveryStart), [__Finish])
-			                VAR SlipStart = MINX(FILTER(Finishes, 'Scenario Date'[Date] > EffectiveStart && NOT ISBLANK([__Finish]) && [__Finish] >= ModelFinish + MaterialDays), 'Scenario Date'[Date])
-			                VAR SlipFinish = MAXX(FILTER(Finishes, 'Scenario Date'[Date] = SlipStart), [__Finish])
-			                VAR RecoveryText =
-			                    IF(
-			                        NOT ISBLANK(RecoveryStart),
-			                        "Start by " & FORMAT(RecoveryStart, "dd-MMM-yy") & " (" & FORMAT(INT(EffectiveStart - RecoveryStart), "#,0") & " days earlier) → finish "
-			                            & FORMAT(RecoveryFinish, "dd-MMM-yy") & ", " & FORMAT(INT(ModelFinish - RecoveryFinish), "#,0") & " days sooner."
-			                    )
-			                VAR SlipText =
-			                    IF(
-			                        NOT ISBLANK(SlipStart),
-			                        "If it starts after " & FORMAT(SlipStart - 1, "dd-MMM-yy") & ", the finish jumps to " & FORMAT(SlipFinish, "dd-MMM-yy")
-			                            & " (+" & FORMAT(INT(SlipFinish - ModelFinish), "#,0") & " days)."
-			                    )
-			                VAR Caveat =
-			                    IF(
-			                        ModelFinish <> ScheduledFinish,
-			                        " The calendar model finishes on " & FORMAT(ModelFinish, "dd-MMM-yy") & ", not the P6 finish " & FORMAT(ScheduledFinish, "dd-MMM-yy")
-			                            & " (resource calendar or part-day duration)."
-			                    )
-			                RETURN
-			                    Code & ": "
-			                        & SWITCH(
+			                "Calendar rules unavailable near scheduled start.",
+			                IF(
+			                    NOT ISBLANK(Shutdown),
+			                    VAR ShutdownStart = DATE(VALUE(MID(Shutdown, 1, 4)), VALUE(MID(Shutdown, 6, 2)), VALUE(MID(Shutdown, 9, 2)))
+			                    VAR ShutdownText =
+			                        FORMAT(ShutdownStart, "dd-MMM-yy") & " → "
+			                            & FORMAT(DATE(VALUE(MID(Shutdown, 12, 4)), VALUE(MID(Shutdown, 17, 2)), VALUE(MID(Shutdown, 20, 2))), "dd-MMM-yy")
+			                    VAR EdgeFinish = IF(NOT ISBLANK(Edge), MAXX(FILTER(Finishes, 'Scenario Date'[Date] = Edge), [__Finish]))
+			                    VAR FirstFinish = MAXX(FILTER(Finishes, 'Scenario Date'[Date] = WindowStart), [__Finish])
+			                    RETURN
+			                        SWITCH(
 			                            TRUE(),
-			                            NOT ISBLANK(RecoveryStart) && NOT ISBLANK(SlipStart), RecoveryText & " " & SlipText,
-			                            NOT ISBLANK(RecoveryStart), RecoveryText,
-			                            NOT ISBLANK(SlipStart), SlipText,
-			                            "no calendar cliff within 60 days of its remaining start; the finish moves day for day."
+			                            NOT ISBLANK(Edge) && NOT ISBLANK(EdgeFinish),
+			                                "Start by " & FORMAT(Edge, "dd-MMM-yy") & " (" & FORMAT(INT(EffectiveStart - Edge), "#,0") & " d earlier) → finish "
+			                                    & FORMAT(EdgeFinish, "dd-MMM-yy") & " (-" & FORMAT(INT(ModelFinish - EdgeFinish), "#,0") & " d) · beats "
+			                                    & ShutdownText & " shutdown",
+			                            NOT ISBLANK(Edge),
+			                                "Start by " & FORMAT(Edge, "dd-MMM-yy") & " (" & FORMAT(INT(EffectiveStart - Edge), "#,0") & " d earlier) · beats "
+			                                    & ShutdownText & " shutdown",
+			                            WindowStart = DataDate && NOT ISBLANK(FirstFinish) && FirstFinish >= ShutdownStart,
+			                                "Cannot beat " & ShutdownText & " shutdown from data date (" & FORMAT(DataDate, "dd-MMM-yy") & ")",
+			                            "Cannot beat " & ShutdownText & " shutdown within window"
+			                        ),
+			                    VAR RecoveryStart =
+			                        MAXX(
+			                            FILTER(
+			                                Finishes,
+			                                'Scenario Date'[Date] < EffectiveStart
+			                                    && NOT ISBLANK([__Finish])
+			                                    && INT(ModelFinish - [__Finish]) - INT(EffectiveStart - 'Scenario Date'[Date]) >= MaterialDays
+			                            ),
+			                            'Scenario Date'[Date]
 			                        )
-			                        & Caveat
+			                    VAR RecoveryFinish = IF(NOT ISBLANK(RecoveryStart), MAXX(FILTER(Finishes, 'Scenario Date'[Date] = RecoveryStart), [__Finish]))
+			                    VAR RecoveryText =
+			                        IF(
+			                            NOT ISBLANK(RecoveryStart),
+			                            "Start by " & FORMAT(RecoveryStart, "dd-MMM-yy") & " (" & FORMAT(INT(EffectiveStart - RecoveryStart), "#,0")
+			                                & " d earlier) → finish " & FORMAT(RecoveryFinish, "dd-MMM-yy") & " (-"
+			                                & FORMAT(INT(ModelFinish - RecoveryFinish), "#,0") & " d)"
+			                        )
+			                    VAR SlipStart =
+			                        MINX(
+			                            FILTER(
+			                                Finishes,
+			                                'Scenario Date'[Date] > EffectiveStart
+			                                    && NOT ISBLANK([__Finish])
+			                                    && INT([__Finish] - ModelFinish) - INT('Scenario Date'[Date] - EffectiveStart) >= MaterialDays
+			                            ),
+			                            'Scenario Date'[Date]
+			                        )
+			                    VAR SlipFinish = IF(NOT ISBLANK(SlipStart), MAXX(FILTER(Finishes, 'Scenario Date'[Date] = SlipStart), [__Finish]))
+			                    VAR SlipText =
+			                        IF(
+			                            NOT ISBLANK(SlipStart),
+			                            "Start after " & FORMAT(SlipStart - 1, "dd-MMM-yy") & " → finish " & FORMAT(SlipFinish, "dd-MMM-yy")
+			                                & " (+" & FORMAT(INT(SlipFinish - ModelFinish), "#,0") & " d)"
+			                        )
+			                    RETURN
+			                        SWITCH(
+			                            TRUE(),
+			                            NOT ISBLANK(RecoveryText) && NOT ISBLANK(SlipText), RecoveryText & " · " & SlipText,
+			                            NOT ISBLANK(RecoveryText), RecoveryText,
+			                            NOT ISBLANK(SlipText), SlipText,
+			                            "No calendar cliff around scheduled start · finish moves day for day"
+			                        )
+			                )
 			            )
 			    )
 		formatString: @
@@ -1962,6 +2043,280 @@ table 'XER Measures'
 		formatString: @
 		displayFolder: Calendar Analysis
 		lineageTag: 51fa1c56-4293-5029-a649-0e671f9b8a57
+
+	/// 1 when the report update has at least one RLS-visible task in scope; applied to CurrentDate slicers so Viewers never see update dates from unauthorised projects.
+	measure 'Update Has Visible Tasks' = INT ( NOT ISEMPTY ( '01 XER_TASK' ) )
+		formatString: 0
+		isHidden
+		displayFolder: Governance
+		lineageTag: 9f4e2c71-8d3a-4b65-a2c9-5e1f84b7d310
+
+	/// Scheduled or remaining start date (MAX(Start, data_date)) of the cliff-edge activity ([CS Cliff Task Code]), used as the vertical X-axis reference line on the cliff-edge chart.
+	measure 'CS Cliff Start Date' =
+			VAR Code = [CS Cliff Task Code]
+			RETURN
+			    IF(
+			        NOT ISBLANK(Code),
+			        VAR TaskRow = CALCULATETABLE('01 XER_TASK', KEEPFILTERS(TREATAS({ Code }, '01 XER_TASK'[task_code])))
+			        RETURN
+			            MAXX(
+			                TaskRow,
+			                VAR StartDate = '01 XER_TASK'[Start]
+			                VAR RowDataDate = '01 XER_TASK'[data_date]
+			                RETURN IF(NOT ISBLANK(StartDate) && NOT ISBLANK(RowDataDate), MAX(StartDate, RowDataDate), StartDate)
+			            )
+			    )
+		formatString: dd/mm/yyyy
+		isHidden
+		displayFolder: Calendar Stretch
+		lineageTag: 4a61e8b2-9c3d-47e1-8f25-1d09b3e7c412
+
+	/// First shutdown the cliff-edge activity's remaining work runs into, as "yyyy-MM-dd|yyyy-MM-dd": a run of 7 or more consecutive non-working days (the rule of 'CS Activity Shutdown Bands') that starts after its remaining start and on or before its Finish. Blank when its delay comes only from scattered holidays.
+	measure 'CS Cliff Shutdown' =
+			VAR Code = [CS Cliff Task Code]
+			RETURN
+			    IF(
+			        NOT ISBLANK(Code),
+			        MAXX(
+			            CALCULATETABLE('01 XER_TASK', KEEPFILTERS(TREATAS({ Code }, '01 XER_TASK'[task_code]))),
+			            VAR StartDate = '01 XER_TASK'[Start]
+			            VAR DataDate = '01 XER_TASK'[data_date]
+			            VAR EffectiveStart = IF(NOT ISBLANK(StartDate) && NOT ISBLANK(DataDate), MAX(StartDate, DataDate), StartDate)
+			            VAR FinishDate = '01 XER_TASK'[Finish]
+			            VAR CalKey = '01 XER_TASK'[calendar_id_key]
+			            VAR WorkweekMask = RELATED('10 XER_CALENDARS'[Workweek Mask])
+			            RETURN
+			                IF(
+			                    LEN(WorkweekMask) = 7 && NOT ISBLANK(EffectiveStart) && FinishDate > EffectiveStart,
+			                    VAR FetchFrom = EffectiveStart - 7
+			                    VAR FetchTo = FinishDate + 7
+			                    VAR Dated =
+			                        CALCULATETABLE(
+			                            SELECTCOLUMNS(
+			                                '11 XER_CALENDAR_DETAILED',
+			                                "__Date", '11 XER_CALENDAR_DETAILED'[date],
+			                                "__Hours", '11 XER_CALENDAR_DETAILED'[work_hours]
+			                            ),
+			                            REMOVEFILTERS('11 XER_CALENDAR_DETAILED'),
+			                            TREATAS({ CalKey }, '11 XER_CALENDAR_DETAILED'[clndr_id_key]),
+			                            '11 XER_CALENDAR_DETAILED'[date] >= FetchFrom,
+			                            '11 XER_CALENDAR_DETAILED'[date] <= FetchTo,
+			                            '11 XER_CALENDAR_DETAILED'[exception_type] <> "Exception - Invalid"
+			                        )
+			                    VAR Closed = DISTINCT(SELECTCOLUMNS(FILTER(Dated, NOT ISBLANK([__Hours]) && [__Hours] <= 0), "__Date", [__Date]))
+			                    VAR Opened = DISTINCT(SELECTCOLUMNS(FILTER(Dated, [__Hours] > 0), "__Date", [__Date]))
+			                    VAR OffPerWeek = 7 - LEN(SUBSTITUTE(WorkweekMask, "0", ""))
+			                    VAR DoubleMask = WorkweekMask & WorkweekMask
+			                    VAR ReverseMask =
+			                        MID(WorkweekMask, 7, 1) & MID(WorkweekMask, 6, 1) & MID(WorkweekMask, 5, 1) & MID(WorkweekMask, 4, 1)
+			                            & MID(WorkweekMask, 3, 1) & MID(WorkweekMask, 2, 1) & MID(WorkweekMask, 1, 1)
+			                    // Runs as in 'CS Activity Shutdown Bands': a closed date starts a run unless every day since the previous closed date is a routine off-day.
+			                    VAR Heads =
+			                        FILTER(
+			                            Closed,
+			                            VAR ThisDate = [__Date]
+			                            VAR PreviousDate = MAXX(FILTER(Closed, [__Date] < ThisDate), [__Date])
+			                            VAR GapDays = IF(ISBLANK(PreviousDate), 0, INT(ThisDate - PreviousDate) - 1)
+			                            VAR GapStartDow = IF(ISBLANK(PreviousDate), 1, WEEKDAY(PreviousDate + 1, 2))
+			                            VAR GapExtra = MOD(GapDays, 7)
+			                            VAR GapOffDays = QUOTIENT(GapDays, 7) * OffPerWeek + GapExtra - LEN(SUBSTITUTE(MID(DoubleMask, GapStartDow, GapExtra), "0", ""))
+			                            RETURN
+			                                ISBLANK(PreviousDate)
+			                                    || GapOffDays < GapDays
+			                                    || NOT ISEMPTY(FILTER(Opened, [__Date] > PreviousDate && [__Date] < ThisDate))
+			                        )
+			                    VAR Runs =
+			                        ADDCOLUMNS(
+			                            Heads,
+			                            "__Start",
+			                                VAR Head = [__Date]
+			                                VAR OffBefore = FIND("1", MID(ReverseMask & ReverseMask, 8 - WEEKDAY(Head - 1, 2), 7) & "1") - 1
+			                                VAR LastOpened = MAXX(FILTER(Opened, [__Date] < Head), [__Date])
+			                                VAR Back = IF(ISBLANK(LastOpened), OffBefore, MIN(OffBefore, INT(Head - LastOpened) - 1))
+			                                RETURN MAX(FetchFrom, Head - Back),
+			                            "__End",
+			                                VAR Head = [__Date]
+			                                VAR NextHead = MINX(FILTER(Heads, [__Date] > Head), [__Date])
+			                                VAR Tail = MAXX(FILTER(Closed, [__Date] >= Head && (ISBLANK(NextHead) || [__Date] < NextHead)), [__Date])
+			                                VAR OffAfter = FIND("1", MID(DoubleMask, WEEKDAY(Tail + 1, 2), 7) & "1") - 1
+			                                VAR NextOpened = MINX(FILTER(Opened, [__Date] > Tail), [__Date])
+			                                VAR Forward = IF(ISBLANK(NextOpened), OffAfter, MIN(OffAfter, INT(NextOpened - Tail) - 1))
+			                                RETURN MIN(FetchTo, Tail + Forward)
+			                        )
+			                    VAR Hit = FILTER(Runs, INT([__End] - [__Start]) + 1 >= 7 && [__Start] > EffectiveStart && [__Start] <= FinishDate)
+			                    VAR FirstStart = MINX(Hit, [__Start])
+			                    VAR FirstEnd = MINX(FILTER(Hit, [__Start] = FirstStart), [__End])
+			                    RETURN IF(NOT ISBLANK(FirstStart), FORMAT(FirstStart, "yyyy-MM-dd") & "|" & FORMAT(FirstEnd, "yyyy-MM-dd"))
+			                )
+			        )
+			    )
+		formatString: @
+		isHidden
+		displayFolder: Calendar Stretch
+		lineageTag: 7c3e9a51-2b84-4f60-9d17-e6a0b5c48f21
+
+	/// Last start that beats [CS Cliff Shutdown]: the latest date from the data date with at least CEILING(remaining_duration) working days before the shutdown starts (weekday rules plus dated exceptions). The same closed-form counts and exception deltas as 'CS Cliff Finish Date', searched backwards in 13 bisection levels rendered by scripts/calendar_analysis/stretch_dax.py. Blank without a shutdown, when even the data date is too late, or when an invalid or conflicting exception falls between it and the shutdown.
+	measure 'CS Cliff Edge Date' =
+			VAR Code = [CS Cliff Task Code]
+			VAR Shutdown = [CS Cliff Shutdown]
+			RETURN
+			    IF(
+			        NOT ISBLANK(Code) && NOT ISBLANK(Shutdown),
+			        VAR LastDay = DATE(VALUE(MID(Shutdown, 1, 4)), VALUE(MID(Shutdown, 6, 2)), VALUE(MID(Shutdown, 9, 2))) - 1
+			        VAR TaskRow = CALCULATETABLE('01 XER_TASK', KEEPFILTERS(TREATAS({ Code }, '01 XER_TASK'[task_code])))
+			        VAR DataDate = MAXX(TaskRow, '01 XER_TASK'[data_date])
+			        VAR RemWork = MAXX(TaskRow, '01 XER_TASK'[remaining_duration])
+			        VAR NeedDays = IF(NOT ISBLANK(RemWork), INT(CEILING(ROUND(RemWork, 4), 1)))
+			        VAR CalKey = MAXX(TaskRow, '01 XER_TASK'[calendar_id_key])
+			        VAR WorkweekMask = MAXX(TaskRow, RELATED('10 XER_CALENDARS'[Workweek Mask]))
+			        VAR WorkDays = LEN(SUBSTITUTE(WorkweekMask, "0", ""))
+			        VAR UndatedMarkers =
+			            CALCULATE(
+			                COUNTROWS('11 XER_CALENDAR_DETAILED'),
+			                REMOVEFILTERS('11 XER_CALENDAR_DETAILED'),
+			                TREATAS({ CalKey }, '11 XER_CALENDAR_DETAILED'[clndr_id_key]),
+			                ISBLANK('11 XER_CALENDAR_DETAILED'[date]),
+			                '11 XER_CALENDAR_DETAILED'[exception_type] <> "Standard"
+			            )
+			        RETURN
+			            IF(
+			                LEN(WorkweekMask) = 7 && WorkDays > 0 && NeedDays >= 1 && ISBLANK(UndatedMarkers) && NOT ISBLANK(DataDate) && LastDay >= DataDate,
+			                VAR Dated =
+			                    CALCULATETABLE(
+			                        SELECTCOLUMNS(
+			                            '11 XER_CALENDAR_DETAILED',
+			                            "__Date", '11 XER_CALENDAR_DETAILED'[date],
+			                            "__Hours", '11 XER_CALENDAR_DETAILED'[work_hours],
+			                            "__Type", '11 XER_CALENDAR_DETAILED'[exception_type]
+			                        ),
+			                        REMOVEFILTERS('11 XER_CALENDAR_DETAILED'),
+			                        TREATAS({ CalKey }, '11 XER_CALENDAR_DETAILED'[clndr_id_key]),
+			                        '11 XER_CALENDAR_DETAILED'[date] >= DataDate,
+			                        '11 XER_CALENDAR_DETAILED'[date] <= LastDay
+			                    )
+			                VAR Valid =
+			                    DISTINCT(
+			                        SELECTCOLUMNS(
+			                            FILTER(Dated, NOT ISBLANK([__Hours]) && [__Hours] >= 0 && [__Type] <> "Exception - Invalid"),
+			                            "__Date", [__Date],
+			                            "__Working", IF([__Hours] > 0, 1, 0)
+			                        )
+			                    )
+			                // Unusable dates: invalid exceptions, or a date carrying both a working and a non-working exception.
+			                VAR LastUnknown =
+			                    MAXX(
+			                        UNION(
+			                            SELECTCOLUMNS(FILTER(Dated, ISBLANK([__Hours]) || [__Hours] < 0 || [__Type] = "Exception - Invalid"), "__Date", [__Date]),
+			                            SELECTCOLUMNS(FILTER(GROUPBY(Valid, [__Date], "__Flags", SUMX(CURRENTGROUP(), 1)), [__Flags] > 1), "__Date", [__Date])
+			                        ),
+			                        [__Date]
+			                    )
+			                VAR Deltas =
+			                    FILTER(
+			                        ADDCOLUMNS(Valid, "__Delta", [__Working] - IF(MID(WorkweekMask, WEEKDAY([__Date], 2), 1) = "1", 1, 0)),
+			                        [__Delta] <> 0
+			                    )
+			                VAR DoubleMask = WorkweekMask & WorkweekMask
+			                // Bisection invariant: at least NeedDays working days from Lo through LastDay, fewer from Hi.
+			                VAR EdgeFound =
+			                        VAR Lo00 = DataDate
+			                        VAR Hi00 = LastDay + 1
+			                        VAR Mid01 = Lo00 + QUOTIENT(INT(Hi00 - Lo00), 2)
+			                        VAR Ok01 = QUOTIENT(INT(LastDay - Mid01) + 1, 7) * WorkDays + LEN(SUBSTITUTE(MID(DoubleMask, WEEKDAY(Mid01, 2), MOD(INT(LastDay - Mid01) + 1, 7)), "0", "")) + SUMX(FILTER(Deltas, [__Date] >= Mid01), [__Delta]) >= NeedDays
+			                        VAR Lo01 = IF(Ok01, Mid01, Lo00)
+			                        VAR Hi01 = IF(Ok01, Hi00, Mid01)
+			                        VAR Mid02 = Lo01 + QUOTIENT(INT(Hi01 - Lo01), 2)
+			                        VAR Ok02 = QUOTIENT(INT(LastDay - Mid02) + 1, 7) * WorkDays + LEN(SUBSTITUTE(MID(DoubleMask, WEEKDAY(Mid02, 2), MOD(INT(LastDay - Mid02) + 1, 7)), "0", "")) + SUMX(FILTER(Deltas, [__Date] >= Mid02), [__Delta]) >= NeedDays
+			                        VAR Lo02 = IF(Ok02, Mid02, Lo01)
+			                        VAR Hi02 = IF(Ok02, Hi01, Mid02)
+			                        VAR Mid03 = Lo02 + QUOTIENT(INT(Hi02 - Lo02), 2)
+			                        VAR Ok03 = QUOTIENT(INT(LastDay - Mid03) + 1, 7) * WorkDays + LEN(SUBSTITUTE(MID(DoubleMask, WEEKDAY(Mid03, 2), MOD(INT(LastDay - Mid03) + 1, 7)), "0", "")) + SUMX(FILTER(Deltas, [__Date] >= Mid03), [__Delta]) >= NeedDays
+			                        VAR Lo03 = IF(Ok03, Mid03, Lo02)
+			                        VAR Hi03 = IF(Ok03, Hi02, Mid03)
+			                        VAR Mid04 = Lo03 + QUOTIENT(INT(Hi03 - Lo03), 2)
+			                        VAR Ok04 = QUOTIENT(INT(LastDay - Mid04) + 1, 7) * WorkDays + LEN(SUBSTITUTE(MID(DoubleMask, WEEKDAY(Mid04, 2), MOD(INT(LastDay - Mid04) + 1, 7)), "0", "")) + SUMX(FILTER(Deltas, [__Date] >= Mid04), [__Delta]) >= NeedDays
+			                        VAR Lo04 = IF(Ok04, Mid04, Lo03)
+			                        VAR Hi04 = IF(Ok04, Hi03, Mid04)
+			                        VAR Mid05 = Lo04 + QUOTIENT(INT(Hi04 - Lo04), 2)
+			                        VAR Ok05 = QUOTIENT(INT(LastDay - Mid05) + 1, 7) * WorkDays + LEN(SUBSTITUTE(MID(DoubleMask, WEEKDAY(Mid05, 2), MOD(INT(LastDay - Mid05) + 1, 7)), "0", "")) + SUMX(FILTER(Deltas, [__Date] >= Mid05), [__Delta]) >= NeedDays
+			                        VAR Lo05 = IF(Ok05, Mid05, Lo04)
+			                        VAR Hi05 = IF(Ok05, Hi04, Mid05)
+			                        VAR Mid06 = Lo05 + QUOTIENT(INT(Hi05 - Lo05), 2)
+			                        VAR Ok06 = QUOTIENT(INT(LastDay - Mid06) + 1, 7) * WorkDays + LEN(SUBSTITUTE(MID(DoubleMask, WEEKDAY(Mid06, 2), MOD(INT(LastDay - Mid06) + 1, 7)), "0", "")) + SUMX(FILTER(Deltas, [__Date] >= Mid06), [__Delta]) >= NeedDays
+			                        VAR Lo06 = IF(Ok06, Mid06, Lo05)
+			                        VAR Hi06 = IF(Ok06, Hi05, Mid06)
+			                        VAR Mid07 = Lo06 + QUOTIENT(INT(Hi06 - Lo06), 2)
+			                        VAR Ok07 = QUOTIENT(INT(LastDay - Mid07) + 1, 7) * WorkDays + LEN(SUBSTITUTE(MID(DoubleMask, WEEKDAY(Mid07, 2), MOD(INT(LastDay - Mid07) + 1, 7)), "0", "")) + SUMX(FILTER(Deltas, [__Date] >= Mid07), [__Delta]) >= NeedDays
+			                        VAR Lo07 = IF(Ok07, Mid07, Lo06)
+			                        VAR Hi07 = IF(Ok07, Hi06, Mid07)
+			                        VAR Mid08 = Lo07 + QUOTIENT(INT(Hi07 - Lo07), 2)
+			                        VAR Ok08 = QUOTIENT(INT(LastDay - Mid08) + 1, 7) * WorkDays + LEN(SUBSTITUTE(MID(DoubleMask, WEEKDAY(Mid08, 2), MOD(INT(LastDay - Mid08) + 1, 7)), "0", "")) + SUMX(FILTER(Deltas, [__Date] >= Mid08), [__Delta]) >= NeedDays
+			                        VAR Lo08 = IF(Ok08, Mid08, Lo07)
+			                        VAR Hi08 = IF(Ok08, Hi07, Mid08)
+			                        VAR Mid09 = Lo08 + QUOTIENT(INT(Hi08 - Lo08), 2)
+			                        VAR Ok09 = QUOTIENT(INT(LastDay - Mid09) + 1, 7) * WorkDays + LEN(SUBSTITUTE(MID(DoubleMask, WEEKDAY(Mid09, 2), MOD(INT(LastDay - Mid09) + 1, 7)), "0", "")) + SUMX(FILTER(Deltas, [__Date] >= Mid09), [__Delta]) >= NeedDays
+			                        VAR Lo09 = IF(Ok09, Mid09, Lo08)
+			                        VAR Hi09 = IF(Ok09, Hi08, Mid09)
+			                        VAR Mid10 = Lo09 + QUOTIENT(INT(Hi09 - Lo09), 2)
+			                        VAR Ok10 = QUOTIENT(INT(LastDay - Mid10) + 1, 7) * WorkDays + LEN(SUBSTITUTE(MID(DoubleMask, WEEKDAY(Mid10, 2), MOD(INT(LastDay - Mid10) + 1, 7)), "0", "")) + SUMX(FILTER(Deltas, [__Date] >= Mid10), [__Delta]) >= NeedDays
+			                        VAR Lo10 = IF(Ok10, Mid10, Lo09)
+			                        VAR Hi10 = IF(Ok10, Hi09, Mid10)
+			                        VAR Mid11 = Lo10 + QUOTIENT(INT(Hi10 - Lo10), 2)
+			                        VAR Ok11 = QUOTIENT(INT(LastDay - Mid11) + 1, 7) * WorkDays + LEN(SUBSTITUTE(MID(DoubleMask, WEEKDAY(Mid11, 2), MOD(INT(LastDay - Mid11) + 1, 7)), "0", "")) + SUMX(FILTER(Deltas, [__Date] >= Mid11), [__Delta]) >= NeedDays
+			                        VAR Lo11 = IF(Ok11, Mid11, Lo10)
+			                        VAR Hi11 = IF(Ok11, Hi10, Mid11)
+			                        VAR Mid12 = Lo11 + QUOTIENT(INT(Hi11 - Lo11), 2)
+			                        VAR Ok12 = QUOTIENT(INT(LastDay - Mid12) + 1, 7) * WorkDays + LEN(SUBSTITUTE(MID(DoubleMask, WEEKDAY(Mid12, 2), MOD(INT(LastDay - Mid12) + 1, 7)), "0", "")) + SUMX(FILTER(Deltas, [__Date] >= Mid12), [__Delta]) >= NeedDays
+			                        VAR Lo12 = IF(Ok12, Mid12, Lo11)
+			                        VAR Hi12 = IF(Ok12, Hi11, Mid12)
+			                        VAR Mid13 = Lo12 + QUOTIENT(INT(Hi12 - Lo12), 2)
+			                        VAR Ok13 = QUOTIENT(INT(LastDay - Mid13) + 1, 7) * WorkDays + LEN(SUBSTITUTE(MID(DoubleMask, WEEKDAY(Mid13, 2), MOD(INT(LastDay - Mid13) + 1, 7)), "0", "")) + SUMX(FILTER(Deltas, [__Date] >= Mid13), [__Delta]) >= NeedDays
+			                        VAR Lo13 = IF(Ok13, Mid13, Lo12)
+			                        VAR Hi13 = IF(Ok13, Hi12, Mid13)
+			                        RETURN IF(QUOTIENT(INT(LastDay - DataDate) + 1, 7) * WorkDays + LEN(SUBSTITUTE(MID(DoubleMask, WEEKDAY(DataDate, 2), MOD(INT(LastDay - DataDate) + 1, 7)), "0", "")) + SUMX(FILTER(Deltas, [__Date] >= DataDate), [__Delta]) >= NeedDays, Lo13)
+			                RETURN IF(NOT ISBLANK(EdgeFound) && (ISBLANK(LastUnknown) || LastUnknown < EdgeFound), EdgeFound)
+			            )
+			    )
+		formatString: dd/mm/yyyy
+		isHidden
+		displayFolder: Calendar Stretch
+		lineageTag: 2f8d6b03-91ae-4c57-b3e8-5a7c0d1e9f64
+
+	/// First date of the cliff-edge window, never before the data date: 14 days before [CS Cliff Edge Date], otherwise 30 days before the remaining start, and never more than 60 days before it (the chart's data range). Evaluated once per visual: it sets the minimum of the chart's X axis and bounds 'CS Cliff Callout'.
+	measure 'CS Cliff Window Start' =
+			VAR Code = [CS Cliff Task Code]
+			VAR EffectiveStart = [CS Cliff Start Date]
+			RETURN
+			    IF(
+			        NOT ISBLANK(Code) && NOT ISBLANK(EffectiveStart),
+			        VAR DataDate = CALCULATE(MAX('01 XER_TASK'[data_date]), KEEPFILTERS(TREATAS({ Code }, '01 XER_TASK'[task_code])))
+			        VAR Edge = [CS Cliff Edge Date]
+			        VAR Wanted =
+			            IF(NOT ISBLANK(Edge), MAX(Edge - 14, EffectiveStart - 60), EffectiveStart - 30)
+			        RETURN IF(NOT ISBLANK(DataDate), MAX(DataDate, Wanted), Wanted)
+			    )
+		formatString: dd/mm/yyyy
+		isHidden
+		displayFolder: Calendar Stretch
+		lineageTag: 9b41c7e2-5d06-4a83-8f9c-3e2a6d70b158
+
+	/// Last date of the cliff-edge window: 14 days after [CS Cliff Shutdown] starts, so the slips up to the shutdown and the flat line inside it show, otherwise 30 days after the remaining start, and never more than 60 days after it (the chart's data range). Evaluated once per visual: it sets the maximum of the chart's X axis and bounds 'CS Cliff Callout'.
+	measure 'CS Cliff Window End' =
+			VAR EffectiveStart = [CS Cliff Start Date]
+			VAR Shutdown = [CS Cliff Shutdown]
+			RETURN
+			    IF(
+			        NOT ISBLANK(EffectiveStart),
+			        IF(
+			            NOT ISBLANK(Shutdown),
+			            MIN(EffectiveStart + 60, DATE(VALUE(MID(Shutdown, 1, 4)), VALUE(MID(Shutdown, 6, 2)), VALUE(MID(Shutdown, 9, 2))) + 14),
+			            EffectiveStart + 30
+			        )
+			    )
+		formatString: dd/mm/yyyy
+		isHidden
+		displayFolder: Calendar Stretch
+		lineageTag: 4d7a0e96-c3b1-4f28-a5e4-81b9f2c6d037
 
 	partition 'XER Measures' = m
 		mode: import
