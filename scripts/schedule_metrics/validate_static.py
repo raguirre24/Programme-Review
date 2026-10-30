@@ -83,7 +83,7 @@ EXPECTED_DRILL_ROUTES = [
         "SM Invalid Dates Count",
         "SM Drill Date Integrity Header",
         "SM Drill Date Integrity Detail",
-        ("status_code", "task_type", "SM Fail Invalid Dates"),
+        ("task_type", "SM Fail Invalid Dates"),
     ),
     (
         "68cba7045a475d22afb7",
@@ -94,6 +94,20 @@ EXPECTED_DRILL_ROUTES = [
         ("status_code", "task_type", "SM Fail Baseline Coverage"),
     ),
 ]
+
+# Drill-through populations: FS share and remaining duration cover activities only
+# (milestones are tied finish-to-finish and carry no duration); date integrity
+# covers every status; out-of-sequence covers in-progress work only.
+ACTIVITY_TYPES = frozenset({"TT_Task", "TT_Rsrc"})
+EVENT_TYPES = frozenset({"TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile"})
+INCOMPLETE = frozenset({"Not Started", "In Progress"})
+EXPECTED_ROUTE_POPULATIONS = {
+    "a4aae77cfb0f528bb352": (INCOMPLETE, ACTIVITY_TYPES),
+    "381cf6286aea5f0a94f6": (INCOMPLETE, ACTIVITY_TYPES),
+    "7a03ed9cacd75d91903e": (None, EVENT_TYPES),
+    "0ce34782f4f350ad83b5": (frozenset({"In Progress"}), EVENT_TYPES),
+}
+DEFAULT_ROUTE_POPULATION = (INCOMPLETE, EVENT_TYPES)
 
 EXPECTED_GUIDE_GRID_MEASURES = {
     "missing_logic": "XER Metrics[SM Missing Logic Count]",
@@ -177,6 +191,26 @@ def walk(value):
     elif isinstance(value, list):
         for child in value:
             yield from walk(child)
+
+
+def in_filter_values(flt: dict) -> frozenset[str]:
+    """Text literals of a single-column categorical In filter."""
+    values = set()
+    for where in flt.get("filter", {}).get("Where", []):
+        for row in where.get("Condition", {}).get("In", {}).get("Values", []):
+            for item in row:
+                literal = item.get("Literal", {}).get("Value", "")
+                if literal.startswith("'") and literal.endswith("'"):
+                    values.add(literal[1:-1].replace("''", "'"))
+    return frozenset(values)
+
+
+def page_column_filters(page: dict) -> dict[str, dict]:
+    return {
+        flt["field"]["Column"]["Property"]: flt
+        for flt in page.get("filterConfig", {}).get("filters", [])
+        if flt.get("filter") and "Column" in flt.get("field", {})
+    }
 
 
 def field_references(data):
@@ -359,6 +393,17 @@ def validate_drillthrough_and_retirements(report: Path, objects: dict) -> int:
             filter_cols.add(col_prop)
         for req_col in required_cols:
             assert req_col in filter_cols, f"Missing storage-engine filter {req_col} on {display_name}"
+        statuses, task_types = EXPECTED_ROUTE_POPULATIONS.get(pid, DEFAULT_ROUTE_POPULATION)
+        column_filters = page_column_filters(page)
+        assert in_filter_values(column_filters["task_type"]) == task_types, (
+            f"Drill-through task_type population differs on {display_name}"
+        )
+        if statuses is None:
+            assert "status_code" not in column_filters, f"{display_name} must list every status"
+        else:
+            assert in_filter_values(column_filters["status_code"]) == statuses, (
+                f"Drill-through status population differs on {display_name}"
+            )
 
         matrices = []
         page_refs = set()
@@ -410,6 +455,11 @@ def main() -> None:
     assert len(matches) == 1, f"Expected one Schedule Metrics page, found {len(matches)}"
     page_path, page = matches[0]
     assert page.get("name") == "327b48a7fbd37ce0a51c", "Existing page identity changed"
+    # Drill-through keeps all source filters, so a page status filter would hide
+    # completed activities from the Date Integrity list.
+    assert "status_code" not in page_column_filters(page), (
+        "Sched. Metrics must not filter status_code; completed date failures must reach Date Integrity"
+    )
     visual_paths = list((page_path.parent / "visuals").glob("*/visual.json"))
     assert visual_paths, "No page visuals found"
     scored_policy_checks = validate_guide_policy(json.loads(

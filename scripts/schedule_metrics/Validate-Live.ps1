@@ -63,7 +63,7 @@ try {
     $availableRates = @($rates | Where-Object { $metricsTable.Measures.Contains($_) })
     # Baseline coverage is scored from the detail table's consolidated value.
     $crossTable = @('SM Detail Value')
-    $helpers = @('Task_Count', 'SM Eligible Relationship Count', 'SM Date Eligible Count',
+    $helpers = @('Task_Count', 'SM Activity Count', 'SM Eligible Relationship Count', 'SM Activity Relationship Count', 'SM Date Eligible Count',
         'SM Positive Lag Count', 'SM Missing Logic Count', 'SM FS Count', 'SM Restrictive Primary Count',
         'SM Invalid Dates Count', 'SM Applicable Checks', 'SM Assessed Checks', 'SM Passed Checks',
         'SM Partial Checks', 'SM Review Checks', 'SM Priority Checks', 'Float >44', 'Dur >44', 'Task_Count_Negative_Float', 'Task_Count_Float_0', 'Leads<0d',
@@ -123,10 +123,10 @@ TREATAS({$pointDate},CurrentDate[UpdateDate]),$pageFilters)
         'HighFloat%' = @('Float >44', 'Task_Count', 'SM Missing Float Count')
         '<0Float%' = @('Task_Count_Negative_Float', 'Task_Count', 'SM Missing Float Count')
         '0Float%' = @('Task_Count_Float_0', 'Task_Count', 'SM Missing Float Count')
-        'HighDur%' = @('Dur >44', 'Task_Count', 'SM Missing Duration Count')
+        'HighDur%' = @('Dur >44', 'SM Activity Count', 'SM Missing Duration Count')
         'Lags%' = @('Lags>5d', 'SM Eligible Relationship Count', 'SM Missing Lag Count')
         '<0Lead%' = @('Leads<0d', 'SM Eligible Relationship Count', 'SM Missing Lag Count')
-        'SM FS %' = @('SM FS Count', 'SM Eligible Relationship Count', 'SM Unknown Relationship Type Count')
+        'SM FS %' = @('SM FS Count', 'SM Activity Relationship Count', 'SM Unknown Relationship Type Count')
         'Constraint%' = @('SM Restrictive Primary Count', 'Task_Count', 'SM Unknown Constraint Count')
         'SM Out Of Sequence %' = @('Out Of Sequence Count', 'SM In Progress Count', $null)
     }

@@ -29,15 +29,15 @@ $policy = @(
     @{ Label='Missing Logic'; Rate='SM Missing Logic %'; Numerator='SM Missing Logic Count'; Denominator='Task_Count'; Excluded=$null; Target=.05; Limit=.10; Direction='low' },
     @{ Label='Leads'; Rate='<0Lead%'; Numerator='Leads<0d'; Denominator='SM Eligible Relationship Count'; Excluded='SM Missing Lag Count'; Target=0; Limit=.01; Direction='low' },
     @{ Label='Lags'; Rate='Lags%'; Numerator='Lags>5d'; Denominator='SM Eligible Relationship Count'; Excluded='SM Missing Lag Count'; Target=.05; Limit=.10; Direction='low' },
-    @{ Label='FS'; Rate='SM FS %'; Numerator='SM FS Count'; Denominator='SM Eligible Relationship Count'; Excluded='SM Unknown Relationship Type Count'; Target=.90; Limit=.80; Direction='high' },
+    @{ Label='FS'; Rate='SM FS %'; Numerator='SM FS Count'; Denominator='SM Activity Relationship Count'; Excluded='SM Unknown Relationship Type Count'; Target=.90; Limit=.80; Direction='high' },
     @{ Label='Constraints'; Rate='Constraint%'; Numerator='SM Restrictive Primary Count'; Denominator='Task_Count'; Excluded='SM Unknown Constraint Count'; Target=.05; Limit=.10; Direction='low' },
     @{ Label='Negative Float'; Rate='<0Float%'; Numerator='Task_Count_Negative_Float'; Denominator='Task_Count'; Excluded='SM Missing Float Count'; Target=0; Limit=.05; Direction='low' },
-    @{ Label='High Duration'; Rate='HighDur%'; Numerator='Dur >44'; Denominator='Task_Count'; Excluded='SM Missing Duration Count'; Target=.05; Limit=.10; Direction='low' },
+    @{ Label='High Duration'; Rate='HighDur%'; Numerator='Dur >44'; Denominator='SM Activity Count'; Excluded='SM Missing Duration Count'; Target=.05; Limit=.10; Direction='low' },
     @{ Label='Invalid Dates'; Rate='SM Invalid Dates %'; Numerator='SM Invalid Dates Count'; Denominator='SM Date Eligible Count'; Excluded=$null; Target=0; Limit=.01; Direction='low' },
     @{ Label='Out Of Sequence'; Rate='SM Out Of Sequence %'; Numerator='Out Of Sequence Count'; Denominator='SM In Progress Count'; Excluded=$null; Target=0; Limit=.10; Direction='low' },
     @{ Label='Baseline Coverage'; Rate='SM Detail Value'; Direct=$coverageInput; Excluded=$null; Target=.90; Limit=.60; Direction='high' }
 )
-$inputNames = @('Task_Count','SM Eligible Relationship Count','SM Date Eligible Count','SM Missing Logic Count','Leads<0d',
+$inputNames = @('Task_Count','SM Activity Count','SM Eligible Relationship Count','SM Activity Relationship Count','SM Date Eligible Count','SM Missing Logic Count','Leads<0d',
     'Lags>5d','SM FS Count','SM Restrictive Primary Count','Float >44','Task_Count_Negative_Float','Dur >44',
     'SM Invalid Dates Count','SM Missing Float Count','SM Missing Duration Count','SM Missing Lag Count',
     'SM Unknown Relationship Type Count','SM Unknown Constraint Count','Out Of Sequence Count','SM In Progress Count',$coverageInput,
@@ -166,7 +166,7 @@ try {
 
     if (-not $SnapshotsOnly -and -not $UseLoadedModel) {
         $base = @{
-            'SM Snapshot Valid'=$true; 'Task_Count'=100000; 'SM Eligible Relationship Count'=100000; 'SM Date Eligible Count'=100000
+            'SM Snapshot Valid'=$true; 'Task_Count'=100000; 'SM Activity Count'=100000; 'SM Eligible Relationship Count'=100000; 'SM Activity Relationship Count'=100000; 'SM Date Eligible Count'=100000
             'SM Missing Logic Count'=5000; 'Leads<0d'=0; 'Lags>5d'=5000; 'SM FS Count'=90000
             'SM Restrictive Primary Count'=5000; 'Float >44'=5000; 'Task_Count_Negative_Float'=0; 'Dur >44'=5000; 'SM Invalid Dates Count'=0
             'SM Missing Float Count'=0; 'SM Missing Duration Count'=0; 'SM Missing Lag Count'=0; 'SM Unknown Relationship Type Count'=0; 'SM Unknown Constraint Count'=0
@@ -189,6 +189,8 @@ try {
         $cases.Add(@{Name='partial duration uses known denominator';Changes=@{'SM Missing Duration Count'=20000}})
         $cases.Add(@{Name='partial lag affects both sign checks';Changes=@{'SM Missing Lag Count'=20000}})
         $cases.Add(@{Name='partial FS uses recognised denominator';Changes=@{'SM Unknown Relationship Type Count'=20000;'SM FS Count'=64000}})
+        # Milestones count in Task_Count and the link total but not in duration or the FS share.
+        $cases.Add(@{Name='duration and FS use activity denominators';Changes=@{'SM Activity Count'=80000;'Dur >44'=4500;'SM Activity Relationship Count'=80000;'SM FS Count'=70000}})
         $cases.Add(@{Name='partial constraints use recognised denominator';Changes=@{'SM Unknown Constraint Count'=20000}})
         $cases.Add(@{Name='complete green bands with six partial input cohorts';Changes=@{'SM Missing Float Count'=20000;'SM Missing Duration Count'=20000;'SM Missing Lag Count'=20000;'SM Unknown Relationship Type Count'=20000;'SM Unknown Constraint Count'=20000;'Dur >44'=4000;'Lags>5d'=4000;'SM FS Count'=72000;'SM Restrictive Primary Count'=4000}})
         # Headline colour follows the score: one check at its limit stays amber (90%),
@@ -206,7 +208,7 @@ try {
             $cases.Add(@{Name="all input unavailable: $missing";Changes=$changes})
         }
         $cases.Add(@{Name='no date population shows 0% invalid dates';Changes=@{'SM Date Eligible Count'=0;'SM Invalid Dates Count'=0}})
-        $cases.Add(@{Name='no relationships: leads and lags 0%, FS 0% scores nothing';Changes=@{'SM Eligible Relationship Count'=0;'Leads<0d'=0;'Lags>5d'=0;'SM FS Count'=0;'SM Missing Logic Count'=100000}})
+        $cases.Add(@{Name='no relationships: leads and lags 0%, FS 0% scores nothing';Changes=@{'SM Eligible Relationship Count'=0;'SM Activity Relationship Count'=0;'Leads<0d'=0;'Lags>5d'=0;'SM FS Count'=0;'SM Missing Logic Count'=100000}})
         $cases.Add(@{Name='no incomplete work yields no score';Changes=@{'Task_Count'=0}})
         $cases.Add(@{Name='unknown incomplete work yields no score';Changes=@{'Task_Count'=$null}})
         $cases.Add(@{Name='empty populations show 0%; FS and blank coverage do not pass';Changes=@{'SM Missing Logic Count'=$null;'SM Invalid Dates Count'=$null;'SM Missing Float Count'=100000;'Float >44'=0;'Task_Count_Negative_Float'=0;'SM Missing Duration Count'=100000;'Dur >44'=0;'SM Missing Lag Count'=100000;'Leads<0d'=0;'Lags>5d'=0;'SM Unknown Relationship Type Count'=100000;'SM FS Count'=0;'SM Unknown Constraint Count'=100000;'SM Restrictive Primary Count'=0;'SM In Progress Count'=0;'Out Of Sequence Count'=$null;$coverageInput=$null}})

@@ -138,20 +138,6 @@
                           "Value": "'TT_Rsrc'"
                         }
                       }
-                    ],
-                    [
-                      {
-                        "Literal": {
-                          "Value": "'TT_Mile'"
-                        }
-                      }
-                    ],
-                    [
-                      {
-                        "Literal": {
-                          "Value": "'TT_FinMile'"
-                        }
-                      }
                     ]
                   ]
                 }

@@ -361,7 +361,7 @@ table 'Schedule Metric Detail'
 		displayFolder: Detail diagnostics\Internal
 		lineageTag: f2454ced-4095-4421-9cdc-7b4a84309a86
 
-	/// Current task-dependent/resource-dependent activities with a matching, dated original baseline divided by all current activities in that population. A repeated code counts each current activity once and is disclosed, not penalised.
+	/// Current incomplete activities and milestones (excluding LOE and WBS Summary) with a matching, dated baseline divided by all current activities and milestones in that population. A repeated code counts each current activity once and is disclosed, not penalised.
 	measure 'SM Baseline Coverage %' =
 			IF([SM Detail Scope Message] = "",
 			    IF([SM Detail Baseline Provenance],

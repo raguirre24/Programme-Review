@@ -24,70 +24,8 @@
         "howCreated": "Drillthrough"
       },
       {
-        "name": "4acff6d719bd535b88c5",
+        "name": "cb001faabf315a1b8aca",
         "ordinal": 1,
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "01 XER_TASK"
-              }
-            },
-            "Property": "status_code"
-          }
-        },
-        "type": "Categorical",
-        "filter": {
-          "Version": 2,
-          "From": [
-            {
-              "Name": "t",
-              "Entity": "01 XER_TASK",
-              "Type": 0
-            }
-          ],
-          "Where": [
-            {
-              "Condition": {
-                "In": {
-                  "Expressions": [
-                    {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Source": "t"
-                          }
-                        },
-                        "Property": "status_code"
-                      }
-                    }
-                  ],
-                  "Values": [
-                    [
-                      {
-                        "Literal": {
-                          "Value": "'Not Started'"
-                        }
-                      }
-                    ],
-                    [
-                      {
-                        "Literal": {
-                          "Value": "'In Progress'"
-                        }
-                      }
-                    ]
-                  ]
-                }
-              }
-            }
-          ]
-        },
-        "howCreated": "User"
-      },
-      {
-        "name": "54714325e3ea563ba32a",
-        "ordinal": 2,
         "field": {
           "Column": {
             "Expression": {
@@ -162,8 +100,8 @@
         "howCreated": "User"
       },
       {
-        "name": "1190d57db28c5d279440",
-        "ordinal": 3,
+        "name": "59fd11d697965dd08f2a",
+        "ordinal": 2,
         "field": {
           "Column": {
             "Expression": {

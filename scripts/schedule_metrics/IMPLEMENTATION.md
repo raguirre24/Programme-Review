@@ -6,12 +6,23 @@ is a DCMA-inspired assessment using the current dataset, not a claim that all
 
 ## Definitions and populations
 
-Core activity checks use incomplete discrete activities (`TT_Task`, `TT_Rsrc`;
-`Not Started`, `In Progress`). Milestones, LOE and WBS summaries are excluded
-from those denominators. Relationship checks use links into these activities;
-their predecessors need not themselves be incomplete. Missing logic counts an
-activity once if either end is missing. The two component counts remain useful
-diagnostics.
+Core checks use incomplete activities and milestones (`TT_Task`, `TT_Rsrc`,
+`TT_Mile`, `TT_FinMile`; `Not Started`, `In Progress`). LOE and WBS summaries
+are excluded. Two checks narrow this to task- and resource-dependent activities
+(`SM Activity Count`, `SM Activity Relationship Count`):
+
+- **Finish-to-start share** counts only links into activities. Finish
+  milestones are normally tied finish-to-finish, which equals FS for a
+  zero-duration event, so counting those links as non-FS penalised a normal
+  modelling convention.
+- **Remaining duration** divides by activities only. A milestone has no
+  remaining duration, so it can never fail and only dilutes the rate.
+
+Date integrity covers every status, including completed work, and
+out-of-sequence covers in-progress work. Relationship checks use links into
+their population; predecessors need not themselves be incomplete. Missing logic
+counts an activity once if either end is missing. The two component counts
+remain useful diagnostics.
 
 | Scored check | Target (1 point) | Limit (0 points) |
 | --- | --- | --- |
@@ -33,7 +44,7 @@ lags deliberately depart from DCMA (see Score policy
 revision below). The compact metric titles show target / limit; gauge markers
 retain the target. Every gauge on the page is scored.
 
-Out-of-sequence counts in-progress `TT_Task`/`TT_Rsrc` activities with an FS
+Out-of-sequence counts in-progress activities and milestones with an FS
 predecessor not yet finished, or an SS predecessor not yet started; LOE and WBS
 predecessors are ignored. `06 XER_PREDECESSOR` holds raw P6 status codes
 (`TK_NotStart`, `TK_Active`, `TK_Complete`), unlike the task table. With no
@@ -47,9 +58,10 @@ relationship type. Only lags over 5 working days count; shorter lags, mostly on
 SS/FF overlap pairs, are assessed through the FS share instead. Negative float
 counts every activity with total float below zero, however small (user decision,
 19 October 2026). Hard constraints evaluate incomplete activities and milestones (excluding only Level of Effort and WBS Summary) using recognised primary constraint codes; blank means unconstrained and secondary constraints are unavailable. Float is already in working days.
-Remaining duration uses known, nonnegative remaining days and remains a custom
-work-definition check. Date integrity includes completed activities, milestones
-and unscheduled work, using the meaningful milestone endpoints.
+Remaining duration uses known, nonnegative remaining days on activities only and
+remains a custom work-definition check. Date integrity includes completed
+activities, milestones and unscheduled work, using the meaningful milestone
+endpoints.
 
 Invalid dates additionally catches missing required fields, future actual dates,
 overdue forecasts, inconsistent finish status and reversed start/finish dates.
@@ -136,6 +148,26 @@ the score is 89.3% (Jul-25, out-of-sequence 0% with nothing in progress), 66.7% 
 no re-baseline loaded), July's 15 of 40 out-of-sequence activities and July's
 45 activities with negative float (2.6%) are the new review items.
 
+### Population revision — 30 October 2026
+
+The 30 October update added milestones to every check and limited date
+integrity to incomplete work. An audit against an independent recalculation
+found the arithmetic correct but two side effects:
+
+- FS share fell from about 87% to 69% on C6012 (May–Sep 2026), because 96% of
+  links into finish milestones are finish-to-finish. FS scored 0 points on
+  every loaded snapshot, and C6012 dropped from green (95.5–97.3%) to amber
+  (90%).
+- Milestones diluted remaining duration, turning amber results green (C6012
+  May 2026 5.7% → 4.7%; also C6036, J2060).
+
+FS share and remaining duration now use activities only, as before 30 October.
+The other checks keep milestones. Date integrity again covers completed work,
+so actual dates after the data date and completed activities without an actual
+finish are caught. The Sched. Metrics page no longer filters status: the
+drill-through keeps all source filters, and that filter hid completed
+activities from the Date Integrity list. The measures already ignored it.
+
 The existing status card shows within/review/priority counts on its first line
 and `SM Score Coverage` on its second. Coverage reports assessed/applicable
 checks (always 10/10 for a valid selection) and partial inputs independently of
@@ -198,8 +230,9 @@ the tooltip, not penalised: the baseline side is reduced to one row per code,
 so each current activity counts at most once.
 
 Baseline coverage is scored like the other checks (green at 90% or more, red at
-60% or less) and stays whole-project: the WBS selection does not change it. It uses the current
-eligible activity cohort as its denominator; 100% does not mean all original
+60% or less) and stays whole-project: the WBS selection does not change it. Its
+denominator is the current incomplete activities and milestones; the baseline
+side keeps every status. 100% does not mean all original
 baseline activities have been retained. Baseline activity codes absent from the
 current snapshot are disclosed separately in the tooltip. When baseline
 activities disappear from the current snapshot, the dataset does not establish
@@ -211,7 +244,10 @@ whether they completed, were deleted or were renumbered.
 visible pages (and the four Summary bookmark captures) and omitted on `Home`,
 `Sched. Metrics` and all 10 hidden drill-through pages so schedule-health checks
 and their activity detail lists evaluate the same population, including
-unscheduled work. Governance and security remain unchanged.
+unscheduled work. `Sched. Metrics` keeps only an Activity/Milestone page filter
+and no status filter, so completed date failures reach `Date Integrity`; each
+drill-through page sets its own status population. Governance and security
+remain unchanged.
 
 Every scored check has a failing-activity count column in `58fbc09d197fe53515d8`
 and a dedicated `HiddenInViewMode` single-measure drill-through page maintained
@@ -222,17 +258,18 @@ by `scripts/schedule_metrics/repair_drillthrough_display.py`:
 | `Missing Logic` | `4da217e10ae952b9b4a4` | `SM Missing Logic Count` | `SM Fail Missing Logic` is not blank |
 | `Leads` | `566c6f848f9c58ccae18` | `SM Leads Activity Count` | `SM Fail Leads > 0` |
 | `Lags >5d` | `2dc1210d106d519e8c33` | `SM Lags Activity Count` | `SM Fail Lags > 0` |
-| `Non-FS Relationships` | `a4aae77cfb0f528bb352` | `SM Non-FS Activity Count` | `SM Fail Non FS > 0` |
+| `Non-FS Relationships` | `a4aae77cfb0f528bb352` | `SM Non-FS Activity Count` | Incomplete `TT_Task`/`TT_Rsrc` + `SM Fail Non FS > 0` |
 | `Hard Constraints` | `4e84ddebb9405ac18f9d` | `SM Restrictive Primary Count` | Incomplete non-LOE/non-WBS (`TT_Task`, `TT_Rsrc`, `TT_Mile`, `TT_FinMile`) + 6 hard `cstr_type` codes |
 | `Out-of-Sequence` | `0ce34782f4f350ad83b5` | `Out Of Sequence Count` | `SM Fail Out Of Sequence > 0` |
-| `Negative Float` | `1650221e71f2522ca403` | `Task_Count_Negative_Float` | Incomplete discrete + `total_float < 0` |
-| `Remaining Duration >44d` | `381cf6286aea5f0a94f6` | `Dur >44` | Incomplete discrete + `remaining_duration > 44` |
-| `Date Integrity` | `7a03ed9cacd75d91903e` | `SM Invalid Dates Count` | `SM Fail Invalid Dates` is not blank |
+| `Negative Float` | `1650221e71f2522ca403` | `Task_Count_Negative_Float` | Incomplete activities and milestones + `total_float < 0` |
+| `Remaining Duration >44d` | `381cf6286aea5f0a94f6` | `Dur >44` | Incomplete `TT_Task`/`TT_Rsrc` + `remaining_duration > 44` |
+| `Date Integrity` | `7a03ed9cacd75d91903e` | `SM Invalid Dates Count` | Activities and milestones in any status + `SM Fail Invalid Dates` is not blank |
 | `Baseline Coverage` | `68cba7045a475d22afb7` | `SM Baseline Unmatched Activity Count` | `SM Fail Baseline Coverage` is not blank |
 
 Gauges for Leads, Lags >5d and FS relationships continue to score at
 relationship grain; their counts-table columns count distinct incomplete
-discrete successor activities with at least one failing incoming link, and their
+successors (activities and milestones for leads and lags, activities only for
+non-FS) with at least one failing incoming link, and their
 `SM Drill <Route> Detail` columns list up to three offending predecessors (`+N
 more`). Baseline coverage continues to score whole-project; `SM Baseline
 Unmatched Activity Count` and its `Baseline Coverage` drill-through page list

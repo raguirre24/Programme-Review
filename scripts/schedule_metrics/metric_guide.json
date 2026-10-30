@@ -6,7 +6,7 @@
   "reading_notes": [
     {
       "title": "Core activity population",
-      "text": "Unless a row says otherwise, core activity checks use incomplete task-dependent and resource-dependent activities. Completed activities, milestones, level-of-effort activities and WBS summaries are excluded. Unscheduled work is included. Project and WBS selections, datalake exclusions and access restrictions are retained."
+      "text": "Unless a row says otherwise, checks use incomplete activities and milestones (task-dependent, resource-dependent, start and finish milestones). Completed work, level-of-effort activities and WBS summaries are excluded. Finish-to-start relationships and long remaining duration cover activities only: milestones carry no duration and are normally tied finish-to-finish. Date integrity covers every status. Unscheduled work is included. Project and WBS selections, datalake exclusions and access restrictions are retained."
     },
     {
       "title": "Review bands and evidence coverage",
@@ -18,7 +18,7 @@
     },
     {
       "title": "Baseline and detail scope",
-      "text": "Baseline coverage uses the whole selected project and programme, including its completed activities, independently of the WBS and activity-status selections. Baseline coverage matches activity codes to the latest BL-tagged snapshot on or before the selected update, or falls back to the earliest loaded snapshot when no BL file exists. Table 04 is a derived earliest-snapshot subset, not an independent baseline. Invalid BL filename provenance makes baseline coverage 0%; repeated or blank activity codes are disclosed in its tooltip, not penalised."
+      "text": "Baseline coverage uses the whole selected project and programme, independently of the WBS and activity-status selections: current incomplete activities and milestones are matched against every activity in the baseline snapshot, including completed ones. Baseline coverage matches activity codes to the latest BL-tagged snapshot on or before the selected update, or falls back to the earliest loaded snapshot when no BL file exists. Table 04 is a derived earliest-snapshot subset, not an independent baseline. Invalid BL filename provenance makes baseline coverage 0%; repeated or blank activity codes are disclosed in its tooltip, not penalised."
     },
     {
       "title": "Reading counts beside percentages",
@@ -40,12 +40,12 @@
       "section": "Scored checks",
       "metric": "Missing logic",
       "meaning": "Activities with no predecessor, no successor, or neither.",
-      "calculation": "Activities missing either end / core activities. Each activity counted once.",
+      "calculation": "Activities and milestones missing either end / incomplete activities and milestones. Each counted once.",
       "threshold": "Green ≤5%; amber >5% to <10%; red ≥10%.",
       "green": "≤5%",
       "amber": ">5% to <10%",
       "red": "≥10%",
-      "population": "Core activities: incomplete task- and resource-dependent activities. Excludes milestones, LOE, WBS summaries and completed work.",
+      "population": "Incomplete activities and milestones. Excludes LOE, WBS summaries and completed work. Project start and finish milestones naturally lack one end.",
       "limitations": "Each activity missing a predecessor, a successor, or both is counted once. Right-click Missing logic > Drill through to list failing activities.",
       "classification": "Network logic",
       "scored": true,
@@ -61,7 +61,7 @@
         {
           "label": "Missing logic",
           "measure": "XER Metrics[SM Missing Logic Count]",
-          "meaning": "Number of incomplete discrete activities missing a predecessor, a successor, or both."
+          "meaning": "Number of incomplete activities and milestones missing a predecessor, a successor, or both."
         }
       ],
       "review_bands": {
@@ -82,7 +82,7 @@
       "green": "0%",
       "amber": ">0% to <1%",
       "red": "≥1%",
-      "population": "Links into incomplete discrete successors.",
+      "population": "Links into incomplete activities and milestones.",
       "limitations": "Gauge scores relationships (missing lag excluded); table column Leads <0d counts distinct incomplete activities receiving a lead for drill-through.",
       "classification": "Network logic",
       "scored": true,
@@ -99,7 +99,7 @@
         {
           "label": "Leads <0d",
           "measure": "XER Metrics[SM Leads Activity Count]",
-          "meaning": "Number of incomplete discrete activities with at least one incoming negative-lag relationship."
+          "meaning": "Number of incomplete activities and milestones with at least one incoming negative-lag relationship."
         }
       ],
       "review_bands": {
@@ -120,7 +120,7 @@
       "green": "≤5%",
       "amber": ">5% to <10%",
       "red": "≥10%",
-      "population": "Links into incomplete discrete successors.",
+      "population": "Links into incomplete activities and milestones.",
       "limitations": "Short lags (5 days or less), mostly on SS/FF overlap pairs, are not counted; missing lag excluded. Gauge scores relationships; table column Lags >5d counts distinct receiving activities for drill-through.",
       "classification": "Network logic",
       "scored": true,
@@ -137,7 +137,7 @@
         {
           "label": "Lags >5d",
           "measure": "XER Metrics[SM Lags Activity Count]",
-          "meaning": "Number of incomplete discrete activities with at least one incoming lag over 5 working days."
+          "meaning": "Number of incomplete activities and milestones with at least one incoming lag over 5 working days."
         }
       ],
       "review_bands": {
@@ -153,12 +153,12 @@
       "section": "Scored checks",
       "metric": "Finish-to-start relationships",
       "meaning": "Share of relationships that are finish-to-start.",
-      "calculation": "FS relationships (incl. PR_FS1) / relationships with a recognised FS, SS, FF or SF type.",
+      "calculation": "FS relationships (incl. PR_FS1) into activities / relationships into activities with a recognised FS, SS, FF or SF type.",
       "threshold": "Green ≥90%; amber >80% to <90%; red ≤80%.",
       "green": "≥90%",
       "amber": ">80% to <90%",
       "red": "≤80%",
-      "population": "Links into incomplete discrete successors.",
+      "population": "Links into incomplete task- and resource-dependent activities. Links into milestones are excluded: finish milestones are normally tied finish-to-finish, which equals FS for a zero-duration event.",
       "limitations": "Unknown types excluded; FS and FS1 rows are not deduplicated. Gauge scores FS share of relationships; table column Non-FS counts distinct activities receiving SS/FF/SF links for drill-through.",
       "classification": "Network logic",
       "scored": true,
@@ -175,7 +175,7 @@
         {
           "label": "Non-FS",
           "measure": "XER Metrics[SM Non-FS Activity Count]",
-          "meaning": "Number of incomplete discrete activities with at least one incoming SS, FF or SF relationship."
+          "meaning": "Number of incomplete task- and resource-dependent activities with at least one incoming SS, FF or SF relationship."
         }
       ],
       "review_bands": {
@@ -183,7 +183,7 @@
         "target": 0.9,
         "limit": 0.8
       },
-      "scope": "Relationships into incomplete activities and milestones (`Not Started` and `In Progress`, excluding LOE and WBS summaries). Gauge scores FS relationship share; counts table shows activities with non-FS links (`Non-FS`)."
+      "scope": "Relationships into incomplete task- and resource-dependent activities (`Not Started` and `In Progress`); links into milestones, LOE and WBS summaries are excluded. Gauge scores FS relationship share; counts table shows activities with non-FS links (`Non-FS`)."
     },
     {
       "id": "restrictive_constraints",
@@ -232,7 +232,7 @@
       "green": "0%",
       "amber": ">0% to <10%",
       "red": "≥10%",
-      "population": "In-progress task- and resource-dependent activities. LOE and WBS predecessors are ignored.",
+      "population": "In-progress activities and milestones. LOE and WBS predecessors are ignored.",
       "limitations": "Shows 0% until work is in progress. Fix by progressing the predecessor or correcting the logic.",
       "classification": "Network logic",
       "scored": true,
@@ -266,12 +266,12 @@
       "section": "Scored checks",
       "metric": "Negative total float",
       "meaning": "Activities forecast to miss a required date (total float below zero).",
-      "calculation": "Activities with total float < 0 / core activities with known float.",
+      "calculation": "Activities and milestones with total float < 0 / incomplete activities and milestones with known float.",
       "threshold": "Green 0%; amber >0% to <5%; red ≥5%.",
       "green": "0%",
       "amber": ">0% to <5%",
       "red": "≥5%",
-      "population": "Core activities.",
+      "population": "Incomplete activities and milestones.",
       "limitations": "Any negative float counts, however small. Missing float excluded.",
       "classification": "Schedule flexibility",
       "scored": true,
@@ -286,7 +286,7 @@
         {
           "label": "Float <0",
           "measure": "XER Metrics[Task_Count_Negative_Float]",
-          "meaning": "Number of eligible activities with negative total float."
+          "meaning": "Number of incomplete activities and milestones with negative total float."
         }
       ],
       "review_bands": {
@@ -302,12 +302,12 @@
       "section": "Scored checks",
       "metric": "Long remaining duration",
       "meaning": "Activities with more than 44 working days still to perform.",
-      "calculation": "Activities with remaining duration > 44d / core activities with known, non-negative remaining duration.",
+      "calculation": "Activities with remaining duration > 44d / incomplete activities with known, non-negative remaining duration.",
       "threshold": "Green ≤5%; amber >5% to <10%; red ≥10%.",
       "green": "≤5%",
       "amber": ">5% to <10%",
       "red": "≥10%",
-      "population": "Core activities.",
+      "population": "Incomplete task- and resource-dependent activities. Milestones are excluded: they carry no remaining duration and would only dilute the rate.",
       "limitations": "Uses remaining, not original, duration. Exactly 44d is not flagged.",
       "classification": "Work definition",
       "scored": true,
@@ -322,7 +322,7 @@
         {
           "label": "Dur. >44d",
           "measure": "XER Metrics[Dur >44]",
-          "meaning": "Number of eligible activities with remaining duration above 44 working days."
+          "meaning": "Number of incomplete activities with remaining duration above 44 working days."
         }
       ],
       "review_bands": {
@@ -330,7 +330,7 @@
         "target": 0.05,
         "limit": 0.1
       },
-      "scope": "Incomplete activities and milestones (`Not Started` and `In Progress`) with known remaining duration; excludes Level of Effort (`TT_LOE`), WBS summaries (`TT_WBS`), and completed work (`Complete`). Drill through from `Dur. >44d` in the counts table to list failing activities."
+      "scope": "Incomplete task- and resource-dependent activities (`Not Started` and `In Progress`) with known remaining duration; milestones, Level of Effort (`TT_LOE`), WBS summaries (`TT_WBS`) and completed work (`Complete`) are excluded. Drill through from `Dur. >44d` in the counts table to list failing activities."
     },
     {
       "id": "invalid_dates",
@@ -343,7 +343,7 @@
       "green": "0%",
       "amber": ">0% to <1%",
       "red": "≥1%",
-      "population": "Task- and resource-dependent activities and milestones in all statuses. Excludes LOE and WBS summaries.",
+      "population": "Task- and resource-dependent activities and milestones in all statuses, including completed work. Excludes LOE and WBS summaries.",
       "limitations": "Rules: future actuals, overdue forecasts, actual finish vs status, missing data date, unknown status, finish before start. Milestones need only their relevant date. Missing dates count as defects.",
       "classification": "Data integrity",
       "scored": true,
@@ -361,7 +361,7 @@
         {
           "label": "Invalid dates",
           "measure": "XER Metrics[SM Invalid Dates Count]",
-          "meaning": "Number of activities and milestones failing any date integrity rule."
+          "meaning": "Number of activities and milestones, in any status, failing a date integrity rule."
         }
       ],
       "review_bands": {
@@ -369,7 +369,7 @@
         "target": 0,
         "limit": 0.01
       },
-      "scope": "Incomplete activities and milestones (`Not Started` and `In Progress`); excludes Level of Effort (`TT_LOE`), WBS summaries (`TT_WBS`), and completed work (`Complete`). Drill through from `Invalid dates` in the counts table to list failing activities."
+      "scope": "Activities and milestones in all statuses (`Not Started`, `In Progress` and `Complete`); excludes Level of Effort (`TT_LOE`) and WBS summaries (`TT_WBS`). Drill through from `Invalid dates` in the counts table to list failing activities."
     },
     {
       "id": "baseline_coverage",
@@ -377,12 +377,12 @@
       "section": "Scored checks",
       "metric": "Baseline coverage",
       "meaning": "Share of current activities that have a dated baseline match.",
-      "calculation": "Current activities matched to a baseline activity with a Finish / all current activities.",
+      "calculation": "Current incomplete activities and milestones matched to a baseline activity with a Finish / all current incomplete activities and milestones.",
       "threshold": "Green ≥90%; amber >60% to <90%; red ≤60%.",
       "green": "≥90%",
       "amber": ">60% to <90%",
       "red": "≤60%",
-      "population": "Whole project, all statuses, against the latest BL baseline file up to the selected update (or the earliest loaded update when no BL file exists).",
+      "population": "Whole project: current incomplete activities and milestones against every activity in the latest BL baseline file up to the selected update (or the earliest loaded update when no BL file exists).",
       "limitations": "Gauge scores whole-project coverage (0% if a BL filename tag is invalid; repeated codes disclosed, not penalised). Table column No baseline counts unmatched activities in the current selection for drill-through.",
       "classification": "Baseline coverage",
       "scored": true,
@@ -399,7 +399,7 @@
         {
           "label": "No baseline",
           "measure": "XER Metrics[SM Baseline Unmatched Activity Count]",
-          "meaning": "Number of discrete activities lacking a dated finish in the project baseline snapshot."
+          "meaning": "Number of incomplete activities and milestones lacking a dated finish in the project baseline snapshot."
         }
       ],
       "review_bands": {

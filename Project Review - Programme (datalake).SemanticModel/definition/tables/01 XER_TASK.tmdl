@@ -874,11 +874,11 @@ table '01 XER_TASK'
 
 		annotation SummarizationSetBy = Automatic
 
-	/// Hidden storage-engine count of incoming non-FS recognised relationships (SS/FF/SF) on an incomplete discrete activity.
+	/// Hidden storage-engine count of incoming non-FS recognised relationships (SS/FF/SF) on an incomplete task- or resource-dependent activity; milestones are outside the FS share.
 	column 'SM Fail Non FS' =
 			IF (
 			    '01 XER_TASK'[status_code] IN { "Not Started", "In Progress" }
-			        && '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" },
+			        && '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" },
 			    COALESCE (
 			        COUNTROWS (
 			            FILTER (
@@ -926,11 +926,10 @@ table '01 XER_TASK'
 
 		annotation SummarizationSetBy = Automatic
 
-	/// Hidden storage-engine failure reason for the scored Date integrity check across incomplete activities and milestones (excluding LOE and WBS Summary).
+	/// Hidden storage-engine failure reason for the scored Date integrity check across activities and milestones in all statuses (excluding LOE and WBS Summary).
 	column 'SM Fail Invalid Dates' =
 			IF (
-			    '01 XER_TASK'[status_code] IN { "Not Started", "In Progress" }
-			        && '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" },
+			    '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" },
 			    VAR S = '01 XER_TASK'[status_code]
 			    VAR T = '01 XER_TASK'[task_type]
 			    VAR DD = '01 XER_TASK'[data_date]

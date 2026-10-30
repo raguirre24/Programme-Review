@@ -74,8 +74,9 @@ scored-metric drill-through routes (`Missing Logic`, `Leads`, `Lags >5d`,
 against its exact `01 XER_TASK` storage-engine filter across every loaded
 snapshot and WBS node, plus synthetic fixtures, leaf diagnostic detail strings,
 context measures and multi-snapshot/multi-project guards. Without
-`-UseLoadedModel`, it evaluates proposed disk measures and unmaterialised
-`SM Fail *` columns via query-scoped `DEFINE TABLE` / `DEFINE MEASURE`
+`-UseLoadedModel`, it defines every `XER Metrics` measure from disk and
+simulates `SM Fail *` columns that are unmaterialised or whose loaded
+expression differs from disk, via query-scoped `DEFINE TABLE` / `DEFINE MEASURE`
 overrides; with `-UseLoadedModel`, it queries physical columns and loaded
 measures directly after Desktop reload/refresh. `-SkipWbs` skips the exhaustive
 per-WBS sweep while retaining snapshot, fixture, leaf-evidence, context and
@@ -99,7 +100,9 @@ zero float, small (-5 days) and larger negative float both counting, union
 logic counting, hard versus soft constraints, positive lags below/equal/above five
 days, leads, out-of-sequence progress (an FS predecessor still active counts;
 an LOE predecessor or a started SS predecessor does not), the user-confirmed
-`PR_FS1` alias and a truly unknown relationship encoding. Known records remain in each rate's denominator;
+`PR_FS1` alias and a truly unknown relationship encoding. A milestone counts in
+the core checks but not in the FS share or remaining duration: its FS and FF
+links leave `SM FS %` unchanged and its duration is not counted. Known records remain in each rate's denominator;
 unusable records are excluded only from the affected check.
 
 The date fixture redirects the actual date-check expressions to 22 independent

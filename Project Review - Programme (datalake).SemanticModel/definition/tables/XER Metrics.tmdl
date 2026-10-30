@@ -17,7 +17,7 @@ table 'XER Metrics'
 		displayFolder: Schedule Quality Table
 		lineageTag: b2f7cb81-8dec-4005-9a48-ad65ebfa34d0
 
-	/// Incomplete discrete work: TT_Task/TT_Rsrc. Includes unscheduled work; preserves datalake exclusions. Not a sum across snapshots.
+	/// Incomplete activities and milestones (TT_Task, TT_Rsrc, TT_Mile, TT_FinMile; excludes LOE and WBS Summary). Includes unscheduled work; preserves datalake exclusions. Not a sum across snapshots.
 	measure Task_Count =
 			VAR N = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
 			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
@@ -59,7 +59,7 @@ table 'XER Metrics'
 		displayFolder: Schedule Quality Visuals
 		lineageTag: b0c84e96-887e-471b-b1d0-f53663d01542
 
-	/// Custom remaining-duration check, not original/baseline duration.
+	/// Custom remaining-duration check on incomplete task- and resource-dependent activities, not original/baseline duration. Milestones are excluded.
 	measure 'Dur >44' =
 			VAR N = [Task_Count]
 			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
@@ -69,14 +69,14 @@ table 'XER Metrics'
 			REMOVEFILTERS ( '00 CALENDAR' ),
 			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }, KEEPFILTERS ( '01 XER_TASK'[remaining_duration] > 44 ) )
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" }, KEEPFILTERS ( '01 XER_TASK'[remaining_duration] > 44 ) )
 			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
 		formatString: #,0
 		displayFolder: Schedule Quality Table
 		lineageTag: f0c8dee3-9325-44bb-ac70-f3c622aae79a
 
-	/// Custom remaining duration >44 working days / work with valid duration; internal benchmark at or below 5%.
-	measure HighDur% = IF ( [SM Snapshot Valid], COALESCE ( DIVIDE ( [Dur >44], [Task_Count] - [SM Missing Duration Count] ), 0 ) )
+	/// Custom remaining duration >44 working days / activities with valid duration (milestones excluded); internal benchmark at or below 5%.
+	measure HighDur% = IF ( [SM Snapshot Valid], COALESCE ( DIVIDE ( [Dur >44], [SM Activity Count] - [SM Missing Duration Count] ), 0 ) )
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Visuals
 		lineageTag: 197e994d-8397-448d-81b5-bd7fc09c90d2
@@ -426,6 +426,7 @@ table 'XER Metrics'
 		displayFolder: Schedule Quality Coverage
 		lineageTag: 76510ce3-8c69-4d31-a7d2-3896a8016a34
 
+	/// Incomplete task- and resource-dependent activities with blank or negative remaining duration, excluded from the remaining-duration denominator.
 	measure 'SM Missing Duration Count' =
 			VAR N = [Task_Count]
 			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
@@ -435,7 +436,7 @@ table 'XER Metrics'
 			REMOVEFILTERS ( '00 CALENDAR' ),
 			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }, KEEPFILTERS ( ISBLANK ( '01 XER_TASK'[remaining_duration] ) || '01 XER_TASK'[remaining_duration] < 0 ) )
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" }, KEEPFILTERS ( ISBLANK ( '01 XER_TASK'[remaining_duration] ) || '01 XER_TASK'[remaining_duration] < 0 ) )
 			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
 		formatString: #,0
 		displayFolder: Schedule Quality Coverage
@@ -495,6 +496,7 @@ table 'XER Metrics'
 		displayFolder: Schedule Quality Table
 		lineageTag: 26b0c0c4-7880-4cdb-ad0d-df995069e994
 
+	/// Finish-to-start relationships (PR_FS, PR_FS1) into incomplete task- and resource-dependent activities; links into milestones are outside the FS share.
 	measure 'SM FS Count' =
 			VAR N = [Task_Count]
 			VAR WorkKeys = CALCULATETABLE ( VALUES ( '01 XER_TASK'[task_id_key] ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
@@ -504,7 +506,7 @@ table 'XER Metrics'
 			REMOVEFILTERS ( '00 CALENDAR' ),
 			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" } )
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" } )
 			VAR Result = CALCULATE ( COUNTROWS ( '06 XER_PREDECESSOR' ),
 			    REMOVEFILTERS ( '01 XER_TASK' ),
 			    TREATAS ( WorkKeys, '06 XER_PREDECESSOR'[task_id_key] ),
@@ -533,7 +535,7 @@ table 'XER Metrics'
 		displayFolder: Schedule Quality Coverage
 		lineageTag: 250767c4-aff7-4c9a-b950-0fdada40588b
 
-	/// PR_FS1 is an explicitly accepted FS alias. Other unknown encodings are excluded from the FS denominator and disclosed.
+	/// Relationships into incomplete task- and resource-dependent activities with an unrecognised type. PR_FS1 is an explicitly accepted FS alias. Other unknown encodings are excluded from the FS denominator and disclosed.
 	measure 'SM Unknown Relationship Type Count' =
 			VAR N = [Task_Count]
 			VAR WorkKeys = CALCULATETABLE ( VALUES ( '01 XER_TASK'[task_id_key] ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
@@ -543,7 +545,7 @@ table 'XER Metrics'
 			REMOVEFILTERS ( '00 CALENDAR' ),
 			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" } )
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" } )
 			VAR Result = CALCULATE ( COUNTROWS ( '06 XER_PREDECESSOR' ),
 			    REMOVEFILTERS ( '01 XER_TASK' ),
 			    TREATAS ( WorkKeys, '06 XER_PREDECESSOR'[task_id_key] ),
@@ -559,36 +561,34 @@ table 'XER Metrics'
 		displayFolder: Schedule Quality Visuals
 		lineageTag: 7fbffa3b-6c57-47cd-8d7b-f253602f23e9
 
-	/// Finish-to-start share of relationships with recognised types; PR_FS1 counts as FS. Pass at or above 90%.
-	measure 'SM FS %' = IF ( [SM Snapshot Valid], COALESCE ( DIVIDE ( [SM FS Count], [SM Eligible Relationship Count] - [SM Unknown Relationship Type Count] ), 0 ) )
+	/// Finish-to-start share of relationships into activities with recognised types; PR_FS1 counts as FS and links into milestones are excluded. Pass at or above 90%.
+	measure 'SM FS %' = IF ( [SM Snapshot Valid], COALESCE ( DIVIDE ( [SM FS Count], [SM Activity Relationship Count] - [SM Unknown Relationship Type Count] ), 0 ) )
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Visuals
 		lineageTag: ccac7e63-2a44-4d12-935d-0027049761dc
 
-	/// Incomplete activities and milestones (excluding LOE and WBS Summary), including unscheduled activities.
+	/// Activities and milestones in all statuses (excluding LOE and WBS Summary), including completed and unscheduled activities.
 	measure 'SM Date Eligible Count' =
 			VAR ScopeRows = CALCULATETABLE ( '01 XER_TASK', REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
 			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
 			REMOVEFILTERS ( Filter_Activity_Status ),
 			REMOVEFILTERS ( Filter_TaskType ),
 			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
-			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" } )
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) )
 			VAR Events = FILTER ( ScopeRows, '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" } )
 			RETURN IF ( [SM Snapshot Valid], COUNTROWS ( Events ) )
 		formatString: #,0
 		displayFolder: Schedule Quality Support
 		lineageTag: bc4f8db4-6dcf-4b46-824a-edc500ea26d4
 
-	/// Custom extension of DCMA invalid dates on incomplete activities and milestones: missing required dates, future actuals, overdue forecasts, inconsistent finish status and reversed intervals. Milestones require only their meaningful endpoint.
+	/// Custom extension of DCMA invalid dates on activities and milestones in all statuses: missing required dates, future actuals, overdue forecasts, inconsistent finish status and reversed intervals. Milestones require only their meaningful endpoint.
 	measure 'SM Invalid Dates Count' =
 			VAR ScopeRows = CALCULATETABLE ( '01 XER_TASK', REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
 			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
 			REMOVEFILTERS ( Filter_Activity_Status ),
 			REMOVEFILTERS ( Filter_TaskType ),
 			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
-			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" } )
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) )
 			VAR Events = FILTER ( ScopeRows, '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" } )
 			VAR Bad = FILTER ( Events,
 			    VAR S = '01 XER_TASK'[status_code]
@@ -672,7 +672,9 @@ table 'XER Metrics'
 	/// Assessed checks whose usable records cover only part of the eligible population. Unassessed checks are reported separately.
 	measure 'SM Partial Checks' =
 			VAR N = [Task_Count]
+			VAR A = [SM Activity Count]
 			VAR R = [SM Eligible Relationship Count]
+			VAR RA = [SM Activity Relationship Count]
 			VAR MissingFloat = [SM Missing Float Count]
 			VAR MissingDuration = [SM Missing Duration Count]
 			VAR MissingLag = [SM Missing Lag Count]
@@ -680,9 +682,9 @@ table 'XER Metrics'
 			VAR UnknownConstraint = [SM Unknown Constraint Count]
 			RETURN IF ( N > 0,
 			    IF ( MissingFloat > 0 && MissingFloat < N, 1, 0 )
-			    + IF ( MissingDuration > 0 && MissingDuration < N, 1, 0 )
+			    + IF ( MissingDuration > 0 && MissingDuration < A, 1, 0 )
 			    + IF ( MissingLag > 0 && MissingLag < R, 2, 0 )
-			    + IF ( UnknownType > 0 && UnknownType < R, 1, 0 )
+			    + IF ( UnknownType > 0 && UnknownType < RA, 1, 0 )
 			    + IF ( UnknownConstraint > 0 && UnknownConstraint < N, 1, 0 ) )
 		formatString: #,0
 		displayFolder: Schedule Quality Score
@@ -791,9 +793,9 @@ table 'XER Metrics'
 			VAR UnknownType = [SM Unknown Relationship Type Count]
 			VAR UnknownConstraint = [SM Unknown Constraint Count]
 			VAR KnownFloat = N - MissingFloat
-			VAR KnownDuration = N - MissingDuration
+			VAR KnownDuration = [SM Activity Count] - MissingDuration
 			VAR KnownLag = R - MissingLag
-			VAR KnownType = R - UnknownType
+			VAR KnownType = [SM Activity Relationship Count] - UnknownType
 			VAR KnownConstraint = N - UnknownConstraint
 			VAR Excluded =
 			    IF ( MissingFloat > 0, "float " & FORMAT ( MissingFloat, "#,0" ) & "; ", "" )
@@ -1208,7 +1210,7 @@ table 'XER Metrics'
 		displayFolder: Schedule Quality Coverage
 		lineageTag: 9e3aa57d-5300-5ffc-9025-0769345fe721
 
-	/// In-progress discrete work (TT_Task/TT_Rsrc): the out-of-sequence denominator. Includes unscheduled work; preserves datalake exclusions.
+	/// In-progress activities and milestones (excluding LOE and WBS Summary): the out-of-sequence denominator. Includes unscheduled work; preserves datalake exclusions.
 	measure 'SM In Progress Count' =
 			VAR N = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
 			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
@@ -1358,7 +1360,7 @@ table 'XER Metrics'
 		displayFolder: Schedule Quality Table
 		lineageTag: 2ccd3a50-7660-5df2-b3ef-74ae3ad19112
 
-	/// Incomplete discrete activities with at least one incoming non-FS recognised relationship (SS, FF, or SF).
+	/// Incomplete task- and resource-dependent activities with at least one incoming non-FS recognised relationship (SS, FF, or SF); milestones are outside the FS share.
 	measure 'SM Non-FS Activity Count' =
 			VAR N = [Task_Count]
 			VAR Result = CALCULATE (
@@ -1375,7 +1377,7 @@ table 'XER Metrics'
 			    REMOVEFILTERS ( '00 CALENDAR' ),
 			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			    '01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			    '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" },
+			    '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" },
 			    KEEPFILTERS ( '01 XER_TASK'[SM Fail Non FS] > 0 )
 			)
 			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
@@ -1597,7 +1599,7 @@ table 'XER Metrics'
 			    REMOVEFILTERS ( Filter_TaskType ),
 			    REMOVEFILTERS ( '00 CALENDAR' ),
 			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) ), 0 )
-			VAR Links = COALESCE ( CALCULATE ( [SM Eligible Relationship Count] - [SM Unknown Relationship Type Count] - [SM FS Count], REMOVEFILTERS (
+			VAR Links = COALESCE ( CALCULATE ( [SM Activity Relationship Count] - [SM Unknown Relationship Type Count] - [SM FS Count], REMOVEFILTERS (
 			        '01 XER_TASK'[No Predecessor],
 			        '01 XER_TASK'[No Successor],
 			        '01 XER_TASK'[Driven_DataDate],
@@ -2124,6 +2126,40 @@ table 'XER Metrics'
 		formatString: @
 		displayFolder: Schedule Quality Drill-through
 		lineageTag: 027c7230-17d3-530d-b5a6-5e5416cb12e6
+
+	/// Incomplete task- and resource-dependent activities (TT_Task/TT_Rsrc): the remaining-duration denominator. Milestones are excluded because they carry no remaining duration and can never fail that check.
+	measure 'SM Activity Count' =
+			VAR N = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			REMOVEFILTERS ( Filter_Activity_Status ),
+			REMOVEFILTERS ( Filter_TaskType ),
+			REMOVEFILTERS ( '00 CALENDAR' ),
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" } )
+			RETURN IF ( [SM Snapshot Valid], N )
+		formatString: #,0
+		displayFolder: Schedule Quality Table
+		lineageTag: d2614ed7-32fe-48ab-865f-3c05150deb58
+
+	/// Relationships into incomplete task- and resource-dependent successor activities: the FS-share population. Links into milestones are excluded because finish milestones are conventionally tied finish-to-finish, which is equivalent to FS for a zero-duration event.
+	measure 'SM Activity Relationship Count' =
+			VAR N = [Task_Count]
+			VAR WorkKeys = CALCULATETABLE ( VALUES ( '01 XER_TASK'[task_id_key] ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
+			REMOVEFILTERS ( Filter_Activity_Status ),
+			REMOVEFILTERS ( Filter_TaskType ),
+			REMOVEFILTERS ( '00 CALENDAR' ),
+			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
+			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" } )
+			VAR Result = CALCULATE ( COUNTROWS ( '06 XER_PREDECESSOR' ),
+			    REMOVEFILTERS ( '01 XER_TASK' ),
+			    TREATAS ( WorkKeys, '06 XER_PREDECESSOR'[task_id_key] ) )
+			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
+		formatString: #,0
+		displayFolder: Schedule Quality Table
+		lineageTag: c56b826c-8cc5-4c49-995f-032431267af9
 
 	partition 'XER Metrics' = m
 		mode: import

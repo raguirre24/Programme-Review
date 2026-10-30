@@ -45,17 +45,21 @@ TABLE '__SM Links' = DATATABLE("task_id_key",STRING,"lag",DOUBLE,"pred_type",STR
         {"C",BLANK(),"PR_FS","TK_NotStart","TK_Complete","TT_Task"},
         {"C",0,"PR_UNKNOWN","TK_NotStart","TK_Complete","TT_Task"},
         {"K",0,"PR_FS","TK_Active","TK_Active","TT_Task"},
-        {"E",100,"PR_FS","TK_NotStart","TK_Complete","TT_Task"},{"F",100,"PR_FS","TK_Complete","TK_Complete","TT_Task"},
+        {"E",100,"PR_FS","TK_NotStart","TK_Complete","TT_Task"},{"E",0,"PR_FF","TK_NotStart","TK_Complete","TT_Task"},
+        {"F",100,"PR_FS","TK_Complete","TK_Complete","TT_Task"},
         {"G",100,"PR_FS","TK_NotStart","TK_Complete","TT_Task"},{"H",100,"PR_FS","TK_NotStart","TK_Complete","TT_Task"}
     })
 '@
+# Milestone E is in Task_Count but outside the FS share and remaining duration:
+# its FS and FF links leave SM FS % unchanged, and its 99-day value is not counted.
 $expected = [ordered]@{
     'Task_Count' = 8
+    'SM Activity Count' = 7
     'Missing Predecessor' = 2
     'Missing Successor' = 2
     'SM Missing Logic Count' = 2
     'Float >44' = 2
-    'Dur >44' = 2
+    'Dur >44' = 1
     'Task_Count_Negative_Float' = 2
     'Task_Count_Float_0' = 1
     'Primary Constraints' = 4
@@ -63,11 +67,12 @@ $expected = [ordered]@{
     'SM Unknown Constraint Count' = 1
     'SM Missing Float Count' = 1
     'SM Missing Duration Count' = 2
-    'SM Eligible Relationship Count' = 10
+    'SM Eligible Relationship Count' = 11
+    'SM Activity Relationship Count' = 9
     'SM Positive Lag Count' = 4
     'Lags>5d' = 2
     'Leads<0d' = 1
-    'SM FS Count' = 7
+    'SM FS Count' = 6
     'SM Missing Lag Count' = 2
     'SM Unknown Relationship Type Count' = 1
     'SM In Progress Count' = 2
@@ -75,11 +80,11 @@ $expected = [ordered]@{
     'HighFloat%' = (2.0 / 7.0)
     '<0Float%' = (2.0 / 7.0)
     '0Float%' = (1.0 / 7.0)
-    'HighDur%' = (2.0 / 6.0)
+    'HighDur%' = (1.0 / 5.0)
     'Constraint%' = (2.0 / 7.0)
-    'Lags%' = (2.0 / 8.0)
-    '<0Lead%' = (1.0 / 8.0)
-    'SM FS %' = (7.0 / 9.0)
+    'Lags%' = (2.0 / 9.0)
+    '<0Lead%' = (1.0 / 9.0)
+    'SM FS %' = (6.0 / 8.0)
     'SM Out Of Sequence %' = 0.5
     'SM Partial Checks' = 6
 }

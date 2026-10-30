@@ -143,17 +143,17 @@ For per-table, per-field detail (TASK, TASKPRED, PROJECT, PROJWBS, CALENDAR incl
 
 ### This workspace: Schedule Metrics (`XER Metrics`), `PR_FS1`, and `Is Unscheduled` filter placement
 
-- **10 Scored Schedule-Health Checks (`SM Score`)**: On page `Sched. Metrics` (`327b48a7fbd37ce0a51c`), `SM Score` averages the points (`1` at target, `0` at limit, proportional between) across 10 scored checks:
+- **10 Scored Schedule-Health Checks (`SM Score`)**: On page `Sched. Metrics` (`327b48a7fbd37ce0a51c`), `SM Score` averages the points (`1` at target, `0` at limit, proportional between) across 10 scored checks. Unless noted, a check covers incomplete activities and milestones (`TT_Task`, `TT_Rsrc`, `TT_Mile`, `TT_FinMile`; LOE and WBS summaries excluded):
   1. Missing predecessor or successor (`<=5%` target, `10%` limit)
   2. Leads (`0%` target, `1%` limit)
   3. Lags over 5 working days (`<=5%` target, `10%` limit)
-  4. Finish-to-start links (`>=90%` target, `80%` limit)
+  4. Finish-to-start links (`>=90%` target, `80%` limit; links into `TT_Task`/`TT_Rsrc` only, because finish milestones are normally tied finish-to-finish, which equals FS for a zero-duration event)
   5. Restrictive primary constraints (`<=5%` target, `10%` limit)
   6. Negative total float (`0%` target, `5%` limit; counts every activity with total float `< 0`)
-  7. Remaining duration above 44 working days (`<=5%` target, `10%` limit)
-  8. Date integrity (`0%` target, `1%` limit; includes completed activities, milestones, and unscheduled work)
+  7. Remaining duration above 44 working days (`<=5%` target, `10%` limit; `TT_Task`/`TT_Rsrc` only, because milestones have no duration and would dilute the rate)
+  8. Date integrity (`0%` target, `1%` limit; every status, so completed activities with actual dates after the data date are caught; includes milestones and unscheduled work)
   9. Out-of-sequence progress (`0%` target, `10%` limit; replaces `HighFloat%` on the page)
   10. Baseline coverage (`>=90%` target, `60%` limit; whole-project comparison against the latest `BL`-tagged snapshot on or before the selected update, falling back to the earliest loaded update when no `BL` file exists)
 - **`PR_FS1` Alias**: `PR_FS1` is an explicit user-confirmed alias for `PR_FS` in `06 XER_PREDECESSOR[pred_type]`. Always treat `pred_type IN {"PR_FS", "PR_FS1"}` as Finish-to-Start.
-- **`Is Unscheduled` Filter Placement**: `Is Unscheduled = false` is applied as a page-level filter on 9 operational pages, and intentionally omitted from `Sched. Metrics` and its two hidden drill-through pages (`Missing Predecessor`, `Missing Successor`) so schedule health checks and their drill-through tables share the same activity population. `Home` has no page filter and shows every activity, including unscheduled ones.
+- **`Is Unscheduled` Filter Placement**: `Is Unscheduled = false` is applied as a page-level filter on 9 operational pages, and intentionally omitted from `Sched. Metrics` and its 10 hidden drill-through pages so schedule health checks and their drill-through tables share the same activity population. `Sched. Metrics` also has no status page filter: drill-through keeps all source filters, and a status filter would hide completed activities from the `Date Integrity` list. `Home` has no page filter and shows every activity, including unscheduled ones.
 - **Validation**: Whenever editing schedule-health measures, `Schedule Metric Detail`, `Schedule Metric Guide`, or `Sched. Metrics`, run `python scripts/schedule_metrics/validate_static.py`.

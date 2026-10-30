@@ -24,12 +24,12 @@ $routes = @(
     @{ Page = '4da217e10ae952b9b4a4'; Label = 'Missing Logic'; Measure = 'SM Missing Logic Count'; LinkExpr = $null; RequiredCols = @('status_code','task_type','SM Fail Missing Logic'); FailCol = 'SM Fail Missing Logic'; FailType = 'string'; Header = 'SM Drill Missing Logic Header'; Detail = 'SM Drill Missing Logic Detail' },
     @{ Page = '566c6f848f9c58ccae18'; Label = 'Leads'; Measure = 'SM Leads Activity Count'; LinkExpr = '[Leads<0d]'; RequiredCols = @('status_code','task_type','SM Fail Leads'); FailCol = 'SM Fail Leads'; FailType = 'int'; Header = 'SM Drill Leads Header'; Detail = 'SM Drill Leads Detail' },
     @{ Page = '2dc1210d106d519e8c33'; Label = 'Lags >5d'; Measure = 'SM Lags Activity Count'; LinkExpr = '[Lags>5d]'; RequiredCols = @('status_code','task_type','SM Fail Lags'); FailCol = 'SM Fail Lags'; FailType = 'int'; Header = 'SM Drill Lags Header'; Detail = 'SM Drill Lags Detail' },
-    @{ Page = 'a4aae77cfb0f528bb352'; Label = 'Non-FS Relationships'; Measure = 'SM Non-FS Activity Count'; LinkExpr = '([SM Eligible Relationship Count] - [SM Unknown Relationship Type Count] - [SM FS Count])'; RequiredCols = @('status_code','task_type','SM Fail Non FS'); FailCol = 'SM Fail Non FS'; FailType = 'int'; Header = 'SM Drill Non-FS Header'; Detail = 'SM Drill Non-FS Detail' },
+    @{ Page = 'a4aae77cfb0f528bb352'; Label = 'Non-FS Relationships'; Measure = 'SM Non-FS Activity Count'; LinkExpr = '([SM Activity Relationship Count] - [SM Unknown Relationship Type Count] - [SM FS Count])'; RequiredCols = @('status_code','task_type','SM Fail Non FS'); FailCol = 'SM Fail Non FS'; FailType = 'int'; Header = 'SM Drill Non-FS Header'; Detail = 'SM Drill Non-FS Detail' },
     @{ Page = '4e84ddebb9405ac18f9d'; Label = 'Hard Constraints'; Measure = 'SM Restrictive Primary Count'; LinkExpr = $null; RequiredCols = @('status_code','task_type','cstr_type'); FailCol = $null; FailType = $null; Header = 'SM Drill Restrictive Constraints Header'; Detail = 'SM Drill Restrictive Constraints Detail' },
     @{ Page = '0ce34782f4f350ad83b5'; Label = 'Out-of-Sequence'; Measure = 'Out Of Sequence Count'; LinkExpr = $null; RequiredCols = @('status_code','task_type','SM Fail Out Of Sequence'); FailCol = 'SM Fail Out Of Sequence'; FailType = 'int'; Header = 'SM Drill Out-of-Sequence Header'; Detail = 'SM Drill Out-of-Sequence Detail' },
     @{ Page = '1650221e71f2522ca403'; Label = 'Negative Float'; Measure = 'Task_Count_Negative_Float'; LinkExpr = $null; RequiredCols = @('status_code','task_type','total_float'); FailCol = $null; FailType = $null; Header = 'SM Drill Negative Float Header'; Detail = 'SM Drill Negative Float Detail' },
     @{ Page = '381cf6286aea5f0a94f6'; Label = 'Remaining Duration >44d'; Measure = 'Dur >44'; LinkExpr = $null; RequiredCols = @('status_code','task_type','remaining_duration'); FailCol = $null; FailType = $null; Header = 'SM Drill Remaining Duration Header'; Detail = 'SM Drill Remaining Duration Detail' },
-    @{ Page = '7a03ed9cacd75d91903e'; Label = 'Date Integrity'; Measure = 'SM Invalid Dates Count'; LinkExpr = $null; RequiredCols = @('status_code','task_type','SM Fail Invalid Dates'); FailCol = 'SM Fail Invalid Dates'; FailType = 'string'; Header = 'SM Drill Date Integrity Header'; Detail = 'SM Drill Date Integrity Detail' },
+    @{ Page = '7a03ed9cacd75d91903e'; Label = 'Date Integrity'; Measure = 'SM Invalid Dates Count'; LinkExpr = $null; RequiredCols = @('task_type','SM Fail Invalid Dates'); FailCol = 'SM Fail Invalid Dates'; FailType = 'string'; Header = 'SM Drill Date Integrity Header'; Detail = 'SM Drill Date Integrity Detail' },
     @{ Page = '68cba7045a475d22afb7'; Label = 'Baseline Coverage'; Measure = 'SM Baseline Unmatched Activity Count'; LinkExpr = $null; RequiredCols = @('status_code','task_type','SM Fail Baseline Coverage'); FailCol = 'SM Fail Baseline Coverage'; FailType = 'string'; Header = 'SM Drill Baseline Coverage Header'; Detail = 'SM Drill Baseline Coverage Detail' }
 )
 
@@ -309,7 +309,11 @@ try {
 
     $hasPhysicalFailCols = $true
     foreach ($col in $failColumnNames) {
-        if ($null -eq $target.Database.Model.Tables['01 XER_TASK'].Columns.Find($col)) {
+        $loadedCol = $target.Database.Model.Tables['01 XER_TASK'].Columns.Find($col)
+        # Without -UseLoadedModel, a column whose loaded expression predates the
+        # disk definition is simulated from disk like an unmaterialised one.
+        if ($null -eq $loadedCol -or (-not $UseLoadedModel -and
+            $loadedCol.Expression.Replace("`r`n", "`n").Trim() -ne $disk.Tables['01 XER_TASK'].Columns[$col].Expression.Replace("`r`n", "`n").Trim())) {
             $hasPhysicalFailCols = $false
             break
         }
@@ -326,16 +330,20 @@ try {
     }
 
     $preexistingCore = @(
-        'Task_Count', 'SM Snapshot Valid', 'SM Missing Logic Count',
+        'Task_Count', 'SM Activity Count', 'SM Snapshot Valid', 'SM Missing Logic Count',
         'SM Restrictive Primary Count', 'Out Of Sequence Count',
         'Task_Count_Negative_Float', 'Dur >44', 'SM Invalid Dates Count',
-        'Leads<0d', 'Lags>5d', 'SM Eligible Relationship Count',
+        'Leads<0d', 'Lags>5d', 'SM Eligible Relationship Count', 'SM Activity Relationship Count',
         'SM Unknown Relationship Type Count', 'SM FS Count'
     )
     foreach ($name in $preexistingCore) {
-        $loaded = $target.Database.Model.Tables['XER Metrics'].Measures.Find($name)
-        Assert-Drill ($null -ne $loaded) "Loaded core measure missing: $name"
-        Assert-Drill ($loaded.Expression.Trim() -eq $disk.Tables['XER Metrics'].Measures[$name].Expression.Trim()) "Loaded core expression differs from disk: $name"
+        Assert-Drill ($null -ne $disk.Tables['XER Metrics'].Measures.Find($name)) "Disk core measure missing: $name"
+        # Proposed mode defines every disk measure in each query instead.
+        if ($UseLoadedModel) {
+            $loaded = $target.Database.Model.Tables['XER Metrics'].Measures.Find($name)
+            Assert-Drill ($null -ne $loaded) "Loaded core measure missing: $name"
+            Assert-Drill ($loaded.Expression.Trim() -eq $disk.Tables['XER Metrics'].Measures[$name].Expression.Trim()) "Loaded core expression differs from disk: $name"
+        }
     }
 
     $newCountMeasures = @('SM Leads Activity Count', 'SM Lags Activity Count', 'SM Non-FS Activity Count', 'SM Baseline Unmatched Activity Count')
@@ -352,6 +360,18 @@ try {
     $failKeyTableNames = @{}
     for ($i = 0; $i -lt $failColumnNames.Count; $i++) {
         $failKeyTableNames[$failColumnNames[$i]] = "__SM_Fail_$i"
+    }
+
+    # Every XER Metrics measure from disk, with unloaded or outdated SM Fail *
+    # columns redirected to their simulated key tables.
+    function Get-ProposedMeasureLines([string[]]$Skip = @()) {
+        $measureLines = [Collections.Generic.List[string]]::new()
+        foreach ($measure in $disk.Tables['XER Metrics'].Measures) {
+            if ($measure.Name -in $Skip) { continue }
+            $mExpr = if ($hasPhysicalFailCols) { $measure.Expression } else { Convert-PreReloadMeasureDax $measure.Expression $failKeyTableNames }
+            $measureLines.Add("MEASURE 'XER Metrics'[$($measure.Name.Replace(']', ']]'))] = $mExpr")
+        }
+        return ,$measureLines.ToArray()
     }
 
     function Get-DefineBlock([string]$ScopeFilterDax = '') {
@@ -371,16 +391,8 @@ try {
                 $pred = if ($isInt) { "[val] > 0" } else { "NOT ISBLANK([val]) && [val] <> `"`"" }
                 $lines.Add("TABLE '$tbl' = FILTER(SELECTCOLUMNS($baseTaskTable, `"task_id_key`", '01 XER_TASK'[task_id_key], `"val`", $colExpr), $pred)")
             }
-            foreach ($mName in ($newCountMeasures + $helperNames)) {
-                $mExpr = Convert-PreReloadMeasureDax $disk.Tables['XER Metrics'].Measures[$mName].Expression $failKeyTableNames
-                $lines.Add("MEASURE 'XER Metrics'[$mName] = $mExpr")
-            }
-        } else {
-            foreach ($mName in ($newCountMeasures + $helperNames)) {
-                $mExpr = $disk.Tables['XER Metrics'].Measures[$mName].Expression
-                $lines.Add("MEASURE 'XER Metrics'[$mName] = $mExpr")
-            }
         }
+        foreach ($line in (Get-ProposedMeasureLines)) { $lines.Add($line) }
         return ($lines -join "`n")
     }
 
@@ -550,8 +562,9 @@ TREATAS({"D1"},'__SM Drill Tasks'[UpdateDate])
 '@
     # Route order: MissingLogic, Leads, Lags, NonFS, Restrictive, OutOfSeq, NegFloat, RemDur>44, InvalidDates, BaselineUnmatched
     $fixtures = @(
-        @{ Name='whole selected snapshot'; Extra=''; Expected=@(5, 1, 2, 2, 3, 1, 3, 2, 2, 2) },
-        @{ Name='WBS W1 retains unscheduled, completed and milestone rules'; Extra=",TREATAS({`"W1`"},'__SM Drill Tasks'[wbs_id_key])"; Expected=@(4, 1, 1, 2, 3, 1, 3, 1, 2, 1) },
+        # Date integrity covers completed work, so completed task F joins B and G.
+        @{ Name='whole selected snapshot'; Extra=''; Expected=@(5, 1, 2, 2, 3, 1, 3, 2, 3, 2) },
+        @{ Name='WBS W1 retains unscheduled, completed and milestone rules'; Extra=",TREATAS({`"W1`"},'__SM Drill Tasks'[wbs_id_key])"; Expected=@(4, 1, 1, 2, 3, 1, 3, 1, 3, 1) },
         @{ Name='WBS W2 scope'; Extra=",TREATAS({`"W2`"},'__SM Drill Tasks'[wbs_id_key])"; Expected=@(1, 0, 1, 0, 0, 0, 0, 1, 0, 1) },
         @{ Name='unscheduled task B with boundary float=0 and dur=44'; Extra=",TREATAS({`"B`"},'__SM Drill Tasks'[task_code])"; Expected=@(1, 0, 1, 1, 0, 0, 0, 0, 1, 0) },
         @{ Name='unscheduled in-progress resource task C'; Extra=",TREATAS({`"C`"},'__SM Drill Tasks'[task_code])"; Expected=@(1, 0, 0, 1, 0, 1, 1, 0, 0, 0) },
@@ -622,15 +635,8 @@ $fixtureScope$($case.Extra))
                 $valType = if ($isInt) { 'INTEGER' } else { 'STRING' }
                 $guardDefineLines.Add("TABLE '$tbl' = FILTER(DATATABLE(`"task_id_key`", STRING, `"val`", $valType, {{`"`", $emptyVal}}), FALSE())")
             }
-            foreach ($mName in ($newCountMeasures + $helperNames)) {
-                $mExpr = Convert-PreReloadMeasureDax $disk.Tables['XER Metrics'].Measures[$mName].Expression $failKeyTableNames
-                $guardDefineLines.Add("MEASURE 'XER Metrics'[$mName] = $mExpr")
-            }
-        } else {
-            foreach ($mName in ($newCountMeasures + $helperNames)) {
-                $guardDefineLines.Add("MEASURE 'XER Metrics'[$mName] = " + $disk.Tables['XER Metrics'].Measures[$mName].Expression)
-            }
         }
+        foreach ($line in (Get-ProposedMeasureLines)) { $guardDefineLines.Add($line) }
     }
     $guardDefine = ($guardDefineLines -join "`n")
 
@@ -655,21 +661,21 @@ $($case.Scope),$detailDax)
     $structLines.Add('DEFINE')
     $structLines.Add("MEASURE 'XER Metrics'[SM Snapshot Valid] = FALSE()")
     $fixtureHelperTable = if ($UseLoadedModel) { $target.Database.Model.Tables['XER Metrics'] } else { $disk.Tables['XER Metrics'] }
-    if (-not $UseLoadedModel -and -not $hasPhysicalFailCols) {
-        foreach ($col in $failColumnNames) {
-            $tbl = $failKeyTableNames[$col]
-            $isInt = $col -in @('SM Fail Leads', 'SM Fail Lags', 'SM Fail Non FS', 'SM Fail Out Of Sequence')
-            $emptyVal = if ($isInt) { '0' } else { '""' }
-            $valType = if ($isInt) { 'INTEGER' } else { 'STRING' }
-            $structLines.Add("TABLE '$tbl' = FILTER(DATATABLE(`"task_id_key`", STRING, `"val`", $valType, {{`"`", $emptyVal}}), FALSE())")
-        }
-        foreach ($mName in ($newCountMeasures + $helperNames)) {
-            $structLines.Add("MEASURE 'XER Metrics'[$mName] = " + (Convert-PreReloadMeasureDax $fixtureHelperTable.Measures[$mName].Expression $failKeyTableNames))
-        }
-    } else {
+    if ($UseLoadedModel) {
         foreach ($mName in ($newCountMeasures + $helperNames)) {
             $structLines.Add("MEASURE 'XER Metrics'[$mName] = " + $fixtureHelperTable.Measures[$mName].Expression)
         }
+    } else {
+        if (-not $hasPhysicalFailCols) {
+            foreach ($col in $failColumnNames) {
+                $tbl = $failKeyTableNames[$col]
+                $isInt = $col -in @('SM Fail Leads', 'SM Fail Lags', 'SM Fail Non FS', 'SM Fail Out Of Sequence')
+                $emptyVal = if ($isInt) { '0' } else { '""' }
+                $valType = if ($isInt) { 'INTEGER' } else { 'STRING' }
+                $structLines.Add("TABLE '$tbl' = FILTER(DATATABLE(`"task_id_key`", STRING, `"val`", $valType, {{`"`", $emptyVal}}), FALSE())")
+            }
+        }
+        foreach ($line in (Get-ProposedMeasureLines -Skip @('SM Snapshot Valid'))) { $structLines.Add($line) }
     }
     $invalidIdentityDefinitions = ($structLines -join "`n")
     $validScope = Get-SnapshotFilters $snapshots[0]

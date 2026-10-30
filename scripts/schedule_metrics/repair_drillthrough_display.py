@@ -120,13 +120,13 @@ ROUTES = [
         'table_header': 'Non-FS',
         'table_width': 70,
         'count_measure': 'SM Non-FS Activity Count',
-        'link_expr': '[SM Eligible Relationship Count] - [SM Unknown Relationship Type Count] - [SM FS Count]',
+        'link_expr': '[SM Activity Relationship Count] - [SM Unknown Relationship Type Count] - [SM FS Count]',
         'header_measure': 'SM Drill Non-FS Header',
         'detail_measure': 'SM Drill Non-FS Detail',
         'detail_caption': 'Non-FS predecessors',
         'filters': [
             ('in', 'status_code', ('Not Started', 'In Progress')),
-            ('in', 'task_type', ('TT_Task', 'TT_Rsrc', 'TT_Mile', 'TT_FinMile')),
+            ('in', 'task_type', ('TT_Task', 'TT_Rsrc')),
             ('gt_int', 'SM Fail Non FS', 0),
         ],
     },
@@ -190,7 +190,7 @@ ROUTES = [
         'detail_caption': 'Remaining duration',
         'filters': [
             ('in', 'status_code', ('Not Started', 'In Progress')),
-            ('in', 'task_type', ('TT_Task', 'TT_Rsrc', 'TT_Mile', 'TT_FinMile')),
+            ('in', 'task_type', ('TT_Task', 'TT_Rsrc')),
             ('gt_num', 'remaining_duration', 44),
         ],
     },
@@ -205,7 +205,6 @@ ROUTES = [
         'detail_measure': 'SM Drill Date Integrity Detail',
         'detail_caption': 'Date issue',
         'filters': [
-            ('in', 'status_code', ('Not Started', 'In Progress')),
             ('in', 'task_type', ('TT_Task', 'TT_Rsrc', 'TT_Mile', 'TT_FinMile')),
             ('nonblank_str', 'SM Fail Invalid Dates', None),
         ],
@@ -343,11 +342,11 @@ def build_task_columns() -> list[tuple[str, str, str | None, str]]:
         ),
         (
             'SM Fail Non FS',
-            'Hidden storage-engine count of incoming non-FS recognised relationships (SS/FF/SF) on an incomplete discrete activity.',
+            'Hidden storage-engine count of incoming non-FS recognised relationships (SS/FF/SF) on an incomplete task- or resource-dependent activity; milestones are outside the FS share.',
             '#,0',
             """IF (
     '01 XER_TASK'[status_code] IN { "Not Started", "In Progress" }
-        && '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" },
+        && '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" },
     COALESCE (
         COUNTROWS (
             FILTER (
@@ -385,11 +384,10 @@ def build_task_columns() -> list[tuple[str, str, str | None, str]]:
         ),
         (
             'SM Fail Invalid Dates',
-            'Hidden storage-engine failure reason for the scored Date integrity check across incomplete activities and milestones (excluding LOE and WBS Summary).',
+            'Hidden storage-engine failure reason for the scored Date integrity check across activities and milestones in all statuses (excluding LOE and WBS Summary).',
             None,
             """IF (
-    '01 XER_TASK'[status_code] IN { "Not Started", "In Progress" }
-        && '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" },
+    '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" },
     VAR S = '01 XER_TASK'[status_code]
     VAR T = '01 XER_TASK'[task_type]
     VAR DD = '01 XER_TASK'[data_date]
@@ -672,7 +670,7 @@ RETURN IF ( N > 0, COALESCE ( Result, 0 ) )""",
         ),
         (
             'SM Non-FS Activity Count',
-            'Incomplete discrete activities with at least one incoming non-FS recognised relationship (SS, FF, or SF).',
+            'Incomplete task- and resource-dependent activities with at least one incoming non-FS recognised relationship (SS, FF, or SF); milestones are outside the FS share.',
             '#,0',
             'Schedule Quality Table',
             f"""VAR N = [Task_Count]
@@ -680,7 +678,7 @@ VAR Result = CALCULATE (
     COUNTROWS ( '01 XER_TASK' ),
     {scope_reset},
     '01 XER_TASK'[status_code] IN {{ "Not Started", "In Progress" }},
-    '01 XER_TASK'[task_type] IN {{ "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }},
+    '01 XER_TASK'[task_type] IN {{ "TT_Task", "TT_Rsrc" }},
     KEEPFILTERS ( '01 XER_TASK'[SM Fail Non FS] > 0 )
 )
 RETURN IF ( N > 0, COALESCE ( Result, 0 ) )""",

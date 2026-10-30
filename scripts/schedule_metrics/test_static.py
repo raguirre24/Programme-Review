@@ -6,8 +6,12 @@ from tempfile import TemporaryDirectory
 import unittest
 
 from validate_static import (
+    ACTIVITY_TYPES,
     EXPECTED_DRILL_ROUTES,
+    EXPECTED_ROUTE_POPULATIONS,
     conflicting_measure_formats,
+    in_filter_values,
+    page_column_filters,
     validate_failing_activities_table,
     validate_guide_policy,
     validate_measure_formats,
@@ -85,6 +89,27 @@ class FailingActivitiesTableTests(unittest.TestCase):
         changed["visual"]["query"]["queryState"]["Values"]["projections"][1]["field"]["Measure"]["Property"] = "Missing Predecessor"
         with self.assertRaisesRegex(AssertionError, "Failing-activities table columns differ"):
             validate_failing_activities_table(changed)
+
+
+class RoutePopulationTests(unittest.TestCase):
+    @staticmethod
+    def in_filter(column, values):
+        return {
+            "field": {"Column": {"Expression": {"SourceRef": {"Entity": "01 XER_TASK"}}, "Property": column}},
+            "filter": {"Where": [{"Condition": {"In": {"Values": [[{"Literal": {"Value": f"'{v}'"}}] for v in values]}}}]},
+        }
+
+    def test_reads_categorical_filter_values(self):
+        page = {"filterConfig": {"filters": [self.in_filter("task_type", ["TT_Task", "TT_Rsrc"])]}}
+        self.assertEqual(in_filter_values(page_column_filters(page)["task_type"]), ACTIVITY_TYPES)
+
+    def test_pre_fix_milestone_population_is_rejected(self):
+        # 30 Oct 2026: FS share and remaining duration included milestones, and the
+        # date route listed incomplete work only; neither matches the contract now.
+        pre_fix_types = in_filter_values(self.in_filter("task_type", ["TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile"]))
+        for page_id in ("a4aae77cfb0f528bb352", "381cf6286aea5f0a94f6"):
+            self.assertNotEqual(EXPECTED_ROUTE_POPULATIONS[page_id][1], pre_fix_types)
+        self.assertIsNone(EXPECTED_ROUTE_POPULATIONS["7a03ed9cacd75d91903e"][0])
 
 
 class MeasureFormatTests(unittest.TestCase):
