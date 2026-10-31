@@ -29,6 +29,7 @@ try{
         if($table.Name -like 'Scenario *'){$target.Partitions[0].Source.Expression=$table.Partitions[0].Source.Expression}
         $copied++
     }
+    . (Join-Path $PSScriptRoot 'FixtureAuditMeasures.ps1');[void](Set-FixtureAuditMeasures $fixture.Model.Tables.Find('Resource Scenario Measures') $(if($RawPeriodOnly){@('Scenario Period Quantity')}else{$null}))
     if($copied -ne $(if($RawPeriodOnly){1}else{14})){throw 'Scenario inventory guard failed.'}
     $fixture.Model.RequestRefresh($(if($RawPeriodOnly){[Microsoft.AnalysisServices.Tabular.RefreshType]::Calculate}else{[Microsoft.AnalysisServices.Tabular.RefreshType]::Full}));$fixture.Model.SaveChanges()|Out-Null;$fixture.Refresh()
     $states=@($fixture.Model.Tables|ForEach-Object {$t=$_;$_.Partitions|ForEach-Object {[PSCustomObject]@{table=$t.Name;state=$_.State.ToString();error=$_.ErrorMessage}}})

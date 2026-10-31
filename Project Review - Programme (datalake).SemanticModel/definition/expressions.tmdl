@@ -6,7 +6,7 @@ expression SharePointSite = "https://accionaau-my.sharepoint.com/personal/ricard
 
 	annotation PBI_ResultType = Text
 
-expression SelectedProjects = "C6012, J2060, C6036" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+expression SelectedProjects = "C6012, J2060, C6036, CNZ01" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
 	lineageTag: a1b2c3d4-5e6f-7a8b-9c0d-ef1234567890
 	queryGroup: Database
 
@@ -39,7 +39,7 @@ expression ProjectFilterList =
 
 expression fnAthenaSource =
 		let
-		    fn = (tableName as text, optional selectList as nullable text) as table =>
+		    fn = (tableName as text, optional selectList as nullable text, optional excludedTaskKeyColumns as nullable list) as table =>
 		        let
 		            DB = AthenaDB,
 		
@@ -63,11 +63,29 @@ expression fnAthenaSource =
 		                else
 		                    Text.Trim(selectList),
 		
+		            // Optional: drop rows whose listed task keys are excluded from Data Lake reporting (AthenaExcludedTasksSql).
+		            SafeExcludedTaskKeyColumns =
+		                List.Transform(
+		                    if excludedTaskKeyColumns = null then {} else excludedTaskKeyColumns,
+		                    each if Text.Length(_) > 0 and Text.Length(Text.Remove(_, AllowedChars)) = 0 then _ else error "Invalid excluded task key column."
+		                ),
+		            ExclusionCte = if List.IsEmpty(SafeExcludedTaskKeyColumns) then "" else AthenaExcludedTasksSql,
+		            ExclusionFilter =
+		                if List.IsEmpty(SafeExcludedTaskKeyColumns) then
+		                    ""
+		                else
+		                    " WHERE " &
+		                    Text.Combine(
+		                        List.Transform(SafeExcludedTaskKeyColumns, each "NOT EXISTS (SELECT 1 FROM excluded_tasks xt WHERE xt.task_id_key = t.""" & _ & """)"),
+		                        " AND "
+		                    ),
+		
 		            Sql =
-		                AthenaScopeSql &
+		                AthenaScopeSql & ExclusionCte &
 		                "SELECT " & SelectClause & " " &
 		                "FROM prod_projectcontrols_p6.""" & SafeTableName & """ t " &
-		                "INNER JOIN kept_filenames kf ON t.""filename"" = kf.""filename""",
+		                "INNER JOIN kept_filenames kf ON t.""filename"" = kf.""filename""" &
+		                ExclusionFilter,
 		
 		            Result = Value.NativeQuery(DB, Sql, null)
 		        in
@@ -240,7 +258,7 @@ expression AthenaScopeSql =
 
 	annotation PBI_ResultType = Text
 
-expression XerCsvEnabled = false meta [IsParameterQuery=true, Type="Logical", IsParameterQueryRequired=true]
+expression XerCsvEnabled = true meta [IsParameterQuery=true, Type="Logical", IsParameterQueryRequired=true]
 	lineageTag: 1553888a-a615-4930-b8a4-9c6d618fcfd8
 	queryGroup: XER
 
@@ -398,14 +416,14 @@ expression XerCsvTableContracts =
 		            "Baseline Effective_Late_End", "Adjusted Baseline Finish", "Adjusted Baseline Start",
 		            "Adjusted Baseline Source Month", "Adjusted Baseline Source"
 		        },
-		        // Model memory: id_name, PreviousDataDate, Previous Remaining Working Days and the adjusted-baseline source
-		        // columns stay in the CSV file contract but are not loaded (no report or DAX use).
+		        // Model memory: id_name, PreviousDataDate, Previous Remaining Working Days, Driven_DataDate and the
+		        // adjusted-baseline source columns stay in the CSV file contract but are not loaded (no report or DAX use).
 		        ModelColumns = {
 		            "status_code", "task_code", "total_float", "task_type", "early_start_date", "calendar_id_key",
 		            "task_id_key", "driving_path_flag", "remaining_duration", "early_end_date", "monthupdate", "task_name",
 		            "data_date", "act_end_date", "Finish", "proj_id_key", "wbs_id_key", "free_float", "cstr_type", "cstr_date", "Start",
 		            "filename", "late_end_date", "ProjectCode", "UpdateDate", "ProjectName", "Finish_Variance_Previous_Month",
-		            "Driven_DataDate", "Variance_Finish_BL", "Variance_Finish_Adjusted_BL", "Baseline Finish", "Baseline Start",
+		            "Variance_Finish_BL", "Variance_Finish_Adjusted_BL", "Baseline Finish", "Baseline Start",
 		            "Previous Month Start", "Previous Month Finish", "Planned Not Completed Last Period",
 		            "Start_Variance_Previous_Month", "Planned Last Period",
 		            "Completed Last Period", "Completed of Planned Last Period", "Baseline Effective_Early_End",
@@ -446,6 +464,9 @@ expression XerCsvTableContracts =
 		    #"02_XER_PROJECT" = [
 		        FileName = "02_XER_PROJECT.csv",
 		        Columns = {"last_recalc_date", "proj_id_key", "monthupdate", "ProjectCode"},
+		        // Model memory: last_recalc_date and monthupdate stay in the CSV file contract but are not loaded;
+		        // the data date reaches the report through 01 XER_TASK[data_date].
+		        ModelColumns = {"proj_id_key", "ProjectCode"},
 		        Types = {{"last_recalc_date", type nullable date}, {"proj_id_key", type nullable text}, {"monthupdate", type nullable date}, {"ProjectCode", type nullable text}},
 		        DateColumns = {"last_recalc_date", "monthupdate"}, LogicalColumns = {}, IntegerColumns = {}, NumberColumns = {},
 		        RequiredColumns = {"last_recalc_date", "monthupdate", "proj_id_key", "ProjectCode"},
@@ -471,7 +492,7 @@ expression XerCsvTableContracts =
 		    #"06_XER_PREDECESSOR" = [
 		        FileName = "06_XER_PREDECESSOR.csv",
 		        Columns = {"task_id_key", "pred_type", "predecessor_status_code", "task_type", "predecessor_task_type", "lag", "start", "finish", "predecessor_start", "predecessor_finish", "free_float", "free_float_status", "free_float_basis", "free_float_reason", "pred_task_id_key", "status_code", "total_float", "task_pred_id_key", "ProjectCode"},
-		        ModelColumns = {"task_id_key", "pred_type", "predecessor_status_code", "task_type", "predecessor_task_type", "lag", "start", "finish", "predecessor_start", "predecessor_finish", "free_float", "free_float_status", "free_float_basis", "free_float_reason", "pred_task_id_key", "status_code", "total_float"},
+		        ModelColumns = {"task_id_key", "pred_type", "predecessor_status_code", "task_type", "predecessor_task_type", "lag", "start", "finish", "predecessor_start", "predecessor_finish", "free_float", "pred_task_id_key", "status_code", "total_float"},
 		        Types = {{"task_id_key", type nullable text}, {"pred_type", type nullable text}, {"predecessor_status_code", type nullable text}, {"task_type", type nullable text}, {"predecessor_task_type", type nullable text}, {"lag", type nullable number}, {"start", type nullable date}, {"finish", type nullable date}, {"predecessor_start", type nullable date}, {"predecessor_finish", type nullable date}, {"free_float", type nullable number}, {"free_float_status", type nullable text}, {"free_float_basis", type nullable text}, {"free_float_reason", type nullable text}, {"pred_task_id_key", type nullable text}, {"status_code", type nullable text}, {"total_float", type nullable number}, {"task_pred_id_key", type nullable text}, {"ProjectCode", type nullable text}},
 		        DateColumns = {"start", "finish", "predecessor_start", "predecessor_finish"}, LogicalColumns = {}, IntegerColumns = {}, NumberColumns = {"lag", "free_float", "total_float"},
 		        RequiredColumns = {"pred_type", "task_id_key", "pred_task_id_key", "ProjectCode", "task_pred_id_key"},
@@ -527,6 +548,8 @@ expression XerCsvTableContracts =
 		    #"11_XER_CALENDAR_DETAILED" = [
 		        FileName = "11_XER_CALENDAR_DETAILED.csv",
 		        Columns = {"clndr_name", "clndr_type", "date", "day_of_week", "working_day", "work_hours", "exception_type", "clndr_id_key", "MonthUpdate", "day_of_week_num", "working_day_int"},
+		        // Model memory: clndr_type and day_of_week stay in the CSV file contract and the exception shift, but are not loaded.
+		        ModelColumns = {"clndr_name", "date", "working_day", "work_hours", "exception_type", "clndr_id_key", "MonthUpdate", "day_of_week_num", "working_day_int"},
 		        Types = {{"clndr_name", type nullable text}, {"clndr_type", type nullable text}, {"date", type nullable date}, {"day_of_week", type nullable text}, {"working_day", type nullable text}, {"work_hours", type nullable number}, {"exception_type", type nullable text}, {"clndr_id_key", type nullable text}, {"MonthUpdate", type nullable date}, {"day_of_week_num", Int64.Type}, {"working_day_int", Int64.Type}},
 		        DateColumns = {"date", "MonthUpdate"}, LogicalColumns = {}, IntegerColumns = {"day_of_week_num", "working_day_int"}, NumberColumns = {"work_hours"},
 		        RequiredColumns = {"MonthUpdate"},
@@ -1140,10 +1163,10 @@ expression fnXerCsvLoadTable =
 		        let
 		            Contract = if Record.HasFields(XerCsvTableContracts, tableName) then Record.Field(XerCsvTableContracts, tableName) else error Error.Record("XerCsvContract", "Unknown Programme Review CSV table.", [TableName = tableName]),
 		            ContractModelColumns = Record.FieldOrDefault(Contract, "ModelColumns", Contract[Columns]),
-		            ModelColumns = List.Combine({ContractModelColumns, {"IsCsvSource"}, if tableName = "11_XER_CALENDAR_DETAILED" then {"ExceptionDateShiftDays", "ProjectKey"} else {}}),
+		            ModelColumns = List.Combine({ContractModelColumns, {"IsCsvSource"}, if tableName = "11_XER_CALENDAR_DETAILED" then {"ProjectKey"} else {}}),
 		            EmptySource = Table.AddColumn(fnXerCsvEmptyTable(tableName), "IsCsvSource", each true, type logical),
-		            Empty = if tableName = "11_XER_CALENDAR_DETAILED" then Table.AddColumn(Table.AddColumn(EmptySource, "ExceptionDateShiftDays", each 0, Int64.Type), "ProjectKey", each null, type nullable text) else EmptySource,
-		            Combined = if XerCsvRouting[IsActive] then Table.Combine(List.Transform(XerCsvSelectedBundles, each fnXerCsvReadBundleTable(_, tableName))) else Empty,
+		            Empty = if tableName = "11_XER_CALENDAR_DETAILED" then Table.AddColumn(EmptySource, "ProjectKey", each null, type nullable text) else EmptySource,
+		            Combined = if XerCsvRouting[IsActive] then Table.Combine(List.Transform(XerCsvSelectedBundles, each fnXerCsvExcludeFlaggedTasks(fnXerCsvReadBundleTable(_, tableName), _, tableName))) else Empty,
 		            Result = Table.SelectColumns(Combined, ModelColumns, MissingField.Error)
 		        in
 		            Result
@@ -1397,88 +1420,6 @@ expression AthenaProgrammeSelectionAudit =
 
 	annotation PBI_ResultType = Table
 
-expression dbo_project_events =
-		let
-		    Source =
-		        Value.NativeQuery(
-		            AthenaDB,
-		            "SELECT ""projectid"", ""eventname"", ""eventtype"",""eventdate"",""locationname"",""description"",""eventstatus"",""eventcategory"",""impact"",""impactedagreements"",""cost"" FROM prod_projectcontrols_linkedsite.""project_events_capture""",
-		            null
-		        ),
-		
-		    // 1. Merge with your existing dbo_project table
-		    MergedWithProject =
-		        Table.NestedJoin(
-		            Source,
-		            {"projectid"},
-		            dbo_project,
-		            {"projectid"},
-		            "ProjectDetails",
-		            JoinKind.LeftOuter
-		        ),
-		
-		    // 2. Expand only the projectno column
-		    ExpandedProject =
-		        Table.ExpandTableColumn(
-		            MergedWithProject,
-		            "ProjectDetails",
-		            {"projectno"},
-		            {"projectno"}
-		        ),
-		
-		    // 3. Generate the alternate project code for each row
-		    AddAltProjectNo =
-		        Table.AddColumn(
-		            ExpandedProject,
-		            "AltProjectNo",
-		            each
-		                if [projectno] = null or [projectno] = "" then
-		                    null
-		                else if Text.StartsWith([projectno], "C") then
-		                    "J" & Text.Middle([projectno], 1)
-		                else if Text.StartsWith([projectno], "J") then
-		                    "C" & Text.Middle([projectno], 1)
-		                else
-		                    null,
-		            type nullable text
-		        ),
-		
-		    // 4. Group the codes into a list and remove nulls/duplicates
-		    AddCodeList =
-		        Table.AddColumn(
-		            AddAltProjectNo,
-		            "AllProjectCodes",
-		            each
-		                List.RemoveNulls(
-		                    List.Distinct({[projectno], [AltProjectNo]})
-		                ),
-		            type list
-		        ),
-		
-		    // 5. Expand the list column to duplicate the rows for both codes
-		    ExpandedCodes =
-		        Table.ExpandListColumn(AddCodeList, "AllProjectCodes"),
-		
-		    // 6. Clean up temporary columns and rename the final code column back to 'projectno'
-		    RenameForRLS =
-		        Table.RenameColumns(
-		            Table.RemoveColumns(ExpandedCodes, {"projectno", "AltProjectNo"}),
-		            {{"AllProjectCodes", "projectno"}}
-		        ),
-		
-		    // 7. Remove any identical duplicate rows that may have been created
-		    Deduped =
-		        Table.Distinct(RenameForRLS),
-		    #"Removed Other Columns" = Table.SelectColumns(Deduped,{"eventname", "eventtype", "eventdate", "locationname", "description", "eventstatus", "eventcategory", "impact", "impactedagreements", "cost", "projectno"})
-		in
-		    #"Removed Other Columns"
-	lineageTag: b73c1473-8ef2-46ac-a07d-b2883378c02b
-	queryGroup: Database
-
-	annotation PBI_NavigationStepName = Navigation
-
-	annotation PBI_ResultType = Table
-
 expression fnXerCsvProjectList =
 		(value as nullable text) as list =>
 		let
@@ -1685,4 +1626,109 @@ expression LatestUpdateCount = "3" meta [IsParameterQuery=true, Type="Text", IsP
 	annotation PBI_NavigationStepName = Navigation
 
 	annotation PBI_ResultType = Text
+
+expression AthenaExcludedTasksSql =
+		// Query Name: AthenaExcludedTasksSql
+		// Activities coded "GBL-Exclude From Data Lake Reporting" = "Yes" in a kept file, one snapshot at a time.
+		// Appended after AthenaScopeSql; consumers anti-join excluded_tasks with NOT EXISTS (never NOT IN).
+		// The normalisation mirrors '01 XER_TASK'[IsExcludedFromDataLake]: DAX TRIM collapses inner spaces and
+		// DAX "=" ignores case. Joining 09 on filename and code key lets Athena prune its scan to flagged files.
+		// Each reference adds one copy of the scope chain, so keep it out of the TASK history CTEs.
+		let
+		    Sql =
+		        ", excluded_activity_codes AS ( " &
+		        "    SELECT ac.""filename"" AS filename, ac.""actv_code_id_key"" AS actv_code_id_key " &
+		        "    FROM prod_projectcontrols_p6.""08_xer_actvcode"" ac " &
+		        "    INNER JOIN kept_filenames ekf ON ac.""filename"" = ekf.""filename"" " &
+		        "    INNER JOIN prod_projectcontrols_p6.""07_xer_actvtype"" aty " &
+		        "        ON aty.""filename"" = ac.""filename"" AND aty.""actv_code_type_id_key"" = ac.""actv_code_type_id_key"" " &
+		        "    WHERE LOWER(REGEXP_REPLACE(TRIM(aty.""actv_code_type""), ' +', ' ')) = 'gbl-exclude from data lake reporting' " &
+		        "        AND LOWER(REGEXP_REPLACE(TRIM(ac.""actv_code_name""), ' +', ' ')) = 'yes' " &
+		        "), excluded_tasks AS ( " &
+		        "    SELECT ta.""task_id_key"" AS task_id_key " &
+		        "    FROM prod_projectcontrols_p6.""09_xer_taskactv"" ta " &
+		        "    INNER JOIN excluded_activity_codes eac " &
+		        "        ON eac.filename = ta.""filename"" AND eac.actv_code_id_key = ta.""actv_code_id_key"" " &
+		        ")  "
+		in
+		    Sql
+	lineageTag: ab6ff29f-9b33-4ea4-aeed-aaae1db3f7af
+	queryGroup: Database
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
+
+expression fnXerCsvExcludedTaskKeys =
+		// Task keys a bundle codes "GBL-Exclude From Data Lake Reporting" = "Yes", per snapshot; the same rule
+		// as AthenaExcludedTasksSql and '01 XER_TASK'[IsExcludedFromDataLake]. A light streaming read of 07/08/09:
+		// their full contract validation still runs when those tables load, and import never rewrites keys, so
+		// these raw keys equal the loaded keys. Only small key lists are buffered (the flagged code keys and the
+		// flagged task keys, reused by both 06 link ends); the 09 file itself streams.
+		let
+		    fn = (bundle as record) as table =>
+		        let
+		            Normalise = (value as any) as text => Text.Lower(Text.Combine(List.Select(Text.Split(Text.Trim(if value = null then "" else Text.From(value)), " "), each _ <> ""), " ")),
+		            ReadCsv = (tableName as text, columns as list) as table =>
+		                let
+		                    Contract = Record.Field(XerCsvTableContracts, tableName),
+		                    FileMatches = Table.SelectRows(bundle[Files], each [Name] = Contract[FileName]),
+		                    FileBinary = if Table.RowCount(FileMatches) = 1 then FileMatches{0}[Content] else error Error.Record("XerCsvBundle", "Expected exactly one contract CSV file.", [BundleId = bundle[BundleId], FileName = Contract[FileName]]),
+		                    Promoted = Table.PromoteHeaders(Csv.Document(FileBinary, [Delimiter = ",", Columns = List.Count(Contract[Columns]), Encoding = 65001, QuoteStyle = QuoteStyle.Csv]), [PromoteAllScalars = true])
+		                in
+		                    Table.SelectColumns(Promoted, columns, MissingField.Error),
+		            ExcludeTypeKeys = List.Buffer(Table.SelectRows(ReadCsv("07_XER_ACTVTYPE", {"actv_code_type_id_key", "actv_code_type"}), each Normalise([actv_code_type]) = "gbl-exclude from data lake reporting")[actv_code_type_id_key]),
+		            FlaggedCodeKeys = List.Buffer(Table.SelectRows(ReadCsv("08_XER_ACTVCODE", {"actv_code_id_key", "actv_code_name", "actv_code_type_id_key"}), each List.Contains(ExcludeTypeKeys, [actv_code_type_id_key]) and Normalise([actv_code_name]) = "yes")[actv_code_id_key]),
+		            FlaggedTaskKeys =
+		                if List.IsEmpty(FlaggedCodeKeys) then
+		                    {}
+		                else
+		                    List.Buffer(Table.SelectRows(ReadCsv("09_XER_TASKACTV", {"task_id_key", "actv_code_id_key"}), each List.Contains(FlaggedCodeKeys, [actv_code_id_key]))[task_id_key]),
+		            Flagged = Table.FromColumns({FlaggedTaskKeys}, type table [task_id_key = nullable text])
+		        in
+		            Flagged
+		in
+		    fn
+	lineageTag: b0f1e1cf-ae30-40a1-b85a-18a14ee2f34d
+	queryGroup: XER
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Function
+
+expression fnXerCsvExcludeFlaggedTasks =
+		// Removes activities excluded from Data Lake reporting from the task-keyed CSV tables, per snapshot,
+		// after fnXerCsvReadBundleTable's exact manifest row check. A link goes when either end is excluded.
+		let
+		    fn = (source as table, bundle as record, tableName as text) as table =>
+		        let
+		            KeyColumns =
+		                Record.FieldOrDefault(
+		                    [
+		                        #"01_XER_TASK" = {"task_id_key"},
+		                        #"06_XER_PREDECESSOR" = {"task_id_key", "pred_task_id_key"},
+		                        #"09_XER_TASKACTV" = {"task_id_key"},
+		                        #"15_XER_RESOURCE_DISTRIBUTION" = {"task_id_key"}
+		                    ],
+		                    tableName,
+		                    {}
+		                ),
+		            Excluded = fnXerCsvExcludedTaskKeys(bundle),
+		            Result =
+		                List.Accumulate(
+		                    KeyColumns,
+		                    source,
+		                    (state as table, keyColumn as text) as table =>
+		                        Table.RemoveColumns(Table.NestedJoin(state, {keyColumn}, Excluded, {"task_id_key"}, "DataLakeExcluded", JoinKind.LeftAnti), {"DataLakeExcluded"})
+		                )
+		        in
+		            Result
+		in
+		    fn
+	lineageTag: 32f2c9e8-b2f9-4a5b-ac59-c1cfc448ebfd
+	queryGroup: XER
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Function
 

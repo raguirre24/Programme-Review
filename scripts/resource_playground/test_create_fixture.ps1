@@ -26,6 +26,8 @@ if ($model.Tables.Find('01 XER_TASK')) { throw 'Production table detected in fix
 # The empty measure-table carrier has no semantic role. Replacing its empty M
 # partition avoids any external or Desktop-only mashup processing dependencies.
 $measures = $model.Tables.Find('Resource Scenario Measures')
+. (Join-Path $PSScriptRoot 'FixtureAuditMeasures.ps1')
+[void](Set-FixtureAuditMeasures $measures)
 $measures.Partitions.Clear()
 $carrier = [Microsoft.AnalysisServices.Tabular.CalculatedTableColumn]::new()
 $carrier.Name = '__FixtureCarrier'

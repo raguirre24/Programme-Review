@@ -60,12 +60,6 @@ relationship 3e7d6192-5b98-528e-77c5-2d5538bcf78c
 	fromColumn: '09 XER_TASKACTV'.task_id_key
 	toColumn: '01 XER_TASK'.task_id_key
 
-relationship f96494cb-d9c1-d0e8-5ae0-16664e7b7f5f
-	crossFilteringBehavior: bothDirections
-	fromCardinality: one
-	fromColumn: '00 PLANNED DATE TABLE (PV)'.Date
-	toColumn: '00 CALENDAR'.Date
-
 relationship bf55c7c9-a457-d538-128b-3031335740b0
 	isActive: false
 	joinOnDateBehavior: datePartOnly

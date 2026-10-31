@@ -57,16 +57,16 @@ try {
     } else {
         $definitions = Get-ScheduleMetricsDefinitions -Model $proposed -LiveModel $target.Database.Model
     }
-    $rates = @('MissingPredecessor%', 'MissingSuccessor%', 'HighFloat%', 'HighDur%', 'Lags%',
-        '<0Lead%', '<0Float%', '0Float%', 'Constraint%', 'Score',
+    $rates = @('HighDur%', 'Lags%',
+        '<0Lead%', '<0Float%', 'Constraint%', 'Score',
         'SM Missing Logic %', 'SM FS %', 'SM Invalid Dates %', 'SM Out Of Sequence %')
     $availableRates = @($rates | Where-Object { $metricsTable.Measures.Contains($_) })
     # Baseline coverage is scored from the detail table's consolidated value.
     $crossTable = @('SM Detail Value')
     $helpers = @('Task_Count', 'SM Activity Count', 'SM Eligible Relationship Count', 'SM Activity Relationship Count', 'SM Date Eligible Count',
-        'SM Positive Lag Count', 'SM Missing Logic Count', 'SM FS Count', 'SM Restrictive Primary Count',
+        'SM Missing Logic Count', 'SM FS Count', 'SM Restrictive Primary Count',
         'SM Invalid Dates Count', 'SM Applicable Checks', 'SM Assessed Checks', 'SM Passed Checks',
-        'SM Partial Checks', 'SM Review Checks', 'SM Priority Checks', 'Float >44', 'Dur >44', 'Task_Count_Negative_Float', 'Task_Count_Float_0', 'Leads<0d',
+        'SM Partial Checks', 'SM Review Checks', 'SM Priority Checks', 'Dur >44', 'Task_Count_Negative_Float', 'Leads<0d',
         'Lags>5d', 'Out Of Sequence Count', 'SM In Progress Count',
         'SM Missing Float Count', 'SM Missing Duration Count', 'SM Missing Lag Count',
         'SM Unknown Relationship Type Count', 'SM Unknown Constraint Count') |
@@ -120,9 +120,7 @@ TREATAS({$pointDate},CurrentDate[UpdateDate]),$pageFilters)
     $snapshots = $snapshotList.ToArray()
     Assert-ScheduleMetric ($snapshots.Count -gt 0) 'No project snapshots were evaluated.'
     $observedRates = [ordered]@{
-        'HighFloat%' = @('Float >44', 'Task_Count', 'SM Missing Float Count')
         '<0Float%' = @('Task_Count_Negative_Float', 'Task_Count', 'SM Missing Float Count')
-        '0Float%' = @('Task_Count_Float_0', 'Task_Count', 'SM Missing Float Count')
         'HighDur%' = @('Dur >44', 'SM Activity Count', 'SM Missing Duration Count')
         'Lags%' = @('Lags>5d', 'SM Eligible Relationship Count', 'SM Missing Lag Count')
         '<0Lead%' = @('Leads<0d', 'SM Eligible Relationship Count', 'SM Missing Lag Count')

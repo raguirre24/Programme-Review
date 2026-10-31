@@ -31,7 +31,7 @@ REPORT_DEF = ROOT / "Project Review - Programme (datalake).Report" / "definition
 DAY = timedelta(days=1)
 
 EXPECTED_CS_MEASURES = {
-    "CS Activity Calendar Delay Days", "CS Activity Effective Start", "CS Activity Finish Without Exceptions",
+    "CS Activity Calendar Delay Days",
     "CS Activity Timeline Dates", "CS Activity Shutdown Bands",
     "CS KPI Delayed Activities", "CS KPI Severely Delayed Activities", "CS KPI Critical Delay Days",
     "CS KPI Max Delay Days", "CS KPI Worst Stretch Ratio", "CS Scope Prompt",

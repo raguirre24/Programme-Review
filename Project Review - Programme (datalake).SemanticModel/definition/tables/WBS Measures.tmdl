@@ -1,28 +1,6 @@
 table 'WBS Measures'
 	lineageTag: 075ff10b-d681-4a2b-ac84-012ad91336ac
 
-	measure 'Finish Variance (Working Days)' = ```
-			
-			VAR MaxActualFinish = 
-			    MAX('01 XER_TASK'[Finish])
-			VAR MaxBaselineFinish = 
-			    MAX('01 XER_TASK'[Baseline Finish])
-			VAR HasBothDates = 
-			    NOT(ISBLANK(MaxActualFinish)) && NOT(ISBLANK(MaxBaselineFinish))
-			VAR SameDates = 
-			    MaxActualFinish = MaxBaselineFinish
-			VAR WorkingDaysDiff = 
-			    NETWORKDAYS(MaxBaselineFinish, MaxActualFinish) - 1
-			RETURN
-			    IF (
-			        HasBothDates,
-			        IF (SameDates, 0, WorkingDaysDiff),
-			        BLANK()
-			    )
-			```
-		formatString: 0
-		lineageTag: a5a6165b-9371-4314-8fb5-97e08dba855c
-
 	measure 'Count of Links' = COUNTROWS('06 XER_PREDECESSOR')
 		formatString: 0
 		lineageTag: bfc5265a-b677-4d74-992c-eb2634fd4d71

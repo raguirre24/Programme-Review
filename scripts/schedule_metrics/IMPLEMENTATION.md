@@ -50,8 +50,8 @@ predecessors are ignored. `06 XER_PREDECESSOR` holds raw P6 status codes
 (`TK_NotStart`, `TK_Active`, `TK_Complete`), unlike the task table. With no
 in-progress work it shows 0%. It replaced high float, which
 scored 0 on C6014 every month (22–42% against DCMA's 5%) even where the float
-was genuine; `HighFloat%` and the zero-float measures remain in the model but
-are no longer shown.
+was genuine; `HighFloat%`, the zero-float measures and the separate missing
+predecessor/successor rates were removed from the model in the October 2026 trim.
 
 Relationship denominators use eligible links with a known lag or recognised
 relationship type. Only lags over 5 working days count; shorter lags, mostly on

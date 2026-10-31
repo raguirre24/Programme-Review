@@ -47,7 +47,7 @@ table '09 XER_TASKACTV'
 		queryGroup: XER
 		source =
 				let
-				    Source = fnAthenaSource("09_xer_taskactv", "t.""actv_code_id_key"", t.""task_id_key"""),
+				    Source = fnAthenaSource("09_xer_taskactv", "t.""actv_code_id_key"", t.""task_id_key""", {"task_id_key"}),
 				    ContractColumns = Record.Field(XerCsvTableContracts, "09_XER_TASKACTV")[Columns],
 				    ModelColumns = List.Combine({ContractColumns, {"IsCsvSource"}}),
 				    AthenaFinal = Table.SelectColumns(Source, ContractColumns),

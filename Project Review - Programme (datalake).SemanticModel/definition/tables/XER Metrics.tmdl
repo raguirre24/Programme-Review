@@ -1,30 +1,13 @@
 table 'XER Metrics'
 	lineageTag: 4c90930e-7191-402b-8b10-d92d87090b7d
 
-	/// Eligible work with no predecessor. Diagnostic component of combined missing logic.
-	measure 'Missing Predecessor' =
-			VAR N = [Task_Count]
-			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
-			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
-			REMOVEFILTERS ( Filter_Activity_Status ),
-			REMOVEFILTERS ( Filter_TaskType ),
-			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
-			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }, KEEPFILTERS ( '01 XER_TASK'[No Predecessor] = 1 ) )
-			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
-		formatString: #,0
-		displayFolder: Schedule Quality Table
-		lineageTag: b2f7cb81-8dec-4005-9a48-ad65ebfa34d0
-
 	/// Incomplete activities and milestones (TT_Task, TT_Rsrc, TT_Mile, TT_FinMile; excludes LOE and WBS Summary). Includes unscheduled work; preserves datalake exclusions. Not a sum across snapshots.
 	measure Task_Count =
-			VAR N = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			VAR N = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code],
 			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
 			REMOVEFILTERS ( Filter_Activity_Status ),
 			REMOVEFILTERS ( Filter_TaskType ),
 			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
 			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" } )
 			RETURN IF ( [SM Snapshot Valid], N )
@@ -32,42 +15,14 @@ table 'XER Metrics'
 		displayFolder: Schedule Quality Table
 		lineageTag: a59b8440-c71a-49f5-ac02-82817bf03c64
 
-	measure MissingPredecessor% = DIVIDE ( [Missing Predecessor], [Task_Count] )
-		formatString: 0.00%;-0.00%;0.00%
-		displayFolder: Schedule Quality Visuals
-		lineageTag: b10b5f78-5dc1-4c51-b3a0-55f52d133cc1
-
-	/// Float is already in working days; no hours-to-days conversion.
-	measure 'Float >44' =
-			VAR N = [Task_Count]
-			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
-			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
-			REMOVEFILTERS ( Filter_Activity_Status ),
-			REMOVEFILTERS ( Filter_TaskType ),
-			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
-			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }, KEEPFILTERS ( '01 XER_TASK'[total_float] > 44 ) )
-			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
-		formatString: #,0
-		displayFolder: Schedule Quality Table
-		lineageTag: f455b06e-fc38-40f8-a1bd-e98e87db351b
-
-	/// Float >44 working days / work with known float; a context-dependent diagnostic, excluded from the score. Missing inputs are disclosed separately.
-	measure HighFloat% = DIVIDE ( [Float >44], [Task_Count] - [SM Missing Float Count] )
-		formatString: 0.00%;-0.00%;0.00%
-		displayFolder: Schedule Quality Visuals
-		lineageTag: b0c84e96-887e-471b-b1d0-f53663d01542
-
 	/// Custom remaining-duration check on incomplete task- and resource-dependent activities, not original/baseline duration. Milestones are excluded.
 	measure 'Dur >44' =
 			VAR N = [Task_Count]
-			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code],
 			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
 			REMOVEFILTERS ( Filter_Activity_Status ),
 			REMOVEFILTERS ( Filter_TaskType ),
 			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
 			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" }, KEEPFILTERS ( '01 XER_TASK'[remaining_duration] > 44 ) )
 			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
@@ -84,12 +39,11 @@ table 'XER Metrics'
 	/// Lags over 5 working days into eligible work: the scored lag check's numerator. Short overlap lags are assessed through FS%.
 	measure Lags>5d =
 			VAR N = [Task_Count]
-			VAR WorkKeys = CALCULATETABLE ( VALUES ( '01 XER_TASK'[task_id_key] ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			VAR WorkKeys = CALCULATETABLE ( VALUES ( '01 XER_TASK'[task_id_key] ), REMOVEFILTERS ( '01 XER_TASK'[status_code],
 			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
 			REMOVEFILTERS ( Filter_Activity_Status ),
 			REMOVEFILTERS ( Filter_TaskType ),
 			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
 			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" } )
 			VAR Result = CALCULATE ( COUNTROWS ( '06 XER_PREDECESSOR' ),
@@ -131,12 +85,11 @@ table 'XER Metrics'
 	/// Incomplete discrete work with negative total float: the scored negative-float numerator.
 	measure Task_Count_Negative_Float =
 			VAR N = [Task_Count]
-			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code],
 			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
 			REMOVEFILTERS ( Filter_Activity_Status ),
 			REMOVEFILTERS ( Filter_TaskType ),
 			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
 			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }, KEEPFILTERS ( '01 XER_TASK'[total_float] < 0 ) )
 			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
@@ -144,30 +97,13 @@ table 'XER Metrics'
 		displayFolder: Schedule Quality Table
 		lineageTag: 84f80f9d-6679-44c8-9967-879cefb38790
 
-	/// All primary constraints on incomplete activities and milestones (excluding LOE and WBS Summary); retained for existing diagnostic consumers. Score uses hard primary constraints instead.
-	measure 'Primary Constraints' =
-			VAR N = [Task_Count]
-			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
-			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
-			REMOVEFILTERS ( Filter_Activity_Status ),
-			REMOVEFILTERS ( Filter_TaskType ),
-			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
-			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }, KEEPFILTERS ( NOT ISBLANK ( '01 XER_TASK'[cstr_type] ) && '01 XER_TASK'[cstr_type] <> "" ) )
-			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
-		formatString: #,0
-		displayFolder: Schedule Quality Table
-		lineageTag: a30c0519-b72a-480b-8510-a3d929447144
-
 	measure Leads<0d =
 			VAR N = [Task_Count]
-			VAR WorkKeys = CALCULATETABLE ( VALUES ( '01 XER_TASK'[task_id_key] ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			VAR WorkKeys = CALCULATETABLE ( VALUES ( '01 XER_TASK'[task_id_key] ), REMOVEFILTERS ( '01 XER_TASK'[status_code],
 			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
 			REMOVEFILTERS ( Filter_Activity_Status ),
 			REMOVEFILTERS ( Filter_TaskType ),
 			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
 			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" } )
 			VAR Result = CALCULATE ( COUNTROWS ( '06 XER_PREDECESSOR' ),
@@ -178,28 +114,6 @@ table 'XER Metrics'
 		formatString: #,0
 		displayFolder: Schedule Quality Table
 		lineageTag: bd7bae77-005f-45cb-b795-11d1bc91c490
-
-	/// Strict equality excludes missing float. Diagnostic only, not longest path or a scored defect.
-	measure Task_Count_Float_0 =
-			VAR N = [Task_Count]
-			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
-			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
-			REMOVEFILTERS ( Filter_Activity_Status ),
-			REMOVEFILTERS ( Filter_TaskType ),
-			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
-			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }, KEEPFILTERS ( '01 XER_TASK'[total_float] == 0 ) )
-			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
-		formatString: #,0
-		displayFolder: Schedule Quality Table
-		lineageTag: f23dbffe-c081-4eae-8448-8886f89d6cb0
-
-	/// Diagnostic only; neither longest-path membership nor a scored defect.
-	measure 0Float% = DIVIDE ( [Task_Count_Float_0], [Task_Count] - [SM Missing Float Count] )
-		formatString: 0.00%;-0.00%;0.00%
-		displayFolder: Schedule Quality Visuals
-		lineageTag: a831311e-8b1d-4ec8-b39f-dccb280d63ff
 
 	/// Negative total float / work with known float. Full point at zero, none at 5%; missing inputs are disclosed separately.
 	measure <0Float% = IF ( [SM Snapshot Valid], COALESCE ( DIVIDE ( [Task_Count_Negative_Float], [Task_Count] - [SM Missing Float Count] ), 0 ) )
@@ -218,27 +132,6 @@ table 'XER Metrics'
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Visuals
 		lineageTag: 2ad2059f-95e3-418a-9e3e-4a2659f6bb8c
-
-	/// Eligible work with no successor. Diagnostic component of combined missing logic.
-	measure 'Missing Successor' =
-			VAR N = [Task_Count]
-			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
-			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
-			REMOVEFILTERS ( Filter_Activity_Status ),
-			REMOVEFILTERS ( Filter_TaskType ),
-			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
-			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }, KEEPFILTERS ( '01 XER_TASK'[No Successor] = 1 ) )
-			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
-		formatString: #,0
-		displayFolder: Schedule Quality Table
-		lineageTag: 72da43b9-9740-4e17-9d42-0d75e5d8d035
-
-	measure MissingSuccessor% = DIVIDE ( [Missing Successor], [Task_Count] )
-		formatString: 0.00%;-0.00%;0.00%
-		displayFolder: Schedule Quality Visuals
-		lineageTag: aa2548ee-cb2f-4bfe-9f84-8449da03dafe
 
 	/// History up to the selected update, evaluated at one disconnected UpdateHistory axis point.
 	measure 'Score (History)' =
@@ -265,18 +158,6 @@ table 'XER Metrics'
 		lineageTag: 718a571f-8715-4cc1-ac9c-4217052ed4b2
 
 	/// History up to the selected update, evaluated at one disconnected UpdateHistory axis point.
-	measure 'HighFloat% (History)' =
-			VAR SelectedUpdate = [SM Selected History Cutoff]
-			VAR AxisUpdate = SELECTEDVALUE ( UpdateHistory[UpdateDate] )
-			RETURN IF ( NOT ISBLANK ( AxisUpdate ) && AxisUpdate <= SelectedUpdate,
-			    CALCULATE ( [HighFloat%], REMOVEFILTERS ( CurrentDate ),
-			        TREATAS ( { AxisUpdate }, '01 XER_TASK'[UpdateDate] ) )
-			)
-		formatString: 0.00%;-0.00%;0.00%
-		displayFolder: Schedule Quality Trend
-		lineageTag: b82c651f-8143-46de-be30-ac0cf105e7bd
-
-	/// History up to the selected update, evaluated at one disconnected UpdateHistory axis point.
 	measure 'Lags% (History)' =
 			VAR SelectedUpdate = [SM Selected History Cutoff]
 			VAR AxisUpdate = SELECTEDVALUE ( UpdateHistory[UpdateDate] )
@@ -287,18 +168,6 @@ table 'XER Metrics'
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Schedule Quality Trend
 		lineageTag: 9a1ac5a0-2b88-4386-bea1-d194ab4d14bc
-
-	/// History up to the selected update, evaluated at one disconnected UpdateHistory axis point.
-	measure '0Float% (History)' =
-			VAR SelectedUpdate = [SM Selected History Cutoff]
-			VAR AxisUpdate = SELECTEDVALUE ( UpdateHistory[UpdateDate] )
-			RETURN IF ( NOT ISBLANK ( AxisUpdate ) && AxisUpdate <= SelectedUpdate,
-			    CALCULATE ( [0Float%], REMOVEFILTERS ( CurrentDate ),
-			        TREATAS ( { AxisUpdate }, '01 XER_TASK'[UpdateDate] ) )
-			)
-		formatString: 0.00%;-0.00%;0.00%
-		displayFolder: Schedule Quality Trend
-		lineageTag: e0134715-0330-4c27-b393-7198e2071804
 
 	/// History up to the selected update, evaluated at one disconnected UpdateHistory axis point.
 	measure '<0Float% (History)' =
@@ -336,38 +205,13 @@ table 'XER Metrics'
 		displayFolder: Schedule Quality Trend
 		lineageTag: 6de16914-add8-4676-8dc5-44bd159fdc60
 
-	/// History up to the selected update, evaluated at one disconnected UpdateHistory axis point.
-	measure 'MissingPredecessor% (History)' =
-			VAR SelectedUpdate = [SM Selected History Cutoff]
-			VAR AxisUpdate = SELECTEDVALUE ( UpdateHistory[UpdateDate] )
-			RETURN IF ( NOT ISBLANK ( AxisUpdate ) && AxisUpdate <= SelectedUpdate,
-			    CALCULATE ( [MissingPredecessor%], REMOVEFILTERS ( CurrentDate ),
-			        TREATAS ( { AxisUpdate }, '01 XER_TASK'[UpdateDate] ) )
-			)
-		formatString: 0.00%;-0.00%;0.00%
-		displayFolder: Schedule Quality Trend
-		lineageTag: ab03040a-11e4-4d1b-b1cc-f747fd49910e
-
-	/// History up to the selected update, evaluated at one disconnected UpdateHistory axis point.
-	measure 'MissingSuccessor% (History)' =
-			VAR SelectedUpdate = [SM Selected History Cutoff]
-			VAR AxisUpdate = SELECTEDVALUE ( UpdateHistory[UpdateDate] )
-			RETURN IF ( NOT ISBLANK ( AxisUpdate ) && AxisUpdate <= SelectedUpdate,
-			    CALCULATE ( [MissingSuccessor%], REMOVEFILTERS ( CurrentDate ),
-			        TREATAS ( { AxisUpdate }, '01 XER_TASK'[UpdateDate] ) )
-			)
-		formatString: 0.00%;-0.00%;0.00%
-		displayFolder: Schedule Quality Trend
-		lineageTag: 5b9091f0-61b8-4dde-ac05-8acf4eb1c168
-
 	/// One project/programme/update from one XER file, with row keys present. Activity codes may repeat; baseline coverage discloses them. Clears health population filters, preserving project/WBS scope and RLS.
 	measure 'SM Snapshot Valid' =
-			VAR ScopeRows = CALCULATETABLE ( '01 XER_TASK', REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			VAR ScopeRows = CALCULATETABLE ( '01 XER_TASK', REMOVEFILTERS ( '01 XER_TASK'[status_code],
 			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
 			REMOVEFILTERS ( Filter_Activity_Status ),
 			REMOVEFILTERS ( Filter_TaskType ),
-			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) )
+			REMOVEFILTERS ( '00 CALENDAR' ) )
 			VAR SnapshotCount = COUNTROWS ( SUMMARIZE ( ScopeRows,
 			    '01 XER_TASK'[ProjectCode], '01 XER_TASK'[ProgrammeType], '01 XER_TASK'[UpdateDate] ) )
 			VAR FileCount = COUNTROWS ( SUMMARIZE ( ScopeRows, '01 XER_TASK'[filename] ) )
@@ -382,12 +226,11 @@ table 'XER Metrics'
 	/// Counts each activity once even when both ends are missing.
 	measure 'SM Missing Logic Count' =
 			VAR N = [Task_Count]
-			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code],
 			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
 			REMOVEFILTERS ( Filter_Activity_Status ),
 			REMOVEFILTERS ( Filter_TaskType ),
 			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
 			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }, KEEPFILTERS ( '01 XER_TASK'[No Predecessor] = 1 || '01 XER_TASK'[No Successor] = 1 ) )
 			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
@@ -398,12 +241,11 @@ table 'XER Metrics'
 	/// DCMA hard fixed/latest-date mapping across incomplete activities and milestones (excluding LOE and WBS Summary). Secondary constraints are unavailable.
 	measure 'SM Restrictive Primary Count' =
 			VAR N = [Task_Count]
-			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code],
 			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
 			REMOVEFILTERS ( Filter_Activity_Status ),
 			REMOVEFILTERS ( Filter_TaskType ),
 			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
 			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }, KEEPFILTERS ( '01 XER_TASK'[cstr_type] IN { "CS_MSO", "CS_MSOB", "CS_MEO", "CS_MEOB", "CS_MANDSTART", "CS_MANDFIN" } ) )
 			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
@@ -413,12 +255,11 @@ table 'XER Metrics'
 
 	measure 'SM Missing Float Count' =
 			VAR N = [Task_Count]
-			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code],
 			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
 			REMOVEFILTERS ( Filter_Activity_Status ),
 			REMOVEFILTERS ( Filter_TaskType ),
 			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
 			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }, KEEPFILTERS ( ISBLANK ( '01 XER_TASK'[total_float] ) ) )
 			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
@@ -429,12 +270,11 @@ table 'XER Metrics'
 	/// Incomplete task- and resource-dependent activities with blank or negative remaining duration, excluded from the remaining-duration denominator.
 	measure 'SM Missing Duration Count' =
 			VAR N = [Task_Count]
-			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code],
 			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
 			REMOVEFILTERS ( Filter_Activity_Status ),
 			REMOVEFILTERS ( Filter_TaskType ),
 			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
 			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" }, KEEPFILTERS ( ISBLANK ( '01 XER_TASK'[remaining_duration] ) || '01 XER_TASK'[remaining_duration] < 0 ) )
 			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
@@ -444,12 +284,11 @@ table 'XER Metrics'
 
 	measure 'SM Unknown Constraint Count' =
 			VAR N = [Task_Count]
-			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			VAR Result = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code],
 			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
 			REMOVEFILTERS ( Filter_Activity_Status ),
 			REMOVEFILTERS ( Filter_TaskType ),
 			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
 			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" }, KEEPFILTERS ( NOT ISBLANK ( '01 XER_TASK'[cstr_type] ) && '01 XER_TASK'[cstr_type] <> "" && NOT ( '01 XER_TASK'[cstr_type] IN { "CS_ALAP", "CS_MSO", "CS_MSOA", "CS_MSOB", "CS_MEO", "CS_MEOA", "CS_MEOB", "CS_MANDSTART", "CS_MANDFIN" } ) ) )
 			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
@@ -460,12 +299,11 @@ table 'XER Metrics'
 	/// Relationships into eligible incomplete discrete successor activities; predecessors need not themselves be incomplete.
 	measure 'SM Eligible Relationship Count' =
 			VAR N = [Task_Count]
-			VAR WorkKeys = CALCULATETABLE ( VALUES ( '01 XER_TASK'[task_id_key] ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			VAR WorkKeys = CALCULATETABLE ( VALUES ( '01 XER_TASK'[task_id_key] ), REMOVEFILTERS ( '01 XER_TASK'[status_code],
 			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
 			REMOVEFILTERS ( Filter_Activity_Status ),
 			REMOVEFILTERS ( Filter_TaskType ),
 			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
 			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" } )
 			VAR Result = CALCULATE ( COUNTROWS ( '06 XER_PREDECESSOR' ),
@@ -476,35 +314,14 @@ table 'XER Metrics'
 		displayFolder: Schedule Quality Table
 		lineageTag: 5dae7311-cc09-4a20-a90e-a98e2af44ed5
 
-	/// All positive lags, including those of five days or less.
-	measure 'SM Positive Lag Count' =
-			VAR N = [Task_Count]
-			VAR WorkKeys = CALCULATETABLE ( VALUES ( '01 XER_TASK'[task_id_key] ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
-			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
-			REMOVEFILTERS ( Filter_Activity_Status ),
-			REMOVEFILTERS ( Filter_TaskType ),
-			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
-			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
-			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" } )
-			VAR Result = CALCULATE ( COUNTROWS ( '06 XER_PREDECESSOR' ),
-			    REMOVEFILTERS ( '01 XER_TASK' ),
-			    TREATAS ( WorkKeys, '06 XER_PREDECESSOR'[task_id_key] ),
-			    KEEPFILTERS ( '06 XER_PREDECESSOR'[lag] > 0 ) )
-			RETURN IF ( N > 0, COALESCE ( Result, 0 ) )
-		formatString: #,0
-		displayFolder: Schedule Quality Table
-		lineageTag: 26b0c0c4-7880-4cdb-ad0d-df995069e994
-
 	/// Finish-to-start relationships (PR_FS, PR_FS1) into incomplete task- and resource-dependent activities; links into milestones are outside the FS share.
 	measure 'SM FS Count' =
 			VAR N = [Task_Count]
-			VAR WorkKeys = CALCULATETABLE ( VALUES ( '01 XER_TASK'[task_id_key] ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			VAR WorkKeys = CALCULATETABLE ( VALUES ( '01 XER_TASK'[task_id_key] ), REMOVEFILTERS ( '01 XER_TASK'[status_code],
 			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
 			REMOVEFILTERS ( Filter_Activity_Status ),
 			REMOVEFILTERS ( Filter_TaskType ),
 			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
 			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" } )
 			VAR Result = CALCULATE ( COUNTROWS ( '06 XER_PREDECESSOR' ),
@@ -518,12 +335,11 @@ table 'XER Metrics'
 
 	measure 'SM Missing Lag Count' =
 			VAR N = [Task_Count]
-			VAR WorkKeys = CALCULATETABLE ( VALUES ( '01 XER_TASK'[task_id_key] ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			VAR WorkKeys = CALCULATETABLE ( VALUES ( '01 XER_TASK'[task_id_key] ), REMOVEFILTERS ( '01 XER_TASK'[status_code],
 			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
 			REMOVEFILTERS ( Filter_Activity_Status ),
 			REMOVEFILTERS ( Filter_TaskType ),
 			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
 			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" } )
 			VAR Result = CALCULATE ( COUNTROWS ( '06 XER_PREDECESSOR' ),
@@ -538,12 +354,11 @@ table 'XER Metrics'
 	/// Relationships into incomplete task- and resource-dependent activities with an unrecognised type. PR_FS1 is an explicitly accepted FS alias. Other unknown encodings are excluded from the FS denominator and disclosed.
 	measure 'SM Unknown Relationship Type Count' =
 			VAR N = [Task_Count]
-			VAR WorkKeys = CALCULATETABLE ( VALUES ( '01 XER_TASK'[task_id_key] ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			VAR WorkKeys = CALCULATETABLE ( VALUES ( '01 XER_TASK'[task_id_key] ), REMOVEFILTERS ( '01 XER_TASK'[status_code],
 			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
 			REMOVEFILTERS ( Filter_Activity_Status ),
 			REMOVEFILTERS ( Filter_TaskType ),
 			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
 			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" } )
 			VAR Result = CALCULATE ( COUNTROWS ( '06 XER_PREDECESSOR' ),
@@ -569,12 +384,11 @@ table 'XER Metrics'
 
 	/// Activities and milestones in all statuses (excluding LOE and WBS Summary), including completed and unscheduled activities.
 	measure 'SM Date Eligible Count' =
-			VAR ScopeRows = CALCULATETABLE ( '01 XER_TASK', REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			VAR ScopeRows = CALCULATETABLE ( '01 XER_TASK', REMOVEFILTERS ( '01 XER_TASK'[status_code],
 			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
 			REMOVEFILTERS ( Filter_Activity_Status ),
 			REMOVEFILTERS ( Filter_TaskType ),
-			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) )
+			REMOVEFILTERS ( '00 CALENDAR' ) )
 			VAR Events = FILTER ( ScopeRows, '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" } )
 			RETURN IF ( [SM Snapshot Valid], COUNTROWS ( Events ) )
 		formatString: #,0
@@ -583,12 +397,11 @@ table 'XER Metrics'
 
 	/// Custom extension of DCMA invalid dates on activities and milestones in all statuses: missing required dates, future actuals, overdue forecasts, inconsistent finish status and reversed intervals. Milestones require only their meaningful endpoint.
 	measure 'SM Invalid Dates Count' =
-			VAR ScopeRows = CALCULATETABLE ( '01 XER_TASK', REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			VAR ScopeRows = CALCULATETABLE ( '01 XER_TASK', REMOVEFILTERS ( '01 XER_TASK'[status_code],
 			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
 			REMOVEFILTERS ( Filter_Activity_Status ),
 			REMOVEFILTERS ( Filter_TaskType ),
-			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) )
+			REMOVEFILTERS ( '00 CALENDAR' ) )
 			VAR Events = FILTER ( ScopeRows, '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" } )
 			VAR Bad = FILTER ( Events,
 			    VAR S = '01 XER_TASK'[status_code]
@@ -704,11 +517,6 @@ table 'XER Metrics'
 		formatString: @
 		displayFolder: Schedule Quality Score
 		lineageTag: 3f46da93-c566-4335-8c80-9fff3f75134a
-
-	measure 'SM High Float Colour' = IF ( ISBLANK ( [HighFloat%] ), "#687078", "#252525" )
-		formatString: @
-		displayFolder: Schedule Quality Formatting
-		lineageTag: ce57a426-7400-4545-a84c-bcaa06e189ef
 
 	measure 'SM High Duration Colour' =
 			VAR GradeValue = [SM High Duration Points]
@@ -878,10 +686,10 @@ table 'XER Metrics'
 			        && NOT ISBLANK ( SELECTEDVALUE ( '01 XER_TASK'[ProgrammeType] ) )
 			        && COUNTROWS ( '01 XER_TASK' ) > 0,
 			        REMOVEFILTERS ( CurrentDate ),
-			        REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			        REMOVEFILTERS ( '01 XER_TASK'[status_code],
 			            '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
 			        REMOVEFILTERS ( Filter_Activity_Status ), REMOVEFILTERS ( Filter_TaskType ),
-			        REMOVEFILTERS ( '00 CALENDAR' ), REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
+			        REMOVEFILTERS ( '00 CALENDAR' ),
 			        TREATAS ( { AxisUpdate }, '01 XER_TASK'[UpdateDate] ) ), 1 ) )
 		formatString: 0
 		displayFolder: Schedule Quality Support
@@ -914,7 +722,6 @@ table 'XER Metrics'
 			    REMOVEFILTERS (
 			        '01 XER_TASK'[No Predecessor],
 			        '01 XER_TASK'[No Successor],
-			        '01 XER_TASK'[Driven_DataDate],
 			        '01 XER_TASK'[SM Fail Missing Logic],
 			        '01 XER_TASK'[SM Fail Leads],
 			        '01 XER_TASK'[SM Fail Lags],
@@ -926,15 +733,13 @@ table 'XER Metrics'
 			        '01 XER_TASK'[total_float],
 			        '01 XER_TASK'[remaining_duration],
 			        '01 XER_TASK'[status_code],
-			        '01 XER_TASK'[StatusCategory],
 			        '01 XER_TASK'[task_type],
 			        '01 XER_TASK'[TaskType_Classified],
 			        '01 XER_TASK'[Is Unscheduled]
 			    ),
 			    REMOVEFILTERS ( Filter_Activity_Status ),
 			    REMOVEFILTERS ( Filter_TaskType ),
-			    REMOVEFILTERS ( '00 CALENDAR' ),
-			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' )
+			    REMOVEFILTERS ( '00 CALENDAR' )
 			)
 		formatString: @
 		displayFolder: Schedule Quality Drill-through
@@ -945,7 +750,6 @@ table 'XER Metrics'
 			VAR SourceDate = CALCULATE ( SELECTEDVALUE ( '01 XER_TASK'[data_date] ), REMOVEFILTERS (
 			        '01 XER_TASK'[No Predecessor],
 			        '01 XER_TASK'[No Successor],
-			        '01 XER_TASK'[Driven_DataDate],
 			        '01 XER_TASK'[SM Fail Missing Logic],
 			        '01 XER_TASK'[SM Fail Leads],
 			        '01 XER_TASK'[SM Fail Lags],
@@ -957,15 +761,13 @@ table 'XER Metrics'
 			        '01 XER_TASK'[total_float],
 			        '01 XER_TASK'[remaining_duration],
 			        '01 XER_TASK'[status_code],
-			        '01 XER_TASK'[StatusCategory],
 			        '01 XER_TASK'[task_type],
 			        '01 XER_TASK'[TaskType_Classified],
 			        '01 XER_TASK'[Is Unscheduled]
 			    ),
 			    REMOVEFILTERS ( Filter_Activity_Status ),
 			    REMOVEFILTERS ( Filter_TaskType ),
-			    REMOVEFILTERS ( '00 CALENDAR' ),
-			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) )
+			    REMOVEFILTERS ( '00 CALENDAR' ) )
 			RETURN "Data date: " & IF ( ISBLANK ( SourceDate ), "Unavailable or multiple", FORMAT ( SourceDate, "dd MMM yyyy" ) )
 		formatString: @
 		displayFolder: Schedule Quality Drill-through
@@ -976,7 +778,6 @@ table 'XER Metrics'
 			CALCULATE ( SELECTEDVALUE ( '01 XER_TASK'[FileName], "Multiple or unavailable source files" ), REMOVEFILTERS (
 			        '01 XER_TASK'[No Predecessor],
 			        '01 XER_TASK'[No Successor],
-			        '01 XER_TASK'[Driven_DataDate],
 			        '01 XER_TASK'[SM Fail Missing Logic],
 			        '01 XER_TASK'[SM Fail Leads],
 			        '01 XER_TASK'[SM Fail Lags],
@@ -988,15 +789,13 @@ table 'XER Metrics'
 			        '01 XER_TASK'[total_float],
 			        '01 XER_TASK'[remaining_duration],
 			        '01 XER_TASK'[status_code],
-			        '01 XER_TASK'[StatusCategory],
 			        '01 XER_TASK'[task_type],
 			        '01 XER_TASK'[TaskType_Classified],
 			        '01 XER_TASK'[Is Unscheduled]
 			    ),
 			    REMOVEFILTERS ( Filter_Activity_Status ),
 			    REMOVEFILTERS ( Filter_TaskType ),
-			    REMOVEFILTERS ( '00 CALENDAR' ),
-			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) )
+			    REMOVEFILTERS ( '00 CALENDAR' ) )
 		formatString: @
 		displayFolder: Schedule Quality Drill-through
 		lineageTag: b167361a-f559-5971-87c8-a94d5aa04241
@@ -1014,7 +813,6 @@ table 'XER Metrics'
 			    REMOVEFILTERS (
 			        '01 XER_TASK'[No Predecessor],
 			        '01 XER_TASK'[No Successor],
-			        '01 XER_TASK'[Driven_DataDate],
 			        '01 XER_TASK'[SM Fail Missing Logic],
 			        '01 XER_TASK'[SM Fail Leads],
 			        '01 XER_TASK'[SM Fail Lags],
@@ -1026,15 +824,13 @@ table 'XER Metrics'
 			        '01 XER_TASK'[total_float],
 			        '01 XER_TASK'[remaining_duration],
 			        '01 XER_TASK'[status_code],
-			        '01 XER_TASK'[StatusCategory],
 			        '01 XER_TASK'[task_type],
 			        '01 XER_TASK'[TaskType_Classified],
 			        '01 XER_TASK'[Is Unscheduled]
 			    ),
 			    REMOVEFILTERS ( Filter_Activity_Status ),
 			    REMOVEFILTERS ( Filter_TaskType ),
-			    REMOVEFILTERS ( '00 CALENDAR' ),
-			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' )
+			    REMOVEFILTERS ( '00 CALENDAR' )
 			)
 		formatString: @
 		displayFolder: Schedule Quality Drill-through
@@ -1212,12 +1008,11 @@ table 'XER Metrics'
 
 	/// In-progress activities and milestones (excluding LOE and WBS Summary): the out-of-sequence denominator. Includes unscheduled work; preserves datalake exclusions.
 	measure 'SM In Progress Count' =
-			VAR N = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			VAR N = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code],
 			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
 			REMOVEFILTERS ( Filter_Activity_Status ),
 			REMOVEFILTERS ( Filter_TaskType ),
 			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "In Progress" },
 			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" } )
 			RETURN IF ( [SM Snapshot Valid], COALESCE ( N, 0 ) )
@@ -1228,12 +1023,11 @@ table 'XER Metrics'
 	/// In-progress discrete work started before an FS predecessor finished, or before an SS predecessor started. LOE/WBS predecessors are ignored; predecessor status uses P6 codes.
 	measure 'Out Of Sequence Count' =
 			VAR N = [SM In Progress Count]
-			VAR WorkKeys = CALCULATETABLE ( VALUES ( '01 XER_TASK'[task_id_key] ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			VAR WorkKeys = CALCULATETABLE ( VALUES ( '01 XER_TASK'[task_id_key] ), REMOVEFILTERS ( '01 XER_TASK'[status_code],
 			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
 			REMOVEFILTERS ( Filter_Activity_Status ),
 			REMOVEFILTERS ( Filter_TaskType ),
 			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "In Progress" },
 			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" } )
 			VAR Result = CALCULATE ( DISTINCTCOUNT ( '06 XER_PREDECESSOR'[task_id_key] ),
@@ -1317,7 +1111,6 @@ table 'XER Metrics'
 			    COUNTROWS ( '01 XER_TASK' ),
 			    REMOVEFILTERS (
 			        '01 XER_TASK'[status_code],
-			        '01 XER_TASK'[StatusCategory],
 			        '01 XER_TASK'[task_type],
 			        '01 XER_TASK'[TaskType_Classified],
 			        '01 XER_TASK'[Is Unscheduled]
@@ -1325,7 +1118,6 @@ table 'XER Metrics'
 			    REMOVEFILTERS ( Filter_Activity_Status ),
 			    REMOVEFILTERS ( Filter_TaskType ),
 			    REMOVEFILTERS ( '00 CALENDAR' ),
-			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			    '01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
 			    '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" },
 			    KEEPFILTERS ( '01 XER_TASK'[SM Fail Leads] > 0 )
@@ -1342,7 +1134,6 @@ table 'XER Metrics'
 			    COUNTROWS ( '01 XER_TASK' ),
 			    REMOVEFILTERS (
 			        '01 XER_TASK'[status_code],
-			        '01 XER_TASK'[StatusCategory],
 			        '01 XER_TASK'[task_type],
 			        '01 XER_TASK'[TaskType_Classified],
 			        '01 XER_TASK'[Is Unscheduled]
@@ -1350,7 +1141,6 @@ table 'XER Metrics'
 			    REMOVEFILTERS ( Filter_Activity_Status ),
 			    REMOVEFILTERS ( Filter_TaskType ),
 			    REMOVEFILTERS ( '00 CALENDAR' ),
-			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			    '01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
 			    '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" },
 			    KEEPFILTERS ( '01 XER_TASK'[SM Fail Lags] > 0 )
@@ -1367,7 +1157,6 @@ table 'XER Metrics'
 			    COUNTROWS ( '01 XER_TASK' ),
 			    REMOVEFILTERS (
 			        '01 XER_TASK'[status_code],
-			        '01 XER_TASK'[StatusCategory],
 			        '01 XER_TASK'[task_type],
 			        '01 XER_TASK'[TaskType_Classified],
 			        '01 XER_TASK'[Is Unscheduled]
@@ -1375,7 +1164,6 @@ table 'XER Metrics'
 			    REMOVEFILTERS ( Filter_Activity_Status ),
 			    REMOVEFILTERS ( Filter_TaskType ),
 			    REMOVEFILTERS ( '00 CALENDAR' ),
-			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			    '01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
 			    '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" },
 			    KEEPFILTERS ( '01 XER_TASK'[SM Fail Non FS] > 0 )
@@ -1392,7 +1180,6 @@ table 'XER Metrics'
 			    COUNTROWS ( '01 XER_TASK' ),
 			    REMOVEFILTERS (
 			        '01 XER_TASK'[status_code],
-			        '01 XER_TASK'[StatusCategory],
 			        '01 XER_TASK'[task_type],
 			        '01 XER_TASK'[TaskType_Classified],
 			        '01 XER_TASK'[Is Unscheduled]
@@ -1400,7 +1187,6 @@ table 'XER Metrics'
 			    REMOVEFILTERS ( Filter_Activity_Status ),
 			    REMOVEFILTERS ( Filter_TaskType ),
 			    REMOVEFILTERS ( '00 CALENDAR' ),
-			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			    '01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
 			    '01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc", "TT_Mile", "TT_FinMile" },
 			    KEEPFILTERS ( NOT ISBLANK ( '01 XER_TASK'[SM Fail Baseline Coverage] ) )
@@ -1415,7 +1201,6 @@ table 'XER Metrics'
 			VAR Matches = COALESCE ( CALCULATE ( [SM Missing Logic Count], REMOVEFILTERS (
 			        '01 XER_TASK'[No Predecessor],
 			        '01 XER_TASK'[No Successor],
-			        '01 XER_TASK'[Driven_DataDate],
 			        '01 XER_TASK'[SM Fail Missing Logic],
 			        '01 XER_TASK'[SM Fail Leads],
 			        '01 XER_TASK'[SM Fail Lags],
@@ -1427,15 +1212,13 @@ table 'XER Metrics'
 			        '01 XER_TASK'[total_float],
 			        '01 XER_TASK'[remaining_duration],
 			        '01 XER_TASK'[status_code],
-			        '01 XER_TASK'[StatusCategory],
 			        '01 XER_TASK'[task_type],
 			        '01 XER_TASK'[TaskType_Classified],
 			        '01 XER_TASK'[Is Unscheduled]
 			    ),
 			    REMOVEFILTERS ( Filter_Activity_Status ),
 			    REMOVEFILTERS ( Filter_TaskType ),
-			    REMOVEFILTERS ( '00 CALENDAR' ),
-			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) ), 0 )
+			    REMOVEFILTERS ( '00 CALENDAR' ) ), 0 )
 			RETURN IF (
 			    NOT [SM Drill Snapshot Available],
 			    "Select one project and available update",
@@ -1452,7 +1235,6 @@ table 'XER Metrics'
 			VAR Matches = COALESCE ( CALCULATE ( [SM Leads Activity Count], REMOVEFILTERS (
 			        '01 XER_TASK'[No Predecessor],
 			        '01 XER_TASK'[No Successor],
-			        '01 XER_TASK'[Driven_DataDate],
 			        '01 XER_TASK'[SM Fail Missing Logic],
 			        '01 XER_TASK'[SM Fail Leads],
 			        '01 XER_TASK'[SM Fail Lags],
@@ -1464,19 +1246,16 @@ table 'XER Metrics'
 			        '01 XER_TASK'[total_float],
 			        '01 XER_TASK'[remaining_duration],
 			        '01 XER_TASK'[status_code],
-			        '01 XER_TASK'[StatusCategory],
 			        '01 XER_TASK'[task_type],
 			        '01 XER_TASK'[TaskType_Classified],
 			        '01 XER_TASK'[Is Unscheduled]
 			    ),
 			    REMOVEFILTERS ( Filter_Activity_Status ),
 			    REMOVEFILTERS ( Filter_TaskType ),
-			    REMOVEFILTERS ( '00 CALENDAR' ),
-			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) ), 0 )
+			    REMOVEFILTERS ( '00 CALENDAR' ) ), 0 )
 			VAR Links = COALESCE ( CALCULATE ( [Leads<0d], REMOVEFILTERS (
 			        '01 XER_TASK'[No Predecessor],
 			        '01 XER_TASK'[No Successor],
-			        '01 XER_TASK'[Driven_DataDate],
 			        '01 XER_TASK'[SM Fail Missing Logic],
 			        '01 XER_TASK'[SM Fail Leads],
 			        '01 XER_TASK'[SM Fail Lags],
@@ -1488,15 +1267,13 @@ table 'XER Metrics'
 			        '01 XER_TASK'[total_float],
 			        '01 XER_TASK'[remaining_duration],
 			        '01 XER_TASK'[status_code],
-			        '01 XER_TASK'[StatusCategory],
 			        '01 XER_TASK'[task_type],
 			        '01 XER_TASK'[TaskType_Classified],
 			        '01 XER_TASK'[Is Unscheduled]
 			    ),
 			    REMOVEFILTERS ( Filter_Activity_Status ),
 			    REMOVEFILTERS ( Filter_TaskType ),
-			    REMOVEFILTERS ( '00 CALENDAR' ),
-			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) ), 0 )
+			    REMOVEFILTERS ( '00 CALENDAR' ) ), 0 )
 			RETURN IF (
 			    NOT [SM Drill Snapshot Available],
 			    "Select one project and available update",
@@ -1515,7 +1292,6 @@ table 'XER Metrics'
 			VAR Matches = COALESCE ( CALCULATE ( [SM Lags Activity Count], REMOVEFILTERS (
 			        '01 XER_TASK'[No Predecessor],
 			        '01 XER_TASK'[No Successor],
-			        '01 XER_TASK'[Driven_DataDate],
 			        '01 XER_TASK'[SM Fail Missing Logic],
 			        '01 XER_TASK'[SM Fail Leads],
 			        '01 XER_TASK'[SM Fail Lags],
@@ -1527,19 +1303,16 @@ table 'XER Metrics'
 			        '01 XER_TASK'[total_float],
 			        '01 XER_TASK'[remaining_duration],
 			        '01 XER_TASK'[status_code],
-			        '01 XER_TASK'[StatusCategory],
 			        '01 XER_TASK'[task_type],
 			        '01 XER_TASK'[TaskType_Classified],
 			        '01 XER_TASK'[Is Unscheduled]
 			    ),
 			    REMOVEFILTERS ( Filter_Activity_Status ),
 			    REMOVEFILTERS ( Filter_TaskType ),
-			    REMOVEFILTERS ( '00 CALENDAR' ),
-			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) ), 0 )
+			    REMOVEFILTERS ( '00 CALENDAR' ) ), 0 )
 			VAR Links = COALESCE ( CALCULATE ( [Lags>5d], REMOVEFILTERS (
 			        '01 XER_TASK'[No Predecessor],
 			        '01 XER_TASK'[No Successor],
-			        '01 XER_TASK'[Driven_DataDate],
 			        '01 XER_TASK'[SM Fail Missing Logic],
 			        '01 XER_TASK'[SM Fail Leads],
 			        '01 XER_TASK'[SM Fail Lags],
@@ -1551,15 +1324,13 @@ table 'XER Metrics'
 			        '01 XER_TASK'[total_float],
 			        '01 XER_TASK'[remaining_duration],
 			        '01 XER_TASK'[status_code],
-			        '01 XER_TASK'[StatusCategory],
 			        '01 XER_TASK'[task_type],
 			        '01 XER_TASK'[TaskType_Classified],
 			        '01 XER_TASK'[Is Unscheduled]
 			    ),
 			    REMOVEFILTERS ( Filter_Activity_Status ),
 			    REMOVEFILTERS ( Filter_TaskType ),
-			    REMOVEFILTERS ( '00 CALENDAR' ),
-			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) ), 0 )
+			    REMOVEFILTERS ( '00 CALENDAR' ) ), 0 )
 			RETURN IF (
 			    NOT [SM Drill Snapshot Available],
 			    "Select one project and available update",
@@ -1578,7 +1349,6 @@ table 'XER Metrics'
 			VAR Matches = COALESCE ( CALCULATE ( [SM Non-FS Activity Count], REMOVEFILTERS (
 			        '01 XER_TASK'[No Predecessor],
 			        '01 XER_TASK'[No Successor],
-			        '01 XER_TASK'[Driven_DataDate],
 			        '01 XER_TASK'[SM Fail Missing Logic],
 			        '01 XER_TASK'[SM Fail Leads],
 			        '01 XER_TASK'[SM Fail Lags],
@@ -1590,19 +1360,16 @@ table 'XER Metrics'
 			        '01 XER_TASK'[total_float],
 			        '01 XER_TASK'[remaining_duration],
 			        '01 XER_TASK'[status_code],
-			        '01 XER_TASK'[StatusCategory],
 			        '01 XER_TASK'[task_type],
 			        '01 XER_TASK'[TaskType_Classified],
 			        '01 XER_TASK'[Is Unscheduled]
 			    ),
 			    REMOVEFILTERS ( Filter_Activity_Status ),
 			    REMOVEFILTERS ( Filter_TaskType ),
-			    REMOVEFILTERS ( '00 CALENDAR' ),
-			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) ), 0 )
+			    REMOVEFILTERS ( '00 CALENDAR' ) ), 0 )
 			VAR Links = COALESCE ( CALCULATE ( [SM Activity Relationship Count] - [SM Unknown Relationship Type Count] - [SM FS Count], REMOVEFILTERS (
 			        '01 XER_TASK'[No Predecessor],
 			        '01 XER_TASK'[No Successor],
-			        '01 XER_TASK'[Driven_DataDate],
 			        '01 XER_TASK'[SM Fail Missing Logic],
 			        '01 XER_TASK'[SM Fail Leads],
 			        '01 XER_TASK'[SM Fail Lags],
@@ -1614,15 +1381,13 @@ table 'XER Metrics'
 			        '01 XER_TASK'[total_float],
 			        '01 XER_TASK'[remaining_duration],
 			        '01 XER_TASK'[status_code],
-			        '01 XER_TASK'[StatusCategory],
 			        '01 XER_TASK'[task_type],
 			        '01 XER_TASK'[TaskType_Classified],
 			        '01 XER_TASK'[Is Unscheduled]
 			    ),
 			    REMOVEFILTERS ( Filter_Activity_Status ),
 			    REMOVEFILTERS ( Filter_TaskType ),
-			    REMOVEFILTERS ( '00 CALENDAR' ),
-			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) ), 0 )
+			    REMOVEFILTERS ( '00 CALENDAR' ) ), 0 )
 			RETURN IF (
 			    NOT [SM Drill Snapshot Available],
 			    "Select one project and available update",
@@ -1641,7 +1406,6 @@ table 'XER Metrics'
 			VAR Matches = COALESCE ( CALCULATE ( [SM Restrictive Primary Count], REMOVEFILTERS (
 			        '01 XER_TASK'[No Predecessor],
 			        '01 XER_TASK'[No Successor],
-			        '01 XER_TASK'[Driven_DataDate],
 			        '01 XER_TASK'[SM Fail Missing Logic],
 			        '01 XER_TASK'[SM Fail Leads],
 			        '01 XER_TASK'[SM Fail Lags],
@@ -1653,15 +1417,13 @@ table 'XER Metrics'
 			        '01 XER_TASK'[total_float],
 			        '01 XER_TASK'[remaining_duration],
 			        '01 XER_TASK'[status_code],
-			        '01 XER_TASK'[StatusCategory],
 			        '01 XER_TASK'[task_type],
 			        '01 XER_TASK'[TaskType_Classified],
 			        '01 XER_TASK'[Is Unscheduled]
 			    ),
 			    REMOVEFILTERS ( Filter_Activity_Status ),
 			    REMOVEFILTERS ( Filter_TaskType ),
-			    REMOVEFILTERS ( '00 CALENDAR' ),
-			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) ), 0 )
+			    REMOVEFILTERS ( '00 CALENDAR' ) ), 0 )
 			RETURN IF (
 			    NOT [SM Drill Snapshot Available],
 			    "Select one project and available update",
@@ -1678,7 +1440,6 @@ table 'XER Metrics'
 			VAR Matches = COALESCE ( CALCULATE ( [Out Of Sequence Count], REMOVEFILTERS (
 			        '01 XER_TASK'[No Predecessor],
 			        '01 XER_TASK'[No Successor],
-			        '01 XER_TASK'[Driven_DataDate],
 			        '01 XER_TASK'[SM Fail Missing Logic],
 			        '01 XER_TASK'[SM Fail Leads],
 			        '01 XER_TASK'[SM Fail Lags],
@@ -1690,15 +1451,13 @@ table 'XER Metrics'
 			        '01 XER_TASK'[total_float],
 			        '01 XER_TASK'[remaining_duration],
 			        '01 XER_TASK'[status_code],
-			        '01 XER_TASK'[StatusCategory],
 			        '01 XER_TASK'[task_type],
 			        '01 XER_TASK'[TaskType_Classified],
 			        '01 XER_TASK'[Is Unscheduled]
 			    ),
 			    REMOVEFILTERS ( Filter_Activity_Status ),
 			    REMOVEFILTERS ( Filter_TaskType ),
-			    REMOVEFILTERS ( '00 CALENDAR' ),
-			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) ), 0 )
+			    REMOVEFILTERS ( '00 CALENDAR' ) ), 0 )
 			RETURN IF (
 			    NOT [SM Drill Snapshot Available],
 			    "Select one project and available update",
@@ -1715,7 +1474,6 @@ table 'XER Metrics'
 			VAR Matches = COALESCE ( CALCULATE ( [Task_Count_Negative_Float], REMOVEFILTERS (
 			        '01 XER_TASK'[No Predecessor],
 			        '01 XER_TASK'[No Successor],
-			        '01 XER_TASK'[Driven_DataDate],
 			        '01 XER_TASK'[SM Fail Missing Logic],
 			        '01 XER_TASK'[SM Fail Leads],
 			        '01 XER_TASK'[SM Fail Lags],
@@ -1727,15 +1485,13 @@ table 'XER Metrics'
 			        '01 XER_TASK'[total_float],
 			        '01 XER_TASK'[remaining_duration],
 			        '01 XER_TASK'[status_code],
-			        '01 XER_TASK'[StatusCategory],
 			        '01 XER_TASK'[task_type],
 			        '01 XER_TASK'[TaskType_Classified],
 			        '01 XER_TASK'[Is Unscheduled]
 			    ),
 			    REMOVEFILTERS ( Filter_Activity_Status ),
 			    REMOVEFILTERS ( Filter_TaskType ),
-			    REMOVEFILTERS ( '00 CALENDAR' ),
-			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) ), 0 )
+			    REMOVEFILTERS ( '00 CALENDAR' ) ), 0 )
 			RETURN IF (
 			    NOT [SM Drill Snapshot Available],
 			    "Select one project and available update",
@@ -1752,7 +1508,6 @@ table 'XER Metrics'
 			VAR Matches = COALESCE ( CALCULATE ( [Dur >44], REMOVEFILTERS (
 			        '01 XER_TASK'[No Predecessor],
 			        '01 XER_TASK'[No Successor],
-			        '01 XER_TASK'[Driven_DataDate],
 			        '01 XER_TASK'[SM Fail Missing Logic],
 			        '01 XER_TASK'[SM Fail Leads],
 			        '01 XER_TASK'[SM Fail Lags],
@@ -1764,15 +1519,13 @@ table 'XER Metrics'
 			        '01 XER_TASK'[total_float],
 			        '01 XER_TASK'[remaining_duration],
 			        '01 XER_TASK'[status_code],
-			        '01 XER_TASK'[StatusCategory],
 			        '01 XER_TASK'[task_type],
 			        '01 XER_TASK'[TaskType_Classified],
 			        '01 XER_TASK'[Is Unscheduled]
 			    ),
 			    REMOVEFILTERS ( Filter_Activity_Status ),
 			    REMOVEFILTERS ( Filter_TaskType ),
-			    REMOVEFILTERS ( '00 CALENDAR' ),
-			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) ), 0 )
+			    REMOVEFILTERS ( '00 CALENDAR' ) ), 0 )
 			RETURN IF (
 			    NOT [SM Drill Snapshot Available],
 			    "Select one project and available update",
@@ -1789,7 +1542,6 @@ table 'XER Metrics'
 			VAR Matches = COALESCE ( CALCULATE ( [SM Invalid Dates Count], REMOVEFILTERS (
 			        '01 XER_TASK'[No Predecessor],
 			        '01 XER_TASK'[No Successor],
-			        '01 XER_TASK'[Driven_DataDate],
 			        '01 XER_TASK'[SM Fail Missing Logic],
 			        '01 XER_TASK'[SM Fail Leads],
 			        '01 XER_TASK'[SM Fail Lags],
@@ -1801,15 +1553,13 @@ table 'XER Metrics'
 			        '01 XER_TASK'[total_float],
 			        '01 XER_TASK'[remaining_duration],
 			        '01 XER_TASK'[status_code],
-			        '01 XER_TASK'[StatusCategory],
 			        '01 XER_TASK'[task_type],
 			        '01 XER_TASK'[TaskType_Classified],
 			        '01 XER_TASK'[Is Unscheduled]
 			    ),
 			    REMOVEFILTERS ( Filter_Activity_Status ),
 			    REMOVEFILTERS ( Filter_TaskType ),
-			    REMOVEFILTERS ( '00 CALENDAR' ),
-			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) ), 0 )
+			    REMOVEFILTERS ( '00 CALENDAR' ) ), 0 )
 			RETURN IF (
 			    NOT [SM Drill Snapshot Available],
 			    "Select one project and available update",
@@ -1826,7 +1576,6 @@ table 'XER Metrics'
 			VAR Matches = COALESCE ( CALCULATE ( [SM Baseline Unmatched Activity Count], REMOVEFILTERS (
 			        '01 XER_TASK'[No Predecessor],
 			        '01 XER_TASK'[No Successor],
-			        '01 XER_TASK'[Driven_DataDate],
 			        '01 XER_TASK'[SM Fail Missing Logic],
 			        '01 XER_TASK'[SM Fail Leads],
 			        '01 XER_TASK'[SM Fail Lags],
@@ -1838,15 +1587,13 @@ table 'XER Metrics'
 			        '01 XER_TASK'[total_float],
 			        '01 XER_TASK'[remaining_duration],
 			        '01 XER_TASK'[status_code],
-			        '01 XER_TASK'[StatusCategory],
 			        '01 XER_TASK'[task_type],
 			        '01 XER_TASK'[TaskType_Classified],
 			        '01 XER_TASK'[Is Unscheduled]
 			    ),
 			    REMOVEFILTERS ( Filter_Activity_Status ),
 			    REMOVEFILTERS ( Filter_TaskType ),
-			    REMOVEFILTERS ( '00 CALENDAR' ),
-			    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ) ), 0 )
+			    REMOVEFILTERS ( '00 CALENDAR' ) ), 0 )
 			RETURN IF (
 			    NOT [SM Drill Snapshot Available],
 			    "Select one project and available update",
@@ -2129,12 +1876,11 @@ table 'XER Metrics'
 
 	/// Incomplete task- and resource-dependent activities (TT_Task/TT_Rsrc): the remaining-duration denominator. Milestones are excluded because they carry no remaining duration and can never fail that check.
 	measure 'SM Activity Count' =
-			VAR N = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			VAR N = CALCULATE ( COUNTROWS ( '01 XER_TASK' ), REMOVEFILTERS ( '01 XER_TASK'[status_code],
 			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
 			REMOVEFILTERS ( Filter_Activity_Status ),
 			REMOVEFILTERS ( Filter_TaskType ),
 			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
 			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" } )
 			RETURN IF ( [SM Snapshot Valid], N )
@@ -2145,12 +1891,11 @@ table 'XER Metrics'
 	/// Relationships into incomplete task- and resource-dependent successor activities: the FS-share population. Links into milestones are excluded because finish milestones are conventionally tied finish-to-finish, which is equivalent to FS for a zero-duration event.
 	measure 'SM Activity Relationship Count' =
 			VAR N = [Task_Count]
-			VAR WorkKeys = CALCULATETABLE ( VALUES ( '01 XER_TASK'[task_id_key] ), REMOVEFILTERS ( '01 XER_TASK'[status_code], '01 XER_TASK'[StatusCategory],
+			VAR WorkKeys = CALCULATETABLE ( VALUES ( '01 XER_TASK'[task_id_key] ), REMOVEFILTERS ( '01 XER_TASK'[status_code],
 			    '01 XER_TASK'[task_type], '01 XER_TASK'[TaskType_Classified], '01 XER_TASK'[Is Unscheduled] ),
 			REMOVEFILTERS ( Filter_Activity_Status ),
 			REMOVEFILTERS ( Filter_TaskType ),
 			REMOVEFILTERS ( '00 CALENDAR' ),
-			REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' ),
 			'01 XER_TASK'[status_code] IN { "Not Started", "In Progress" },
 			'01 XER_TASK'[task_type] IN { "TT_Task", "TT_Rsrc" } )
 			VAR Result = CALCULATE ( COUNTROWS ( '06 XER_PREDECESSOR' ),

@@ -170,6 +170,8 @@ Before activation, open the manifest and verify:
 
 The parser's successful publication validation is authoritative for SHA-256 hashes, duplicate keys and full cross-table referential integrity. The report independently validates each selected import envelope, tokens and types. During each table load it sums manifest `row_count` across all source snapshots, counts the corresponding CSV data rows after header validation, and blocks a mismatch before type and key conversion. It does not redownload all eleven tables through `01 XER_TASK` to repeat parser validation.
 
+Activities coded `GBL-Exclude From Data Lake Reporting` = `Yes` are then removed, one snapshot at a time (`fnXerCsvExcludeFlaggedTasks`), the same way as on the Athena branch. They go from `01_XER_TASK`, `09_XER_TASKACTV` and `15_XER_RESOURCE_DISTRIBUTION`, and from `06_XER_PREDECESSOR` when either end of a link is flagged. The bundle itself is unchanged: the parser still exports every activity. To find the flagged keys, the loader reads the bundle's `07`, `08` and `09` CSVs once more for each of those four tables.
+
 The loader navigates only project folders represented by `XerCsvProjectCodes`; additional project folders beneath `Active` are not opened or validated. Within each selected project it ignores manifest-free staging folders, orders manifest-bearing folders by the timestamp embedded in the contract-valid `bundle_id`, then fully validates the newest selected bundle. A selected older or mixed-version bundle fails before table loading; the loader does not fall back to an older bundle. Move superseded folders to `Archive/<PROJECT_CODE>`. Rollback is possible only to another valid schema `5.0` bundle.
 
 Microsoft's supported upload methods are described in [Upload files and folders to a library](https://support.microsoft.com/en-US/SharePoint/documents-and-library/upload-files-and-folders-to-a-library). Upload the manifest separately even if folder drag-and-drop is available.
@@ -234,8 +236,8 @@ After refresh, verify source ownership:
 - every imported XER table's hidden `IsCsvSource` is `true` only for CSV-owned rows and `false` for Athena rows;
 - every CSV key follows `CSV::<encoded_project_code>::<C|T>::<snapshot_tag>::<native_id>` and no model key contains `|`;
 - no `task_id_key` for an Athena-owned project starts with `CSV::`;
-- hidden `XER CSV Manifest` contains only the selected bundle metadata and its row totals match the imported model;
-- all eleven hidden `XER CSV Refresh Audit` records return `PASS`; `DIAGNOSTIC_MISMATCH` is retained only as a secondary calculated reconciliation state, while ownership and governance failures still raise `ERROR()`;
+- hidden `XER CSV Manifest` contains only the selected bundles' project codes, table names and row counts, and its row totals match the imported model;
+- all eleven hidden `XER CSV Refresh Audit` records return `PASS`. For `01`, `06`, `09` and `15`, `PASS` allows fewer loaded rows than the manifest, because excluded activities are removed after the exact per-file check. `DIAGNOSTIC_MISMATCH` is retained only as a secondary calculated reconciliation state, while ownership and governance failures still raise `ERROR()`;
 - every configured project has its baseline and expected updates;
 - project, WBS, predecessor, activity-code, calendar and resource visuals return data without relationship errors.
 

@@ -12,7 +12,7 @@ $ErrorActionPreference = 'Stop'
 Import-ScheduleMetricsTom -AssemblyDirectory $AssemblyDirectory
 
 if (-not $ServerAddress) {
-    # Pick the open model that already carries the table-11 alignment column (refreshed with this fix).
+    # Pick the one open Programme Review model (table 11 with its weekday numbers).
     $processIds = @(Get-Process -Name msmdsrv -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Id)
     $ports = @(Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue |
         Where-Object { $_.OwningProcess -in $processIds } | Select-Object -ExpandProperty LocalPort -Unique)
@@ -23,12 +23,12 @@ if (-not $ServerAddress) {
             $server.Connect("Data Source=localhost:$port")
             foreach ($database in $server.Databases) {
                 $table = $database.Model.Tables.Find('11 XER_CALENDAR_DETAILED')
-                if ($table -and $table.Columns.Contains('ExceptionDateShiftDays')) { $candidates += "localhost:$port" }
+                if ($table -and $table.Columns.Contains('day_of_week_num')) { $candidates += "localhost:$port" }
             }
         } catch { } finally { $server.Disconnect() }
     }
     if ($candidates.Count -ne 1) {
-        throw "Expected one open model with '11 XER_CALENDAR_DETAILED'[ExceptionDateShiftDays], found $($candidates.Count). Refresh the report in Power BI Desktop or pass -ServerAddress."
+        throw "Expected one open model with '11 XER_CALENDAR_DETAILED'[day_of_week_num], found $($candidates.Count). Open the report in Power BI Desktop or pass -ServerAddress."
     }
     $ServerAddress = $candidates[0]
 }
@@ -43,10 +43,8 @@ SELECTCOLUMNS(
     "key", '11 XER_CALENDAR_DETAILED'[clndr_id_key],
     "date", IF(ISBLANK('11 XER_CALENDAR_DETAILED'[date]), BLANK(), FORMAT('11 XER_CALENDAR_DETAILED'[date], "yyyy-MM-dd")),
     "weekday", '11 XER_CALENDAR_DETAILED'[day_of_week_num],
-    "weekday_name", '11 XER_CALENDAR_DETAILED'[day_of_week],
     "hours", '11 XER_CALENDAR_DETAILED'[work_hours],
-    "type", '11 XER_CALENDAR_DETAILED'[exception_type],
-    "shift", '11 XER_CALENDAR_DETAILED'[ExceptionDateShiftDays]
+    "type", '11 XER_CALENDAR_DETAILED'[exception_type]
 )
 '@
         activities = @'

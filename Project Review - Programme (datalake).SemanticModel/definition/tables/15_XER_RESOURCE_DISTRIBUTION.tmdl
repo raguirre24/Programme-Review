@@ -135,7 +135,8 @@ table 15_XER_RESOURCE_DISTRIBUTION
 				                    "TRIM(UPPER(SPLIT_PART(t.""filename"", '-', 1))) AS ""ProjectCode"""
 				                },
 				                ", "
-				            )
+				            ),
+				            {"task_id_key"}
 				        ),
 				    Typed = Table.TransformColumnTypes(Source, {
 				        {"distribution_month", type date},

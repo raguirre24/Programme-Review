@@ -38,7 +38,7 @@ $policy = @(
     @{ Label='Baseline Coverage'; Rate='SM Detail Value'; Direct=$coverageInput; Excluded=$null; Target=.90; Limit=.60; Direction='high' }
 )
 $inputNames = @('Task_Count','SM Activity Count','SM Eligible Relationship Count','SM Activity Relationship Count','SM Date Eligible Count','SM Missing Logic Count','Leads<0d',
-    'Lags>5d','SM FS Count','SM Restrictive Primary Count','Float >44','Task_Count_Negative_Float','Dur >44',
+    'Lags>5d','SM FS Count','SM Restrictive Primary Count','Task_Count_Negative_Float','Dur >44',
     'SM Invalid Dates Count','SM Missing Float Count','SM Missing Duration Count','SM Missing Lag Count',
     'SM Unknown Relationship Type Count','SM Unknown Constraint Count','Out Of Sequence Count','SM In Progress Count',$coverageInput,
     'SM Snapshot Valid')
@@ -98,9 +98,6 @@ function Get-ReviewExpectation([hashtable]$Inputs) {
     if (-not ($Inputs['Task_Count'] -gt 0)) {
         foreach ($key in @('Applicable','Assessed','Passed','Review','Priority','Partial')) { $expected[$key] = $null }
     }
-    $floatKnown = [double]$Inputs['Task_Count'] - [double]$Inputs['SM Missing Float Count']
-    $expected['HighFloat'] = if ($floatKnown -gt 0 -and $null -ne $Inputs['Float >44']) { [double]$Inputs['Float >44'] / $floatKnown } else { $null }
-    $expected['HighFloatColour'] = if ($null -eq $expected.HighFloat) { '#687078' } else { '#252525' }
     return $expected
 }
 
@@ -111,7 +108,7 @@ function Get-ReviewProjection {
         $parts.Add('"Points:' + $rule.Label + '",[SM ' + $rule.Label + ' Points]')
         $parts.Add('"Colour:' + $rule.Label + '",[SM ' + $rule.Label + ' Colour]')
     }
-    $parts.Add('"Score",[Score],"Passed",[SM Passed Checks],"Review",[SM Review Checks],"Priority",[SM Priority Checks],"Assessed",[SM Assessed Checks],"Applicable",[SM Applicable Checks],"Partial",[SM Partial Checks],"ScoreColour",[SM Score Colour],"ScoreStatus",[SM Score Status],"Coverage",[SM Score Coverage],"HighFloat",[HighFloat%],"HighFloatColour",[SM High Float Colour]')
+    $parts.Add('"Score",[Score],"Passed",[SM Passed Checks],"Review",[SM Review Checks],"Priority",[SM Priority Checks],"Assessed",[SM Assessed Checks],"Applicable",[SM Applicable Checks],"Partial",[SM Partial Checks],"ScoreColour",[SM Score Colour],"ScoreStatus",[SM Score Status],"Coverage",[SM Score Coverage]')
     return $parts -join ','
 }
 
@@ -122,13 +119,12 @@ function Assert-ReviewResult($Row, $Expected, [string]$Context) {
         Assert-ScheduleMetric ($Row.("[Colour:"+$rule.Label+"]") -eq $Expected.Colours[$rule.Label]) "${Context}: $($rule.Label) severity colour mismatch."
         $script:assertions += 3
     }
-    foreach ($field in @('Score','Passed','Review','Priority','Assessed','Applicable','Partial','HighFloat')) {
+    foreach ($field in @('Score','Passed','Review','Priority','Assessed','Applicable','Partial')) {
         Assert-ScheduleMetric (Test-ScheduleMetricNumber $Row.("["+$field+"]") $Expected[$field]) "${Context}: $field mismatch."
         $script:assertions++
     }
     Assert-ScheduleMetric ($Row.'[ScoreColour]' -eq $Expected.ScoreColour) "${Context}: score colour must follow the 90%/65% score thresholds."
-    Assert-ScheduleMetric ($Row.'[HighFloatColour]' -eq $Expected.HighFloatColour) "${Context}: high float must be neutral contextual information."
-    $script:assertions += 2
+    $script:assertions++
     if ($Expected.Partial -gt 0) {
         Assert-ScheduleMetric ($Row.'[Coverage]' -match 'partial') "${Context}: partial evidence must remain separately disclosed."
         $script:assertions++
@@ -168,7 +164,7 @@ try {
         $base = @{
             'SM Snapshot Valid'=$true; 'Task_Count'=100000; 'SM Activity Count'=100000; 'SM Eligible Relationship Count'=100000; 'SM Activity Relationship Count'=100000; 'SM Date Eligible Count'=100000
             'SM Missing Logic Count'=5000; 'Leads<0d'=0; 'Lags>5d'=5000; 'SM FS Count'=90000
-            'SM Restrictive Primary Count'=5000; 'Float >44'=5000; 'Task_Count_Negative_Float'=0; 'Dur >44'=5000; 'SM Invalid Dates Count'=0
+            'SM Restrictive Primary Count'=5000; 'Task_Count_Negative_Float'=0; 'Dur >44'=5000; 'SM Invalid Dates Count'=0
             'SM Missing Float Count'=0; 'SM Missing Duration Count'=0; 'SM Missing Lag Count'=0; 'SM Unknown Relationship Type Count'=0; 'SM Unknown Constraint Count'=0
             'Out Of Sequence Count'=0; 'SM In Progress Count'=100000; $coverageInput=1
         }
@@ -182,8 +178,6 @@ try {
                 $cases.Add(@{Name="$($rule.Label) exact/adjacent boundary $value";Changes=$change})
             }
         }
-        $cases.Add(@{Name='high float zero has no score weight';Changes=@{'Float >44'=0}})
-        $cases.Add(@{Name='high float hundred percent has no score weight';Changes=@{'Float >44'=100000}})
         $cases.Add(@{Name='partial float contributes only one scored coverage check';Changes=@{'SM Missing Float Count'=20000}})
         $cases.Add(@{Name='partial negative float does not mask red severity';Changes=@{'SM Missing Float Count'=20000;'Task_Count_Negative_Float'=5000}})
         $cases.Add(@{Name='partial duration uses known denominator';Changes=@{'SM Missing Duration Count'=20000}})
@@ -204,14 +198,13 @@ try {
         foreach ($missing in @('SM Missing Float Count','SM Missing Duration Count','SM Missing Lag Count','SM Unknown Relationship Type Count','SM Unknown Constraint Count')) {
             $changes=@{$missing=100000}
             foreach ($rule in $policy | Where-Object Excluded -eq $missing) { $changes[$rule.Numerator]=0 }
-            if ($missing -eq 'SM Missing Float Count') { $changes['Float >44']=0 }
             $cases.Add(@{Name="all input unavailable: $missing";Changes=$changes})
         }
         $cases.Add(@{Name='no date population shows 0% invalid dates';Changes=@{'SM Date Eligible Count'=0;'SM Invalid Dates Count'=0}})
         $cases.Add(@{Name='no relationships: leads and lags 0%, FS 0% scores nothing';Changes=@{'SM Eligible Relationship Count'=0;'SM Activity Relationship Count'=0;'Leads<0d'=0;'Lags>5d'=0;'SM FS Count'=0;'SM Missing Logic Count'=100000}})
         $cases.Add(@{Name='no incomplete work yields no score';Changes=@{'Task_Count'=0}})
         $cases.Add(@{Name='unknown incomplete work yields no score';Changes=@{'Task_Count'=$null}})
-        $cases.Add(@{Name='empty populations show 0%; FS and blank coverage do not pass';Changes=@{'SM Missing Logic Count'=$null;'SM Invalid Dates Count'=$null;'SM Missing Float Count'=100000;'Float >44'=0;'Task_Count_Negative_Float'=0;'SM Missing Duration Count'=100000;'Dur >44'=0;'SM Missing Lag Count'=100000;'Leads<0d'=0;'Lags>5d'=0;'SM Unknown Relationship Type Count'=100000;'SM FS Count'=0;'SM Unknown Constraint Count'=100000;'SM Restrictive Primary Count'=0;'SM In Progress Count'=0;'Out Of Sequence Count'=$null;$coverageInput=$null}})
+        $cases.Add(@{Name='empty populations show 0%; FS and blank coverage do not pass';Changes=@{'SM Missing Logic Count'=$null;'SM Invalid Dates Count'=$null;'SM Missing Float Count'=100000;'Task_Count_Negative_Float'=0;'SM Missing Duration Count'=100000;'Dur >44'=0;'SM Missing Lag Count'=100000;'Leads<0d'=0;'Lags>5d'=0;'SM Unknown Relationship Type Count'=100000;'SM FS Count'=0;'SM Unknown Constraint Count'=100000;'SM Restrictive Primary Count'=0;'SM In Progress Count'=0;'Out Of Sequence Count'=$null;$coverageInput=$null}})
         foreach ($case in $cases) {
             $inputs=$base.Clone()
             foreach ($key in $case.Changes.Keys) { $inputs[$key]=$case.Changes[$key] }
@@ -239,7 +232,8 @@ try {
         )
         foreach ($case in $detailCases) {
             $overrides=@{ 'Schedule Metric Detail[SM Detail Value]'=$case.Value }
-            $fixtureDefinitions=Get-ScheduleMetricsDefinitions -Model $proposed -LiveModel $target.Database.Model -Overrides $overrides
+            # SM Detail Status is a test-only reference measure (detail_reference_measures.json).
+            $fixtureDefinitions=Get-ScheduleMetricsDefinitions -Model $proposed -LiveModel $target.Database.Model -Overrides $overrides -ReferenceMeasures (Get-ScheduleMetricsReferenceMeasures)
             $row=(Invoke-ScheduleMetricsDax $target ($fixtureDefinitions+"`nEVALUATE ROW(""Colour"",[SM Detail Colour],""Status"",[SM Detail Status])"))[0]
             Assert-ScheduleMetric ($row.'[Colour]' -eq $case.Colour) "Baseline coverage $($case.Value) colour mismatch."
             Assert-ScheduleMetric ($row.'[Status]' -eq $case.Status) "Baseline coverage $($case.Value) status mismatch."
@@ -279,5 +273,5 @@ TREATAS({FALSE()},'01 XER_TASK'[Is Unscheduled]),TREATAS({FALSE()},'01 XER_TASK'
             Write-Output ("PASS review bands {0} {1:yyyy-MM-dd}: score={2:P2}, G/A/R={3}/{4}/{5}" -f $project,$date,$row.'[Score]',$row.'[Passed]',$row.'[Review]',$row.'[Priority]')
         }
     }
-    [pscustomobject]@{Status='PASS';Mode=if($UseLoadedModel){'Direct loaded model; no DEFINE'}else{'Query-scoped candidate expressions'};ScoredChecks=10;HighFloat='No longer presented or scored';Fixtures=$fixtureCount;Snapshots=$snapshotCount;Assertions=$assertions;ModelWrites=$false}|ConvertTo-Json
+    [pscustomobject]@{Status='PASS';Mode=if($UseLoadedModel){'Direct loaded model; no DEFINE'}else{'Query-scoped candidate expressions'};ScoredChecks=10;Fixtures=$fixtureCount;Snapshots=$snapshotCount;Assertions=$assertions;ModelWrites=$false}|ConvertTo-Json
 } finally { $target.Connection.Disconnect() }

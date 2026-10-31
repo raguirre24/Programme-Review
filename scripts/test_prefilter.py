@@ -132,11 +132,84 @@ def task_sql(**parameters):
     for line in body.splitlines():
         if not line.strip():
             continue
+        if line.strip() == "AthenaExcludedTasksSql,":
+            fragments.append(excluded_tasks_sql())
+            continue
         match = re.fullmatch(r'\s*"((?:""|[^"])*)",?\s*', line)
         if not match:
             raise AssertionError("Unexpected TASK SQL fragment: " + line)
         fragments.append(decode_m_literal(match[1]))
     return scope_sql(**parameters) + " " + " ".join(fragments)
+
+
+def m_expression(name):
+    text = EXPRESSIONS.read_text(encoding="utf-8-sig")
+    return text.split("expression " + name + " =", 1)[1].split("\nexpression ", 1)[0]
+
+
+def excluded_tasks_sql():
+    """Extract the shared Data Lake exclusion CTEs that follow AthenaScopeSql."""
+    body = re.search(r"^\s+Sql =\s*\n(.*?)^\s+in\s*$", m_expression("AthenaExcludedTasksSql"), re.M | re.S)[1]
+    fragments = []
+    for line in body.splitlines():
+        if not line.strip():
+            continue
+        match = re.fullmatch(r'\s*"((?:""|[^"])*)"\s*&?\s*', line)
+        if not match:
+            raise AssertionError("Unexpected exclusion SQL fragment: " + line)
+        fragments.append(decode_m_literal(match[1]))
+    return "".join(fragments)
+
+
+def m_call_arguments(text, open_paren):
+    """Split the top-level arguments of the M call whose '(' is at text[open_paren]."""
+    depth, position, current, arguments = 0, open_paren, [], []
+    while position < len(text):
+        if text[position] == '"':
+            end = position + 1
+            while True:
+                end = text.index('"', end)
+                if text.startswith('""', end):
+                    end += 2
+                    continue
+                break
+            current.append(text[position:end + 1])
+            position = end + 1
+            continue
+        if text.startswith("//", position):
+            position = text.index("\n", position)
+            continue
+        char = text[position]
+        if char in "({[":
+            depth += 1
+            if depth == 1:
+                position += 1
+                continue
+        elif char in ")}]":
+            depth -= 1
+            if depth == 0:
+                arguments.append("".join(current).strip())
+                return arguments
+        elif char == "," and depth == 1:
+            arguments.append("".join(current).strip())
+            current = []
+            position += 1
+            continue
+        current.append(char)
+        position += 1
+    raise AssertionError("Unterminated M call")
+
+
+def athena_consumers():
+    """Map each fnAthenaSource consumer to the task-key columns its partition excludes (third argument)."""
+    consumers = {}
+    for path in (DEFINITION / "tables").glob("*.tmdl"):
+        text = path.read_text(encoding="utf-8-sig")
+        for match in re.finditer(r'fnAthenaSource\s*(\()\s*"', text):
+            arguments = m_call_arguments(text, match.start(1))
+            table = re.fullmatch(r'"([A-Za-z0-9_]+)"', arguments[0])[1]
+            consumers[table] = tuple(re.findall(r'"([A-Za-z0-9_]+)"', arguments[2])) if len(arguments) > 2 else ()
+    return consumers
 
 
 def calendar_sql(**parameters):
@@ -169,14 +242,26 @@ def audit_sql(**parameters):
     return scope_sql(**parameters) + "".join(fragments)
 
 
-def fn_athena_sql(table_name, projection='t."filename"', **parameters):
-    """Extract the real shared native-query wrapper, substituting its inputs."""
+def fn_athena_sql(table_name, projection='t."filename"', excluded_task_columns=None, **parameters):
+    """Extract the real shared native-query wrapper, substituting its inputs.
+
+    excluded_task_columns defaults to the consumer partition's own third argument."""
     if not re.fullmatch(r"[A-Za-z0-9_]+", table_name):
         raise ValueError("Invalid fixture table name")
-    text = EXPRESSIONS.read_text(encoding="utf-8-sig")
-    expression = text.split("expression fnAthenaSource =", 1)[1].split("\nexpression ", 1)[0]
+    if excluded_task_columns is None:
+        excluded_task_columns = athena_consumers().get(table_name, ())
+    expression = m_expression("fnAthenaSource")
     body = re.search(r"^\s+Sql =\s*\n(.*?)^\s+Result =", expression, re.M | re.S)[1]
+    template = re.search(r'each "((?:""|[^"])*)" & _ & "((?:""|[^"])*)"\)', expression)
+    if not template or '" WHERE " &' not in expression or '" AND "' not in expression:
+        raise AssertionError("Unexpected fnAthenaSource exclusion filter; review extraction")
+    exclusion_filter = ""
+    if excluded_task_columns:
+        exclusion_filter = " WHERE " + " AND ".join(
+            decode_m_literal(template[1]) + column + decode_m_literal(template[2]) for column in excluded_task_columns)
     values = {"AthenaScopeSql": scope_sql(**parameters),
+              "ExclusionCte": excluded_tasks_sql() if excluded_task_columns else "",
+              "ExclusionFilter": exclusion_filter,
               "SelectClause": projection, "SafeTableName": table_name}
     pattern = re.compile(r'\s+|"(?:""|[^"])*"|[A-Za-z_][A-Za-z0-9_]*|[&,]')
     fragments = []
@@ -330,9 +415,35 @@ class Fixtures(unittest.TestCase):
         self.task_columns = sorted(set(re.findall(r't\."([^"]+)"', task_sql())))
         self.db.execute('CREATE TABLE prod_projectcontrols_p6."01_xer_task" (' +
                         ", ".join('"' + col + '" VARCHAR' for col in self.task_columns) + ")")
+        # The Data Lake exclusion CTEs read 07/08/09 in every task-keyed consumer, TASK included.
+        self.db.execute('CREATE TABLE prod_projectcontrols_p6."07_xer_actvtype" '
+                        '(filename VARCHAR, actv_code_type_id_key VARCHAR, actv_code_type VARCHAR)')
+        self.db.execute('CREATE TABLE prod_projectcontrols_p6."08_xer_actvcode" '
+                        '(filename VARCHAR, actv_code_id_key VARCHAR, actv_code_name VARCHAR, actv_code_type_id_key VARCHAR)')
+        self.db.execute('CREATE TABLE prod_projectcontrols_p6."09_xer_taskactv" '
+                        '(filename VARCHAR, task_id_key VARCHAR, actv_code_id_key VARCHAR)')
 
     def tearDown(self):
         self.db.close()
+
+    def add_consumer_rows(self, table, filenames):
+        """One row per file in a shared consumer table, with the task keys its exclusion reads left blank."""
+        self.db.execute('CREATE TABLE IF NOT EXISTS prod_projectcontrols_p6."' + table + '" '
+                        '(filename VARCHAR, task_id_key VARCHAR, pred_task_id_key VARCHAR)')
+        self.db.executemany('INSERT INTO prod_projectcontrols_p6."' + table + '" (filename) VALUES (?)',
+                            [(name,) for name in filenames])
+
+    def add_activity_code(self, filename, value="Yes", code_type="GBL-Exclude From Data Lake Reporting", number=1):
+        type_key, code_key = f"{filename}.t{number}", f"{filename}.c{number}"
+        self.db.execute('INSERT INTO prod_projectcontrols_p6."07_xer_actvtype" VALUES (?, ?, ?)',
+                        [filename, type_key, code_type])
+        self.db.execute('INSERT INTO prod_projectcontrols_p6."08_xer_actvcode" VALUES (?, ?, ?, ?)',
+                        [filename, code_key, value, type_key])
+        return code_key
+
+    def assign_code(self, filename, task_id_key, code_key):
+        self.db.execute('INSERT INTO prod_projectcontrols_p6."09_xer_taskactv" VALUES (?, ?, ?)',
+                        [filename, task_id_key, code_key])
 
     def register_project(self, code, name="Registered project"):
         """Insert deliberate registry fixtures, including duplicate/blank rows."""
@@ -694,9 +805,7 @@ class ProjectRegistryTests(Fixtures):
         filenames = [old, baseline, update, unknown]
         for table in shared_tables:
             if table != "02_xer_project":
-                self.db.execute('CREATE TABLE prod_projectcontrols_p6."' + table + '" (filename VARCHAR)')
-                self.db.executemany('INSERT INTO prod_projectcontrols_p6."' + table + '" VALUES (?)',
-                                    [(name,) for name in filenames])
+                self.add_consumer_rows(table, filenames)
             with self.subTest(consumer=table):
                 rows = self.db.execute(duck_sql(fn_athena_sql(table))).fetchall()
                 self.assertEqual(sorted(rows), sorted([(baseline,), (update,)]))
@@ -790,6 +899,120 @@ class TaskTests(Fixtures):
         self.assertEqual(self.db.execute(task_stage_sql(
             "task_named", "filename, project_name"
         )).fetchall(), [(c, "Named C6012")])
+
+
+class DataLakeExclusionTests(Fixtures):
+    """Activities coded "GBL-Exclude From Data Lake Reporting" = "Yes" are removed at load, one snapshot at a time."""
+
+    def task_rows(self):
+        cursor = self.db.execute(duck_sql(task_sql()))
+        names = [column[0] for column in cursor.description]
+        return {(row[names.index("filename")], row[names.index("task_code")]): row for row in cursor.fetchall()}
+
+    def test_task_rows_drop_only_in_the_updates_that_flag_them(self):
+        first = self.add("C4017", "2601", "2026-01-31")
+        second = self.add("C4017", "2602", "2026-02-28")
+        for name, month in ((first, "2026-01-31"), (second, "2026-02-28")):
+            self.add_task(name, month, task_code="A100", task_id_key=name + ".1")
+            self.add_task(name, month, task_code="A200", task_id_key=name + ".2")
+        unflagged = self.task_rows()
+        self.assign_code(first, first + ".1", self.add_activity_code(first))
+        self.assign_code(second, second + ".1", self.add_activity_code(second, value="No"))
+        flagged = self.task_rows()
+        self.assertEqual(set(unflagged) - set(flagged), {(first, "A100")})
+        # Only the final rows are filtered, so every shown row, history columns included, is unchanged.
+        self.assertEqual({key: unflagged[key] for key in flagged}, flagged)
+
+    def test_flag_matching_mirrors_dax_trim_and_case(self):
+        cases = (
+            ("  gbl-exclude  from  data lake REPORTING ", " YES ", False),
+            ("GBL-Exclude From Data Lake Reporting", "yes", False),
+            ("GBL-Exclude From Data Lake Reporting", "No", True),
+            ("GBL-Discipline", "Yes", True),
+        )
+        expected = set()
+        for index, (code_type, value, shown) in enumerate(cases, start=1):
+            month = dt.date(2026, index, calendar.monthrange(2026, index)[1]).isoformat()
+            name = self.add("C4017", f"26{index:02d}", month)
+            self.add_task(name, month, task_id_key=name + ".1")
+            self.assign_code(name, name + ".1", self.add_activity_code(name, value, code_type))
+            if shown:
+                expected.add((name, "A100"))
+        self.assertEqual(set(self.task_rows()), expected)
+
+    def test_blank_task_key_on_a_flag_row_keeps_other_activities(self):
+        name = self.add("C4017")
+        self.add_task(name, task_id_key=name + ".1")
+        self.assign_code(name, None, self.add_activity_code(name))
+        self.assertEqual(set(self.task_rows()), {(name, "A100")})
+
+    def test_consumers_drop_every_row_of_a_flagged_activity(self):
+        name = self.add("C4017")
+        flagged, kept, other = name + ".1", name + ".2", name + ".3"
+        flag = self.add_activity_code(name)
+        plain = self.add_activity_code(name, "Civil", "GBL-Discipline", number=2)
+        for key, code in ((flagged, flag), (flagged, plain), (kept, plain)):
+            self.assign_code(name, key, code)
+        self.db.execute('CREATE TABLE prod_projectcontrols_p6."06_xer_predecessor" '
+                        '(filename VARCHAR, task_id_key VARCHAR, pred_task_id_key VARCHAR)')
+        self.db.executemany('INSERT INTO prod_projectcontrols_p6."06_xer_predecessor" VALUES (?, ?, ?)',
+                            [(name, kept, flagged), (name, flagged, kept), (name, other, kept)])
+        self.db.execute('CREATE TABLE prod_projectcontrols_p6."15_xer_resource_distribution" (filename VARCHAR, task_id_key VARCHAR)')
+        self.db.executemany('INSERT INTO prod_projectcontrols_p6."15_xer_resource_distribution" VALUES (?, ?)',
+                            [(name, flagged), (name, kept)])
+        for table, projection, expected in (
+            ("06_xer_predecessor", 't."task_id_key", t."pred_task_id_key"', [(other, kept)]),
+            ("09_xer_taskactv", 't."task_id_key", t."actv_code_id_key"', [(kept, plain)]),
+            ("15_xer_resource_distribution", 't."task_id_key"', [(kept,)]),
+        ):
+            with self.subTest(consumer=table):
+                self.assertEqual(self.db.execute(duck_sql(fn_athena_sql(table, projection))).fetchall(), expected)
+
+
+class DataLakeExclusionContractTests(unittest.TestCase):
+    """The Athena SQL, the CSV loader and the DAX guard column apply one rule to the same tables."""
+
+    TASK_KEYED = {"01_XER_TASK": ("task_id_key",), "06_XER_PREDECESSOR": ("task_id_key", "pred_task_id_key"),
+                  "09_XER_TASKACTV": ("task_id_key",), "15_XER_RESOURCE_DISTRIBUTION": ("task_id_key",)}
+
+    def test_athena_consumers_exclude_task_keyed_tables_and_both_link_ends(self):
+        self.assertEqual({table: columns for table, columns in athena_consumers().items() if columns}, {
+            table.lower(): columns for table, columns in self.TASK_KEYED.items() if table != "01_XER_TASK"})
+        self.assertIn("AthenaExcludedTasksSql,", TASK.read_text(encoding="utf-8-sig"))
+
+    def test_rule_literals_match_the_dax_guard_column(self):
+        dax = TASK.read_text(encoding="utf-8-sig").split("column IsExcludedFromDataLake =", 1)[1].split("\n\tcolumn ", 1)[0]
+        code_type = re.search(r"TRIM\('09 XER_TASKACTV'\[actv_code_type\]\)\s*=\s*\"([^\"]+)\"", dax)[1].lower()
+        value = re.search(r"TRIM\('09 XER_TASKACTV'\[actv_code_name\]\)\s*=\s*\"([^\"]+)\"", dax)[1].lower()
+        sql = excluded_tasks_sql()
+        self.assertIn("= '" + code_type + "'", sql)
+        self.assertIn("= '" + value + "'", sql)
+        loader = m_expression("fnXerCsvExcludedTaskKeys")
+        self.assertIn('= "' + code_type + '"', loader)
+        self.assertIn('= "' + value + '"', loader)
+
+    def test_csv_loader_excludes_the_same_tables_after_the_manifest_check(self):
+        self.assertIn("fnXerCsvExcludeFlaggedTasks(fnXerCsvReadBundleTable(_, tableName), _, tableName)",
+                      m_expression("fnXerCsvLoadTable"))
+        exclude = m_expression("fnXerCsvExcludeFlaggedTasks")
+        mapping = {table: tuple(re.findall(r'"([A-Za-z0-9_]+)"', columns))
+                   for table, columns in re.findall(r'#"([0-9A-Z_]+)" = \{([^}]*)\}', exclude)}
+        self.assertEqual(mapping, self.TASK_KEYED)
+        contracts = m_expression("XerCsvTableContracts")
+        for table, columns in mapping.items():
+            contract_columns = re.search(r'#"' + table + r'" = \[\s*FileName = "[^"]+",\s*Columns = \{([^}]*)\}', contracts)[1]
+            with self.subTest(table=table):
+                self.assertTrue(set(columns) <= set(re.findall(r'"([A-Za-z0-9_]+)"', contract_columns)))
+        for name in ("fnXerCsvExcludedTaskKeys", "fnXerCsvExcludeFlaggedTasks"):
+            with self.subTest(function=name):
+                self.assertNotIn("Table.Buffer", m_expression(name))
+                self.assertNotIn("Binary.Buffer", m_expression(name))
+
+    def test_refresh_audit_relaxes_only_the_task_keyed_tables(self):
+        audit = (DEFINITION / "tables" / "XER CSV Refresh Audit.tmdl").read_text(encoding="utf-8-sig")
+        relaxed = re.search(r"\[Check\] IN \{([^}]*)\},\s*\[ActualRows\] <= \[ExpectedRows\],\s*\[ActualRows\] = \[ExpectedRows\]", audit)
+        self.assertIsNotNone(relaxed)
+        self.assertEqual(set(re.findall(r'"([0-9A-Z_]+)"', relaxed[1])), set(self.TASK_KEYED))
 
 
 class BaselineDateBoundaryTests(unittest.TestCase):
@@ -1184,15 +1407,46 @@ class ScopePlanTests(unittest.TestCase):
                 self.assertEqual(scans, {"02_xer_project": 1, "dbo_project": 1})
 
     def test_consumers_carry_one_metadata_read_per_scope_copy(self):
-        scans = inlined_table_scans(fn_athena_sql("06_xer_predecessor", latest_updates="5"))
-        self.assertEqual(scans, {"06_xer_predecessor": 1, "02_xer_project": 1, "dbo_project": 1})
+        # Each Data Lake exclusion reference adds one scope copy and one pruned read of 07, 08 and 09.
+        for table, columns in athena_consumers().items():
+            expected = {}
+            for name, count in ((table, 1), ("02_xer_project", 1 + len(columns)), ("dbo_project", 1 + len(columns)),
+                                ("07_xer_actvtype", len(columns)), ("08_xer_actvcode", len(columns)),
+                                ("09_xer_taskactv", len(columns))):
+                if count:
+                    expected[name] = expected.get(name, 0) + count
+            with self.subTest(consumer=table):
+                self.assertEqual(inlined_table_scans(fn_athena_sql(table, latest_updates="5")), expected)
         scans = inlined_table_scans(calendar_sql(latest_updates="5"))
         self.assertEqual(scans["02_xer_project"], scans["11_xer_calendar_detailed"])
         self.assertEqual(scans["dbo_project"], scans["11_xer_calendar_detailed"])
         scans = inlined_table_scans(task_sql(latest_updates="5"))
-        self.assertEqual(scans["02_xer_project"], scans["01_xer_task"])
+        # TASK filters only its final rows, so the exclusion adds one scope copy, not one per history CTE.
+        self.assertEqual(scans["02_xer_project"], scans["01_xer_task"] + 1)
         # TASK also joins dbo_project twice per copy for project names (j_proj, c_proj).
-        self.assertEqual(scans["dbo_project"], 3 * scans["01_xer_task"])
+        self.assertEqual(scans["dbo_project"], 3 * scans["01_xer_task"] + 1)
+        self.assertEqual([scans["07_xer_actvtype"], scans["08_xer_actvcode"], scans["09_xer_taskactv"]], [1, 1, 1])
+
+    def test_exclusion_stays_out_of_the_task_history_chain(self):
+        tree = sqlglot.parse_one(task_sql(), read="trino")
+        users = {cte.alias_or_name for cte in tree.args["with_"].expressions
+                 if any(table.name == "excluded_tasks" for table in cte.this.find_all(sqlglot.exp.Table))}
+        self.assertEqual(users, set())
+        body = tree.copy()
+        body.set("with_", None)
+        self.assertIn("excluded_tasks", {table.name for table in body.find_all(sqlglot.exp.Table)})
+
+    def test_exclusion_joins_prune_by_file(self):
+        tree = sqlglot.parse_one(scope_sql() + excluded_tasks_sql() + "SELECT task_id_key FROM excluded_tasks", read="trino")
+        ctes = {cte.alias_or_name: cte.this for cte in tree.args["with_"].expressions}
+        for name in ("excluded_activity_codes", "excluded_tasks"):
+            joins = ctes[name].args.get("joins") or []
+            self.assertTrue(joins, name)
+            for join in joins:
+                with self.subTest(cte=name, join=join.this.name):
+                    self.assertIn("filename", {column.name for column in join.args["on"].find_all(sqlglot.exp.Column)})
+        on = ctes["excluded_tasks"].args["joins"][0].args["on"]
+        self.assertEqual({column.name for column in on.find_all(sqlglot.exp.Column)}, {"filename", "actv_code_id_key"})
 
 
 class UpdateLimitTests(Fixtures):
@@ -1307,9 +1561,7 @@ class UpdateLimitTests(Fixtures):
         expected = {baseline, *updates[-2:]}
         for table in ("03_xer_projwbs", "06_xer_predecessor", "07_xer_actvtype", "08_xer_actvcode",
                       "09_xer_taskactv", "10_xer_calendar", "12_xer_rsrc", "15_xer_resource_distribution"):
-            self.db.execute('CREATE TABLE prod_projectcontrols_p6."' + table + '" (filename VARCHAR)')
-            self.db.executemany('INSERT INTO prod_projectcontrols_p6."' + table + '" VALUES (?)',
-                                [(name,) for name in filenames])
+            self.add_consumer_rows(table, filenames)
         for table in ("02_xer_project", "03_xer_projwbs", "06_xer_predecessor", "07_xer_actvtype",
                       "08_xer_actvcode", "09_xer_taskactv", "10_xer_calendar", "12_xer_rsrc",
                       "15_xer_resource_distribution"):

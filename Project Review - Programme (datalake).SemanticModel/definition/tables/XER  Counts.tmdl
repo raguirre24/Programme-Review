@@ -893,27 +893,6 @@ table 'XER  Counts'
 		displayFolder: Previous Month Finish Variance
 		lineageTag: 06e45df0-0725-4714-8586-fbd3ee66d93f
 
-	measure Count_Tasks_Continuous = ```
-			
-			VAR CurrentCount = COUNTROWS('01 XER_TASK')
-			
-			VAR Level2_IsActiveInMonth = 
-			    CALCULATE(
-			        NOT ISEMPTY('01 XER_TASK'),
-			        ALL('01 XER_TASK'[PreviousMonthFinishVarianceCategory])
-			    )
-			
-			RETURN
-			
-			    IF(
-			        Level2_IsActiveInMonth,
-			        COALESCE(CurrentCount, 0),
-			        BLANK()
-			    )
-			```
-		formatString: 0
-		lineageTag: c7647c7a-0d79-49e7-8fbb-f6a59d2a8945
-
 	measure 'PreviousMonth_FinishVariance_Ahead_TT_Task (-1)' = ```
 			
 			VAR CountResult = 

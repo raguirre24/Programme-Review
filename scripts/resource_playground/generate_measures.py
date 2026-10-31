@@ -8,6 +8,7 @@ weekday arithmetic and exception replacement cannot drift between them.
 """
 
 import argparse
+import json
 from pathlib import Path
 from textwrap import dedent
 from uuid import NAMESPACE_URL, uuid5
@@ -15,8 +16,16 @@ from uuid import NAMESPACE_URL, uuid5
 
 ROOT = Path(__file__).resolve().parents[2]
 OUTPUT = ROOT / "Project Review - Programme (datalake).SemanticModel/definition/tables/Resource Scenario Measures.tmdl"
+AUDIT_OUTPUT = Path(__file__).with_name("audit_measures.json")
 TABLE = "'11 XER_CALENDAR_DETAILED'"
 MEASURES = []
+# Read by the fixture suites, not by the report: they are written to audit_measures.json for the fixture
+# databases instead of the model (removed in the October 2026 model trim).
+AUDIT_MEASURES = {
+    "Scenario Boundary Quantity", "Scenario Bucket Quantity", "Scenario Period Quantity", "Scenario Cumulative Quantity",
+    "Scenario Daily Hours", "Scenario Daily Capacity", "Scenario Daily Remaining", "Scenario Show Daily Row",
+    "Scenario Show Period Row", "Comparison Selection Summary",
+}
 
 
 def add(name, expression, description, fmt="#,0.########", hidden=False, folder="Results"):
@@ -879,6 +888,35 @@ def uid(name):
     return str(uuid5(NAMESPACE_URL, "programme-review/resource-playground/" + name))
 
 
+def prepared_measures():
+    """Every measure with the generator's input-helper substitutions applied, in definition order."""
+    prepared = []
+    for name, expression, description, fmt, hidden, folder in MEASURES:
+        if fmt == "#,0.##":
+            fmt = "#,0.########"
+        if name not in {"Scenario Selected Start", "Scenario Selected Target"}:
+            expression = expression.replace("SELECTEDVALUE('Scenario Start'[Date])", "[Scenario Selected Start]")
+            expression = expression.replace("SELECTEDVALUE('Scenario Target'[Date])", "[Scenario Selected Target]")
+        if name not in INPUT_HELPERS:
+            for helper, (table, column, _) in INPUT_HELPERS.items():
+                expression = expression.replace(f"SELECTEDVALUE('{table}'[{column}])", f"[{helper}]")
+        prepared.append((name, expression, description, fmt, hidden, folder))
+    return prepared
+
+
+def audit_measures():
+    """Fixture-only measures, as {name, expression, formatString, isHidden, displayFolder} records."""
+    return [{"name": name, "expression": expression, "formatString": fmt, "isHidden": hidden, "displayFolder": folder}
+            for name, expression, _, fmt, hidden, folder in prepared_measures() if name in AUDIT_MEASURES]
+
+
+def write_audit_json(path: Path = AUDIT_OUTPUT):
+    records = audit_measures()
+    assert {r["name"] for r in records} == AUDIT_MEASURES, "Audit measure inventory changed."
+    path.write_text(json.dumps(records, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
+    print(f"Wrote {len(records)} audit measures to {path}")
+
+
 def generate(output_dir: Path | None = None):
     target = OUTPUT if output_dir is None else output_dir.resolve() / OUTPUT.name
     if output_dir is not None and target.resolve() == OUTPUT.resolve():
@@ -890,15 +928,8 @@ def generate(output_dir: Path | None = None):
         )
     lines = ["/// Hypothetical resource forecasts calculated directly from table-11 rules and exceptions. No calendar-by-date rows are materialised.",
              "table 'Resource Scenario Measures'", f"\tlineageTag: {uid('Resource Scenario Measures')}", ""]
-    for name, expression, description, fmt, hidden, folder in MEASURES:
-        if fmt == "#,0.##":
-            fmt = "#,0.########"
-        if name not in {"Scenario Selected Start", "Scenario Selected Target"}:
-            expression = expression.replace("SELECTEDVALUE('Scenario Start'[Date])", "[Scenario Selected Start]")
-            expression = expression.replace("SELECTEDVALUE('Scenario Target'[Date])", "[Scenario Selected Target]")
-        if name not in INPUT_HELPERS:
-            for helper, (table, column, _) in INPUT_HELPERS.items():
-                expression = expression.replace(f"SELECTEDVALUE('{table}'[{column}])", f"[{helper}]")
+    production = [m for m in prepared_measures() if m[0] not in AUDIT_MEASURES]
+    for name, expression, description, fmt, hidden, folder in production:
         lines.extend([f"\t/// {description}", f"\tmeasure '{name}' = ```"])
         lines.extend("\t\t\t" + line if line else "" for line in expression.splitlines())
         lines.extend(["\t\t\t```", f"\t\tformatString: {fmt}"])
@@ -908,11 +939,17 @@ def generate(output_dir: Path | None = None):
     lines.extend(["\tpartition 'Resource Scenario Measures' = m", "\t\tmode: import", "\t\tsource = #table(type table [], {})", "", "\tannotation PBI_ResultType = Table", ""])
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text("\n".join(lines), encoding="utf-8", newline="\n")
-    print(f"Generated {len(MEASURES)} measures in {target}")
+    print(f"Generated {len(production)} measures in {target}")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path,
                         help="Write a review-only table draft here without changing production model files.")
-    generate(parser.parse_args().output_dir)
+    parser.add_argument("--audit-json", action="store_true",
+                        help="Refresh audit_measures.json, the fixture-only measures, instead of the table draft.")
+    args = parser.parse_args()
+    if args.audit_json:
+        write_audit_json()
+    else:
+        generate(args.output_dir)

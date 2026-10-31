@@ -117,7 +117,17 @@ table 'XER CSV Refresh Audit'
 				        "Status",
 				            IF (
 				                AuditStatus = "PASS",
-				                IF ( [ExpectedRows] = [ActualRows], "PASS", "DIAGNOSTIC_MISMATCH" ),
+				                // The task-keyed tables load the manifest rows less the activities excluded from Data Lake
+				                // reporting (fnXerCsvExcludeFlaggedTasks); the loader has already matched every file to its manifest.
+				                IF (
+				                    IF (
+				                        [Check] IN { "01_XER_TASK", "06_XER_PREDECESSOR", "09_XER_TASKACTV", "15_XER_RESOURCE_DISTRIBUTION" },
+				                        [ActualRows] <= [ExpectedRows],
+				                        [ActualRows] = [ExpectedRows]
+				                    ),
+				                    "PASS",
+				                    "DIAGNOSTIC_MISMATCH"
+				                ),
 				                "FAIL"
 				            )
 				    )

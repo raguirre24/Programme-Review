@@ -45,7 +45,9 @@ function Set-DetailFixtureVariable {
 }
 
 try {
-    $definitions = Get-ScheduleMetricsDefinitions -Model $model -LiveModel $target.Database.Model
+    # SM Baseline Coverage % and its decomposition are test-only reference measures (detail_reference_measures.json).
+    $reference = Get-ScheduleMetricsReferenceMeasures
+    $definitions = Get-ScheduleMetricsDefinitions -Model $model -LiveModel $target.Database.Model -ReferenceMeasures $reference
     $snapshots = Invoke-ScheduleMetricsDax $target @"
 EVALUATE SUMMARIZECOLUMNS('01 XER_TASK'[ProjectCode],'01 XER_TASK'[ProgrammeType],'01 XER_TASK'[UpdateDate],"Rows",COUNTROWS('01 XER_TASK'))
 ORDER BY '01 XER_TASK'[ProjectCode],'01 XER_TASK'[ProgrammeType],'01 XER_TASK'[UpdateDate]
@@ -149,7 +151,7 @@ EVALUATE CALCULATETABLE(ROW("Value",[SM Detail Value],"Scope",[SM Detail Scope M
         foreach ($name in @('SM Detail Value', 'SM Detail Tooltip')) {
             $fixture.Overrides["Schedule Metric Detail[$name]"] = Set-DetailFixtureVariable $detail.Measures.Find($name).Expression $fixture.Variable $fixture.Value
         }
-        $fixtureDefinitions = Get-ScheduleMetricsDefinitions -Model $model -LiveModel $target.Database.Model -Overrides $fixture.Overrides
+        $fixtureDefinitions = Get-ScheduleMetricsDefinitions -Model $model -LiveModel $target.Database.Model -ReferenceMeasures $reference -Overrides $fixture.Overrides
         $rows = Invoke-ScheduleMetricsDax $target ($fixtureDefinitions + @"
 
 EVALUATE CALCULATETABLE(ROW("Provenance",[SM Detail Baseline Provenance],"Coverage",[SM Baseline Coverage %],"Selected",[SM Detail Value],"Status",[SM Detail Status],"Tooltip",[SM Detail Tooltip]),$filter)
@@ -160,7 +162,7 @@ EVALUATE CALCULATETABLE(ROW("Provenance",[SM Detail Baseline Provenance],"Covera
         Assert-ScheduleMetric ($rows[0].'[Tooltip]' -match '0%: ') "$($fixture.Name): an explicit tooltip reason is required."
         $assertions += 4
     }
-    $fallbackDefinitions = Get-ScheduleMetricsDefinitions -Model $model -LiveModel $target.Database.Model -Overrides @{
+    $fallbackDefinitions = Get-ScheduleMetricsDefinitions -Model $model -LiveModel $target.Database.Model -ReferenceMeasures $reference -Overrides @{
         'Schedule Metric Detail[SM Detail Baseline File]' = '"PROJECT-C-2609_20260930.xer"'
     }
     $rows = Invoke-ScheduleMetricsDax $target ($fallbackDefinitions + @"
@@ -190,7 +192,7 @@ EVALUATE CALCULATETABLE(ROW("Provenance",[SM Detail Baseline Provenance]),$filte
             }
             $overrides["Schedule Metric Detail[$name]"] = $expression
         }
-        $caseDefinitions = Get-ScheduleMetricsDefinitions -Model $model -LiveModel $target.Database.Model -Overrides $overrides
+        $caseDefinitions = Get-ScheduleMetricsDefinitions -Model $model -LiveModel $target.Database.Model -ReferenceMeasures $reference -Overrides $overrides
         $rows = Invoke-ScheduleMetricsDax $target ($caseDefinitions + @"
 
 EVALUATE CALCULATETABLE(ROW("Value",[SM Detail Value],"Status",[SM Detail Status],"Colour",[SM Detail Colour],"Tooltip",[SM Detail Tooltip]),$filter)

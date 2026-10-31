@@ -2,19 +2,6 @@ table '02 XER_PROJECT'
 	isHidden
 	lineageTag: 4174ebbd-f58e-48fd-9c0f-aa9cf47af1ac
 
-	column last_recalc_date
-		dataType: dateTime
-		formatString: dd/mm/yyyy
-		lineageTag: f1dae6a1-f1b0-48e3-bef0-4ff9cbc40a73
-		summarizeBy: none
-		sourceColumn: last_recalc_date
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation UnderlyingDateTimeDataType = Date
-
-		annotation PBI_FormatHint = {"isDateTimeCustom":true}
-
 	column proj_id_key
 		dataType: string
 		lineageTag: 43bfde4d-82c8-4b06-a306-35d6426f5eb4
@@ -22,19 +9,6 @@ table '02 XER_PROJECT'
 		sourceColumn: proj_id_key
 
 		annotation SummarizationSetBy = Automatic
-
-	column monthupdate
-		dataType: dateTime
-		formatString: dd/mm/yyyy
-		lineageTag: 22d4b0fe-826a-4aa7-8d96-bf8d55a6f7f0
-		summarizeBy: none
-		sourceColumn: monthupdate
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation UnderlyingDateTimeDataType = Date
-
-		annotation PBI_FormatHint = {"isDateTimeCustom":true}
 
 	column ProjectCode
 		dataType: string
@@ -72,8 +46,6 @@ table '02 XER_PROJECT'
 				            "02_xer_project",
 				            Text.Combine(
 				                {
-				                    "t.""last_recalc_date""",
-				                    "t.""monthupdate""",
 				                    "t.""proj_id_key""",
 				                    "TRIM(UPPER(SPLIT_PART(t.""filename"", '-', 1))) AS ""ProjectCode"""
 				                },
@@ -81,26 +53,9 @@ table '02 XER_PROJECT'
 				            )
 				        ),
 				
-				    ChangedTypes =
-				        Table.TransformColumns(
-				            Source,
-				            {
-				                {
-				                    "last_recalc_date",
-				                    each try Date.From(DateTime.FromText(Text.From(_))) otherwise try Date.From(_) otherwise null,
-				                    type nullable date
-				                },
-				                {
-				                    "monthupdate",
-				                    each try Date.From(DateTime.FromText(Text.From(_))) otherwise try Date.From(_) otherwise null,
-				                    type nullable date
-				                }
-				            }
-				        ),
-				
 				    CleanProjectCode =
 				        Table.TransformColumns(
-				            ChangedTypes,
+				            Source,
 				            {
 				                {
 				                    "ProjectCode",
@@ -110,7 +65,8 @@ table '02 XER_PROJECT'
 				            }
 				        ),
 				
-				    ContractColumns = Record.Field(XerCsvTableContracts, "02_XER_PROJECT")[Columns],
+				    Contract = Record.Field(XerCsvTableContracts, "02_XER_PROJECT"),
+				    ContractColumns = Record.FieldOrDefault(Contract, "ModelColumns", Contract[Columns]),
 				    ModelColumns = List.Combine({ContractColumns, {"IsCsvSource"}}),
 				    AthenaFinal = Table.SelectColumns(CleanProjectCode, ContractColumns),
 				    AthenaBranch = if XerCsvRouting[HasAthenaProjects] then Table.AddColumn(AthenaFinal, "IsCsvSource", each false, type logical) else Table.AddColumn(fnXerCsvEmptyTable("02_XER_PROJECT"), "IsCsvSource", each false, type logical),

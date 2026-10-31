@@ -47,7 +47,7 @@ $scenarioMeasures = $model.Tables.Find('Resource Scenario Measures')
 $expectedScenarioMeasures = 56
 if ($null -eq $scenarioMeasures -or $scenarioMeasures.Measures.Count -ne $expectedScenarioMeasures) { throw "Expected all $expectedScenarioMeasures Resource Scenario Measures, including the two chart and five daily display measures." }
 if ($scenarioTables.Count -ne 15) { throw "Expected 15 bounded scenario tables; found $($scenarioTables.Count)." }
-$expectedComparisonMeasures = @('Comparison Chart Quantity','Comparison Required Rate','Comparison Target Remaining','Comparison Validation','Comparison Finish Date','Comparison Status','Comparison Selection Summary','Comparison Calendar Identity')
+$expectedComparisonMeasures = @('Comparison Chart Quantity','Comparison Required Rate','Comparison Target Remaining','Comparison Validation','Comparison Finish Date','Comparison Status','Comparison Calendar Identity')
 $actualComparisonMeasures = @($scenarioMeasures.Measures | Where-Object Name -like 'Comparison *' | ForEach-Object Name)
 if (@(Compare-Object @($expectedComparisonMeasures | Sort-Object) @($actualComparisonMeasures | Sort-Object)).Count) { throw 'Comparison measure inventory mismatch.' }
 

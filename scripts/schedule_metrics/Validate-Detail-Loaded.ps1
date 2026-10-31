@@ -18,10 +18,20 @@ $assertions = 0
 $gauges = @{}
 $series = [Collections.Generic.List[object]]::new()
 
+# SM Baseline Coverage % and its decomposition are test-only reference measures (detail_reference_measures.json).
+# They are added to each query; a loaded measure of the same name must be identical, so nothing loaded is overridden.
+$reference = Get-ScheduleMetricsReferenceMeasures
+$loadedDetail = $target.Database.Model.Tables['Schedule Metric Detail']
+foreach ($name in $reference.Keys) {
+    $loaded = $loadedDetail.Measures.Find($name)
+    if ($loaded -and $loaded.Expression.Replace("`r`n", "`n").Trim() -ne $reference[$name].Trim()) { throw "Loaded measure '$name' differs from its test reference." }
+}
+$referenceDefine = "DEFINE`n" + (($reference.Keys | ForEach-Object { "MEASURE 'Schedule Metric Detail'[$_] =`n$($reference[$_])" }) -join "`n") + "`n"
+
 function Invoke-LoadedDetailQuery {
     param([string]$Query)
     if ($Query -match '(?im)^\s*DEFINE\b') { throw 'Loaded validation must not override the live model.' }
-    return ,(Invoke-ScheduleMetricsDax $target $Query -TimeoutSeconds 30)
+    return ,(Invoke-ScheduleMetricsDax $target ($referenceDefine + $Query) -TimeoutSeconds 30)
 }
 
 function Get-LoadedDetailFilter {

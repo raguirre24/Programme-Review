@@ -603,7 +603,6 @@ def build_measures() -> list[tuple[str, str, str, str, str]]:
     clear = """REMOVEFILTERS (
         '01 XER_TASK'[No Predecessor],
         '01 XER_TASK'[No Successor],
-        '01 XER_TASK'[Driven_DataDate],
         '01 XER_TASK'[SM Fail Missing Logic],
         '01 XER_TASK'[SM Fail Leads],
         '01 XER_TASK'[SM Fail Lags],
@@ -615,27 +614,23 @@ def build_measures() -> list[tuple[str, str, str, str, str]]:
         '01 XER_TASK'[total_float],
         '01 XER_TASK'[remaining_duration],
         '01 XER_TASK'[status_code],
-        '01 XER_TASK'[StatusCategory],
         '01 XER_TASK'[task_type],
         '01 XER_TASK'[TaskType_Classified],
         '01 XER_TASK'[Is Unscheduled]
     ),
     REMOVEFILTERS ( Filter_Activity_Status ),
     REMOVEFILTERS ( Filter_TaskType ),
-    REMOVEFILTERS ( '00 CALENDAR' ),
-    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' )"""
+    REMOVEFILTERS ( '00 CALENDAR' )"""
 
     scope_reset = """REMOVEFILTERS (
         '01 XER_TASK'[status_code],
-        '01 XER_TASK'[StatusCategory],
         '01 XER_TASK'[task_type],
         '01 XER_TASK'[TaskType_Classified],
         '01 XER_TASK'[Is Unscheduled]
     ),
     REMOVEFILTERS ( Filter_Activity_Status ),
     REMOVEFILTERS ( Filter_TaskType ),
-    REMOVEFILTERS ( '00 CALENDAR' ),
-    REMOVEFILTERS ( '00 PLANNED DATE TABLE (PV)' )"""
+    REMOVEFILTERS ( '00 CALENDAR' )"""
 
     measures: list[tuple[str, str, str, str, str]] = [
         (

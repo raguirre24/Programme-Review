@@ -13,18 +13,6 @@ table dbo_project
 
 		annotation SummarizationSetBy = Automatic
 
-	column projectid
-		dataType: int64
-		isHidden
-		formatString: 0
-		lineageTag: c2ff44ab-9580-4d3f-a4cb-3d581cf622e2
-		summarizeBy: sum
-		sourceColumn: projectid
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
 	column projectname
 		dataType: string
 		isHidden
@@ -55,7 +43,7 @@ table dbo_project
 				    Source =
 				        Value.NativeQuery(
 				            AthenaDB,
-				            "SELECT NULLIF(UPPER(REGEXP_REPLACE(TRIM(""projectno""), ' +', ' ')), '') AS ""projectno"", ""projectid"", NULLIF(TRIM(""projectname""), '') AS ""projectname"", NULLIF(UPPER(TRIM(""state"")), '') AS ""state"" FROM prod_projectcontrols_linkedsitereports.""dbo_project""",
+				            "SELECT NULLIF(UPPER(REGEXP_REPLACE(TRIM(""projectno""), ' +', ' ')), '') AS ""projectno"", NULLIF(TRIM(""projectname""), '') AS ""projectname"", NULLIF(UPPER(TRIM(""state"")), '') AS ""state"" FROM prod_projectcontrols_linkedsitereports.""dbo_project""",
 				            null
 				        )
 				in

@@ -387,7 +387,7 @@
       "classification": "Baseline coverage",
       "scored": true,
       "score_note": "1 point at ≥90%, falling evenly to 0 at 60%.",
-      "source_measure": "Schedule Metric Detail[SM Baseline Coverage %]",
+      "source_measure": "Schedule Metric Detail[SM Detail Value]",
       "source_columns": [
         "01 XER_TASK[task_code]",
         "01 XER_TASK[Finish]",

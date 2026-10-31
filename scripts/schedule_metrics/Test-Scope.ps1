@@ -16,7 +16,7 @@ try {
 EVALUATE SUMMARIZECOLUMNS('01 XER_TASK'[ProjectCode],'01 XER_TASK'[UpdateDate],"Rows",COUNTROWS('01 XER_TASK'))
 ORDER BY '01 XER_TASK'[ProjectCode],'01 XER_TASK'[UpdateDate]
 '@
-    $rates = @('HighFloat%', 'HighDur%', 'Lags%', '<0Lead%', '<0Float%', 'Constraint%',
+    $rates = @('HighDur%', 'Lags%', '<0Lead%', '<0Float%', 'Constraint%',
         'SM Missing Logic %', 'SM FS %', 'SM Invalid Dates %', 'SM Out Of Sequence %', 'Score')
     $projection = ($rates | ForEach-Object { '"' + $_ + '",[' + $_ + ']' }) -join ','
     $cases = [Collections.Generic.List[object]]::new()

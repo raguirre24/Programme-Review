@@ -28,6 +28,8 @@ foreach ($name in $manifest.literalTables) {
 }
 $measures = $model.Tables.Find('Resource Scenario Measures')
 if ($measures.Measures.Count -ne 56) { throw 'Expected the 48 base measures and eight comparison measures.' }
+. (Join-Path $PSScriptRoot 'FixtureAuditMeasures.ps1')
+[void](Set-FixtureAuditMeasures $measures)
 # The production empty M carrier has no data; a literal carrier makes the
 # isolated fixture entirely source-free without changing any DAX expression.
 $measures.Partitions.Clear()

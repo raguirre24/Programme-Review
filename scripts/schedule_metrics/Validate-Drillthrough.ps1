@@ -262,12 +262,10 @@ REMOVEFILTERS (
         '01 XER_TASK'[task_id_key],
         '01 XER_TASK'[No Predecessor],
         '01 XER_TASK'[No Successor],
-        '01 XER_TASK'[Driven_DataDate],
         '01 XER_TASK'[cstr_type],
         '01 XER_TASK'[total_float],
         '01 XER_TASK'[remaining_duration],
         '01 XER_TASK'[status_code],
-        '01 XER_TASK'[StatusCategory],
         '01 XER_TASK'[task_type],
         '01 XER_TASK'[TaskType_Classified],
         '01 XER_TASK'[Is Unscheduled]
@@ -380,7 +378,7 @@ try {
         $lines.Add('DEFINE')
         if (-not $hasPhysicalFailCols) {
             $baseTaskTable = if ($ScopeFilterDax) {
-                "CALCULATETABLE('01 XER_TASK', REMOVEFILTERS('03 XER_PROJWBS'), REMOVEFILTERS('01 XER_TASK'[status_code],'01 XER_TASK'[StatusCategory],'01 XER_TASK'[task_type],'01 XER_TASK'[TaskType_Classified],'01 XER_TASK'[Is Unscheduled],'01 XER_TASK'[cstr_type],'01 XER_TASK'[total_float],'01 XER_TASK'[remaining_duration]), REMOVEFILTERS(Filter_Activity_Status), REMOVEFILTERS(Filter_TaskType), REMOVEFILTERS('00 CALENDAR'), REMOVEFILTERS('00 PLANNED DATE TABLE (PV)'), $ScopeFilterDax)"
+                "CALCULATETABLE('01 XER_TASK', REMOVEFILTERS('03 XER_PROJWBS'), REMOVEFILTERS('01 XER_TASK'[status_code],'01 XER_TASK'[task_type],'01 XER_TASK'[TaskType_Classified],'01 XER_TASK'[Is Unscheduled],'01 XER_TASK'[cstr_type],'01 XER_TASK'[total_float],'01 XER_TASK'[remaining_duration]), REMOVEFILTERS(Filter_Activity_Status), REMOVEFILTERS(Filter_TaskType), REMOVEFILTERS('00 CALENDAR'), $ScopeFilterDax)"
             } else {
                 "ALLNOBLANKROW('01 XER_TASK')"
             }

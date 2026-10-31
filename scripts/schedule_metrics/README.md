@@ -43,7 +43,8 @@ value with its history endpoint for every loaded project/snapshot, verifies an
 earlier cutoff, and checks missing-snapshot BLANK behaviour.
 
 The direct detail runner checks the baseline-coverage gauge against
-`SM Baseline Coverage %` and its history across all loaded snapshots and
+`SM Baseline Coverage %` (a test-only decomposition in `detail_reference_measures.json`,
+defined in each query) and its history across all loaded snapshots and
 cutoffs, checks that each update compares with the latest BL-tagged file on or
 before it (or falls back to the earliest loaded update when no BL file exists),
 plus provenance, partial/full coverage and repeated-code disclosure

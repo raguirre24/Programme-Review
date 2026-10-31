@@ -315,7 +315,8 @@ def check_diamond_measure_guards(meta: dict) -> int:
         "CROSSFILTER('01 XER_TASK'[UpdateDate], 'CurrentDate'[UpdateDate], OneWay) to avoid RLS QueryUserError. "
         f"Missing on: {missing}"
     )
-    assert checked >= 35, f"Expected at least 35 Scenario Calendar measures, checked {checked}"
+    # 30 since the October 2026 model trim moved five fixture-only Scenario measures to audit_measures.json.
+    assert checked >= 30, f"Expected at least 30 Scenario Calendar measures, checked {checked}"
     return checked
 
 
@@ -468,9 +469,10 @@ def check_sql_and_m_normalisation(model_dir: Path) -> dict:
         assert by_pid[20][4] == "QLD", f"Region must uppercase+trim: {by_pid[20]}"
         assert by_pid[20][6] == "C30550 HUMELINK ACA", f"Internal spaces must collapse: {by_pid[20]}"
 
-        proj_rows = {r[1]: r for r in con.execute(proj_sql_duck).fetchall()}
-        assert proj_rows[10] == ("CT0001", 10, "Test Project", "NSW"), f"Unexpected dbo_project row 10: {proj_rows[10]}"
-        assert proj_rows[20] == ("C30550 HUMELINK ACA", 20, None, None), f"Unexpected dbo_project row 20: {proj_rows[20]}"
+        # The model loads projectno, projectname and state; projectid joins permissions upstream only.
+        proj_rows = {r[0]: r for r in con.execute(proj_sql_duck).fetchall()}
+        assert proj_rows["CT0001"] == ("CT0001", "Test Project", "NSW"), f"Unexpected dbo_project row CT0001: {proj_rows}"
+        assert proj_rows["C30550 HUMELINK ACA"] == ("C30550 HUMELINK ACA", None, None), f"Unexpected dbo_project row C30550: {proj_rows}"
     finally:
         con.close()
 

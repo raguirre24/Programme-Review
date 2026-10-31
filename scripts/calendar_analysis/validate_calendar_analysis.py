@@ -17,11 +17,6 @@ EXPECTED_CA_MEASURES = [
     "CA Horizon Start Month",
     "CA Horizon End Month",
     "CA Monthly Working Days",
-    "CA Monthly Standard Working Days",
-    "CA Monthly Exception Delta Days",
-    "CA Monthly Non-Working Days",
-    "CA Monthly Working Hours",
-    "CA Monthly Critical Activities",
     "CA Monthly Active Activities",
     "CA Monthly Working Days Colour",
     "CA Monthly Working Days Font Colour",
@@ -205,15 +200,15 @@ def verify_calendar_alignment_wiring() -> None:
     apply_block = expressions.split("expression fnXerCalendarApplyExceptionShift =", 1)[1].split("\nexpression ", 1)[0]
     for token in ("Date.AddDays([date], [ExceptionDateShiftDays])", "__AlignedDayOfWeekNum", "__AlignedDayOfWeek"):
         assert token in apply_block, f"fnXerCalendarApplyExceptionShift must move date and both weekday columns ({token})"
-    # Athena: SQL votes per file, M applies it after typing; the shift column is part of the model contract.
+    # Athena: SQL votes per file, M applies it after typing; the shift is applied at load and not loaded (October 2026 trim).
     assert "fnAthenaSource(\"11_xer_calendar_detailed\"" not in table11, "Table 11 must use its own alignment SQL"
     assert "AthenaAligned = fnXerCalendarApplyExceptionShift(AthenaTyped)" in table11
-    assert '"ExceptionDateShiftDays", "IsCsvSource", "ProjectKey"' in table11
-    assert "column ExceptionDateShiftDays" in table11
+    assert 'ModelColumns = List.Combine({ContractModelColumns, {"IsCsvSource", "ProjectKey"}})' in table11
+    assert "column ExceptionDateShiftDays" not in table11, "The exception shift is applied at load, not loaded"
     # CSV: same vote per bundle, then the same apply function.
     assert "CalendarShift = fnXerCalendarDetectExceptionShift(CalendarChecked)" in expressions
     assert "fnXerCalendarApplyExceptionShift(Table.AddColumn(CalendarChecked, \"ExceptionDateShiftDays\"" in expressions
-    assert '{"ExceptionDateShiftDays", "ProjectKey"}' in expressions, "CSV table 11 model columns must carry ExceptionDateShiftDays"
+    assert 'then {"ProjectKey"} else {}' in expressions, "CSV table 11 loads ProjectKey; the exception shift is applied in M only"
     # Workweek comes from table 11's seven weekday rules, never from the calendar name.
     assert "column 'Workweek Mask' =" in table10 and "RELATEDTABLE('11 XER_CALENDAR_DETAILED')" in table10
     blocks = measure_blocks((MODEL_DEF / "tables" / "XER Measures.tmdl").read_text(encoding="utf-8"))
@@ -280,7 +275,9 @@ def verify_tmdl_measures() -> int:
         "Calendar Profile measures must guard per-calendar rows with ISINSCOPE('Scenario Calendar'[Calendar])"
     )
     # 2. ActiveTasks > 0 / ActiveTaskCount > 0 must guard calendar-grain measures so unused calendars are suppressed.
-    assert ca_block.count("ActiveTasks > 0") >= 6 and "ActiveTaskCount > 0" in ca_block, (
+    guarded = ("CA Monthly Working Days", "CA Workweek Signature", "CA Future Exception Blackout Days",
+               "CA Critical Activity Count", "CA Critical Remaining Working Days")
+    assert all("ActiveTasks > 0" in ca[name] for name in guarded) and "ActiveTaskCount > 0" in ca_block, (
         "Calendar-grain measures must require ActiveTasks > 0 to suppress unused calendars"
     )
     # 3. No FORMAT(..., "0.#") or FORMAT(..., "#,0.#") that produces trailing dots like '8.h/d'.

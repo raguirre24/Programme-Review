@@ -1,0 +1,4 @@
+{
+  "guardTables": ["XER CSV Refresh Audit"],
+  "mExpressions": ["AthenaProgrammeSelectionAudit"]
+}

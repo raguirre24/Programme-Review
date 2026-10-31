@@ -49,18 +49,6 @@ table '01 XER_TASK'
 
 		annotation SummarizationSetBy = Automatic
 
-	column StatusCategory =
-			
-			IF(
-			    '01 XER_TASK'[status_code] = "Complete",
-			    "Complete",
-			    "Not Complete"
-			)
-		lineageTag: 4143997f-d77d-4c87-9b34-0e4dc77610e3
-		summarizeBy: none
-
-		annotation SummarizationSetBy = Automatic
-
 	column CriticalStatus =
 			
 			VAR TaskStatus = TRIM(UPPER('01 XER_TASK'[status_code]))
@@ -531,15 +519,6 @@ table '01 XER_TASK'
 		sourceColumn: Finish_Variance_Previous_Month
 
 		annotation SummarizationSetBy = User
-
-	column Driven_DataDate
-		dataType: string
-		isHidden
-		lineageTag: 94225685-becc-4744-a625-f9973e146094
-		summarizeBy: none
-		sourceColumn: Driven_DataDate
-
-		annotation SummarizationSetBy = Automatic
 
 	column Variance_Finish_BL
 		dataType: int64
@@ -1123,6 +1102,7 @@ table '01 XER_TASK'
 				            Text.Combine(
 				                {
 				                    AthenaScopeSql,
+				                    AthenaExcludedTasksSql,
 				                    ", task_raw AS (",
 				                    "SELECT",
 				                    "t.""status_code"" AS status_code, t.""task_code"" AS task_code, TRY_CAST(t.""total_float"" AS DOUBLE) AS total_float, t.""task_type"" AS task_type,",
@@ -1281,7 +1261,6 @@ table '01 XER_TASK'
 				                    "early_end_date, monthupdate, task_name, data_date, act_end_date, finish, proj_id_key, wbs_id_key, free_float, cstr_type, cstr_date, start, filename, late_end_date,",
 				                    "raw_project_code AS ""ProjectCode"", update_date AS ""UpdateDate"", project_name AS ""ProjectName"",",
 				                    "CASE WHEN finish_var_start_date IS NULL OR finish_var_end_date IS NULL THEN 0 WHEN finish_var_start_date = finish_var_end_date THEN 0 ELSE (CASE WHEN finish_var_end_date >= finish_var_start_date THEN 1 ELSE -1 END) * (finish_var_full_weeks * 5 + GREATEST(0, LEAST(finish_var_remainder, 6 - finish_var_dow)) + GREATEST(0, finish_var_remainder - (8 - finish_var_dow))) END AS ""Finish_Variance_Previous_Month"",",
-				                    "CASE WHEN NOT (task_type IN ('TT_Task', 'TT_Rsrc', 'TT_Mile', 'TT_FinMile') AND task_code IS NOT NULL AND project_group_key IS NOT NULL AND COALESCE(status_code, '') <> 'Complete' AND data_date IS NOT NULL AND update_date IS NOT NULL) THEN 'Not Driven' WHEN status_code = 'Not Started' AND previous_task_update_date IS NOT NULL AND previous_task_data_date IS NOT NULL AND previous_task_status = 'Not Started' AND date_diff('day', CAST(previous_task_data_date AS DATE), CAST(data_date AS DATE)) > 0 AND date_diff('day', CAST(previous_task_effective_start AS DATE), CAST(COALESCE(early_start_date, start) AS DATE)) > 0 AND ABS(date_diff('day', CAST(previous_task_effective_start AS DATE), CAST(COALESCE(early_start_date, start) AS DATE)) - date_diff('day', CAST(previous_task_data_date AS DATE), CAST(data_date AS DATE))) <= 1 AND COALESCE(early_start_date, start) IS NOT NULL AND COALESCE(early_end_date, finish) IS NOT NULL AND previous_task_effective_start IS NOT NULL AND previous_task_effective_finish IS NOT NULL AND ABS(date_diff('day', CAST(COALESCE(early_start_date, start) AS DATE), CAST(COALESCE(early_end_date, finish) AS DATE)) - date_diff('day', CAST(previous_task_effective_start AS DATE), CAST(previous_task_effective_finish AS DATE))) <= 1 THEN 'Not Started - Slippage Matches Update Period' WHEN status_code = 'In Progress' AND previous_task_update_date IS NOT NULL AND previous_task_data_date IS NOT NULL AND previous_task_status = 'In Progress' AND date_diff('day', CAST(previous_task_data_date AS DATE), CAST(data_date AS DATE)) > 0 AND remainingduration IS NOT NULL AND previous_task_remainingduration IS NOT NULL AND remainingduration >= previous_task_remainingduration - 1 AND date_diff('day', CAST(previous_task_effective_finish AS DATE), CAST(COALESCE(early_end_date, finish) AS DATE)) > 0 AND ABS(date_diff('day', CAST(previous_task_effective_finish AS DATE), CAST(COALESCE(early_end_date, finish) AS DATE)) - date_diff('day', CAST(previous_task_data_date AS DATE), CAST(data_date AS DATE))) <= 1 THEN 'In Progress - Stagnating Progress' WHEN status_code = 'Not Started' AND COALESCE(early_start_date, start) IS NOT NULL AND CAST(COALESCE(early_start_date, start) AS DATE) = CAST(data_date AS DATE) THEN 'Not Started - Early Start Sitting on Data Date' WHEN status_code = 'In Progress' AND early_start_date IS NOT NULL AND remainingduration IS NOT NULL AND remainingduration > 0 AND CAST(COALESCE(early_start_date, start) AS DATE) = CAST(data_date AS DATE) THEN 'In Progress - Remaining Work Sitting on Data Date' ELSE 'Not Driven' END AS ""Driven_DataDate"",",
 				                    "CASE WHEN baseline_var_start_date IS NULL OR baseline_var_end_date IS NULL THEN NULL WHEN baseline_var_start_date = baseline_var_end_date THEN 0 ELSE (CASE WHEN baseline_var_end_date >= baseline_var_start_date THEN 1 ELSE -1 END) * (baseline_var_full_weeks * 5 + GREATEST(0, LEAST(baseline_var_remainder, 6 - baseline_var_dow)) + GREATEST(0, baseline_var_remainder - (8 - baseline_var_dow))) END AS ""Variance_Finish_BL"",",
 				                    "CASE WHEN adj_baseline_var_start_date IS NULL OR adj_baseline_var_end_date IS NULL THEN NULL WHEN adj_baseline_var_start_date = adj_baseline_var_end_date THEN 0 ELSE (CASE WHEN adj_baseline_var_end_date >= adj_baseline_var_start_date THEN 1 ELSE -1 END) * (adj_baseline_var_full_weeks * 5 + GREATEST(0, LEAST(adj_baseline_var_remainder, 6 - adj_baseline_var_dow)) + GREATEST(0, adj_baseline_var_remainder - (8 - adj_baseline_var_dow))) END AS ""Variance_Finish_Adjusted_BL"",",
 				                    "baseline_finish AS ""Baseline Finish"", baseline_start AS ""Baseline Start"", COALESCE(previous_task_start, start) AS ""Previous Month Start"", COALESCE(previous_task_finish, finish) AS ""Previous Month Finish"",",
@@ -1293,7 +1272,7 @@ table '01 XER_TASK'
 				                    "baseline_effective_early_end AS ""Baseline Effective_Early_End"", baseline_effective_late_end AS ""Baseline Effective_Late_End"",",
 				                    "adjusted_baseline_finish AS ""Adjusted Baseline Finish"", adjusted_baseline_start AS ""Adjusted Baseline Start""",
 				                    "FROM network_calcs",
-				                    "WHERE is_kept"
+				                    "WHERE is_kept AND NOT EXISTS (SELECT 1 FROM excluded_tasks xt WHERE xt.task_id_key = network_calcs.task_id_key)"
 				                },
 				                " "
 				            ),

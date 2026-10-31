@@ -12,8 +12,8 @@ Import-ScheduleMetricsTom -AssemblyDirectory $AssemblyDirectory
 $model = [Microsoft.AnalysisServices.Tabular.TmdlSerializer]::DeserializeModelFromFolder(
     (Join-Path $RepositoryRoot 'Project Review - Programme (datalake).SemanticModel/definition'))
 $target = Connect-ScheduleMetricsModel -ServerAddress $ServerAddress -Catalog $Catalog
-$rates = @('MissingPredecessor%', 'MissingSuccessor%', 'HighFloat%', 'HighDur%',
-    'Lags%', '<0Lead%', '<0Float%', '0Float%', 'Constraint%', 'Score',
+$rates = @('HighDur%',
+    'Lags%', '<0Lead%', '<0Float%', 'Constraint%', 'Score',
     'SM Missing Logic %', 'SM FS %', 'SM Invalid Dates %', 'SM Out Of Sequence %')
 $pageFilters = @'
 TREATAS({"Activity","Milestone"},'01 XER_TASK'[TaskType_Classified]),

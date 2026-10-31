@@ -16,10 +16,13 @@ REPORT = ROOT / "Project Review - Programme (datalake).Report/definition"
 KNOWN_REJECTED_VARIABLES = {"firstdate", "lastdate", "updates", "key", "ordinal"}
 DAILY_VISUAL_ID = "c4762ffe207ce780fc4d"
 CHART_VISUAL_ID = "fa2eaf106e8ead20b935"
-EXPECTED_SCENARIO_MEASURES = 57
+EXPECTED_SCENARIO_MEASURES = 48
 COMPARISON_MEASURES = {"Comparison " + suffix for suffix in (
     "Chart Quantity", "Required Rate", "Target Remaining", "Validation",
-    "Finish Date", "Finish Date Display", "Status", "Selection Summary", "Calendar Identity")}
+    "Finish Date", "Finish Date Display", "Status", "Calendar Identity")}
+# Fixture-only measures (generate_measures.py --audit-json): not in the model, still held to the date-axis contract.
+AUDIT_MEASURES = {record["name"]: record["expression"]
+                  for record in json.loads((Path(__file__).with_name("audit_measures.json")).read_text(encoding="utf-8"))}
 PERIOD_VISUAL_ID = "5f5e832a845f69b11b99"
 RESET_BOOKMARK_ID = "e899bf3a9c2d243f33bf"
 CALENDAR_VISUAL_ID = "16643c36a5f294a63a18"
@@ -145,7 +148,7 @@ def validate_window_and_calendar_contract(tables, measures):
         source = tables[table]["calculatedPartitions"][0]["expression"]
         assert re.search(r'FORMAT\s*\([^,]+,\s*"dd-MM-yyyy"\s*\)', source, re.I), \
             ("date input must use DD-MM-YYYY", table)
-    validate_open_horizon_contract(measures)
+    validate_open_horizon_contract({**measures, **AUDIT_MEASURES})
     calendar = tables["Scenario Calendar"]
     columns = {column["name"]: column for column in calendar["columns"]}
     assert columns["Report Update Date"]["dataType"].lower() == "datetime"

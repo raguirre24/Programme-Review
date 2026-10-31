@@ -348,7 +348,6 @@ def validate_drillthrough_and_retirements(report: Path, objects: dict) -> int:
     } | {("XER Measures", "ShowDriven")}
     for table, measure in removed:
         assert measure not in objects[table][0], f"Removed measure still declared: {table}[{measure}]"
-    assert "Driven_DataDate" in objects["01 XER_TASK"][1], "Removing a report metric must not delete the source classification column"
     for col in (
         "SM Fail Missing Logic", "SM Fail Leads", "SM Fail Lags", "SM Fail Non FS",
         "SM Fail Out Of Sequence", "SM Fail Invalid Dates", "SM Fail Baseline Coverage",

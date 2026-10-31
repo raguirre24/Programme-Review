@@ -39,6 +39,8 @@ try {
         }
         $copied += [PSCustomObject]@{table=$table.Name;measures=$table.Measures.Count}
     }
+    . (Join-Path $PSScriptRoot 'FixtureAuditMeasures.ps1')
+    [void](Set-FixtureAuditMeasures $fixture.Model.Tables.Find('Resource Scenario Measures'))
     if ($copied.Count -ne 14) { throw 'Unexpected number of scenario source tables.' }
     $fixture.Model.RequestRefresh([Microsoft.AnalysisServices.Tabular.RefreshType]::Calculate)
     $fixture.Model.SaveChanges() | Out-Null

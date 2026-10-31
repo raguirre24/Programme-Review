@@ -43,13 +43,13 @@ def extract_measures(text):
 
 def validate_model(tables):
     measures = {m["name"]: m["expression"] for m in tables["Resource Scenario Measures"]["measures"]}
-    assert len(measures) == 66 and {n for n in measures if n.startswith("Comparison ")} == base.COMPARISON_MEASURES
+    assert len(measures) == 56 and {n for n in measures if n.startswith("Comparison ")} == base.COMPARISON_MEASURES
     import tempfile, generate_measures
     with tempfile.TemporaryDirectory() as tmp:
         generate_measures.generate(Path(tmp))
         generated = (Path(tmp) / "Resource Scenario Measures.tmdl").read_text(encoding="utf-8")
     original_measures = {n: e for n, e in extract_measures(generated).items() if n.startswith("Scenario ")}
-    assert len(original_measures) == 57, "Original single-calendar measure inventory changed."
+    assert len(original_measures) == 48, "Original single-calendar measure inventory changed."
     assert all(canonical(measures[n]) == canonical(e) for n, e in original_measures.items()), "Existing single-calendar expressions drifted from generator."
     expected_columns = {"ProjectKey", "clndr_id_key", "IsCsvSource", "Calendar Name", "MonthUpdate", "Report Update Date", "Calendar", "Inspection Calendar"}
     assert {c["name"] for c in tables[TABLE]["columns"]} == expected_columns
@@ -72,7 +72,7 @@ def validate_model(tables):
     assert canonical("[Comparison Finish Date]") in canonical(measures["Comparison Finish Date Display"])
     bounded = measures["Comparison Validation"]
     assert "[Scenario Finish Date]" not in bounded and "[Scenario Status]" not in bounded
-    summary = measures["Comparison Selection Summary"]
+    summary = base.AUDIT_MEASURES["Comparison Selection Summary"]  # fixture-only (audit_measures.json)
     assert "COUNTROWS('Scenario Comparison Calendar'),CROSSFILTER('01 XER_TASK'[UpdateDate],'CurrentDate'[UpdateDate],OneWay)" in canonical(summary)
     assert "[Inspection Calendar]" in summary and "[Calendar]" in summary
     identity = canonical(measures["Comparison Calendar Identity"])

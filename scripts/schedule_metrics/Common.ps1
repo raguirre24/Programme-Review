@@ -78,8 +78,20 @@ function Invoke-ScheduleMetricsDax {
     return ,$rows.ToArray()
 }
 
+function Get-ScheduleMetricsReferenceMeasures {
+    # Test-only baseline-coverage decomposition removed from the model (October 2026 trim). Detail tests define
+    # these in their queries to cross-check the report's consolidated SM Detail Value.
+    $path = Join-Path $PSScriptRoot 'detail_reference_measures.json'
+    $result = [ordered]@{}
+    foreach ($property in (Get-Content -Raw -LiteralPath $path | ConvertFrom-Json).PSObject.Properties) {
+        if ($property.Name -notlike '_*') { $result[$property.Name] = [string]$property.Value }
+    }
+    return $result
+}
+
 function Get-ScheduleMetricsDefinitions {
-    param($Model, $LiveModel, [hashtable]$Overrides = @{}, [switch]$IncludeUnloadedColumns)
+    param($Model, $LiveModel, [hashtable]$Overrides = @{}, [switch]$IncludeUnloadedColumns,
+        [System.Collections.IDictionary]$ReferenceMeasures)
     $lines = [Collections.Generic.List[string]]::new()
     $lines.Add('DEFINE')
     $blockedTokens = [Collections.Generic.List[string]]::new()
@@ -141,6 +153,14 @@ function Get-ScheduleMetricsDefinitions {
             $expression = if ($Overrides.ContainsKey($key)) { $Overrides[$key] } else { $measure.Expression }
             $escapedMeasure = $measure.Name.Replace(']', ']]')
             $lines.Add("MEASURE '$escapedTable'[$escapedMeasure] =`n$expression")
+        }
+    }
+    if ($ReferenceMeasures) {
+        foreach ($name in $ReferenceMeasures.Keys) {
+            if ($Model.Tables['Schedule Metric Detail'].Measures.Contains($name)) { throw "Reference measure '$name' is also a model measure." }
+            $key = "Schedule Metric Detail[$name]"
+            $expression = if ($Overrides.ContainsKey($key)) { $Overrides[$key] } else { $ReferenceMeasures[$name] }
+            $lines.Add("MEASURE 'Schedule Metric Detail'[$($name.Replace(']', ']]'))] =`n$expression")
         }
     }
     return ($lines -join "`n")

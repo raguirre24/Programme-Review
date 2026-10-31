@@ -9,14 +9,6 @@ table '11 XER_CALENDAR_DETAILED'
 
 		annotation SummarizationSetBy = Automatic
 
-	column clndr_type
-		dataType: string
-		lineageTag: 7d8e6a9b-c152-43d5-bab8-955853d7e702
-		summarizeBy: none
-		sourceColumn: clndr_type
-
-		annotation SummarizationSetBy = Automatic
-
 	column date
 		dataType: dateTime
 		formatString: dd/mm/yyyy
@@ -27,14 +19,6 @@ table '11 XER_CALENDAR_DETAILED'
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
-
-	column day_of_week
-		dataType: string
-		lineageTag: f58b577a-d085-40dc-a59c-ea8f309bc094
-		summarizeBy: none
-		sourceColumn: day_of_week
-
-		annotation SummarizationSetBy = Automatic
 
 	column working_day
 		dataType: string
@@ -113,17 +97,6 @@ table '11 XER_CALENDAR_DETAILED'
 
 		annotation SummarizationSetBy = Automatic
 
-	/// Days added at load to this source file's dated exceptions (date, day_of_week_num and day_of_week together): +1 when its exceptions were stored a day early, -1 a day late, 0 when aligned. Undated weekday rules are never moved.
-	column ExceptionDateShiftDays
-		dataType: int64
-		isHidden
-		formatString: 0
-		lineageTag: ec2eaa58-2fed-4d09-be7e-080ee6a760e5
-		summarizeBy: none
-		sourceColumn: ExceptionDateShiftDays
-
-		annotation SummarizationSetBy = Automatic
-
 	partition '11 XER_CALENDAR_DETAILED' = m
 		mode: import
 		queryGroup: XER
@@ -131,7 +104,8 @@ table '11 XER_CALENDAR_DETAILED'
 				let
 				    // Rules plus dated overrides, not a dense date table; preserve duplicates and unknown calendar values.
 				    Contract = Record.Field(XerCsvTableContracts, "11_XER_CALENDAR_DETAILED"),
-				    ModelColumns = List.Combine({Contract[Columns], {"ExceptionDateShiftDays", "IsCsvSource", "ProjectKey"}}),
+				    ContractModelColumns = Record.FieldOrDefault(Contract, "ModelColumns", Contract[Columns]),
+				    ModelColumns = List.Combine({ContractModelColumns, {"IsCsvSource", "ProjectKey"}}),
 				    // The Athena feed stores dated exceptions one day early (found 2026-10; tables 06/15 were calculated correctly upstream).
 				    // P6 stores an exception only for a date whose hours differ from its weekday rule, so per source file the SQL keeps the
 				    // alignment (as stored, a day later or a day earlier) that leaves the fewest exceptions repeating their weekday hours.
@@ -206,8 +180,8 @@ table '11 XER_CALENDAR_DETAILED'
 				    AthenaTyped = Table.TransformColumnTypes(NullBlanks, List.Combine({Contract[Types], {{"ExceptionDateShiftDays", Int64.Type}}}), "en-NZ"),
 				    AthenaAligned = fnXerCalendarApplyExceptionShift(AthenaTyped),
 				    AthenaWithProject = Table.AddColumn(AthenaAligned, "ProjectKey", each fnProjectIdentity([__ProjectCode]), type nullable text),
-				    AthenaFinal = Table.AddColumn(Table.SelectColumns(AthenaWithProject, List.Combine({Contract[Columns], {"ExceptionDateShiftDays", "ProjectKey"}})), "IsCsvSource", each false, type logical),
-				    Empty = Table.AddColumn(Table.AddColumn(Table.AddColumn(fnXerCsvEmptyTable("11_XER_CALENDAR_DETAILED"), "ExceptionDateShiftDays", each 0, Int64.Type), "IsCsvSource", each false, type logical), "ProjectKey", each null, type nullable text),
+				    AthenaFinal = Table.AddColumn(Table.SelectColumns(AthenaWithProject, List.Combine({ContractModelColumns, {"ProjectKey"}})), "IsCsvSource", each false, type logical),
+				    Empty = Table.AddColumn(Table.AddColumn(fnXerCsvEmptyTable("11_XER_CALENDAR_DETAILED"), "IsCsvSource", each false, type logical), "ProjectKey", each null, type nullable text),
 				    AthenaBranch = if XerCsvRouting[HasAthenaProjects] then AthenaFinal else Empty,
 				    Combined = if XerCsvRouting[IsActive] then Table.Combine({AthenaBranch, fnXerCsvLoadTable("11_XER_CALENDAR_DETAILED")}) else AthenaBranch,
 				    Final = Table.SelectColumns(Combined, ModelColumns, MissingField.Error)

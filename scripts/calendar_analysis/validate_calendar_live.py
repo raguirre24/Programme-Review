@@ -1,6 +1,6 @@
 """Read-only live checks of table 11 dated-exception alignment against the model open in Power BI Desktop.
 
-Run after refreshing the report so '11 XER_CALENDAR_DETAILED'[ExceptionDateShiftDays] exists:
+Run after refreshing the report (the alignment is applied at load; the shift itself is not loaded):
     python scripts/calendar_analysis/validate_calendar_live.py [--server localhost:<port>]
 
 Checks, per source file and per project update:
@@ -80,12 +80,12 @@ def main() -> int:
     rule_counts: collections.Counter = collections.Counter()
     exceptions: dict[str, dict[date, float]] = collections.defaultdict(dict)
     file_exceptions: dict[str, list[tuple[str, int, float]]] = collections.defaultdict(list)
-    shifts: dict[str, collections.Counter] = collections.defaultdict(collections.Counter)
+    source_files: set[str] = set()
     weekday_mismatches = []
     for row in calendar_rows:
         key, hours, weekday = row["key"], to_number(row["hours"]), to_number(row["weekday"])
         source_file = key.rsplit("::" if "::" in key else ".", 1)[0]
-        shifts[source_file][int(to_number(row["shift"]) or 0)] += 1
+        source_files.add(source_file)
         if not row["date"]:
             if row["type"] == "Standard" and hours is not None and weekday is not None:
                 rules[key][int(weekday)] = hours
@@ -140,8 +140,7 @@ def main() -> int:
     print(json.dumps({
         "status": status,
         "model": connection,
-        "source_files": len(shifts),
-        "exception_date_shift_by_file": {name: dict(counter) for name, counter in sorted(shifts.items())},
+        "source_files": len(source_files),
         "weekday_mismatches": len(weekday_mismatches),
         "files_still_voting_for_a_shift": still_shifted,
         "p6_reconciliation_rate_by_update": rates,

@@ -68,7 +68,7 @@ Storage added by the playground is independent of project or update counts excep
 - One shared date axis, plus two disconnected date-input projections: roughly 4,383 dates each.
 - Three bounded numeric-input tables: 300,003 rows in total across the whole model, independent of calendars.
 - Two calendar selectors (`Scenario Calendar` and `Scenario Comparison Calendar`) with one row per `ProjectKey`, scoped calendar key and source tuple.
-- Small option tables, one native axis field parameter, and a measure table (`Resource Scenario Measures`, 66 measures: 57 `Scenario *` + 9 `Comparison *`).
+- Small option tables, one native axis field parameter, and a measure table (`Resource Scenario Measures`, 56 measures: 48 `Scenario *` + 8 `Comparison *`). Ten fixture-only measures (daily hours/capacity/remaining, period/bucket/boundary/cumulative quantity, the two row predicates and `Comparison Selection Summary`) live in `scripts/resource_playground/audit_measures.json` and are added only to fixture databases.
 
 Both selectors have direct, one-way relationships from `Project_Dimension` and `CurrentDate`. They inherit the existing Project Access role through the project relationship. Their hidden Report Update Date is resolved from the existing Task source-to-UpdateDate mapping, not from the calendar's source date or a guessed month end. A compact grouping is built before source-key parsing, and calendars unused by tasks remain available when their source snapshot is mapped. Missing or conflicting mappings remain unresolved. Measures apply the selected project/key/source tuple to table 11 with `KEEPFILTERS` and `TREATAS`.
 
@@ -80,7 +80,7 @@ Invalid or duplicate weekday rules, unresolved undated markers and ambiguous cal
 
 ## Files and regeneration
 
-The 14 `Scenario ...` tables and the `Resource Scenario Measures` measure carrier (66 measures) are registered in the semantic model. Report page ID is `4c53a34bba9dcc7f3e8c` (now `Resources`, 58 visuals with the Histogram view; `Resource Calendars` with 50 visuals before the merge); reset bookmark ID is `e899bf3a9c2d243f33bf` (14 target visuals). Existing Resources visuals are unchanged.
+The 14 `Scenario ...` tables and the `Resource Scenario Measures` measure carrier (56 measures) are registered in the semantic model. Report page ID is `4c53a34bba9dcc7f3e8c` (now `Resources`, 58 visuals with the Histogram view; `Resource Calendars` with 50 visuals before the merge); reset bookmark ID is `e899bf3a9c2d243f33bf` (14 target visuals). Existing Resources visuals are unchanged.
 
 The source generators under `scripts/resource_playground/` are:
 
