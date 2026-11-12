@@ -22,8 +22,8 @@ flowchart TD
 
     subgraph Semantic Model Layer TMDL
         MExpr[M Query Expressions\nAthena routing + validated CSV loader]
-        Params[Nine required parameters\nportable source + project scope settings]
-        Tables[Star Schema Tables & Dimensions\n62 TMDL tables, 39 relationships]
+        Params[Ten required parameters\nportable source + project scope settings]
+        Tables[Star Schema Tables & Dimensions\n61 TMDL tables, 38 relationships]
         Measures[DAX Measure Tables\n`XER Measures`, `XER  Counts`, `XER Metrics`, etc.]
         RLS[Role-Based Security\n`Project Access` RLS]
     end
@@ -33,7 +33,7 @@ flowchart TD
         Pages[21 PBIR Report Pages\n11 visible + 10 drill-through]
         Bookmarks[38 Bookmarks JSON]
         Themes[JSON Theme Schemas\n`Contract_Theme.json`, `Target_Theme.json`]
-        Backgrounds[Background Canvas Images\n`Contract.png`, `Target.png`]
+        Backgrounds[Registered Resource Images\n`Contract.png`, `Target.png`]
     end
 
     subgraph Automation & Validation Scripts
@@ -230,7 +230,7 @@ flowchart TD
 
 ### D. Visual Theme & Canvas Background Subsystem
 - **Themes (`Themes/`)**: Contains custom theme JSON definitions (`Contract_Theme.json` and `Target_Theme.json`).
-- **Backgrounds (`Backgrounds/`)**: Canvas background graphics (`Contract.png`, `Target.png`).
+- **Backgrounds (`Project Review - Programme (datalake).Report/StaticResources/RegisteredResources/`)**: Canvas background graphics (`Contract.png`, `Target.png`) referenced via `RegisteredResources`.
 - **Theme Switcher Script (`scripts/switch_theme.js`)**:
   - Node.js script that parses all `page.json` files and injects the corresponding canvas background image (`Contract.png` or `Target.png`) with 0% transparency and `'Fill'` scaling.
   - Usage: `node scripts/switch_theme.js contract` or `node scripts/switch_theme.js target`.
@@ -256,7 +256,6 @@ Programme-Review/
 ├── ATHENA_PROGRAMME_SELECTION.md                       # Athena C/J family selection and baseline window rules
 ├── RESOURCE_PLAYGROUND.md                              # Resource Playground (Resources page, Simulator/Compare views) functional specification
 ├── SHAREPOINT_CSV_SETUP.md                             # SharePoint folders, credentials, refresh and rollback guide
-├── Backgrounds/                                        # Canvas background images (Contract.png, Target.png)
 ├── Themes/                                             # JSON theme definitions (Contract_Theme.json, Target_Theme.json)
 ├── scripts/                                            # Automation & verification scripts
 │   ├── analysis_page/                                  # Analysis page: Float/Duration/Constraint merge (merge_analysis_page.py) and static validator (validate_analysis_page.py)
@@ -283,7 +282,7 @@ Programme-Review/
 └── Project Review - Programme (datalake).Report/       # PBIR Report root
     ├── definition.pbir                                 # Report metadata pointing to SemanticModel
     ├── CustomVisuals/                                  # Custom visual packages (3 custom visuals; AppSource Deneb is registered in report.json publicCustomVisuals instead)
-    ├── StaticResources/                                # Embedded image resources
+    ├── StaticResources/                                # Embedded image & theme resources (RegisteredResources: Contract.png, Target.png, theme JSONs)
     └── definition/                                     # PBIR report definition folder
         ├── report.json                                 # Global report settings, theme bindings & publicCustomVisuals (Deneb)
         ├── version.json                                # PBIR format version
