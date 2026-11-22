@@ -13,8 +13,8 @@ table 'Dynamic Titles & Formatting'
 			        -- Else (a project is selected)
 			        IF(
 			            ISBLANK(SelectedMonth),
-			            "Selected Project: " & SelectedProject & " (No month selected)",
-			            "Selected Project: " & SelectedProject & " - " & FORMAT(SelectedMonth, "MMMM YYYY") // Applied formatting here
+			            SelectedProject & " (No month selected)",
+			            SelectedProject & " - " & FORMAT(SelectedMonth, "MMMM YYYY") // Applied formatting here
 			        )
 			    )
 		lineageTag: 11f7d509-f31a-45b5-b26e-94f5d33c1864

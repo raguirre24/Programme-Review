@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "ca24fltslic000000024",
   "position": {
-    "x": 1348,
-    "y": 82,
-    "z": 6000,
-    "height": 62,
-    "width": 428,
+    "x": 1426,
+    "y": 132,
+    "z": 8000,
+    "height": 52,
+    "width": 476,
     "tabOrder": 6000
   },
   "visual": {

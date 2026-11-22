@@ -4,9 +4,9 @@ This generator owns the layout, slicers, KPI strip, analytical visuals, legend, 
 and project-menu bookmark scoping for 'Cross-WBS Analysis':
   - Cleans the hidden Project Menu backdrop ('f7d730a81623609efa7f') and aligns the header UpdateDate dropdown
     ('20a217eb520400e1b9b8') while preserving its syncGroup and 'Update Has Visible Tasks' = 1L RLS filter.
-  - Builds the 4 titled filter-bar slicers (y = 86, h = 54): Link Scope, Successor Status, Successor Criticality,
+  - Builds the 4 titled filter-bar slicers (y = 132, h = 52): Link Scope, Successor Status, Successor Criticality,
     and Driving Relationship.
-  - Builds the 4 portfolio-safe KPI cards (y = 148, h = 70): Handoff Links & WBS Interfaces, Driving Links & Share,
+  - Builds the 4 portfolio-safe KPI cards (y = 192, h = 66): Handoff Links & WBS Interfaces, Driving Links & Share,
     Critical & Zero-Free-Float Handoffs, and Unique Predecessors & Unique Successors.
   - Builds the WBS Interface Summary table, Risk-Coloured WBS-to-WBS Matrix + Cell Colour Legend, Top 15 WBS Handoff
     Interfaces stacked bar chart, and Unified Handoff Link Inspector table.
@@ -80,14 +80,14 @@ UNTOUCHED_CHROME = [
     CLOSE_MENU_BTN,
 ]
 
-# Filter control strip (y = 86, h = 54)
+# Filter control strip (y = 132, h = 52)
 LINK_SCOPE_SLICER = "77166234f588ee948bbb"
 STATUS_SLICER = "cwbs14statslc0000014"
 CRITICALITY_SLICER = "cwbs15critslc0000015"
 DRIVING_SLICER = "c422a8a54e8d60088d24"
 SLICERS = [LINK_SCOPE_SLICER, STATUS_SLICER, CRITICALITY_SLICER, DRIVING_SLICER]
 
-# KPI banner (y = 148, h = 70)
+# KPI banner (y = 192, h = 66)
 KPIS = [
     "cwbs17kpi1lnk0000017",
     "cwbs18kpi2drv0000018",
@@ -366,7 +366,7 @@ def kpi_cards(template: dict) -> dict[str, dict]:
     specs = [
         (
             KPIS[0],
-            12,
+            18,
             [
                 ("CWBS KPI Handoff Links", "Handoff Links", True),
                 ("CWBS KPI Active Interfaces", "WBS Interfaces", True),
@@ -375,7 +375,7 @@ def kpi_cards(template: dict) -> dict[str, dict]:
         ),
         (
             KPIS[1],
-            456,
+            492,
             [
                 ("CWBS KPI Driving Links", "Driving Links", True),
                 ("CWBS KPI Driving Share", "Driving Share", False),
@@ -384,7 +384,7 @@ def kpi_cards(template: dict) -> dict[str, dict]:
         ),
         (
             KPIS[2],
-            900,
+            966,
             [
                 ("CWBS KPI Critical Handoffs", "Into Critical (TF ≤ 0)", True),
                 ("CWBS KPI Zero Free Float Links", "Zero Free Float (FF ≤ 0d)", True),
@@ -393,7 +393,7 @@ def kpi_cards(template: dict) -> dict[str, dict]:
         ),
         (
             KPIS[3],
-            1344,
+            1440,
             [
                 ("CWBS KPI Distinct Predecessors", "Unique Predecessors", True),
                 ("CWBS KPI Distinct Successors", "Unique Successors", True),
@@ -406,7 +406,7 @@ def kpi_cards(template: dict) -> dict[str, dict]:
         item = copy.deepcopy(template)
         item.pop("isHidden", None)
         item["name"] = name
-        item["position"] = {"x": x, "y": 148, "z": order * 1000, "height": 70, "width": 432, "tabOrder": order * 1000}
+        item["position"] = {"x": x, "y": 192, "z": order * 1000, "height": 66, "width": 462, "tabOrder": order * 1000}
         item["visual"]["query"]["queryState"]["Data"]["projections"] = [
             wbs_measure(m, label) for m, label, _ in metrics
         ]
@@ -425,7 +425,7 @@ def kpi_cards(template: dict) -> dict[str, dict]:
 
 
 def build_summary_table() -> dict:
-    item = container(SUMMARY_TABLE, "tableEx", 12, 226, 688, 370, 13)
+    item = container(SUMMARY_TABLE, "tableEx", 18, 266, 720, 350, 13)
     vis = item["visual"]
     cols = [
         (col_proj(PRED, "Predecessor_Level_2", "From WBS"), 150, "Left", False),
@@ -471,7 +471,7 @@ def build_summary_table() -> dict:
 
 
 def build_wbs_matrix() -> dict:
-    item = container(WBS_MATRIX, "pivotTable", 712, 226, 1064, 322, 14)
+    item = container(WBS_MATRIX, "pivotTable", 750, 266, 1152, 304, 14)
     vis = item["visual"]
     val_proj = wbs_measure("CWBS Matrix Link Count", "Links")
     vis["query"] = {
@@ -538,7 +538,7 @@ def build_wbs_matrix() -> dict:
 
 
 def build_matrix_legend() -> dict:
-    item = container(MATRIX_LEGEND, "textbox", 712, 554, 1064, 42, 15)
+    item = container(MATRIX_LEGEND, "textbox", 750, 574, 1152, 42, 15)
     runs = [
         {"value": "Cell colour:  ", "textStyle": {"fontWeight": "bold", "fontFamily": "Segoe UI", "fontSize": "10pt", "color": "#252525"}},
         {"value": "■", "textStyle": {"fontFamily": "Segoe UI", "fontSize": "14pt", "color": "#FFC7CE"}},
@@ -615,7 +615,7 @@ def top_interfaces_filter(filter_name: str) -> dict:
 
 
 def build_interfaces_bar() -> dict:
-    item = container(INTERFACES_BAR, "barChart", 12, 608, 580, 460, 16)
+    item = container(INTERFACES_BAR, "barChart", 18, 626, 620, 442, 16)
     vis = item["visual"]
     stack = [
         ("CWBS Interface Driving Links", "Driving links", "#C00000"),
@@ -659,7 +659,7 @@ def build_interfaces_bar() -> dict:
 
 
 def build_link_inspector() -> dict:
-    item = container(LINK_INSPECTOR, "tableEx", 604, 608, 1172, 460, 17)
+    item = container(LINK_INSPECTOR, "tableEx", 650, 626, 1252, 442, 17)
     vis = item["visual"]
     cols = [
         (col_proj(PRED, "predecessor_task_code", "Pred. ID"), 85, "Left"),
@@ -793,7 +793,7 @@ def build() -> dict[Path, dict | None]:
 
     # Align header UpdateDate dropdown while preserving its syncGroup and 'Update Has Visible Tasks' = 1L RLS filter
     update_slc = read(DEFINITION / page_dir / "visuals" / UPDATE_SLICER / "visual.json")
-    update_slc["position"] = {"x": 874.3, "y": 41.4, "z": 1000, "height": 42.9, "width": 170.0, "tabOrder": 1000}
+    update_slc["position"] = {"x": 874.3, "y": 39, "z": 1000, "height": 40, "width": 170.0, "tabOrder": 1000}
 
     kpi_template = read(DEFINITION / "pages" / CALENDAR_PAGE / "visuals" / "ca17kpi1cal000000017" / "visual.json")
 
@@ -806,10 +806,10 @@ def build() -> dict[Path, dict | None]:
             PRED,
             "Link_Type",
             "Link Scope",
-            12,
-            86,
-            396,
-            54,
+            18,
+            132,
+            420,
+            52,
             2,
             5,
             defaults=["Cross-WBS Link"],
@@ -821,10 +821,10 @@ def build() -> dict[Path, dict | None]:
             STATUS_FILTER_TABLE,
             "status_code",
             "Successor Status",
-            420,
-            86,
-            468,
-            54,
+            450,
+            132,
+            492,
+            52,
             3,
             6,
             defaults=["Not Started", "In Progress"],
@@ -836,10 +836,10 @@ def build() -> dict[Path, dict | None]:
             CRIT_FILTER_TABLE,
             "CriticalStatus",
             "Successor Criticality",
-            900,
-            86,
-            480,
-            54,
+            954,
+            132,
+            510,
+            52,
             3,
             7,
             defaults=None,
@@ -851,10 +851,10 @@ def build() -> dict[Path, dict | None]:
             PRED,
             "Is Driving Predecessor",
             "Driving Relationship",
-            1392,
-            86,
-            384,
-            54,
+            1476,
+            132,
+            426,
+            52,
             2,
             8,
             defaults=None,

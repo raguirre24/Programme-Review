@@ -162,9 +162,9 @@ def build() -> dict[Path, dict | None]:
 
     navigator = simulator[NAVIGATOR]
     if former_dir.exists():
-        # On the merge, move it to the header row right of the logo: its old spot overlaps the Histogram view's WBS slicer.
+        # On the merge, place it cleanly beneath the horizontal tab divider line.
         # Afterwards its position is the report author's, so a navigator moved in Desktop stays where it is.
-        navigator["position"].update({"x": 200, "y": 20, "width": 450, "height": 44})
+        navigator["position"].update({"x": 18, "y": 132, "width": 450, "height": 44})
     navigator["visual"]["objects"]["bookmarks"] = props(
         bookmarkGroup=string(VIEW_GROUP), allowDeselectionBookmark=expr("false"), selectedBookmark=string(HISTOGRAM_BOOKMARK))
     vco = navigator["visual"]["visualContainerObjects"]

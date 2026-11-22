@@ -2,157 +2,15 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "c055a0c255a725e96736",
   "position": {
-    "x": 12,
-    "y": 226,
+    "x": 18,
+    "y": 266,
     "z": 13000,
-    "height": 370,
-    "width": 688,
+    "height": 350,
+    "width": 720,
     "tabOrder": 13000
   },
   "visual": {
     "visualType": "tableEx",
-    "query": {
-      "queryState": {
-        "Values": {
-          "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "06 XER_PREDECESSOR"
-                    }
-                  },
-                  "Property": "Predecessor_Level_2"
-                }
-              },
-              "queryRef": "06 XER_PREDECESSOR.Predecessor_Level_2",
-              "nativeQueryRef": "From WBS",
-              "active": true,
-              "displayName": "From WBS"
-            },
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "06 XER_PREDECESSOR"
-                    }
-                  },
-                  "Property": "Successor_Level_2"
-                }
-              },
-              "queryRef": "06 XER_PREDECESSOR.Successor_Level_2",
-              "nativeQueryRef": "To WBS",
-              "active": true,
-              "displayName": "To WBS"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "WBS Measures"
-                    }
-                  },
-                  "Property": "CWBS Interface Links"
-                }
-              },
-              "queryRef": "WBS Measures.CWBS Interface Links",
-              "nativeQueryRef": "Links",
-              "active": true,
-              "displayName": "Links",
-              "format": "#,0"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "WBS Measures"
-                    }
-                  },
-                  "Property": "CWBS Interface Driving Links"
-                }
-              },
-              "queryRef": "WBS Measures.CWBS Interface Driving Links",
-              "nativeQueryRef": "Driving",
-              "active": true,
-              "displayName": "Driving",
-              "format": "#,0"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "WBS Measures"
-                    }
-                  },
-                  "Property": "CWBS Interface Driving Share"
-                }
-              },
-              "queryRef": "WBS Measures.CWBS Interface Driving Share",
-              "nativeQueryRef": "Driving %",
-              "active": true,
-              "displayName": "Driving %",
-              "format": "0.0%"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "WBS Measures"
-                    }
-                  },
-                  "Property": "CWBS Interface Critical Links"
-                }
-              },
-              "queryRef": "WBS Measures.CWBS Interface Critical Links",
-              "nativeQueryRef": "Critical (TF≤0)",
-              "active": true,
-              "displayName": "Critical (TF≤0)",
-              "format": "#,0"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "WBS Measures"
-                    }
-                  },
-                  "Property": "CWBS Interface Min Free Float"
-                }
-              },
-              "queryRef": "WBS Measures.CWBS Interface Min Free Float",
-              "nativeQueryRef": "Min FF (d)",
-              "active": true,
-              "displayName": "Min FF (d)",
-              "format": "#,0.0"
-            }
-          ]
-        }
-      },
-      "sortDefinition": {
-        "sort": [
-          {
-            "field": {
-              "Measure": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "WBS Measures"
-                  }
-                },
-                "Property": "CWBS Interface Links"
-              }
-            },
-            "direction": "Descending"
-          }
-        ]
-      }
-    },
     "objects": {
       "columnWidth": [
         {
@@ -656,6 +514,148 @@
         }
       ]
     },
-    "drillFilterOtherVisuals": true
+    "drillFilterOtherVisuals": true,
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "06 XER_PREDECESSOR"
+                    }
+                  },
+                  "Property": "Predecessor_Level_2"
+                }
+              },
+              "queryRef": "06 XER_PREDECESSOR.Predecessor_Level_2",
+              "nativeQueryRef": "From WBS",
+              "active": true,
+              "displayName": "From WBS"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "06 XER_PREDECESSOR"
+                    }
+                  },
+                  "Property": "Successor_Level_2"
+                }
+              },
+              "queryRef": "06 XER_PREDECESSOR.Successor_Level_2",
+              "nativeQueryRef": "To WBS",
+              "active": true,
+              "displayName": "To WBS"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Interface Links"
+                }
+              },
+              "queryRef": "WBS Measures.CWBS Interface Links",
+              "nativeQueryRef": "Links",
+              "active": true,
+              "displayName": "Links",
+              "format": "#,0"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Interface Driving Links"
+                }
+              },
+              "queryRef": "WBS Measures.CWBS Interface Driving Links",
+              "nativeQueryRef": "Driving",
+              "active": true,
+              "displayName": "Driving",
+              "format": "#,0"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Interface Driving Share"
+                }
+              },
+              "queryRef": "WBS Measures.CWBS Interface Driving Share",
+              "nativeQueryRef": "Driving %",
+              "active": true,
+              "displayName": "Driving %",
+              "format": "0.0%"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Interface Critical Links"
+                }
+              },
+              "queryRef": "WBS Measures.CWBS Interface Critical Links",
+              "nativeQueryRef": "Critical (TF≤0)",
+              "active": true,
+              "displayName": "Critical (TF≤0)",
+              "format": "#,0"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Interface Min Free Float"
+                }
+              },
+              "queryRef": "WBS Measures.CWBS Interface Min Free Float",
+              "nativeQueryRef": "Min FF (d)",
+              "active": true,
+              "displayName": "Min FF (d)",
+              "format": "#,0.0"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "WBS Measures"
+                  }
+                },
+                "Property": "CWBS Interface Links"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    }
   }
 }

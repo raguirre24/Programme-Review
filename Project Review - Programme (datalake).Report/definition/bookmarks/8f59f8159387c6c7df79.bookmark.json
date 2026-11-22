@@ -3,6 +3,7 @@
   "displayName": "Constraint",
   "name": "8f59f8159387c6c7df79",
   "options": {
+    "applyOnlyToTargetVisuals": true,
     "targetVisualNames": [
       "0f6740cb8070910e7441",
       "2c9a96d5ea55dd693008",
@@ -26,9 +27,8 @@
       "fc64d8be0e0201a8612b",
       "fd85806e21428c03cbe2"
     ],
-    "suppressData": true,
     "suppressActiveSection": true,
-    "applyOnlyToTargetVisuals": true
+    "suppressData": true
   },
   "explorationState": {
     "version": "1.0",
@@ -88,15 +88,6 @@
             "singleVisual": {
               "visualType": "cardVisual",
               "objects": {}
-            }
-          },
-          "84866ab77b4a247fc84b": {
-            "singleVisual": {
-              "visualType": "shape",
-              "objects": {},
-              "display": {
-                "mode": "hidden"
-              }
             }
           },
           "85d9a29b54cb54003334": {

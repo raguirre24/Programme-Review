@@ -77,12 +77,6 @@
           ]
         },
         "visualContainers": {
-          "03f461a9ad0401389b10": {
-            "singleVisual": {
-              "visualType": "shape",
-              "objects": {}
-            }
-          },
           "11241095742b19cae8d6": {
             "singleVisual": {
               "visualType": "shape",
@@ -1488,12 +1482,6 @@
               }
             }
           },
-          "9c07c8641100954388dd": {
-            "singleVisual": {
-              "visualType": "shape",
-              "objects": {}
-            }
-          },
           "a1a7438c410b77910b59": {
             "filters": {
               "byExpr": [
@@ -1840,12 +1828,6 @@
             },
             "singleVisual": {
               "visualType": "advancedSlicerVisual",
-              "objects": {}
-            }
-          },
-          "ee923a53f52cfd89a4ac": {
-            "singleVisual": {
-              "visualType": "shape",
               "objects": {}
             }
           },

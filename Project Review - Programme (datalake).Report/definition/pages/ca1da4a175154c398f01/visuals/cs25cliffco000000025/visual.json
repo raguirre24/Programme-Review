@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "cs25cliffco000000025",
   "position": {
-    "x": 644,
-    "y": 658,
-    "z": 16000,
-    "height": 62,
-    "width": 1132,
+    "x": 686,
+    "y": 674,
+    "z": 20000,
+    "height": 60,
+    "width": 1216,
     "tabOrder": 16000
   },
   "visual": {
@@ -116,5 +116,6 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  }
+  },
+  "isHidden": true
 }

@@ -476,7 +476,7 @@
           },
           "e4ac7038c18417cc04e2": {
             "singleVisual": {
-              "visualType": "pageNavigator",
+              "visualType": "shape",
               "objects": {},
               "display": {
                 "mode": "hidden"

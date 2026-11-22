@@ -123,12 +123,12 @@ def task_type_filter(name: str, values: list[str]) -> dict:
 
 
 def view_navigator() -> dict:
-    """Header buttons Float | Duration | Constraint, right of the logo; styled like the other pages' view buttons."""
+    """Sub-header buttons Float | Duration | Constraint, directly beneath the horizontal tab divider line."""
     theme_colour = lambda index: {"solid": {"color": {"expr": {"ThemeDataColor": {"ColorId": index, "Percent": 0}}}}}  # noqa: E731
     return {
         "$schema": SCHEMA + "visualContainer/2.13.0/schema.json",
         "name": NAVIGATOR,
-        "position": {"x": 200, "y": 20, "z": 22000, "height": 44, "width": 450, "tabOrder": 22000},
+        "position": {"x": 18, "y": 132, "z": 22000, "height": 44, "width": 450, "tabOrder": 22000},
         "visual": {
             "visualType": "bookmarkNavigator",
             "objects": {

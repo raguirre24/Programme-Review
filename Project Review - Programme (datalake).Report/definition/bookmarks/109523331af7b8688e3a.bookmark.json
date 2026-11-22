@@ -3,9 +3,7 @@
   "displayName": "Clear Filters",
   "name": "109523331af7b8688e3a",
   "options": {
-    "targetVisualNames": [
-      "e473b21d676622c41e5d"
-    ],
+    "targetVisualNames": [],
     "suppressActiveSection": true,
     "suppressDisplay": true
   },
@@ -419,7 +417,7 @@
                   "howCreated": 1
                 },
                 {
-                  "name": "04c2c549332ba367753c",
+                  "name": "018ed1efa686a43766bc",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -472,7 +470,7 @@
                                       [
                                         {
                                           "Literal": {
-                                            "Value": "datetime'2026-09-30T00:00:00'"
+                                            "Value": "datetime'2026-10-31T00:00:00'"
                                           }
                                         }
                                       ]
@@ -549,7 +547,7 @@
             "filters": {
               "byExpr": [
                 {
-                  "name": "63b1ea79d0798820b896",
+                  "name": "984621b2566eb753357d",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -564,7 +562,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "da33fd236d2dde552340",
+                  "name": "0ea75521b9b77154a3ef",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -579,7 +577,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "2e633a059ee363aa0d7a",
+                  "name": "b0f68a79504d643bf5d1",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -594,7 +592,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "88e9b167cd353dd57b0c",
+                  "name": "7466929be48062932a4e",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -609,7 +607,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "7346ed30517a90d3920a",
+                  "name": "02bca76bde51d00cb2d9",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -865,7 +863,7 @@
             "filters": {
               "byExpr": [
                 {
-                  "name": "75b8d7272bad0e9b0521",
+                  "name": "5499833bbf88914013da",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -880,7 +878,7 @@
                   "howCreated": 0
                 },
                 {
-                  "name": "0c0db37fcc480dc94a5a",
+                  "name": "a1a22988f6548fcb23d8",
                   "type": "Categorical",
                   "expression": {
                     "Column": {
@@ -957,7 +955,7 @@
               "expanded": {
                 "expr": {
                   "Literal": {
-                    "Value": "true"
+                    "Value": "false"
                   }
                 }
               },

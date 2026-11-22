@@ -2,9 +2,9 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "ca10menubg0000000010",
   "position": {
-    "x": 866.28078817733967,
-    "y": 0.32019704433495466,
-    "z": 30000,
+    "x": 988,
+    "y": 0.3,
+    "z": 32000,
     "height": 500,
     "width": 920,
     "tabOrder": 30000

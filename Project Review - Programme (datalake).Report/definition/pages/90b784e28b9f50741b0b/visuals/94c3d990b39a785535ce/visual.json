@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "94c3d990b39a785535ce",
   "position": {
-    "x": 624,
-    "y": 126,
-    "z": 4000,
+    "x": 640,
+    "y": 166,
+    "z": 6000,
     "height": 50,
-    "width": 244,
+    "width": 242,
     "tabOrder": 0
   },
   "visual": {
@@ -124,7 +124,7 @@
                           [
                             {
                               "Literal": {
-                                "Value": "datetime'2026-09-30T00:00:00'"
+                                "Value": "datetime'2026-10-31T00:00:00'"
                               }
                             }
                           ]

@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "cwbs25matxleg0000025",
   "position": {
-    "x": 712,
-    "y": 554,
+    "x": 750,
+    "y": 574,
     "z": 15000,
     "height": 42,
-    "width": 1064,
+    "width": 1152,
     "tabOrder": 15000
   },
   "visual": {

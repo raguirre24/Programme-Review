@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "cwbs18kpi2drv0000018",
   "position": {
-    "x": 456,
-    "y": 148,
+    "x": 492,
+    "y": 192,
     "z": 10000,
-    "height": 70,
-    "width": 432,
+    "height": 66,
+    "width": 462,
     "tabOrder": 10000
   },
   "visual": {

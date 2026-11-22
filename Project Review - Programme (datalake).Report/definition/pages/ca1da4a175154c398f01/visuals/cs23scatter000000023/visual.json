@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "cs23scatter000000023",
   "position": {
-    "x": 12,
-    "y": 658,
-    "z": 15000,
-    "height": 410,
-    "width": 620,
+    "x": 18,
+    "y": 674,
+    "z": 19000,
+    "height": 394,
+    "width": 656,
     "tabOrder": 15000
   },
   "visual": {
@@ -540,5 +540,6 @@
         "howCreated": "User"
       }
     ]
-  }
+  },
+  "isHidden": true
 }

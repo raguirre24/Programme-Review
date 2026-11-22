@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "ca20kpi4str000000020",
   "position": {
-    "x": 1344,
-    "y": 148,
-    "z": 15000,
-    "height": 70,
-    "width": 432,
+    "x": 1440,
+    "y": 192,
+    "z": 18000,
+    "height": 66,
+    "width": 462,
     "tabOrder": 15000
   },
   "visual": {
@@ -312,6 +312,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "isHidden": true
+  }
 }

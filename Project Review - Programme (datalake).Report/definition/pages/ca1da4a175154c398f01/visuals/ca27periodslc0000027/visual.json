@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "ca27periodslc0000027",
   "position": {
-    "x": 1514.9708448606086,
-    "y": 228.37880400085123,
-    "z": 19500,
-    "height": 29.63694403064482,
-    "width": 181.30836348159184,
+    "x": 1640,
+    "y": 268,
+    "z": 24000,
+    "height": 30,
+    "width": 182,
     "tabOrder": 19500
   },
   "visual": {
@@ -333,6 +333,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "isHidden": true
+  }
 }

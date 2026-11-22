@@ -171,17 +171,17 @@ def delayed_filter(name: str) -> dict:
 
 def kpi_cards(template: dict) -> dict[str, dict]:
     specs = [
-        (KPIS[0], 12, [("CS KPI Delayed Activities", "Delayed > 30 days"), ("CS KPI Severely Delayed Activities", "Delayed > 90 days")],
+        (KPIS[0], 18, [("CS KPI Delayed Activities", "Delayed > 30 days"), ("CS KPI Severely Delayed Activities", "Delayed > 90 days")],
          "Activities the calendar delays"),
-        (KPIS[1], 456, [("CS KPI Critical Delay Days", "Delay days on critical & near-critical")], "Calendar delay on critical work"),
-        (KPIS[2], 900, [("CS KPI Max Delay Days", "Largest calendar-driven delay (days)")], "Largest calendar-driven delay"),
-        (KPIS[3], 1344, [("CS KPI Worst Stretch Ratio", "Worst calendar vs working ratio")], "Worst calendar vs working ratio"),
+        (KPIS[1], 492, [("CS KPI Critical Delay Days", "Delay days on critical & near-critical")], "Calendar delay on critical work"),
+        (KPIS[2], 966, [("CS KPI Max Delay Days", "Largest calendar-driven delay (days)")], "Largest calendar-driven delay"),
+        (KPIS[3], 1440, [("CS KPI Worst Stretch Ratio", "Worst calendar vs working ratio")], "Worst calendar vs working ratio"),
     ]
     cards = {}
     for order, (name, x, measures, alt_text) in enumerate(specs, start=9):
         item = copy.deepcopy(template)
         item["name"] = name
-        item["position"] = {"x": x, "y": 148, "z": order * 1000, "height": 70, "width": 432, "tabOrder": order * 1000}
+        item["position"] = {"x": x, "y": 192, "z": order * 1000, "height": 66, "width": 462, "tabOrder": order * 1000}
         item["visual"]["query"]["queryState"]["Data"]["projections"] = [measure(m, label) for m, label in measures]
         item["visual"]["query"]["sortDefinition"]["sort"][0]["field"] = field(XER, measures[0][0], "Measure")
         if name != KPIS[3]:
@@ -196,7 +196,7 @@ def kpi_cards(template: dict) -> dict[str, dict]:
 
 
 def work_vs_wait_bars() -> dict:
-    item = container(BARS, "barChart", 12, 226, 620, 420, 13)
+    item = container(BARS, "barChart", 18, 266, 656, 398, 13)
     visual = item["visual"]
     stack = {
         "CA Activity Remaining Working Days": ("Working days", "#404040"),
@@ -231,7 +231,7 @@ def work_vs_wait_bars() -> dict:
 
 
 def deneb_timeline() -> dict:
-    item = container(TIMELINE, DENEB, 644, 226, 1132, 420, 14)
+    item = container(TIMELINE, DENEB, 686, 266, 1216, 398, 14)
     visual = item["visual"]
     visual["query"] = {"queryState": {"dataset": {"projections": [
         column(TASK, "task_code", "Activity"),
@@ -258,7 +258,7 @@ def deneb_timeline() -> dict:
 
 
 def outlier_scatter() -> dict:
-    item = container(SCATTER, "scatterChart", 12, 658, 620, 410, 15)
+    item = container(SCATTER, "scatterChart", 18, 674, 656, 394, 15)
     visual = item["visual"]
     visual["query"] = {"queryState": {
         "Category": {"projections": [column(TASK, "task_code", "Activity")]},
@@ -292,7 +292,7 @@ def outlier_scatter() -> dict:
 
 
 def cliff_callout() -> dict:
-    item = container(CALLOUT, "card", 644, 658, 1132, 62, 16)
+    item = container(CALLOUT, "card", 686, 674, 1216, 60, 16)
     visual = item["visual"]
     visual["query"] = {"queryState": {"Values": {"projections": [measure("CS Cliff Callout", "Cliff edge")]}}}
     visual["objects"] = {
@@ -307,7 +307,7 @@ def cliff_callout() -> dict:
 
 
 def cliff_chart() -> dict:
-    item = container(CLIFF, "lineChart", 644, 728, 1132, 340, 17)
+    item = container(CLIFF, "lineChart", 686, 742, 1216, 326, 17)
     visual = item["visual"]
     visual["query"] = {"queryState": {
         "Category": {"projections": [column("Scenario Date", "Date", "Possible start")]},
@@ -345,8 +345,8 @@ def cliff_chart() -> dict:
 
 
 def view_navigator() -> dict:
-    """Header buttons 'Calendars' | 'Delay' (bookmark group VIEW_GROUP), in the free space right of the logo."""
-    item = container(NAVIGATOR, "bookmarkNavigator", 200, 20, 320, 44, 24)
+    """Header buttons 'Calendars' | 'Delay' (bookmark group VIEW_GROUP), placed cleanly in the sub-header control bar."""
+    item = container(NAVIGATOR, "bookmarkNavigator", 18, 132, 320, 52, 24)
     item["visual"]["objects"] = {
         "bookmarks": props(bookmarkGroup=string(VIEW_GROUP), allowDeselectionBookmark=expr("false"),
                            selectedBookmark=string(CALENDARS_BOOKMARK)),

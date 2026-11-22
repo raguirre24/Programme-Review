@@ -2,9 +2,9 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "ca13closebt000000013",
   "position": {
-    "x": 1686.2807881773392,
-    "y": 10.320197044334954,
-    "z": 33000,
+    "x": 1808,
+    "y": 10.3,
+    "z": 35000,
     "height": 32,
     "width": 80,
     "tabOrder": 33000

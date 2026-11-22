@@ -3,6 +3,7 @@
   "displayName": "Duration",
   "name": "2e9174319be7b5f95c47",
   "options": {
+    "applyOnlyToTargetVisuals": true,
     "targetVisualNames": [
       "0f6740cb8070910e7441",
       "2c9a96d5ea55dd693008",
@@ -26,9 +27,8 @@
       "fc64d8be0e0201a8612b",
       "fd85806e21428c03cbe2"
     ],
-    "suppressData": true,
     "suppressActiveSection": true,
-    "applyOnlyToTargetVisuals": true
+    "suppressData": true
   },
   "explorationState": {
     "version": "1.0",
@@ -99,15 +99,6 @@
           "7e92ee6a3b8c6b1c0b4d": {
             "singleVisual": {
               "visualType": "cardVisual",
-              "objects": {},
-              "display": {
-                "mode": "hidden"
-              }
-            }
-          },
-          "84866ab77b4a247fc84b": {
-            "singleVisual": {
-              "visualType": "shape",
               "objects": {},
               "display": {
                 "mode": "hidden"

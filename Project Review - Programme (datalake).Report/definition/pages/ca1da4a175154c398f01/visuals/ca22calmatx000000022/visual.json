@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "ca22calmatx000000022",
   "position": {
-    "x": 699.60591133004925,
-    "y": 226.10837438423644,
-    "z": 19000,
-    "height": 327.192118226601,
-    "width": 1076.0098522167486,
+    "x": 740,
+    "y": 266,
+    "z": 23000,
+    "height": 308,
+    "width": 1162,
     "tabOrder": 19000
   },
   "visual": {
@@ -1789,6 +1789,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "isHidden": true
+  }
 }

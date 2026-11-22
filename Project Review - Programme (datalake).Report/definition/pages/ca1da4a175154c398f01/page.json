@@ -454,21 +454,6 @@
     },
     {
       "source": "cs26cliffch000000026",
-      "target": "ca04selttl0000000004",
-      "type": "NoFilter"
-    },
-    {
-      "source": "cs26cliffch000000026",
-      "target": "ca05ddttl00000000005",
-      "type": "NoFilter"
-    },
-    {
-      "source": "cs26cliffch000000026",
-      "target": "ca06selfil0000000006",
-      "type": "NoFilter"
-    },
-    {
-      "source": "cs26cliffch000000026",
       "target": "ca07openbtn000000007",
       "type": "NoFilter"
     },

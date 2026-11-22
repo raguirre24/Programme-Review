@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "ca23actinsp000000023",
   "position": {
-    "x": 12,
-    "y": 604,
-    "z": 24000,
-    "height": 464,
-    "width": 1764,
+    "x": 18,
+    "y": 624,
+    "z": 29000,
+    "height": 444,
+    "width": 1884,
     "tabOrder": 24000
   },
   "visual": {
@@ -1051,6 +1051,5 @@
         "type": "Advanced"
       }
     ]
-  },
-  "isHidden": true
+  }
 }

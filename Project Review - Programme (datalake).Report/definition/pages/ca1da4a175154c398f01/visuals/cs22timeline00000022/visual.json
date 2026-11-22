@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "cs22timeline00000022",
   "position": {
-    "x": 644,
-    "y": 226,
-    "z": 14000,
-    "height": 420,
-    "width": 1132,
+    "x": 686,
+    "y": 266,
+    "z": 17000,
+    "height": 398,
+    "width": 1216,
     "tabOrder": 14000
   },
   "visual": {
@@ -211,67 +211,6 @@
               "expr": {
                 "Literal": {
                   "Value": "'simple'"
-                }
-              }
-            },
-            "version": {
-              "expr": {
-                "Literal": {
-                  "Value": "'6.4.3'"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "stateManagement": [
-        {
-          "properties": {
-            "viewportHeight": {
-              "expr": {
-                "Literal": {
-                  "Value": "373D"
-                }
-              }
-            },
-            "viewportWidth": {
-              "expr": {
-                "Literal": {
-                  "Value": "1122D"
-                }
-              }
-            },
-            "supportFieldConfiguration": {
-              "expr": {
-                "Literal": {
-                  "Value": "'{\"Activity\":{\"highlight\":false,\"highlightStatus\":false,\"highlightComparator\":false,\"format\":false,\"formatted\":false,\"names\":false},\"Name\":{\"highlight\":false,\"highlightStatus\":false,\"highlightComparator\":false,\"format\":true,\"formatted\":true,\"names\":false},\"Calendar\":{\"highlight\":false,\"highlightStatus\":false,\"highlightComparator\":false,\"format\":true,\"formatted\":true,\"names\":false},\"Delay Days\":{\"highlight\":false,\"highlightStatus\":false,\"highlightComparator\":false,\"format\":true,\"formatted\":true,\"names\":false},\"Stretch Ratio\":{\"highlight\":false,\"highlightStatus\":false,\"highlightComparator\":false,\"format\":true,\"formatted\":true,\"names\":false},\"Timeline Dates\":{\"highlight\":false,\"highlightStatus\":false,\"highlightComparator\":false,\"format\":true,\"formatted\":true,\"names\":false},\"Shutdown Bands\":{\"highlight\":false,\"highlightStatus\":false,\"highlightComparator\":false,\"format\":true,\"formatted\":true,\"names\":false},\"Total Float\":{\"highlight\":false,\"highlightStatus\":false,\"highlightComparator\":false,\"format\":true,\"formatted\":true,\"names\":false}}'"
-                }
-              }
-            },
-            "denebMetaVersion": {
-              "expr": {
-                "Literal": {
-                  "Value": "'2'"
-                }
-              }
-            },
-            "consolidateFieldParameters": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "developer": [
-        {
-          "properties": {
-            "version": {
-              "expr": {
-                "Literal": {
-                  "Value": "'2.0.1.0'"
                 }
               }
             }
@@ -554,5 +493,6 @@
         "howCreated": "User"
       }
     ]
-  }
+  },
+  "isHidden": true
 }

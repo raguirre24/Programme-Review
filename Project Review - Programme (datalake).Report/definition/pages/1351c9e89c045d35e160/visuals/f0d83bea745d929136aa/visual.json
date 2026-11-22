@@ -1,12 +1,12 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "f0d83bea745d929136aa",
   "position": {
-    "x": 5.4429482636428066,
-    "y": 163.2884479092842,
-    "z": 5000,
-    "height": 376.92416725726434,
-    "width": 1768.9581856839122,
+    "x": 18,
+    "y": 188,
+    "z": 6000,
+    "height": 364,
+    "width": 1884,
     "tabOrder": 4000
   },
   "visual": {
@@ -392,6 +392,7 @@
             "queryRefs": [
               "Project_Dimension.Project"
             ],
+            "isCollapsed": true,
             "identityKeys": [
               {
                 "Column": {
@@ -492,7 +493,6 @@
                           }
                         }
                       ],
-                      "isToggled": true,
                       "children": [
                         {
                           "identityValues": [
@@ -541,252 +541,22 @@
                   ]
                 }
               ]
+            },
+            {
+              "identityValues": [
+                {
+                  "Literal": {
+                    "Value": "'Northland Corridor - WARKWORTH TO TE HANA (W2TH)'"
+                  }
+                }
+              ],
+              "isToggled": true
             }
           ]
         }
       }
     ],
     "objects": {
-      "columnWidth": [
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "80.78990416136685D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "XER  Counts.Count_Critical_Tasks"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "106.16756472018368D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "Activity Completion.Activities Planned Previous Date"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "108.0679432327328D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "Activity Completion.Activities Achieved Previous Date"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "93.76367698205618D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "Activity Completion.Completion Score Previous Date"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "84.58546458484899D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "XER  Counts.Count_NearCritical_Tasks"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "76.96118668979304D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "XER  Counts.PreviousMonth_FinishVariance_Ahead_TT_Task"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "90.99999424196417D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "XER  Counts.PreviousMonth_FinishVariance_<1_Month_TT_Task"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "95D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "XER  Counts.PreviousMonth_FinishVariance_<3_Month_TT_Task"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "91.66668730655633D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "XER  Counts.PreviousMonth_FinishVariance_<6_Month_TT_Task"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "92.66665994607644D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "XER  Counts.PreviousMonth_FinishVariance_>6_Month_TT_Task"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "97.90765653077513D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "Activity Completion.Average_Finish_Variance_PNC"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "100.33333280351425D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "XER  Counts.Count_Remaining_Tasks"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "83D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "XER S-Curve.Percentage_Actual_Finish"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "82.66666807951735D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "XER S-Curve.Percentage_Baseline_Finish"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "82D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "XER  Counts.Count_Tasks"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "284.61845228231346D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "Project_Dimension.Project"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "98D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "Sum(01 XER_TASK.free_float)"
-          }
-        }
-      ],
       "values": [
         {
           "properties": {
@@ -895,6 +665,13 @@
                   "Value": "'Auto'"
                 }
               }
+            },
+            "unfrozen": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
             }
           }
         }
@@ -973,7 +750,7 @@
             "defaultColumnWidth": {
               "expr": {
                 "Literal": {
-                  "Value": "90D"
+                  "Value": "100D"
                 }
               }
             }
@@ -1474,6 +1251,22 @@
                 }
               }
             }
+          }
+        }
+      ],
+      "columnWidth": [
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "265D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Project_Dimension.Project"
           }
         }
       ]

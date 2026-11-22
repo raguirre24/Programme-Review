@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "cs26cliffch000000026",
   "position": {
-    "x": 644,
-    "y": 728,
-    "z": 17000,
-    "height": 340,
-    "width": 1132,
+    "x": 686,
+    "y": 742,
+    "z": 22000,
+    "height": 326,
+    "width": 1216,
     "tabOrder": 17000
   },
   "visual": {
@@ -252,18 +252,6 @@
                   "Value": "'Name'"
                 }
               }
-            },
-            "dataLabelColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "ThemeDataColor": {
-                      "ColorId": 1,
-                      "Percent": 0
-                    }
-                  }
-                }
-              }
             }
           },
           "selector": {
@@ -402,18 +390,6 @@
                   "Value": "'Name'"
                 }
               }
-            },
-            "dataLabelColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "ThemeDataColor": {
-                      "ColorId": 1,
-                      "Percent": 0
-                    }
-                  }
-                }
-              }
             }
           },
           "selector": {
@@ -548,50 +524,5 @@
     },
     "drillFilterOtherVisuals": true
   },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "e1382d96ee9706e335a9",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Scenario Date"
-              }
-            },
-            "Property": "Date"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "04974d893094c9045738",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Measures"
-              }
-            },
-            "Property": "CS Cliff Finish Shift Days"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "2d65c8a9880c93d5037d",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "XER Measures"
-              }
-            },
-            "Property": "CS Cliff Finish Date"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
-  }
+  "isHidden": true
 }

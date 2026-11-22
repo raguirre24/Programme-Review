@@ -188,12 +188,6 @@
               "objects": {}
             }
           },
-          "18df5c9aaf87b7df7e60": {
-            "singleVisual": {
-              "visualType": "shape",
-              "objects": {}
-            }
-          },
           "1b0199ca6ac8d14eab79": {
             "singleVisual": {
               "visualType": "shape",
@@ -1012,7 +1006,7 @@
           },
           "a80bca4d98e425e7069c": {
             "singleVisual": {
-              "visualType": "pageNavigator",
+              "visualType": "shape",
               "objects": {}
             }
           },
