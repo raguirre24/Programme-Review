@@ -10821,7 +10821,7 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "Rel. Type": {
+			          "Rel.": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -12875,6 +12875,16 @@ cultureInfo en-NZ
 			            },
 			            "Weight": 0.727
 			          }
+			        },
+			        {
+			          "Succ. ID": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
 			        }
 			      ]
 			    },
@@ -14265,16 +14275,6 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.609
-			          }
-			        },
-			        {
-			          "Successor": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -16107,6 +16107,16 @@ cultureInfo en-NZ
 			        },
 			        {
 			          "Predecessor ID": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        },
+			        {
+			          "Pred. ID": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -19405,7 +19415,7 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "WBS": {
+			          "Successor WBS": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -19415,7 +19425,7 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "Successor": {
+			          "To WBS": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -19518,7 +19528,7 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "WBS": {
+			          "Predecessor WBS": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -19528,7 +19538,7 @@ cultureInfo en-NZ
 			          }
 			        },
 			        {
-			          "Predecessor": {
+			          "From WBS": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -19807,6 +19817,16 @@ cultureInfo en-NZ
 			            },
 			            "Weight": 0.491
 			          }
+			        },
+			        {
+			          "WBS Interface": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
 			        }
 			      ]
 			    },
@@ -19929,135 +19949,6 @@ cultureInfo en-NZ
 			        },
 			        {
 			          "wallet": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.491
-			          }
-			        }
-			      ]
-			    },
-			    "entity_06_xer_predecessor.critical_link": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "06 XER_PREDECESSOR",
-			          "ConceptualProperty": "CriticalLink"
-			        }
-			      },
-			      "State": "Generated",
-			      "Terms": [
-			        {
-			          "critical link": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "CriticalLink": {
-			            "Type": "Noun",
-			            "State": "Generated",
-			            "Weight": 0.99
-			          }
-			        },
-			        {
-			          "link": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "critical connection": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.5
-			          }
-			        },
-			        {
-			          "critical relation": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.5
-			          }
-			        },
-			        {
-			          "critical association": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.5
-			          }
-			        },
-			        {
-			          "critical relationship": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.5
-			          }
-			        },
-			        {
-			          "critical linkage": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.5
-			          }
-			        },
-			        {
-			          "critical nexus": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.5
-			          }
-			        },
-			        {
-			          "connection": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.491
-			          }
-			        },
-			        {
-			          "relation": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.491
-			          }
-			        },
-			        {
-			          "association": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.491
-			          }
-			        },
-			        {
-			          "relationship": {
 			            "Type": "Noun",
 			            "State": "Suggested",
 			            "Source": {
@@ -21321,16 +21212,6 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.727
-			          }
-			        },
-			        {
-			          "Driving Predecessors": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -26839,177 +26720,6 @@ cultureInfo en-NZ
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.739
-			          }
-			        }
-			      ]
-			    },
-			    "entity_06_xer_predecessor.predecessor_Total_float": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "06 XER_PREDECESSOR",
-			          "ConceptualProperty": "predecessor_Total Float"
-			        }
-			      },
-			      "State": "Generated",
-			      "Terms": [
-			        {
-			          "predecessor_Total float": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "Total Float": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
-			        }
-			      ]
-			    },
-			    "entity_06_xer_predecessor.pred_task_code_and_name": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "06 XER_PREDECESSOR",
-			          "ConceptualProperty": "PredTaskCodeAndName"
-			        }
-			      },
-			      "State": "Generated",
-			      "Terms": [
-			        {
-			          "pred task code and name": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "PredTaskCodeAndName": {
-			            "Type": "Noun",
-			            "State": "Generated",
-			            "Weight": 0.99
-			          }
-			        },
-			        {
-			          "pred task code": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "pred task code name": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
-			          "pred task id": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.762
-			          }
-			        },
-			        {
-			          "pred task code and nickname": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.757
-			          }
-			        },
-			        {
-			          "pred task code and title": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.757
-			          }
-			        },
-			        {
-			          "pred task code and label": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.757
-			          }
-			        },
-			        {
-			          "pred task code and tag": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.757
-			          }
-			        },
-			        {
-			          "pred task code nickname": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.748
-			          }
-			        },
-			        {
-			          "pred task code title": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.748
-			          }
-			        },
-			        {
-			          "pred task code label": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.748
-			          }
-			        },
-			        {
-			          "pred task code tag": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.748
-			          }
-			        },
-			        {
-			          "pred task key": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.739
-			          }
-			        },
-			        {
-			          "Predecessor": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -51280,6 +50990,581 @@ cultureInfo en-NZ
 			          }
 			        }
 			      ]
+			    },
+			    "wbs_measures.cwbs_link_predecessor_name": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "WBS Measures",
+			          "ConceptualProperty": "CWBS Link Predecessor Name"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Predecessor Name": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "wbs_measures.cwbs_link_predecessor_wbs": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "WBS Measures",
+			          "ConceptualProperty": "CWBS Link Predecessor WBS"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "From WBS": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "wbs_measures.cwbs_link_successor_name": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "WBS Measures",
+			          "ConceptualProperty": "CWBS Link Successor Name"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Successor Name": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "wbs_measures.cwbs_link_successor_wbs": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "WBS Measures",
+			          "ConceptualProperty": "CWBS Link Successor WBS"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "To WBS": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "wbs_measures.cwbs_link_lag_days": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "WBS Measures",
+			          "ConceptualProperty": "CWBS Link Lag Days"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Lag (d)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "wbs_measures.cwbs_link_predecessor_finish": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "WBS Measures",
+			          "ConceptualProperty": "CWBS Link Predecessor Finish"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Pred. Finish": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "wbs_measures.cwbs_link_successor_start": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "WBS Measures",
+			          "ConceptualProperty": "CWBS Link Successor Start"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Succ. Start": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "wbs_measures.cwbs_link_free_float_days": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "WBS Measures",
+			          "ConceptualProperty": "CWBS Link Free Float Days"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Free Float (d)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "wbs_measures.cwbs_link_successor_total_float": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "WBS Measures",
+			          "ConceptualProperty": "CWBS Link Successor Total Float"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Succ. TF (d)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "wbs_measures.cwbs_link_driving_status": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "WBS Measures",
+			          "ConceptualProperty": "CWBS Link Driving Status"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Driving": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "wbs_measures.cwbs_matrix_link_count": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "WBS Measures",
+			          "ConceptualProperty": "CWBS Matrix Link Count"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Links": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "wbs_measures.cwbs_interface_driving_links": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "WBS Measures",
+			          "ConceptualProperty": "CWBS Interface Driving Links"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Driving links": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        },
+			        {
+			          "Driving": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "wbs_measures.cwbs_interface_nondriving_links": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "WBS Measures",
+			          "ConceptualProperty": "CWBS Interface Non-Driving Links"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Non-driving links": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "wbs_measures.cwbs_interface_links": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "WBS Measures",
+			          "ConceptualProperty": "CWBS Interface Links"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Total links": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        },
+			        {
+			          "Links": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "wbs_measures.cwbs_interface_driving_share": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "WBS Measures",
+			          "ConceptualProperty": "CWBS Interface Driving Share"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Driving share": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        },
+			        {
+			          "Driving %": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "wbs_measures.cwbs_interface_critical_links": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "WBS Measures",
+			          "ConceptualProperty": "CWBS Interface Critical Links"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Into Critical (TF ≤ 0)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        },
+			        {
+			          "Critical (TF≤0)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "wbs_measures.cwbs_interface_min_free_float": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "WBS Measures",
+			          "ConceptualProperty": "CWBS Interface Min Free Float"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Min Free Float (days)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        },
+			        {
+			          "Min FF (d)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "wbs_measures.cwbs_kpi_handoff_links": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "WBS Measures",
+			          "ConceptualProperty": "CWBS KPI Handoff Links"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Handoff Links": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "wbs_measures.cwbs_kpi_active_interfaces": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "WBS Measures",
+			          "ConceptualProperty": "CWBS KPI Active Interfaces"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "WBS Interfaces": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "wbs_measures.cwbs_kpi_driving_links": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "WBS Measures",
+			          "ConceptualProperty": "CWBS KPI Driving Links"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Driving Links": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "wbs_measures.cwbs_kpi_driving_share": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "WBS Measures",
+			          "ConceptualProperty": "CWBS KPI Driving Share"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Driving Share": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "wbs_measures.cwbs_kpi_critical_handoffs": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "WBS Measures",
+			          "ConceptualProperty": "CWBS KPI Critical Handoffs"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Into Critical (TF ≤ 0)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "wbs_measures.cwbs_kpi_zero_free_float_links": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "WBS Measures",
+			          "ConceptualProperty": "CWBS KPI Zero Free Float Links"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Zero Free Float (FF ≤ 0d)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "wbs_measures.cwbs_kpi_distinct_predecessors": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "WBS Measures",
+			          "ConceptualProperty": "CWBS KPI Distinct Predecessors"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Unique Predecessors": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "wbs_measures.cwbs_kpi_distinct_successors": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "WBS Measures",
+			          "ConceptualProperty": "CWBS KPI Distinct Successors"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Unique Successors": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
 			    }
 			  },
 			  "Relationships": {
@@ -56080,72 +56365,6 @@ cultureInfo en-NZ
 			        }
 			      ]
 			    },
-			    "entity_06_xer_predecessor_has_pred_task_code_and_name": {
-			      "Binding": {
-			        "ConceptualEntity": "06 XER_PREDECESSOR"
-			      },
-			      "State": "Generated",
-			      "Roles": {
-			        "entity_06_xer_predecessor": {
-			          "Target": {
-			            "Entity": "entity_06_xer_predecessor"
-			          }
-			        },
-			        "entity_06_xer_predecessor.pred_task_code_and_name": {
-			          "Target": {
-			            "Entity": "entity_06_xer_predecessor.pred_task_code_and_name"
-			          }
-			        }
-			      },
-			      "Phrasings": [
-			        {
-			          "Attribute": {
-			            "Subject": {
-			              "Role": "entity_06_xer_predecessor"
-			            },
-			            "Object": {
-			              "Role": "entity_06_xer_predecessor.pred_task_code_and_name"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "Phrasing06_xer_predecessors_have_pred_task_code_and_names"
-			        }
-			      ]
-			    },
-			    "entity_06_xer_predecessor_has_predecessor_Total_float": {
-			      "Binding": {
-			        "ConceptualEntity": "06 XER_PREDECESSOR"
-			      },
-			      "State": "Generated",
-			      "Roles": {
-			        "entity_06_xer_predecessor": {
-			          "Target": {
-			            "Entity": "entity_06_xer_predecessor"
-			          }
-			        },
-			        "entity_06_xer_predecessor.predecessor_Total_float": {
-			          "Target": {
-			            "Entity": "entity_06_xer_predecessor.predecessor_Total_float"
-			          }
-			        }
-			      },
-			      "Phrasings": [
-			        {
-			          "Attribute": {
-			            "Subject": {
-			              "Role": "entity_06_xer_predecessor"
-			            },
-			            "Object": {
-			              "Role": "entity_06_xer_predecessor.predecessor_Total_float"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "Phrasing06_xer_predecessors_have_predecessor_Total_floats"
-			        }
-			      ]
-			    },
 			    "entity_07_xer_actvtype_has_actv_code_type": {
 			      "Binding": {
 			        "ConceptualEntity": "07 XER_ACTVTYPE"
@@ -58413,39 +58632,6 @@ cultureInfo en-NZ
 			          "State": "Generated",
 			          "Weight": 0.99,
 			          "ID": "Phrasing06_xer_predecessors_have_count_of_links"
-			        }
-			      ]
-			    },
-			    "entity_06_xer_predecessor_has_critical_link": {
-			      "Binding": {
-			        "ConceptualEntity": "06 XER_PREDECESSOR"
-			      },
-			      "State": "Generated",
-			      "Roles": {
-			        "entity_06_xer_predecessor": {
-			          "Target": {
-			            "Entity": "entity_06_xer_predecessor"
-			          }
-			        },
-			        "entity_06_xer_predecessor.critical_link": {
-			          "Target": {
-			            "Entity": "entity_06_xer_predecessor.critical_link"
-			          }
-			        }
-			      },
-			      "Phrasings": [
-			        {
-			          "Attribute": {
-			            "Subject": {
-			              "Role": "entity_06_xer_predecessor"
-			            },
-			            "Object": {
-			              "Role": "entity_06_xer_predecessor.critical_link"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "Phrasing06_xer_predecessors_have_critical_links"
 			        }
 			      ]
 			    },

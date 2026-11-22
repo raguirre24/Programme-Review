@@ -1,22 +1,26 @@
 table 'WBS Measures'
 	lineageTag: 075ff10b-d681-4a2b-ac84-012ad91336ac
 
-	measure 'Count of Links' = COUNTROWS('06 XER_PREDECESSOR')
-		formatString: 0
+	/// Total relationship rows in '06 XER_PREDECESSOR' within the active filter context.
+	measure 'Count of Links' = COUNTROWS ( '06 XER_PREDECESSOR' )
+		formatString: #,0
+		displayFolder: Cross-WBS Analysis
 		lineageTag: bfc5265a-b677-4d74-992c-eb2634fd4d71
 
-	measure 'Driving Ratio' = [Driving Predecessor Count]/[Count of Links]
+	/// Share of scoped relationships that are driving predecessors, safely handling zero-link contexts.
+	measure 'Driving Ratio' = DIVIDE ( [Driving Predecessor Count], [Count of Links] )
+		formatString: 0.0%
+		displayFolder: Cross-WBS Analysis
 		lineageTag: 8fd80d7f-4c69-4aa0-9c5c-c40fd6e7b561
 
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
+	/// Count of relationships where '06 XER_PREDECESSOR'[Is Driving Predecessor] is "Driving" (minimum incoming relationship free float on the successor).
 	measure 'Driving Predecessor Count' =
-			
-			CALCULATE(
-			    COUNTROWS('06 XER_PREDECESSOR'),
-			    '06 XER_PREDECESSOR'[Is Driving Predecessor] = "Driving"
+			CALCULATE (
+			    COUNTROWS ( '06 XER_PREDECESSOR' ),
+			    KEEPFILTERS ( '06 XER_PREDECESSOR'[Is Driving Predecessor] = "Driving" )
 			)
-		formatString: 0
+		formatString: #,0
+		displayFolder: Cross-WBS Analysis
 		lineageTag: 346fe8a4-8ee0-4167-9205-2c38167026f6
 
 	/// Predecessor activity name for each row of the Programme page's Predecessors table, looked up through the
@@ -32,6 +36,506 @@ table 'WBS Measures'
 			    )
 			)
 		lineageTag: cee379c4-2f10-4d6a-b06f-e78941544b91
+
+	/// TRUE when exactly one project and one report update are in context; guards WBS-chapter visuals and activity link rows against cross-project name collisions.
+	measure 'CWBS Scope Ready' = HASONEVALUE ( Project_Dimension[ProjectKey] ) && HASONEVALUE ( CurrentDate[UpdateDate] )
+		isHidden
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00001-5b11-4c22-8d33-000000000001
+
+	/// Subtitle showing the active snapshot and Data Date when one project is selected, or prompting the user to select one project.
+	measure 'CWBS Scope Prompt' =
+			IF (
+			    [CWBS Scope Ready],
+			    VAR UpdateDt = MAX ( CurrentDate[UpdateDate] )
+			    VAR DataDt = MAX ( '01 XER_TASK'[data_date] )
+			    RETURN
+			        "Update: " & FORMAT ( UpdateDt, "MMM yyyy" )
+			            & IF ( NOT ISBLANK ( DataDt ), " · Data Date " & FORMAT ( DataDt, "dd-MMM-yyyy" ), "" ),
+			    "Select one project ('Select Project ▾') and one update month to inspect WBS interfaces"
+			)
+		formatString: @
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00002-5b11-4c22-8d33-000000000002
+
+	/// Dynamic title for the WBS Interface Summary table.
+	measure 'CWBS Interface Summary Title' =
+			IF (
+			    [CWBS Scope Ready],
+			    "WBS Interface Summary · select a chapter pair to filter handoff links",
+			    "WBS Interface Summary · select one project to inspect WBS interfaces"
+			)
+		formatString: @
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00003-5b11-4c22-8d33-000000000003
+
+	/// Dynamic title for the WBS-to-WBS Interface Matrix.
+	measure 'CWBS Matrix Title' =
+			IF (
+			    [CWBS Scope Ready],
+			    "Links Between WBS Chapters · Row: Predecessor WBS → Column: Successor WBS",
+			    "Links Between WBS Chapters · select one project to display matrix"
+			)
+		formatString: @
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00004-5b11-4c22-8d33-000000000004
+
+	/// Dynamic title for the Top 15 WBS Handoff Interfaces stacked bar chart.
+	measure 'CWBS Top Interfaces Title' =
+			IF (
+			    [CWBS Scope Ready],
+			    "Top 15 WBS Handoff Interfaces · Driving vs Non-Driving Links",
+			    "Top 15 WBS Handoff Interfaces · select one project to rank interfaces"
+			)
+		formatString: @
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00005-5b11-4c22-8d33-000000000005
+
+	/// Dynamic title for the Unified Handoff Link Inspector table, naming a selected From WBS -> To WBS pair when filtered.
+	measure 'CWBS Link Inspector Title' =
+			IF (
+			    [CWBS Scope Ready],
+			    VAR SelectedDirection = SELECTEDVALUE ( '06 XER_PREDECESSOR'[WBS_Link_Direction] )
+			    VAR SelectedPred = SELECTEDVALUE ( '06 XER_PREDECESSOR'[Predecessor_Level_2] )
+			    VAR SelectedSucc = SELECTEDVALUE ( '06 XER_PREDECESSOR'[Successor_Level_2] )
+			    RETURN
+			        SWITCH (
+			            TRUE (),
+			            NOT ISBLANK ( SelectedDirection ), "Handoff Link Inspector · " & SelectedDirection,
+			            NOT ISBLANK ( SelectedPred ), "Handoff Link Inspector · From " & SelectedPred,
+			            NOT ISBLANK ( SelectedSucc ), "Handoff Link Inspector · Into " & SelectedSucc,
+			            "Handoff Link Inspector · Predecessor → Successor Relationships"
+			        ),
+			    "Handoff Link Inspector · select one project to list handoff relationships"
+			)
+		formatString: @
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00006-5b11-4c22-8d33-000000000006
+
+	/// Portfolio-safe count of logic relationships in the selected Link Scope, Successor Status, Criticality, and Driving scope.
+	measure 'CWBS KPI Handoff Links' = COALESCE ( COUNTROWS ( '06 XER_PREDECESSOR' ), 0 )
+		formatString: #,0
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00007-5b11-4c22-8d33-000000000007
+
+	/// Portfolio-safe count of distinct From WBS -> To WBS chapter interfaces summed per project so identical chapter names in separate projects never collide.
+	measure 'CWBS KPI Active Interfaces' =
+			COALESCE (
+			    SUMX (
+			        VALUES ( Project_Dimension[ProjectKey] ),
+			        CALCULATE ( DISTINCTCOUNT ( '06 XER_PREDECESSOR'[WBS_Link_Direction] ) )
+			    ),
+			    0
+			)
+		formatString: #,0
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00008-5b11-4c22-8d33-000000000008
+
+	/// Portfolio-safe count of driving relationships in the selected scope.
+	measure 'CWBS KPI Driving Links' = COALESCE ( [Driving Predecessor Count], 0 )
+		formatString: #,0
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00009-5b11-4c22-8d33-000000000009
+
+	/// Portfolio-safe share of relationships in the selected scope that are driving predecessors.
+	measure 'CWBS KPI Driving Share' = COALESCE ( [Driving Ratio], 0 )
+		formatString: 0.0%
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00010-5b11-4c22-8d33-000000000010
+
+	/// Portfolio-safe count of relationships feeding a Critical successor activity (Total Float <= 0).
+	measure 'CWBS KPI Critical Handoffs' =
+			COALESCE (
+			    CALCULATE (
+			        COUNTROWS ( '06 XER_PREDECESSOR' ),
+			        KEEPFILTERS ( '01 XER_TASK'[CriticalStatus] = "Critical" )
+			    ),
+			    0
+			)
+		formatString: #,0
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00011-5b11-4c22-8d33-000000000011
+
+	/// Portfolio-safe count of relationships with zero or negative Relationship Free Float (FF <= 0 working days).
+	measure 'CWBS KPI Zero Free Float Links' =
+			COALESCE (
+			    CALCULATE (
+			        COUNTROWS ( '06 XER_PREDECESSOR' ),
+			        KEEPFILTERS ( NOT ISBLANK ( '06 XER_PREDECESSOR'[free_float] ) ),
+			        KEEPFILTERS ( '06 XER_PREDECESSOR'[free_float] <= 0 )
+			    ),
+			    0
+			)
+		formatString: #,0
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00012-5b11-4c22-8d33-000000000012
+
+	/// Portfolio-safe count of distinct predecessor activities participating in the scoped relationships (keyed on snapshot-local pred_task_id_key).
+	measure 'CWBS KPI Distinct Predecessors' = COALESCE ( DISTINCTCOUNT ( '06 XER_PREDECESSOR'[pred_task_id_key] ), 0 )
+		formatString: #,0
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00013-5b11-4c22-8d33-000000000013
+
+	/// Portfolio-safe count of distinct successor activities participating in the scoped relationships (keyed on snapshot-local task_id_key).
+	measure 'CWBS KPI Distinct Successors' = COALESCE ( DISTINCTCOUNT ( '06 XER_PREDECESSOR'[task_id_key] ), 0 )
+		formatString: #,0
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00014-5b11-4c22-8d33-000000000014
+
+	/// Single-project relationship count for a WBS interface pair.
+	measure 'CWBS Interface Links' = IF ( [CWBS Scope Ready], COUNTROWS ( '06 XER_PREDECESSOR' ) )
+		formatString: #,0
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00015-5b11-4c22-8d33-000000000015
+
+	/// Single-project driving relationship count for an active WBS interface pair.
+	measure 'CWBS Interface Driving Links' =
+			IF (
+			    [CWBS Scope Ready] && COUNTROWS ( '06 XER_PREDECESSOR' ) > 0,
+			    COALESCE ( [Driving Predecessor Count], 0 )
+			)
+		formatString: #,0
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00016-5b11-4c22-8d33-000000000016
+
+	/// Single-project non-driving relationship count for an active WBS interface pair (stacked alongside driving links).
+	measure 'CWBS Interface Non-Driving Links' =
+			IF (
+			    [CWBS Scope Ready] && COUNTROWS ( '06 XER_PREDECESSOR' ) > 0,
+			    COALESCE (
+			        CALCULATE (
+			            COUNTROWS ( '06 XER_PREDECESSOR' ),
+			            KEEPFILTERS ( '06 XER_PREDECESSOR'[Is Driving Predecessor] <> "Driving" )
+			        ),
+			        0
+			    )
+			)
+		formatString: #,0
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00017-5b11-4c22-8d33-000000000017
+
+	/// Single-project driving relationship share for an active WBS interface pair.
+	measure 'CWBS Interface Driving Share' =
+			IF (
+			    [CWBS Scope Ready] && COUNTROWS ( '06 XER_PREDECESSOR' ) > 0,
+			    COALESCE ( [Driving Ratio], 0 )
+			)
+		formatString: 0.0%
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00018-5b11-4c22-8d33-000000000018
+
+	/// Single-project count of relationships feeding Critical successors (Total Float <= 0) for an active WBS interface pair.
+	measure 'CWBS Interface Critical Links' =
+			IF (
+			    [CWBS Scope Ready] && COUNTROWS ( '06 XER_PREDECESSOR' ) > 0,
+			    COALESCE (
+			        CALCULATE (
+			            COUNTROWS ( '06 XER_PREDECESSOR' ),
+			            KEEPFILTERS ( '01 XER_TASK'[CriticalStatus] = "Critical" )
+			        ),
+			        0
+			    )
+			)
+		formatString: #,0
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00019-5b11-4c22-8d33-000000000019
+
+	/// Tightest (minimum) Relationship Free Float in working days across an active WBS interface pair; never summed.
+	measure 'CWBS Interface Min Free Float' =
+			IF (
+			    [CWBS Scope Ready] && COUNTROWS ( '06 XER_PREDECESSOR' ) > 0,
+			    MIN ( '06 XER_PREDECESSOR'[free_float] )
+			)
+		formatString: #,0.0
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00020-5b11-4c22-8d33-000000000020
+
+	/// WBS Matrix cell count: exact link count where links exist, and 0 (formatted as "—") on the same-WBS diagonal when Cross-WBS Link only is selected so the grey diagonal renders without distorting Outbound/Inbound subtotals.
+	measure 'CWBS Matrix Link Count' =
+			VAR LinkRows = COUNTROWS ( '06 XER_PREDECESSOR' )
+			VAR PredWbs = SELECTEDVALUE ( '06 XER_PREDECESSOR'[Predecessor_Level_2] )
+			VAR SuccWbs = SELECTEDVALUE ( '06 XER_PREDECESSOR'[Successor_Level_2] )
+			VAR IsDiagonal =
+			    HASONEVALUE ( '06 XER_PREDECESSOR'[Predecessor_Level_2] )
+			        && HASONEVALUE ( '06 XER_PREDECESSOR'[Successor_Level_2] )
+			        && NOT ISBLANK ( PredWbs )
+			        && PredWbs = SuccWbs
+			VAR WbsActiveInScope =
+			    IsDiagonal
+			        && (
+			            CALCULATE (
+			                COUNTROWS ( '06 XER_PREDECESSOR' ),
+			                REMOVEFILTERS ( '06 XER_PREDECESSOR'[Successor_Level_2] )
+			            ) > 0
+			            || CALCULATE (
+			                COUNTROWS ( '06 XER_PREDECESSOR' ),
+			                REMOVEFILTERS ( '06 XER_PREDECESSOR'[Predecessor_Level_2] )
+			            ) > 0
+			        )
+			RETURN
+			    IF (
+			        [CWBS Scope Ready],
+			        IF ( LinkRows > 0, LinkRows, IF ( WbsActiveInScope, 0 ) )
+			    )
+		formatString: #,0;-#,0;"—"
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00021-5b11-4c22-8d33-000000000021
+
+	/// WBS Matrix cell background: muted grey (#E7E6E6) on the same-WBS diagonal, light red (#FFC7CE) for critical driving handoffs, light amber (#FFEB9C) for driving or near-critical handoffs, and soft blue (#DDEBF7) for buffered cross-WBS links; subtotals remain uncoloured.
+	measure 'CWBS Matrix Cell Colour' =
+			VAR CellVal = [CWBS Matrix Link Count]
+			VAR PredWbs = SELECTEDVALUE ( '06 XER_PREDECESSOR'[Predecessor_Level_2] )
+			VAR SuccWbs = SELECTEDVALUE ( '06 XER_PREDECESSOR'[Successor_Level_2] )
+			VAR InCell =
+			    HASONEVALUE ( '06 XER_PREDECESSOR'[Predecessor_Level_2] )
+			        && HASONEVALUE ( '06 XER_PREDECESSOR'[Successor_Level_2] )
+			        && NOT ISBLANK ( PredWbs )
+			        && NOT ISBLANK ( SuccWbs )
+			RETURN
+			    IF (
+			        InCell && NOT ISBLANK ( CellVal ),
+			        IF (
+			            PredWbs = SuccWbs,
+			            "#E7E6E6",
+			            VAR CritDriving =
+			                CALCULATE (
+			                    COUNTROWS ( '06 XER_PREDECESSOR' ),
+			                    KEEPFILTERS ( '01 XER_TASK'[CriticalStatus] = "Critical" ),
+			                    KEEPFILTERS (
+			                        '06 XER_PREDECESSOR'[Is Driving Predecessor] = "Driving"
+			                            || ( NOT ISBLANK ( '06 XER_PREDECESSOR'[free_float] ) && '06 XER_PREDECESSOR'[free_float] <= 0 )
+			                    )
+			                )
+			            VAR DrivingOrNearCrit =
+			                [Driving Predecessor Count]
+			                    + CALCULATE (
+			                        COUNTROWS ( '06 XER_PREDECESSOR' ),
+			                        KEEPFILTERS ( '01 XER_TASK'[CriticalStatus] IN { "Critical", "Near Critical" } )
+			                    )
+			            RETURN
+			                SWITCH (
+			                    TRUE (),
+			                    CritDriving > 0, "#FFC7CE",
+			                    DrivingOrNearCrit > 0, "#FFEB9C",
+			                    "#DDEBF7"
+			                )
+			        )
+			    )
+		formatString: @
+		isHidden
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00022-5b11-4c22-8d33-000000000022
+
+	/// WBS Matrix cell font colour paired with CWBS Matrix Cell Colour so every cell achieves at least 4.5:1 WCAG contrast.
+	measure 'CWBS Matrix Font Colour' =
+			VAR FillHex = [CWBS Matrix Cell Colour]
+			RETURN
+			    SWITCH (
+			        FillHex,
+			        "#E7E6E6", "#595959",
+			        "#FFC7CE", "#9C0006",
+			        "#FFEB9C", "#9C5700",
+			        "#DDEBF7", "#1F4E78"
+			    )
+		formatString: @
+		isHidden
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00023-5b11-4c22-8d33-000000000023
+
+	/// Predecessor activity name for a Handoff Link Inspector row; blank unless a single project and update are selected.
+	measure 'CWBS Link Predecessor Name' =
+			VAR LinkRows = COUNTROWS ( '06 XER_PREDECESSOR' )
+			RETURN
+			    IF (
+			        LinkRows > 0
+			            && [CWBS Scope Ready]
+			            && ISINSCOPE ( '06 XER_PREDECESSOR'[predecessor_task_code] )
+			            && ISINSCOPE ( '06 XER_PREDECESSOR'[task_code] )
+			            && ISINSCOPE ( '06 XER_PREDECESSOR'[pred_type] ),
+			        CALCULATE (
+			            MAX ( '01 XER_TASK'[task_name] ),
+			            REMOVEFILTERS (),
+			            TREATAS ( VALUES ( '06 XER_PREDECESSOR'[pred_task_id_key] ), '01 XER_TASK'[task_id_key] )
+			        )
+			    )
+		formatString: @
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00024-5b11-4c22-8d33-000000000024
+
+	/// Predecessor WBS chapter for a Handoff Link Inspector row.
+	measure 'CWBS Link Predecessor WBS' =
+			VAR LinkRows = COUNTROWS ( '06 XER_PREDECESSOR' )
+			RETURN
+			    IF (
+			        LinkRows > 0
+			            && [CWBS Scope Ready]
+			            && ISINSCOPE ( '06 XER_PREDECESSOR'[predecessor_task_code] )
+			            && ISINSCOPE ( '06 XER_PREDECESSOR'[task_code] )
+			            && ISINSCOPE ( '06 XER_PREDECESSOR'[pred_type] ),
+			        MAX ( '06 XER_PREDECESSOR'[Predecessor_Level_2] )
+			    )
+		formatString: @
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00025-5b11-4c22-8d33-000000000025
+
+	/// Successor activity name for a Handoff Link Inspector row.
+	measure 'CWBS Link Successor Name' =
+			VAR LinkRows = COUNTROWS ( '06 XER_PREDECESSOR' )
+			RETURN
+			    IF (
+			        LinkRows > 0
+			            && [CWBS Scope Ready]
+			            && ISINSCOPE ( '06 XER_PREDECESSOR'[predecessor_task_code] )
+			            && ISINSCOPE ( '06 XER_PREDECESSOR'[task_code] )
+			            && ISINSCOPE ( '06 XER_PREDECESSOR'[pred_type] ),
+			        MAXX ( '06 XER_PREDECESSOR', RELATED ( '01 XER_TASK'[task_name] ) )
+			    )
+		formatString: @
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00026-5b11-4c22-8d33-000000000026
+
+	/// Successor WBS chapter for a Handoff Link Inspector row.
+	measure 'CWBS Link Successor WBS' =
+			VAR LinkRows = COUNTROWS ( '06 XER_PREDECESSOR' )
+			RETURN
+			    IF (
+			        LinkRows > 0
+			            && [CWBS Scope Ready]
+			            && ISINSCOPE ( '06 XER_PREDECESSOR'[predecessor_task_code] )
+			            && ISINSCOPE ( '06 XER_PREDECESSOR'[task_code] )
+			            && ISINSCOPE ( '06 XER_PREDECESSOR'[pred_type] ),
+			        MAX ( '06 XER_PREDECESSOR'[Successor_Level_2] )
+			    )
+		formatString: @
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00027-5b11-4c22-8d33-000000000027
+
+	/// Relationship lag in working days for a Handoff Link Inspector row; evaluated via MIN so multiple rows never sum lags.
+	measure 'CWBS Link Lag Days' =
+			VAR LinkRows = COUNTROWS ( '06 XER_PREDECESSOR' )
+			RETURN
+			    IF (
+			        LinkRows > 0
+			            && [CWBS Scope Ready]
+			            && ISINSCOPE ( '06 XER_PREDECESSOR'[predecessor_task_code] )
+			            && ISINSCOPE ( '06 XER_PREDECESSOR'[task_code] )
+			            && ISINSCOPE ( '06 XER_PREDECESSOR'[pred_type] ),
+			        MIN ( '06 XER_PREDECESSOR'[lag] )
+			    )
+		formatString: #,0.0
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00028-5b11-4c22-8d33-000000000028
+
+	/// Predecessor finish date (actual or forecast) for a Handoff Link Inspector row.
+	measure 'CWBS Link Predecessor Finish' =
+			VAR LinkRows = COUNTROWS ( '06 XER_PREDECESSOR' )
+			RETURN
+			    IF (
+			        LinkRows > 0
+			            && [CWBS Scope Ready]
+			            && ISINSCOPE ( '06 XER_PREDECESSOR'[predecessor_task_code] )
+			            && ISINSCOPE ( '06 XER_PREDECESSOR'[task_code] )
+			            && ISINSCOPE ( '06 XER_PREDECESSOR'[pred_type] ),
+			        MAX ( '06 XER_PREDECESSOR'[predecessor_finish] )
+			    )
+		formatString: dd-MMM-yy
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00029-5b11-4c22-8d33-000000000029
+
+	/// Successor start date (actual or forecast) for a Handoff Link Inspector row.
+	measure 'CWBS Link Successor Start' =
+			VAR LinkRows = COUNTROWS ( '06 XER_PREDECESSOR' )
+			RETURN
+			    IF (
+			        LinkRows > 0
+			            && [CWBS Scope Ready]
+			            && ISINSCOPE ( '06 XER_PREDECESSOR'[predecessor_task_code] )
+			            && ISINSCOPE ( '06 XER_PREDECESSOR'[task_code] )
+			            && ISINSCOPE ( '06 XER_PREDECESSOR'[pred_type] ),
+			        MIN ( '06 XER_PREDECESSOR'[start] )
+			    )
+		formatString: dd-MMM-yy
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00030-5b11-4c22-8d33-000000000030
+
+	/// Relationship Free Float in working days for a Handoff Link Inspector row; evaluated via MIN so floats are never summed.
+	measure 'CWBS Link Free Float Days' =
+			VAR LinkRows = COUNTROWS ( '06 XER_PREDECESSOR' )
+			RETURN
+			    IF (
+			        LinkRows > 0
+			            && [CWBS Scope Ready]
+			            && ISINSCOPE ( '06 XER_PREDECESSOR'[predecessor_task_code] )
+			            && ISINSCOPE ( '06 XER_PREDECESSOR'[task_code] )
+			            && ISINSCOPE ( '06 XER_PREDECESSOR'[pred_type] ),
+			        MIN ( '06 XER_PREDECESSOR'[free_float] )
+			    )
+		formatString: #,0.0
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00031-5b11-4c22-8d33-000000000031
+
+	/// Successor Total Float in working days for a Handoff Link Inspector row; evaluated via MIN so floats are never summed.
+	measure 'CWBS Link Successor Total Float' =
+			VAR LinkRows = COUNTROWS ( '06 XER_PREDECESSOR' )
+			RETURN
+			    IF (
+			        LinkRows > 0
+			            && [CWBS Scope Ready]
+			            && ISINSCOPE ( '06 XER_PREDECESSOR'[predecessor_task_code] )
+			            && ISINSCOPE ( '06 XER_PREDECESSOR'[task_code] )
+			            && ISINSCOPE ( '06 XER_PREDECESSOR'[pred_type] ),
+			        MIN ( '06 XER_PREDECESSOR'[total_float] )
+			    )
+		formatString: #,0.0
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00032-5b11-4c22-8d33-000000000032
+
+	/// Driving status label ("Driving" vs "Not Driving") for a Handoff Link Inspector row.
+	measure 'CWBS Link Driving Status' =
+			VAR LinkRows = COUNTROWS ( '06 XER_PREDECESSOR' )
+			RETURN
+			    IF (
+			        LinkRows > 0
+			            && [CWBS Scope Ready]
+			            && ISINSCOPE ( '06 XER_PREDECESSOR'[predecessor_task_code] )
+			            && ISINSCOPE ( '06 XER_PREDECESSOR'[task_code] )
+			            && ISINSCOPE ( '06 XER_PREDECESSOR'[pred_type] ),
+			        IF ( [Driving Predecessor Count] > 0, "Driving", "Not Driving" )
+			    )
+		formatString: @
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00033-5b11-4c22-8d33-000000000033
+
+	/// RAG background colour for Successor Total Float cells in the Handoff Link Inspector (light red <= 0d, light amber <= 10d).
+	measure 'CWBS Link Total Float Colour' =
+			VAR TfVal = [CWBS Link Successor Total Float]
+			RETURN
+			    IF (
+			        NOT ISBLANK ( TfVal ),
+			        SWITCH (
+			            TRUE (),
+			            TfVal <= 0, "#FFC7CE",
+			            TfVal <= 10, "#FFEB9C"
+			        )
+			    )
+		formatString: @
+		isHidden
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00034-5b11-4c22-8d33-000000000034
+
+	/// Accessible font colour paired with CWBS Link Total Float Colour (>= 4.5:1 contrast).
+	measure 'CWBS Link Total Float Font Colour' =
+			VAR FillHex = [CWBS Link Total Float Colour]
+			RETURN
+			    SWITCH (
+			        FillHex,
+			        "#FFC7CE", "#9C0006",
+			        "#FFEB9C", "#9C5700"
+			    )
+		formatString: @
+		isHidden
+		displayFolder: Cross-WBS Analysis
+		lineageTag: c1a00035-5b11-4c22-8d33-000000000035
 
 	partition 'WBS Measures' = m
 		mode: import

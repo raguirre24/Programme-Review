@@ -9,7 +9,9 @@
       "a080ddcc97529e047055",
       "0b8551c19458f13c9d1f"
     ],
-    "suppressData": true
+    "applyOnlyToTargetVisuals": true,
+    "suppressData": true,
+    "suppressActiveSection": true
   },
   "explorationState": {
     "version": "1.0",

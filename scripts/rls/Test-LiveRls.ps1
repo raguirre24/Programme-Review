@@ -54,10 +54,10 @@ foreach ($t in $diskModel.Tables) {
 $defineLines = [System.Collections.Generic.List[string]]::new()
 $defineLines.Add('DEFINE')
 $overriddenMeasures = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
-foreach ($tName in @('Resource Scenario Measures', 'XER Measures')) {
+foreach ($tName in @('Resource Scenario Measures', 'XER Measures', 'WBS Measures')) {
     $tbl = $diskModel.Tables[$tName]
     foreach ($m in $tbl.Measures) {
-        if ($tName -eq 'Resource Scenario Measures' -or $m.Name -like 'CA *' -or $m.Name -like 'CS *' -or $m.Name -eq 'Update Has Visible Tasks') {
+        if ($tName -in @('Resource Scenario Measures', 'WBS Measures') -or $m.Name -like 'CA *' -or $m.Name -like 'CS *' -or $m.Name -eq 'Update Has Visible Tasks') {
             $escT = $tName.Replace("'", "''")
             $escM = $m.Name.Replace(']', ']]')
             $defineLines.Add("MEASURE '$escT'[$escM] =`n$($m.Expression)")

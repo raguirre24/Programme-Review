@@ -1,79 +1,79 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "7ad5b8e76591c9b749e7",
   "position": {
-    "x": 18.571428571428573,
-    "y": 535.71428571428578,
-    "z": 13000,
-    "height": 518.57142857142856,
-    "width": 662.85714285714289,
-    "tabOrder": 13000
+    "x": 12,
+    "y": 608,
+    "z": 16000,
+    "height": 460,
+    "width": 580,
+    "tabOrder": 16000
   },
   "visual": {
-    "visualType": "clusteredBarChart",
-    "query": {
-      "queryState": {
-        "Category": {
-          "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "06 XER_PREDECESSOR"
-                    }
-                  },
-                  "Property": "WBS_Link_Direction"
-                }
-              },
-              "queryRef": "06 XER_PREDECESSOR.WBS_Link_Direction",
-              "nativeQueryRef": "WBS_Link_Direction",
-              "active": true
-            }
-          ]
-        },
-        "Y": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "WBS Measures"
-                    }
-                  },
-                  "Property": "Driving Ratio"
-                }
-              },
-              "queryRef": "WBS Measures.Driving Ratio",
-              "nativeQueryRef": "Driving Ratio1"
-            }
-          ]
-        }
-      },
-      "sortDefinition": {
-        "sort": [
-          {
-            "field": {
-              "Measure": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "WBS Measures"
-                  }
-                },
-                "Property": "Driving Ratio"
-              }
-            },
-            "direction": "Ascending"
-          }
-        ]
-      }
-    },
+    "visualType": "barChart",
     "objects": {
-      "valueAxis": [
+      "dataPoint": [
         {
           "properties": {
-            "invertAxis": {
+            "fill": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#C00000'"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "WBS Measures.CWBS Interface Driving Links"
+          }
+        },
+        {
+          "properties": {
+            "fill": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#BFBFBF'"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "WBS Measures.CWBS Interface Non-Driving Links"
+          }
+        }
+      ],
+      "legend": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "position": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Top'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "totals": [
+        {
+          "properties": {
+            "show": {
               "expr": {
                 "Literal": {
                   "Value": "true"
@@ -83,27 +83,40 @@
           }
         }
       ],
-      "categoryAxis": [
+      "valueAxis": [
         {
           "properties": {
-            "switchAxisPosition": {
+            "showAxisTitle": {
               "expr": {
                 "Literal": {
                   "Value": "true"
                 }
               }
             },
-            "maxMarginFactor": {
+            "titleText": {
               "expr": {
                 "Literal": {
-                  "Value": "40L"
+                  "Value": "'Scoped logic links'"
                 }
               }
-            },
+            }
+          }
+        }
+      ],
+      "categoryAxis": [
+        {
+          "properties": {
             "showAxisTitle": {
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            },
+            "maxMarginFactor": {
+              "expr": {
+                "Literal": {
+                  "Value": "45L"
                 }
               }
             }
@@ -112,13 +125,153 @@
       ]
     },
     "visualContainerObjects": {
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ],
       "title": [
         {
           "properties": {
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Top Interfaces Title"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "13D"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "titleWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Scope Prompt"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "9D"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0.4
+                    }
+                  }
+                }
+              }
+            },
+            "titleWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Top 15 WBS Handoff Interfaces stacked bar chart'"
                 }
               }
             }
@@ -139,10 +292,52 @@
               "solid": {
                 "color": {
                   "expr": {
-                    "Literal": {
-                      "Value": "'#b3b3b3'"
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0.6
                     }
                   }
+                }
+              }
+            },
+            "radius": {
+              "expr": {
+                "Literal": {
+                  "Value": "4D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "padding": [
+        {
+          "properties": {
+            "top": {
+              "expr": {
+                "Literal": {
+                  "Value": "6D"
+                }
+              }
+            },
+            "bottom": {
+              "expr": {
+                "Literal": {
+                  "Value": "6D"
+                }
+              }
+            },
+            "left": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "right": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
                 }
               }
             }
@@ -150,6 +345,330 @@
         }
       ]
     },
-    "drillFilterOtherVisuals": true
+    "drillFilterOtherVisuals": true,
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "06 XER_PREDECESSOR"
+                    }
+                  },
+                  "Property": "WBS_Link_Direction"
+                }
+              },
+              "queryRef": "06 XER_PREDECESSOR.WBS_Link_Direction",
+              "nativeQueryRef": "WBS Interface",
+              "active": true,
+              "displayName": "WBS Interface"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Interface Driving Links"
+                }
+              },
+              "queryRef": "WBS Measures.CWBS Interface Driving Links",
+              "nativeQueryRef": "Driving links",
+              "active": true,
+              "displayName": "Driving links"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Interface Non-Driving Links"
+                }
+              },
+              "queryRef": "WBS Measures.CWBS Interface Non-Driving Links",
+              "nativeQueryRef": "Non-driving links",
+              "active": true,
+              "displayName": "Non-driving links"
+            }
+          ]
+        },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Interface Links"
+                }
+              },
+              "queryRef": "WBS Measures.CWBS Interface Links",
+              "nativeQueryRef": "Total links",
+              "active": true,
+              "displayName": "Total links"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Interface Driving Share"
+                }
+              },
+              "queryRef": "WBS Measures.CWBS Interface Driving Share",
+              "nativeQueryRef": "Driving share",
+              "active": true,
+              "displayName": "Driving share"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Interface Critical Links"
+                }
+              },
+              "queryRef": "WBS Measures.CWBS Interface Critical Links",
+              "nativeQueryRef": "Into Critical (TF ≤ 0)",
+              "active": true,
+              "displayName": "Into Critical (TF ≤ 0)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Interface Min Free Float"
+                }
+              },
+              "queryRef": "WBS Measures.CWBS Interface Min Free Float",
+              "nativeQueryRef": "Min Free Float (days)",
+              "active": true,
+              "displayName": "Min Free Float (days)"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "WBS Measures"
+                  }
+                },
+                "Property": "CWBS Interface Links"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    }
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "cwbs7atopn0000000001",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "06 XER_PREDECESSOR"
+              }
+            },
+            "Property": "WBS_Link_Direction"
+          }
+        },
+        "type": "TopN",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "subquery",
+              "Expression": {
+                "Subquery": {
+                  "Query": {
+                    "Version": 2,
+                    "From": [
+                      {
+                        "Name": "p",
+                        "Entity": "06 XER_PREDECESSOR",
+                        "Type": 0
+                      },
+                      {
+                        "Name": "w",
+                        "Entity": "WBS Measures",
+                        "Type": 0
+                      }
+                    ],
+                    "Select": [
+                      {
+                        "Column": {
+                          "Expression": {
+                            "SourceRef": {
+                              "Source": "p"
+                            }
+                          },
+                          "Property": "WBS_Link_Direction"
+                        },
+                        "Name": "field"
+                      }
+                    ],
+                    "OrderBy": [
+                      {
+                        "Direction": 2,
+                        "Expression": {
+                          "Measure": {
+                            "Expression": {
+                              "SourceRef": {
+                                "Source": "w"
+                              }
+                            },
+                            "Property": "Count of Links"
+                          }
+                        }
+                      }
+                    ],
+                    "Top": 15
+                  }
+                }
+              },
+              "Type": 2
+            },
+            {
+              "Name": "p",
+              "Entity": "06 XER_PREDECESSOR",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "In": {
+                  "Expressions": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "p"
+                          }
+                        },
+                        "Property": "WBS_Link_Direction"
+                      }
+                    }
+                  ],
+                  "Table": {
+                    "SourceRef": {
+                      "Source": "subquery"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "howCreated": "User"
+      },
+      {
+        "name": "cwbs7anonnull0000002",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "06 XER_PREDECESSOR"
+              }
+            },
+            "Property": "WBS_Link_Direction"
+          }
+        },
+        "type": "Categorical",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "p",
+              "Entity": "06 XER_PREDECESSOR",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "Not": {
+                  "Expression": {
+                    "In": {
+                      "Expressions": [
+                        {
+                          "Column": {
+                            "Expression": {
+                              "SourceRef": {
+                                "Source": "p"
+                              }
+                            },
+                            "Property": "WBS_Link_Direction"
+                          }
+                        }
+                      ],
+                      "Values": [
+                        [
+                          {
+                            "Literal": {
+                              "Value": "null"
+                            }
+                          }
+                        ]
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "howCreated": "User",
+        "objects": {
+          "general": [
+            {
+              "properties": {
+                "isInvertedSelectionMode": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "true"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
   }
 }

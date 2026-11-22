@@ -49,84 +49,76 @@ table '06 XER_PREDECESSOR'
 
 		annotation SummarizationSetBy = Automatic
 
-	column Successor_Level_2 = RELATED('03 XER_PROJWBS'[Level_2])
+	column Successor_Level_2 =
+			VAR SuccL2 = RELATED ( '03 XER_PROJWBS'[Level_2] )
+			VAR SuccL1 = RELATED ( '03 XER_PROJWBS'[Level_1] )
+			RETURN
+			    COALESCE ( SuccL2, IF ( NOT ISBLANK ( SuccL1 ), SuccL1 & " (Level 1)" ) )
 		lineageTag: edd8bac4-29f2-4178-9030-2130db1006ed
 		summarizeBy: none
 
 		annotation SummarizationSetBy = Automatic
 
-	column Predecessor_Level_2 = ```
-			
-			VAR PredTaskID = '06 XER_PREDECESSOR'[pred_task_id_key]
-			VAR PredecessorWBS_ID = 
-			    CALCULATE(
-			        SELECTEDVALUE('01 XER_TASK'[wbs_id_key]),
-			        FILTER(
-			            ALL('01 XER_TASK'),
-			            '01 XER_TASK'[task_id_key] = PredTaskID
-			        )
-			    )
-			VAR PredLevel2 = 
-			    IF(
-			        NOT ISBLANK(PredecessorWBS_ID),
-			        CALCULATE(
-			            MINX(
-			                FILTER(
-			                    ALL('03 XER_PROJWBS'),
-			                    '03 XER_PROJWBS'[wbs_id_key] = PredecessorWBS_ID
-			                ),
-			                '03 XER_PROJWBS'[Level_2]
-			            )
+	column Predecessor_Level_2 =
+			VAR PredTaskKey = '06 XER_PREDECESSOR'[pred_task_id_key]
+			VAR PredWbsKey =
+			    CALCULATE (
+			        SELECTEDVALUE ( '01 XER_TASK'[wbs_id_key] ),
+			        FILTER (
+			            ALL ( '01 XER_TASK' ),
+			            '01 XER_TASK'[task_id_key] = PredTaskKey
 			        )
 			    )
 			RETURN
-			    PredLevel2
-			```
+			    IF (
+			        NOT ISBLANK ( PredWbsKey ),
+			        CALCULATE (
+			            MINX (
+			                FILTER (
+			                    ALL ( '03 XER_PROJWBS' ),
+			                    '03 XER_PROJWBS'[wbs_id_key] = PredWbsKey
+			                ),
+			                COALESCE (
+			                    '03 XER_PROJWBS'[Level_2],
+			                    IF (
+			                        NOT ISBLANK ( '03 XER_PROJWBS'[Level_1] ),
+			                        '03 XER_PROJWBS'[Level_1] & " (Level 1)"
+			                    )
+			                )
+			            )
+			        )
+			    )
 		lineageTag: 1cfa0aa8-f050-434a-8ad5-40c9f5725f1f
 		summarizeBy: none
 
 		annotation SummarizationSetBy = Automatic
 
 	column Link_Type =
-			
-			IF(
-			    '06 XER_PREDECESSOR'[Successor_Level_2] = '06 XER_PREDECESSOR'[Predecessor_Level_2],
-			    "Internal Link",
-			    "Cross-WBS Link"
-			)
+			VAR PredWbs = '06 XER_PREDECESSOR'[Predecessor_Level_2]
+			VAR SuccWbs = '06 XER_PREDECESSOR'[Successor_Level_2]
+			RETURN
+			    IF (
+			        NOT ISBLANK ( PredWbs ) && NOT ISBLANK ( SuccWbs ),
+			        IF (
+			            PredWbs = SuccWbs,
+			            "Internal Link",
+			            "Cross-WBS Link"
+			        )
+			    )
 		lineageTag: 95640178-8db4-4f4c-8273-243f59583603
 		summarizeBy: none
 
 		annotation SummarizationSetBy = Automatic
 
 	column WBS_Link_Direction =
-			
-			'06 XER_PREDECESSOR'[Predecessor_Level_2] & " → " & '06 XER_PREDECESSOR'[Successor_Level_2]
-		lineageTag: de16278c-97f0-4bd4-86cc-fc20a5bfd566
-		summarizeBy: none
-
-		annotation SummarizationSetBy = Automatic
-
-	column CriticalLink = ```
-			
-			VAR crit_succ = 
-			    LOOKUPVALUE(
-			        '01 XER_TASK'[CriticalStatus],
-			        '01 XER_TASK'[task_id_key], '06 XER_PREDECESSOR'[task_id_key]
-			    )
-			VAR crit_pred = 
-			    LOOKUPVALUE(
-			        '01 XER_TASK'[CriticalStatus],
-			        '01 XER_TASK'[task_id_key], '06 XER_PREDECESSOR'[pred_task_id_key]
-			    )
+			VAR PredWbs = '06 XER_PREDECESSOR'[Predecessor_Level_2]
+			VAR SuccWbs = '06 XER_PREDECESSOR'[Successor_Level_2]
 			RETURN
-			    IF(
-			        NOT(ISBLANK(crit_pred)) && NOT(ISBLANK(crit_succ)),
-			        crit_pred & " → " & crit_succ,
-			        BLANK()
+			    IF (
+			        NOT ISBLANK ( PredWbs ) && NOT ISBLANK ( SuccWbs ),
+			        PredWbs & " → " & SuccWbs
 			    )
-			```
-		lineageTag: d5223047-9831-495c-a6a7-7598adab917f
+		lineageTag: de16278c-97f0-4bd4-86cc-fc20a5bfd566
 		summarizeBy: none
 
 		annotation SummarizationSetBy = Automatic
@@ -310,25 +302,6 @@ table '06 XER_PREDECESSOR'
 		lineageTag: 81036ff5-a54a-4a53-aabc-5127aba7f20d
 		summarizeBy: sum
 		sourceColumn: total_float
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	column PredTaskCodeAndName =
-			
-			VAR _taskCode = LOOKUPVALUE('01 XER_TASK'[task_code],'01 XER_TASK'[task_id_key],'06 XER_PREDECESSOR'[pred_task_id_key])
-			VAR _taskName = LOOKUPVALUE('01 XER_TASK'[task_name],'01 XER_TASK'[task_id_key],'06 XER_PREDECESSOR'[pred_task_id_key])
-			RETURN
-			    _taskCode & " - " & _taskName
-		lineageTag: ed994dd3-ba8c-4533-a6a9-3dcbeb5dc32e
-		summarizeBy: none
-
-		annotation SummarizationSetBy = Automatic
-
-	column 'predecessor_Total Float' = LOOKUPVALUE('01 XER_TASK'[total_float],'01 XER_TASK'[Task_ID_key],[pred_task_id_key])
-		lineageTag: 3ef7601a-6708-462b-95c2-9e65e33cb7a2
-		summarizeBy: sum
 
 		annotation SummarizationSetBy = Automatic
 

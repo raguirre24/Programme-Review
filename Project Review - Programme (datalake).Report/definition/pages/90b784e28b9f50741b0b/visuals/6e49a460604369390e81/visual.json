@@ -1062,6 +1062,26 @@
             }
           }
         }
+      ],
+      "activityRows": [
+        {
+          "properties": {
+            "milestoneColumn": {
+              "expr": {
+                "Literal": {
+                  "Value": "''"
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
       ]
     },
     "visualContainerObjects": {

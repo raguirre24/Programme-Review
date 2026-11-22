@@ -1,116 +1,16 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "47ceb5d7d41a2b89bf05",
   "position": {
-    "x": 693.33333333333337,
-    "y": 588.33333333333337,
-    "z": 9000,
-    "height": 468.33333333333337,
-    "width": 553.33333333333337,
-    "tabOrder": 9000
+    "x": 604,
+    "y": 608,
+    "z": 17000,
+    "height": 460,
+    "width": 1172,
+    "tabOrder": 17000
   },
   "visual": {
     "visualType": "tableEx",
-    "query": {
-      "queryState": {
-        "Values": {
-          "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "06 XER_PREDECESSOR"
-                    }
-                  },
-                  "Property": "PredTaskCodeAndName"
-                }
-              },
-              "queryRef": "06 XER_PREDECESSOR.PredTaskCodeAndName",
-              "nativeQueryRef": "Predecessor",
-              "displayName": "Predecessor"
-            },
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "06 XER_PREDECESSOR"
-                    }
-                  },
-                  "Property": "Predecessor_Level_2"
-                }
-              },
-              "queryRef": "06 XER_PREDECESSOR.Predecessor_Level_2",
-              "nativeQueryRef": "WBS",
-              "displayName": "WBS"
-            },
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "06 XER_PREDECESSOR"
-                    }
-                  },
-                  "Property": "predecessor_Total Float"
-                }
-              },
-              "queryRef": "Sum(06 XER_PREDECESSOR.predecessor_Total Float)",
-              "nativeQueryRef": "Total Float",
-              "displayName": "Total Float"
-            },
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "06 XER_PREDECESSOR"
-                    }
-                  },
-                  "Property": "free_float"
-                }
-              },
-              "queryRef": "Sum(06 XER_PREDECESSOR.free_float)",
-              "nativeQueryRef": "free_float",
-              "displayName": "Free Float"
-            },
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "06 XER_PREDECESSOR"
-                    }
-                  },
-                  "Property": "pred_type"
-                }
-              },
-              "queryRef": "06 XER_PREDECESSOR.pred_type",
-              "nativeQueryRef": "Rel. Type",
-              "displayName": "Rel. Type"
-            }
-          ]
-        }
-      },
-      "sortDefinition": {
-        "sort": [
-          {
-            "field": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "06 XER_PREDECESSOR"
-                  }
-                },
-                "Property": "PredTaskCodeAndName"
-              }
-            },
-            "direction": "Ascending"
-          }
-        ]
-      }
-    },
     "objects": {
       "columnWidth": [
         {
@@ -118,13 +18,13 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "221.83191477010612D"
+                  "Value": "85D"
                 }
               }
             }
           },
           "selector": {
-            "metadata": "06 XER_PREDECESSOR.PredTaskCodeAndName"
+            "metadata": "06 XER_PREDECESSOR.predecessor_task_code"
           }
         },
         {
@@ -132,13 +32,13 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "119.53738071530597D"
+                  "Value": "165D"
                 }
               }
             }
           },
           "selector": {
-            "metadata": "06 XER_PREDECESSOR.Predecessor_Level_2"
+            "metadata": "WBS Measures.CWBS Link Predecessor Name"
           }
         },
         {
@@ -146,13 +46,13 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "40D"
+                  "Value": "115D"
                 }
               }
             }
           },
           "selector": {
-            "metadata": "06 XER_PREDECESSOR.Finish.Variation.Date Hierarchy.Year"
+            "metadata": "WBS Measures.CWBS Link Predecessor WBS"
           }
         },
         {
@@ -160,13 +60,13 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "56D"
+                  "Value": "85D"
                 }
               }
             }
           },
           "selector": {
-            "metadata": "06 XER_PREDECESSOR.Finish.Variation.Date Hierarchy.Quarter"
+            "metadata": "06 XER_PREDECESSOR.task_code"
           }
         },
         {
@@ -174,13 +74,13 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "73D"
+                  "Value": "165D"
                 }
               }
             }
           },
           "selector": {
-            "metadata": "06 XER_PREDECESSOR.Finish.Variation.Date Hierarchy.Month"
+            "metadata": "WBS Measures.CWBS Link Successor Name"
           }
         },
         {
@@ -188,13 +88,13 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "34D"
+                  "Value": "115D"
                 }
               }
             }
           },
           "selector": {
-            "metadata": "06 XER_PREDECESSOR.Finish.Variation.Date Hierarchy.Day"
+            "metadata": "WBS Measures.CWBS Link Successor WBS"
           }
         },
         {
@@ -202,63 +102,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "40D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "06 XER_PREDECESSOR.predecessor_Finish.Variation.Date Hierarchy.Year"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "56D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "06 XER_PREDECESSOR.predecessor_Finish.Variation.Date Hierarchy.Quarter"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "73D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "06 XER_PREDECESSOR.predecessor_Finish.Variation.Date Hierarchy.Month"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "34D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "06 XER_PREDECESSOR.predecessor_Finish.Variation.Date Hierarchy.Day"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "58.33333333333333D"
+                  "Value": "50D"
                 }
               }
             }
@@ -272,13 +116,13 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "66.25704940533164D"
+                  "Value": "56D"
                 }
               }
             }
           },
           "selector": {
-            "metadata": "Sum(06 XER_PREDECESSOR.free_float)"
+            "metadata": "WBS Measures.CWBS Link Lag Days"
           }
         },
         {
@@ -286,23 +130,152 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "59.000028315272715D"
+                  "Value": "78D"
                 }
               }
             }
           },
           "selector": {
-            "metadata": "Sum(06 XER_PREDECESSOR.predecessor_Total Float)"
+            "metadata": "WBS Measures.CWBS Link Predecessor Finish"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "78D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "WBS Measures.CWBS Link Successor Start"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "68D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "WBS Measures.CWBS Link Free Float Days"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "68D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "WBS Measures.CWBS Link Successor Total Float"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "68D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "WBS Measures.CWBS Link Driving Status"
+          }
+        }
+      ],
+      "values": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "backColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "WBS Measures"
+                        }
+                      },
+                      "Property": "CWBS Link Total Float Colour"
+                    }
+                  }
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "WBS Measures"
+                        }
+                      },
+                      "Property": "CWBS Link Total Float Font Colour"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 1
+                }
+              }
+            ],
+            "metadata": "WBS Measures.CWBS Link Successor Total Float"
           }
         }
       ],
       "columnHeaders": [
         {
           "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
+                }
+              }
+            },
             "autoSizeColumnWidth": {
               "expr": {
                 "Literal": {
                   "Value": "true"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
                 }
               }
             }
@@ -339,13 +312,6 @@
         },
         {
           "properties": {
-            "styleHeader": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
             "alignment": {
               "expr": {
                 "Literal": {
@@ -355,18 +321,11 @@
             }
           },
           "selector": {
-            "metadata": "Sum(06 XER_PREDECESSOR.predecessor_Total Float)"
+            "metadata": "WBS Measures.CWBS Link Lag Days"
           }
         },
         {
           "properties": {
-            "styleHeader": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
             "alignment": {
               "expr": {
                 "Literal": {
@@ -376,7 +335,63 @@
             }
           },
           "selector": {
-            "metadata": "Sum(06 XER_PREDECESSOR.free_float)"
+            "metadata": "WBS Measures.CWBS Link Predecessor Finish"
+          }
+        },
+        {
+          "properties": {
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "WBS Measures.CWBS Link Successor Start"
+          }
+        },
+        {
+          "properties": {
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "WBS Measures.CWBS Link Free Float Days"
+          }
+        },
+        {
+          "properties": {
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "WBS Measures.CWBS Link Successor Total Float"
+          }
+        },
+        {
+          "properties": {
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "WBS Measures.CWBS Link Driving Status"
           }
         }
       ]
@@ -401,7 +416,147 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Link Inspector Title"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "13D"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "titleWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Scope Prompt"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "9D"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0.4
+                    }
+                  }
+                }
+              }
+            },
+            "titleWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Unified Handoff Link Inspector table'"
                 }
               }
             }
@@ -422,10 +577,52 @@
               "solid": {
                 "color": {
                   "expr": {
-                    "Literal": {
-                      "Value": "'#B3B3B3'"
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0.6
                     }
                   }
+                }
+              }
+            },
+            "radius": {
+              "expr": {
+                "Literal": {
+                  "Value": "4D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "padding": [
+        {
+          "properties": {
+            "top": {
+              "expr": {
+                "Literal": {
+                  "Value": "6D"
+                }
+              }
+            },
+            "bottom": {
+              "expr": {
+                "Literal": {
+                  "Value": "6D"
+                }
+              }
+            },
+            "left": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "right": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
                 }
               }
             }
@@ -433,6 +630,257 @@
         }
       ]
     },
-    "drillFilterOtherVisuals": true
+    "drillFilterOtherVisuals": true,
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "06 XER_PREDECESSOR"
+                    }
+                  },
+                  "Property": "predecessor_task_code"
+                }
+              },
+              "queryRef": "06 XER_PREDECESSOR.predecessor_task_code",
+              "nativeQueryRef": "Pred. ID",
+              "active": true,
+              "displayName": "Pred. ID"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Link Predecessor Name"
+                }
+              },
+              "queryRef": "WBS Measures.CWBS Link Predecessor Name",
+              "nativeQueryRef": "Predecessor Name",
+              "active": true,
+              "displayName": "Predecessor Name"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Link Predecessor WBS"
+                }
+              },
+              "queryRef": "WBS Measures.CWBS Link Predecessor WBS",
+              "nativeQueryRef": "From WBS",
+              "active": true,
+              "displayName": "From WBS"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "06 XER_PREDECESSOR"
+                    }
+                  },
+                  "Property": "task_code"
+                }
+              },
+              "queryRef": "06 XER_PREDECESSOR.task_code",
+              "nativeQueryRef": "Succ. ID",
+              "active": true,
+              "displayName": "Succ. ID"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Link Successor Name"
+                }
+              },
+              "queryRef": "WBS Measures.CWBS Link Successor Name",
+              "nativeQueryRef": "Successor Name",
+              "active": true,
+              "displayName": "Successor Name"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Link Successor WBS"
+                }
+              },
+              "queryRef": "WBS Measures.CWBS Link Successor WBS",
+              "nativeQueryRef": "To WBS",
+              "active": true,
+              "displayName": "To WBS"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "06 XER_PREDECESSOR"
+                    }
+                  },
+                  "Property": "pred_type"
+                }
+              },
+              "queryRef": "06 XER_PREDECESSOR.pred_type",
+              "nativeQueryRef": "Rel.",
+              "active": true,
+              "displayName": "Rel."
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Link Lag Days"
+                }
+              },
+              "queryRef": "WBS Measures.CWBS Link Lag Days",
+              "nativeQueryRef": "Lag (d)",
+              "active": true,
+              "displayName": "Lag (d)",
+              "format": "#,0.0"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Link Predecessor Finish"
+                }
+              },
+              "queryRef": "WBS Measures.CWBS Link Predecessor Finish",
+              "nativeQueryRef": "Pred. Finish",
+              "active": true,
+              "displayName": "Pred. Finish",
+              "format": "dd-MMM-yy"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Link Successor Start"
+                }
+              },
+              "queryRef": "WBS Measures.CWBS Link Successor Start",
+              "nativeQueryRef": "Succ. Start",
+              "active": true,
+              "displayName": "Succ. Start",
+              "format": "dd-MMM-yy"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Link Free Float Days"
+                }
+              },
+              "queryRef": "WBS Measures.CWBS Link Free Float Days",
+              "nativeQueryRef": "Free Float (d)",
+              "active": true,
+              "displayName": "Free Float (d)",
+              "format": "#,0.0"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Link Successor Total Float"
+                }
+              },
+              "queryRef": "WBS Measures.CWBS Link Successor Total Float",
+              "nativeQueryRef": "Succ. TF (d)",
+              "active": true,
+              "displayName": "Succ. TF (d)",
+              "format": "#,0.0"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Link Driving Status"
+                }
+              },
+              "queryRef": "WBS Measures.CWBS Link Driving Status",
+              "nativeQueryRef": "Driving",
+              "active": true,
+              "displayName": "Driving"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "WBS Measures"
+                  }
+                },
+                "Property": "CWBS Link Free Float Days"
+              }
+            },
+            "direction": "Ascending"
+          },
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "WBS Measures"
+                  }
+                },
+                "Property": "CWBS Link Successor Total Float"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    }
   }
 }

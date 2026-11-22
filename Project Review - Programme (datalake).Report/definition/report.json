@@ -153,23 +153,23 @@
       ]
     },
     {
-      "name": "P6WBSMatrix8BDB3B26BB4B497EA3E044ADBDE081D0",
-      "type": "CustomVisual",
-      "items": [
-        {
-          "name": "P6WBSMatrix8BDB3B26BB4B497EA3E044ADBDE081D0.pbiviz.json",
-          "path": "P6WBSMatrix8BDB3B26BB4B497EA3E044ADBDE081D0.pbiviz.json",
-          "type": "CustomVisualMetadata"
-        }
-      ]
-    },
-    {
       "name": "LongestPathVisual",
       "type": "CustomVisual",
       "items": [
         {
           "name": "LongestPathVisual.pbiviz.json",
           "path": "LongestPathVisual.pbiviz.json",
+          "type": "CustomVisualMetadata"
+        }
+      ]
+    },
+    {
+      "name": "P6WBSMatrix8BDB3B26BB4B497EA3E044ADBDE081D0",
+      "type": "CustomVisual",
+      "items": [
+        {
+          "name": "P6WBSMatrix8BDB3B26BB4B497EA3E044ADBDE081D0.pbiviz.json",
+          "path": "P6WBSMatrix8BDB3B26BB4B497EA3E044ADBDE081D0.pbiviz.json",
           "type": "CustomVisualMetadata"
         }
       ]

@@ -1,39 +1,16 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
-  "name": "c25ab916ac9a587450df",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "cwbs15critslc0000015",
   "position": {
-    "x": 768.26510182947879,
-    "y": 167.01415257162583,
-    "z": 6000,
-    "height": 40.560579910251988,
-    "width": 248.1353123921298,
-    "tabOrder": 6000
+    "x": 900,
+    "y": 86,
+    "z": 7000,
+    "height": 54,
+    "width": 480,
+    "tabOrder": 7000
   },
   "visual": {
-    "visualType": "listSlicer",
-    "query": {
-      "queryState": {
-        "Values": {
-          "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "06 XER_PREDECESSOR"
-                    }
-                  },
-                  "Property": "CriticalLink"
-                }
-              },
-              "queryRef": "06 XER_PREDECESSOR.CriticalLink",
-              "nativeQueryRef": "CriticalLink",
-              "active": true
-            }
-          ]
-        }
-      }
-    },
+    "visualType": "advancedSlicerVisual",
     "objects": {
       "general": [
         {
@@ -49,6 +26,13 @@
                   "Value": "false"
                 }
               }
+            },
+            "labelSource": {
+              "expr": {
+                "Literal": {
+                  "Value": "'auto'"
+                }
+              }
             }
           },
           "selector": {
@@ -56,16 +40,100 @@
           }
         }
       ],
-      "fillCustom": [
+      "layout": [
         {
           "properties": {
-            "fillColor": {
+            "rowCount": {
+              "expr": {
+                "Literal": {
+                  "Value": "1L"
+                }
+              }
+            },
+            "columnCount": {
+              "expr": {
+                "Literal": {
+                  "Value": "3L"
+                }
+              }
+            },
+            "cellPadding": {
+              "expr": {
+                "Literal": {
+                  "Value": "4L"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "value": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "horizontalAlignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "11D"
+                }
+              }
+            },
+            "fontColor": {
               "solid": {
                 "color": {
                   "expr": {
                     "ThemeDataColor": {
-                      "ColorId": 9,
+                      "ColorId": 1,
                       "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "fontFamily": {
+              "expr": {
+                "Literal": {
+                  "Value": "'''Segoe UI'', wf_segoe-ui_normal, helvetica, arial, sans-serif'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "id": "default"
+          }
+        },
+        {
+          "properties": {
+            "horizontalAlignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#d50000'"
                     }
                   }
                 }
@@ -73,7 +141,7 @@
             }
           },
           "selector": {
-            "id": "selection:selected"
+            "id": "interaction:press"
           }
         }
       ],
@@ -136,101 +204,24 @@
           }
         }
       ],
-      "value": [
+      "fillCustom": [
         {
           "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            }
-          }
-        },
-        {
-          "properties": {
-            "fontSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "12D"
-                }
-              }
-            },
-            "fontColor": {
+            "fillColor": {
               "solid": {
                 "color": {
                   "expr": {
                     "ThemeDataColor": {
-                      "ColorId": 1,
+                      "ColorId": 9,
                       "Percent": 0
                     }
                   }
                 }
               }
-            },
-            "horizontalAlignment": {
-              "expr": {
-                "Literal": {
-                  "Value": "'center'"
-                }
-              }
             }
           },
           "selector": {
-            "id": "default"
-          }
-        },
-        {
-          "properties": {
-            "fontColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Literal": {
-                      "Value": "'#d50000'"
-                    }
-                  }
-                }
-              }
-            },
-            "horizontalAlignment": {
-              "expr": {
-                "Literal": {
-                  "Value": "'center'"
-                }
-              }
-            }
-          },
-          "selector": {
-            "id": "interaction:press"
-          }
-        }
-      ],
-      "layout": [
-        {
-          "properties": {
-            "rowCount": {
-              "expr": {
-                "Literal": {
-                  "Value": "1L"
-                }
-              }
-            },
-            "columnCount": {
-              "expr": {
-                "Literal": {
-                  "Value": "9L"
-                }
-              }
-            },
-            "cellPadding": {
-              "expr": {
-                "Literal": {
-                  "Value": "4L"
-                }
-              }
-            }
+            "id": "selection:selected"
           }
         }
       ],
@@ -263,32 +254,6 @@
             "id": "default"
           }
         }
-      ],
-      "overFlow": [
-        {
-          "properties": {
-            "overFlowStyle": {
-              "expr": {
-                "Literal": {
-                  "Value": "1D"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "selectionIcon": [
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          }
-        }
       ]
     },
     "visualContainerObjects": {
@@ -298,7 +263,40 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Successor Criticality'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
                 }
               }
             },
@@ -319,13 +317,6 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
-                }
-              }
-            },
-            "transparency": {
-              "expr": {
-                "Literal": {
-                  "Value": "0D"
                 }
               }
             }
@@ -352,7 +343,7 @@
             "left": {
               "expr": {
                 "Literal": {
-                  "Value": "0D"
+                  "Value": "1D"
                 }
               }
             },
@@ -366,25 +357,13 @@
           }
         }
       ],
-      "border": [
+      "general": [
         {
           "properties": {
-            "show": {
+            "altText": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "color": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "ThemeDataColor": {
-                      "ColorId": 9,
-                      "Percent": 0
-                    }
-                  }
+                  "Value": "'Successor Criticality slicer'"
                 }
               }
             }
@@ -392,20 +371,60 @@
         }
       ]
     },
-    "drillFilterOtherVisuals": true
+    "drillFilterOtherVisuals": true,
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Filter_Critical_Status"
+                    }
+                  },
+                  "Property": "CriticalStatus"
+                }
+              },
+              "queryRef": "Filter_Critical_Status.CriticalStatus",
+              "nativeQueryRef": "CriticalStatus",
+              "active": true
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Filter_Critical_Status"
+                  }
+                },
+                "Property": "CriticalStatus"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    }
   },
   "filterConfig": {
     "filters": [
       {
-        "name": "a33863662faf7e892610",
+        "name": "cwbs15flt00000000001",
         "field": {
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "06 XER_PREDECESSOR"
+                "Entity": "Filter_Critical_Status"
               }
             },
-            "Property": "CriticalLink"
+            "Property": "CriticalStatus"
           }
         },
         "type": "Categorical",
@@ -413,8 +432,8 @@
           "Version": 2,
           "From": [
             {
-              "Name": "0",
-              "Entity": "06 XER_PREDECESSOR",
+              "Name": "s",
+              "Entity": "Filter_Critical_Status",
               "Type": 0
             }
           ],
@@ -429,35 +448,14 @@
                           "Column": {
                             "Expression": {
                               "SourceRef": {
-                                "Source": "0"
+                                "Source": "s"
                               }
                             },
-                            "Property": "CriticalLink"
+                            "Property": "CriticalStatus"
                           }
                         }
                       ],
                       "Values": [
-                        [
-                          {
-                            "Literal": {
-                              "Value": "'Non-Critical → Critical'"
-                            }
-                          }
-                        ],
-                        [
-                          {
-                            "Literal": {
-                              "Value": "'Non-Critical → Near Critical'"
-                            }
-                          }
-                        ],
-                        [
-                          {
-                            "Literal": {
-                              "Value": "'Non-Critical → Non-Critical'"
-                            }
-                          }
-                        ],
                         [
                           {
                             "Literal": {
@@ -473,6 +471,7 @@
             }
           ]
         },
+        "howCreated": "User",
         "objects": {
           "general": [
             {

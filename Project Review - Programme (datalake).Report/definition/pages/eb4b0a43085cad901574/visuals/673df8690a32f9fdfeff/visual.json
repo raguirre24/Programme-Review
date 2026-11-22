@@ -1,99 +1,16 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "673df8690a32f9fdfeff",
   "position": {
-    "x": 767.14285714285722,
-    "y": 220,
-    "z": 5000,
-    "height": 295.71428571428572,
-    "width": 1005.7142857142858,
-    "tabOrder": 5000
+    "x": 712,
+    "y": 226,
+    "z": 14000,
+    "height": 322,
+    "width": 1064,
+    "tabOrder": 14000
   },
   "visual": {
     "visualType": "pivotTable",
-    "query": {
-      "queryState": {
-        "Columns": {
-          "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "06 XER_PREDECESSOR"
-                    }
-                  },
-                  "Property": "Successor_Level_2"
-                }
-              },
-              "queryRef": "06 XER_PREDECESSOR.Successor_Level_2",
-              "nativeQueryRef": "Successor_Level_2",
-              "active": true
-            }
-          ]
-        },
-        "Rows": {
-          "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "06 XER_PREDECESSOR"
-                    }
-                  },
-                  "Property": "Predecessor_Level_2"
-                }
-              },
-              "queryRef": "06 XER_PREDECESSOR.Predecessor_Level_2",
-              "nativeQueryRef": "WBS",
-              "active": true,
-              "displayName": "WBS"
-            }
-          ]
-        },
-        "Values": {
-          "projections": [
-            {
-              "field": {
-                "Aggregation": {
-                  "Expression": {
-                    "Column": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "06 XER_PREDECESSOR"
-                        }
-                      },
-                      "Property": "WBS_Link_Direction"
-                    }
-                  },
-                  "Function": 5
-                }
-              },
-              "queryRef": "Min(06 XER_PREDECESSOR.WBS_Link_Direction)",
-              "nativeQueryRef": "Count of WBS_Link_Direction"
-            }
-          ]
-        }
-      },
-      "sortDefinition": {
-        "sort": [
-          {
-            "field": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "06 XER_PREDECESSOR"
-                  }
-                },
-                "Property": "Predecessor_Level_2"
-              }
-            },
-            "direction": "Ascending"
-          }
-        ]
-      }
-    },
     "objects": {
       "subTotals": [
         {
@@ -101,14 +18,14 @@
             "columnSubtotals": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
                 }
               }
             },
             "rowSubtotals": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
                 }
               }
             }
@@ -121,322 +38,13 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "169.28571428571428D"
+                  "Value": "185D"
                 }
               }
             }
           },
           "selector": {
             "metadata": "06 XER_PREDECESSOR.Predecessor_Level_2"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "165D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "06 XER_PREDECESSOR"
-                          }
-                        },
-                        "Property": "Successor_Level_2"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "'CONSTRUCTION & INSTALLATION'"
-                      }
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "140.42856694699168D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "06 XER_PREDECESSOR"
-                          }
-                        },
-                        "Property": "Successor_Level_2"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "'DESIGN & ENGINEERING'"
-                      }
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "125.42856443564696D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "06 XER_PREDECESSOR"
-                          }
-                        },
-                        "Property": "Successor_Level_2"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "'EARLY WORKS'"
-                      }
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        },
-        {
-          "properties": {},
-          "selector": {
-            "data": [
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "06 XER_PREDECESSOR"
-                          }
-                        },
-                        "Property": "Successor_Level_2"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "'Key Milestones'"
-                      }
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        },
-        {
-          "properties": {},
-          "selector": {
-            "data": [
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "06 XER_PREDECESSOR"
-                          }
-                        },
-                        "Property": "Successor_Level_2"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "'Preliminaries'"
-                      }
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "99.28571428571429D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "06 XER_PREDECESSOR"
-                          }
-                        },
-                        "Property": "Successor_Level_2"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "'Procurement'"
-                      }
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "152.42854978529192D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "06 XER_PREDECESSOR"
-                          }
-                        },
-                        "Property": "Successor_Level_2"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "'TESTING & COMMISSIONING'"
-                      }
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "61.60629921259842D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "total": [
-                  {
-                    "Column": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "06 XER_PREDECESSOR"
-                        }
-                      },
-                      "Property": "Successor_Level_2"
-                    }
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "166.61551209520218D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "data": [
-              {
-                "scopeId": {
-                  "Comparison": {
-                    "ComparisonKind": 0,
-                    "Left": {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Entity": "06 XER_PREDECESSOR"
-                          }
-                        },
-                        "Property": "Successor_Level_2"
-                      }
-                    },
-                    "Right": {
-                      "Literal": {
-                        "Value": "'COMPLETION AND COMMISSIONING'"
-                      }
-                    }
-                  }
-                }
-              }
-            ]
           }
         }
       ],
@@ -446,7 +54,7 @@
             "bold": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
                 }
               }
             },
@@ -462,20 +70,6 @@
                 }
               }
             },
-            "autoSizeColumnWidth": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "fontSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "11D"
-                }
-              }
-            },
             "backColor": {
               "solid": {
                 "color": {
@@ -485,6 +79,27 @@
                       "Percent": 0
                     }
                   }
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
+                }
+              }
+            },
+            "autoSizeColumnWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
                 }
               }
             }
@@ -497,7 +112,7 @@
             "bold": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
                 }
               }
             },
@@ -513,13 +128,6 @@
                 }
               }
             },
-            "fontSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "11D"
-                }
-              }
-            },
             "backColor": {
               "solid": {
                 "color": {
@@ -529,6 +137,13 @@
                       "Percent": 0
                     }
                   }
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
                 }
               }
             }
@@ -548,7 +163,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "12D"
+                  "Value": "11D"
                 }
               }
             },
@@ -567,44 +182,13 @@
               "solid": {
                 "color": {
                   "expr": {
-                    "Conditional": {
-                      "Cases": [
-                        {
-                          "Condition": {
-                            "Contains": {
-                              "Left": {
-                                "Aggregation": {
-                                  "Expression": {
-                                    "Column": {
-                                      "Expression": {
-                                        "SourceRef": {
-                                          "Entity": "06 XER_PREDECESSOR"
-                                        }
-                                      },
-                                      "Property": "Link_Type"
-                                    }
-                                  },
-                                  "Function": 3
-                                }
-                              },
-                              "Right": {
-                                "Literal": {
-                                  "Value": "'Internal Link'"
-                                }
-                              }
-                            },
-                            "Annotations": {
-                              "PowerBI.SQExprEvaluationKind": 1,
-                              "PowerBI.SQExprTextOperatorOption": 6
-                            }
-                          },
-                          "Value": {
-                            "Literal": {
-                              "Value": "'#000000'"
-                            }
-                          }
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "WBS Measures"
                         }
-                      ]
+                      },
+                      "Property": "CWBS Matrix Cell Colour"
                     }
                   }
                 }
@@ -614,44 +198,13 @@
               "solid": {
                 "color": {
                   "expr": {
-                    "Conditional": {
-                      "Cases": [
-                        {
-                          "Condition": {
-                            "Contains": {
-                              "Left": {
-                                "Aggregation": {
-                                  "Expression": {
-                                    "Column": {
-                                      "Expression": {
-                                        "SourceRef": {
-                                          "Entity": "06 XER_PREDECESSOR"
-                                        }
-                                      },
-                                      "Property": "Link_Type"
-                                    }
-                                  },
-                                  "Function": 3
-                                }
-                              },
-                              "Right": {
-                                "Literal": {
-                                  "Value": "'Internal Link'"
-                                }
-                              }
-                            },
-                            "Annotations": {
-                              "PowerBI.SQExprEvaluationKind": 1,
-                              "PowerBI.SQExprTextOperatorOption": 6
-                            }
-                          },
-                          "Value": {
-                            "Literal": {
-                              "Value": "'#FFFFFF'"
-                            }
-                          }
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "WBS Measures"
                         }
-                      ]
+                      },
+                      "Property": "CWBS Matrix Font Colour"
                     }
                   }
                 }
@@ -666,20 +219,30 @@
                 }
               }
             ],
-            "metadata": "Min(06 XER_PREDECESSOR.WBS_Link_Direction)"
+            "metadata": "WBS Measures.CWBS Matrix Link Count"
           }
         }
       ],
-      "columnTotal": [
+      "columnFormatting": [
         {
           "properties": {
-            "applyToHeaders": {
+            "alignment": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "'Center'"
+                }
+              }
+            },
+            "labelDisplayUnits": {
+              "expr": {
+                "Literal": {
+                  "Value": "1D"
                 }
               }
             }
+          },
+          "selector": {
+            "metadata": "WBS Measures.CWBS Matrix Link Count"
           }
         }
       ],
@@ -700,22 +263,6 @@
                 }
               }
             }
-          }
-        }
-      ],
-      "columnFormatting": [
-        {
-          "properties": {
-            "labelDisplayUnits": {
-              "expr": {
-                "Literal": {
-                  "Value": "1D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "Min(06 XER_PREDECESSOR.WBS_Link_Direction)"
           }
         }
       ]
@@ -740,7 +287,25 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
                 }
               }
             }
@@ -759,8 +324,110 @@
             },
             "text": {
               "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Matrix Title"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
                 "Literal": {
-                  "Value": "'Links Between WBS Chapters'"
+                  "Value": "13D"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "titleWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Scope Prompt"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "9D"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0.4
+                    }
+                  }
+                }
+              }
+            },
+            "titleWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'WBS-to-WBS Interface Matrix'"
                 }
               }
             }
@@ -781,10 +448,52 @@
               "solid": {
                 "color": {
                   "expr": {
-                    "Literal": {
-                      "Value": "'#B3B3B3'"
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0.6
                     }
                   }
+                }
+              }
+            },
+            "radius": {
+              "expr": {
+                "Literal": {
+                  "Value": "4D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "padding": [
+        {
+          "properties": {
+            "top": {
+              "expr": {
+                "Literal": {
+                  "Value": "6D"
+                }
+              }
+            },
+            "bottom": {
+              "expr": {
+                "Literal": {
+                  "Value": "6D"
+                }
+              }
+            },
+            "left": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "right": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
                 }
               }
             }
@@ -792,6 +501,100 @@
         }
       ]
     },
-    "drillFilterOtherVisuals": true
+    "drillFilterOtherVisuals": true,
+    "query": {
+      "queryState": {
+        "Rows": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "06 XER_PREDECESSOR"
+                    }
+                  },
+                  "Property": "Predecessor_Level_2"
+                }
+              },
+              "queryRef": "06 XER_PREDECESSOR.Predecessor_Level_2",
+              "nativeQueryRef": "Predecessor WBS",
+              "active": true,
+              "displayName": "Predecessor WBS"
+            }
+          ]
+        },
+        "Columns": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "06 XER_PREDECESSOR"
+                    }
+                  },
+                  "Property": "Successor_Level_2"
+                }
+              },
+              "queryRef": "06 XER_PREDECESSOR.Successor_Level_2",
+              "nativeQueryRef": "Successor WBS",
+              "active": true,
+              "displayName": "Successor WBS"
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Matrix Link Count"
+                }
+              },
+              "queryRef": "WBS Measures.CWBS Matrix Link Count",
+              "nativeQueryRef": "Links",
+              "active": true,
+              "displayName": "Links"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "06 XER_PREDECESSOR"
+                  }
+                },
+                "Property": "Predecessor_Level_2"
+              }
+            },
+            "direction": "Ascending"
+          },
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "06 XER_PREDECESSOR"
+                  }
+                },
+                "Property": "Successor_Level_2"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    }
   }
 }

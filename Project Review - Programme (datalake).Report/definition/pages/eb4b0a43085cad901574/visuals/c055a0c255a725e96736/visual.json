@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "c055a0c255a725e96736",
   "position": {
-    "x": 18.571428571428573,
-    "y": 220,
-    "z": 8000,
-    "height": 295.71428571428572,
-    "width": 735.71428571428578,
-    "tabOrder": 8000
+    "x": 12,
+    "y": 226,
+    "z": 13000,
+    "height": 370,
+    "width": 688,
+    "tabOrder": 13000
   },
   "visual": {
     "visualType": "tableEx",
@@ -27,8 +27,9 @@
                 }
               },
               "queryRef": "06 XER_PREDECESSOR.Predecessor_Level_2",
-              "nativeQueryRef": "Predecessor",
-              "displayName": "Predecessor"
+              "nativeQueryRef": "From WBS",
+              "active": true,
+              "displayName": "From WBS"
             },
             {
               "field": {
@@ -42,8 +43,9 @@
                 }
               },
               "queryRef": "06 XER_PREDECESSOR.Successor_Level_2",
-              "nativeQueryRef": "Successor",
-              "displayName": "Successor"
+              "nativeQueryRef": "To WBS",
+              "active": true,
+              "displayName": "To WBS"
             },
             {
               "field": {
@@ -53,11 +55,14 @@
                       "Entity": "WBS Measures"
                     }
                   },
-                  "Property": "Count of Links"
+                  "Property": "CWBS Interface Links"
                 }
               },
-              "queryRef": "WBS Measures.Count of Links",
-              "nativeQueryRef": "Count of Links"
+              "queryRef": "WBS Measures.CWBS Interface Links",
+              "nativeQueryRef": "Links",
+              "active": true,
+              "displayName": "Links",
+              "format": "#,0"
             },
             {
               "field": {
@@ -67,12 +72,14 @@
                       "Entity": "WBS Measures"
                     }
                   },
-                  "Property": "Driving Predecessor Count"
+                  "Property": "CWBS Interface Driving Links"
                 }
               },
-              "queryRef": "WBS Measures.Driving Predecessor Count",
-              "nativeQueryRef": "Driving Predecessors",
-              "displayName": "Driving Predecessors"
+              "queryRef": "WBS Measures.CWBS Interface Driving Links",
+              "nativeQueryRef": "Driving",
+              "active": true,
+              "displayName": "Driving",
+              "format": "#,0"
             },
             {
               "field": {
@@ -82,11 +89,48 @@
                       "Entity": "WBS Measures"
                     }
                   },
-                  "Property": "Driving Ratio"
+                  "Property": "CWBS Interface Driving Share"
                 }
               },
-              "queryRef": "WBS Measures.Free Float Ratio",
-              "nativeQueryRef": "Driving Ratio1"
+              "queryRef": "WBS Measures.CWBS Interface Driving Share",
+              "nativeQueryRef": "Driving %",
+              "active": true,
+              "displayName": "Driving %",
+              "format": "0.0%"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Interface Critical Links"
+                }
+              },
+              "queryRef": "WBS Measures.CWBS Interface Critical Links",
+              "nativeQueryRef": "Critical (TF≤0)",
+              "active": true,
+              "displayName": "Critical (TF≤0)",
+              "format": "#,0"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Interface Min Free Float"
+                }
+              },
+              "queryRef": "WBS Measures.CWBS Interface Min Free Float",
+              "nativeQueryRef": "Min FF (d)",
+              "active": true,
+              "displayName": "Min FF (d)",
+              "format": "#,0.0"
             }
           ]
         }
@@ -101,7 +145,7 @@
                     "Entity": "WBS Measures"
                   }
                 },
-                "Property": "Count of Links"
+                "Property": "CWBS Interface Links"
               }
             },
             "direction": "Descending"
@@ -116,21 +160,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "194.2346111365568D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "06 XER_PREDECESSOR.Successor_Level_2"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
-                  "Value": "209.65526641480375D"
+                  "Value": "150D"
                 }
               }
             }
@@ -144,13 +174,13 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "104.20515288958543D"
+                  "Value": "150D"
                 }
               }
             }
           },
           "selector": {
-            "metadata": "WBS Measures.Driving Predecessor Count"
+            "metadata": "06 XER_PREDECESSOR.Successor_Level_2"
           }
         },
         {
@@ -158,13 +188,13 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "95D"
+                  "Value": "60D"
                 }
               }
             }
           },
           "selector": {
-            "metadata": "WBS Measures.Count of Links"
+            "metadata": "WBS Measures.CWBS Interface Links"
           }
         },
         {
@@ -172,23 +202,65 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "87D"
+                  "Value": "66D"
                 }
               }
             }
           },
           "selector": {
-            "metadata": "WBS Measures.Free Float Ratio"
+            "metadata": "WBS Measures.CWBS Interface Driving Links"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "74D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "WBS Measures.CWBS Interface Driving Share"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "84D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "WBS Measures.CWBS Interface Critical Links"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "68D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "WBS Measures.CWBS Interface Min Free Float"
           }
         }
       ],
-      "total": [
+      "values": [
         {
           "properties": {
-            "totals": {
+            "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "10D"
                 }
               }
             }
@@ -198,13 +270,154 @@
       "columnHeaders": [
         {
           "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
+                }
+              }
+            },
             "autoSizeColumnWidth": {
               "expr": {
                 "Literal": {
                   "Value": "true"
                 }
               }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
+                }
+              }
             }
+          }
+        }
+      ],
+      "total": [
+        {
+          "properties": {
+            "totals": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "italic": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "columnFormatting": [
+        {
+          "properties": {
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
+                }
+              }
+            },
+            "styleTotal": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "WBS Measures.CWBS Interface Links"
+          }
+        },
+        {
+          "properties": {
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
+                }
+              }
+            },
+            "styleTotal": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "WBS Measures.CWBS Interface Driving Links"
+          }
+        },
+        {
+          "properties": {
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
+                }
+              }
+            },
+            "styleTotal": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "WBS Measures.CWBS Interface Driving Share"
+          }
+        },
+        {
+          "properties": {
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
+                }
+              }
+            },
+            "styleTotal": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "WBS Measures.CWBS Interface Critical Links"
+          }
+        },
+        {
+          "properties": {
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
+                }
+              }
+            },
+            "styleTotal": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "WBS Measures.CWBS Interface Min Free Float"
           }
         }
       ]
@@ -216,7 +429,7 @@
             "name": {
               "expr": {
                 "Literal": {
-                  "Value": "'AlternatingRowsNew'"
+                  "Value": "'BoldHeader'"
                 }
               }
             }
@@ -229,7 +442,147 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Interface Summary Title"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "13D"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "titleWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WBS Measures"
+                    }
+                  },
+                  "Property": "CWBS Scope Prompt"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "9D"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0.4
+                    }
+                  }
+                }
+              }
+            },
+            "titleWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'WBS Interface Summary table'"
                 }
               }
             }
@@ -250,10 +603,52 @@
               "solid": {
                 "color": {
                   "expr": {
-                    "Literal": {
-                      "Value": "'#b3b3b3'"
+                    "ThemeDataColor": {
+                      "ColorId": 1,
+                      "Percent": 0.6
                     }
                   }
+                }
+              }
+            },
+            "radius": {
+              "expr": {
+                "Literal": {
+                  "Value": "4D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "padding": [
+        {
+          "properties": {
+            "top": {
+              "expr": {
+                "Literal": {
+                  "Value": "6D"
+                }
+              }
+            },
+            "bottom": {
+              "expr": {
+                "Literal": {
+                  "Value": "6D"
+                }
+              }
+            },
+            "left": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "right": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
                 }
               }
             }
